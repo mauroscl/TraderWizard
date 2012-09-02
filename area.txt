@@ -1,0 +1,2 @@
+A área de desenho tem que ser inicializada quando inicia a tela ou quando clica botão atualizar
+Quando utliza um zoom ou quando arrasta a tela precisa apenas atualizar alguns valores
