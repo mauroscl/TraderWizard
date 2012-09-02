@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TesteSemAcessarBancoDeDados</name>
+    </assembly>
+    <members>
+        <member name="P:TesteSemAcessarBancoDeDados.testes_de_carteira_de_ativos.TestContext">
+            <summary>
+            Gets or sets the test context which provides
+            information about and functionality for the current test run.
+            </summary>
+        </member>
+        <member name="T:TesteSemAcessarBancoDeDados.UI.FerramentaDeDesenho.TestesLinhaHorizontal">
+            <summary>
+            Summary description for TestesLinhaHorizontal
+            </summary>
+        </member>
+        <member name="P:TesteSemAcessarBancoDeDados.UI.FerramentaDeDesenho.TestesLinhaHorizontal.TestContext">
+             <summary>
+            Gets or sets the test context which provides
+            information about and functionality for the current test run.
+            </summary>
+        </member>
+        <member name="T:TesteSemAcessarBancoDeDados.UI.FerramentaDeDesenho.TestesCanal">
+            <summary>
+            Summary description for TestesLinhaTendencia
+            </summary>
+        </member>
+        <member name="P:TesteSemAcessarBancoDeDados.UI.FerramentaDeDesenho.TestesCanal.TestContext">
+             <summary>
+            Gets or sets the test context which provides
+            information about and functionality for the current test run.
+            </summary>
+        </member>
+    </members>
+</doc>

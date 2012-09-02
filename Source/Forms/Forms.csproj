@@ -1,0 +1,299 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{437E9094-1DAE-49E1-BA89-B08869AE7A19}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Forms</RootNamespace>
+    <AssemblyName>Forms</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\SAP BusinessObjects\Crystal Reports for .NET Framework 4.0\Common\SAP BusinessObjects Enterprise XI 4.0\win32_x86\dotnet\CrystalDecisions.CrystalReports.Engine.dll</HintPath>
+    </Reference>
+    <Reference Include="CrystalDecisions.ReportSource, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\SAP BusinessObjects\Crystal Reports for .NET Framework 4.0\Common\SAP BusinessObjects Enterprise XI 4.0\win32_x86\dotnet\CrystalDecisions.ReportSource.dll</HintPath>
+    </Reference>
+    <Reference Include="CrystalDecisions.Shared, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\SAP BusinessObjects\Crystal Reports for .NET Framework 4.0\Common\SAP BusinessObjects Enterprise XI 4.0\win32_x86\dotnet\CrystalDecisions.Shared.dll</HintPath>
+    </Reference>
+    <Reference Include="CrystalDecisions.Windows.Forms, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\SAP BusinessObjects\Crystal Reports for .NET Framework 4.0\Common\SAP BusinessObjects Enterprise XI 4.0\win32_x86\dotnet\CrystalDecisions.Windows.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="frmConfiguracao.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmConfiguracao.designer.cs">
+      <DependentUpon>frmConfiguracao.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmCotacao.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmCotacao.designer.cs">
+      <DependentUpon>frmCotacao.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmCotacaoAtualizarPeriodo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmCotacaoAtualizarPeriodo.designer.cs">
+      <DependentUpon>frmCotacaoAtualizarPeriodo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmCotacaoExcluir.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmCotacaoExcluir.designer.cs">
+      <DependentUpon>frmCotacaoExcluir.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmDadosRecalcular.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmDadosRecalcular.designer.cs">
+      <DependentUpon>frmDadosRecalcular.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmGrafico.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmGrafico.designer.cs">
+      <DependentUpon>frmGrafico.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmIFRCalcular.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmIFRCalcular.designer.cs">
+      <DependentUpon>frmIFRCalcular.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmIFRDiarioSimular.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmIFRDiarioSimular.designer.cs">
+      <DependentUpon>frmIFRDiarioSimular.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmIndicadorEscolha.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmIndicadorEscolha.designer.cs">
+      <DependentUpon>frmIndicadorEscolha.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmPrincipal.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmPrincipal.designer.cs">
+      <DependentUpon>frmPrincipal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmProventoAtualizar.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmProventoAtualizar.Designer.cs">
+      <DependentUpon>frmProventoAtualizar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmProventoCadastrar.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmProventoCadastrar.designer.cs">
+      <DependentUpon>frmProventoCadastrar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmRelatBackTest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmRelatBackTest.designer.cs">
+      <DependentUpon>frmRelatBackTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmRelatBackTestDetalhe.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmRelatBackTestDetalhe.designer.cs">
+      <DependentUpon>frmRelatBackTestDetalhe.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmRelatCrystal.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmRelatCrystal.designer.cs">
+      <DependentUpon>frmRelatCrystal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmRelatorioSpool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmRelatorioSpool.designer.cs">
+      <DependentUpon>frmRelatorioSpool.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmRelatVisualizacao.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmRelatVisualizacao.designer.cs">
+      <DependentUpon>frmRelatVisualizacao.cs</DependentUpon>
+    </Compile>
+    <Compile Include="mCotacao.cs" />
+    <Compile Include="mdlGeral.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RelatBackTest.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <EmbeddedResource Include="frmConfiguracao.resx">
+      <DependentUpon>frmConfiguracao.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmCotacao.resx">
+      <DependentUpon>frmCotacao.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmCotacaoAtualizarPeriodo.resx">
+      <DependentUpon>frmCotacaoAtualizarPeriodo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmCotacaoExcluir.resx">
+      <DependentUpon>frmCotacaoExcluir.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmDadosRecalcular.resx">
+      <DependentUpon>frmDadosRecalcular.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmGrafico.resx">
+      <DependentUpon>frmGrafico.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmIFRCalcular.resx">
+      <DependentUpon>frmIFRCalcular.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmIFRDiarioSimular.resx">
+      <DependentUpon>frmIFRDiarioSimular.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmIndicadorEscolha.resx">
+      <DependentUpon>frmIndicadorEscolha.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmPrincipal.resx">
+      <DependentUpon>frmPrincipal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmProventoAtualizar.resx">
+      <DependentUpon>frmProventoAtualizar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmProventoCadastrar.resx">
+      <DependentUpon>frmProventoCadastrar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmRelatBackTest.resx">
+      <DependentUpon>frmRelatBackTest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmRelatBackTestDetalhe.resx">
+      <DependentUpon>frmRelatBackTestDetalhe.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmRelatCrystal.resx">
+      <DependentUpon>frmRelatCrystal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmRelatorioSpool.resx">
+      <DependentUpon>frmRelatorioSpool.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmRelatVisualizacao.resx">
+      <DependentUpon>frmRelatVisualizacao.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="app.config" />
+    <None Include="ClassDiagram1.cd" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DataBase\DataBase.csproj">
+      <Project>{CC20BB02-78E9-487E-A9EC-6BFC64D2B0CB}</Project>
+      <Name>DataBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\frwInterface\frwInterface.csproj">
+      <Project>{AA04D3D2-F5CE-4D2E-A9AF-A304638AC603}</Project>
+      <Name>frwInterface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\frwTela\frwTela.csproj">
+      <Project>{66406753-FEF2-4A51-8F3A-5B4CA569306C}</Project>
+      <Name>frwTela</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\prjCandle\Desenho.csproj">
+      <Project>{90CF8CCF-C0C3-45E8-ACCA-00E354837E5F}</Project>
+      <Name>Desenho</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\prjConfiguracao\prjConfiguracao.csproj">
+      <Project>{B9DCD706-44A1-4B5F-BF93-5C0A3F9BD6D5}</Project>
+      <Name>prjConfiguracao</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\prjDominio\prjDominio.csproj">
+      <Project>{9DAFFBC6-2218-40FF-BDF9-86774B91DA7A}</Project>
+      <Name>prjDominio</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\prjDTO\prjDTO.csproj">
+      <Project>{BD01A0C5-77D7-4FAA-A662-38EA575DED34}</Project>
+      <Name>prjDTO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\prmCotacao\prmCotacao.csproj">
+      <Project>{33BF35FD-D037-46C7-BC26-024AA54481EC}</Project>
+      <Name>prmCotacao</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\pWeb\pWeb.csproj">
+      <Project>{A902DC79-0E9C-4C2D-894E-8301DB0D9849}</Project>
+      <Name>pWeb</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ServicosDeInterface\ServicosDeInterface.csproj">
+      <Project>{D0B52B8A-8A9C-4E34-B324-745E7A126573}</Project>
+      <Name>ServicosDeInterface</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

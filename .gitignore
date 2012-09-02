@@ -1,0 +1,9 @@
+*.stackdump
+_ReSharper.TraderWizard
+*.cache
+*.force
+*.resources
+*.tlog
+*.trx
+bin
+obj

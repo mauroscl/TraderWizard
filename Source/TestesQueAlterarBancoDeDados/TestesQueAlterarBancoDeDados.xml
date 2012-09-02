@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TestesQueAlterarBancoDeDados</name>
+    </assembly>
+    <members>
+        <member name="T:TestesQueAlterarBancoDeDados.teste_da_simulacao_diaria_do_ifr">
+            <summary>
+            This is a test class for cWebTest and is intended
+            to contain all cWebTest Unit Tests
+            </summary>
+        </member>
+        <member name="P:TestesQueAlterarBancoDeDados.teste_da_simulacao_diaria_do_ifr.TestContext">
+            <summary>
+            Gets or sets the test context which provides
+            information about and functionality for the current test run.
+            </summary>
+        </member>
+    </members>
+</doc>
