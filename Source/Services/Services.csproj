@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{BD01A0C5-77D7-4FAA-A662-38EA575DED34}</ProjectGuid>
+    <ProjectGuid>{8BAE22CC-832B-4151-8B2F-222403B12F8B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>prjDTO</RootNamespace>
-    <AssemblyName>prjDTO</AssemblyName>
+    <RootNamespace>Services</RootNamespace>
+    <AssemblyName>Services</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,7 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,19 +41,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="cFaixaDTO.cs" />
-    <Compile Include="cMediaDTO.cs" />
-    <Compile Include="CotacaoDto.cs" />
-    <Compile Include="cSetupIFR2SimularDTO.cs" />
-    <Compile Include="cSugerirAtualizacaoCotacaoDTO.cs" />
-    <Compile Include="cTradeDTO.cs" />
-    <Compile Include="InformacoesDoTradeDTO.cs" />
+    <Compile Include="cArquivoXML.cs" />
+    <Compile Include="FileService.cs" />
+    <Compile Include="IFileService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\frwInterface\frwInterface.csproj">
-      <Project>{AA04D3D2-F5CE-4D2E-A9AF-A304638AC603}</Project>
-      <Name>frwInterface</Name>
+    <ProjectReference Include="..\prjDTO\prjDTO.csproj">
+      <Project>{bd01a0c5-77d7-4faa-a662-38ea575ded34}</Project>
+      <Name>prjDTO</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

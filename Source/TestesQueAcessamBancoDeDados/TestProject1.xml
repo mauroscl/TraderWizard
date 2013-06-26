@@ -4,13 +4,18 @@
         <name>TestProject1</name>
     </assembly>
     <members>
-        <member name="T:TestProject1.testes_do_carregador_de_cotacao_diaria">
+        <member name="T:TestProject1.cWebTest">
             <summary>
-            This is a test class for cCalculadorDataInicialDetalheTest and is intended
-            to contain all cCalculadorDataInicialDetalheTest Unit Tests
+            This is a test class for cWebTest and is intended
+            to contain all cWebTest Unit Tests
             </summary>
         </member>
-        <member name="P:TestProject1.testes_do_carregador_de_cotacao_diaria.TestContext">
+        <member name="M:TestProject1.cWebTest.QuandoPassarLinkValidoFuncaoTemQueRetornarQueOLinkEhValido">
+            <summary>
+            A test for ArquivoBaixar
+            </summary>
+        </member>
+        <member name="P:TestProject1.cWebTest.TestContext">
             <summary>
             Gets or sets the test context which provides
             information about and functionality for the current test run.
@@ -40,6 +45,18 @@
             information about and functionality for the current test run.
             </summary>
         </member>
+        <member name="T:TestProject1.testes_do_carregador_de_cotacao_diaria">
+            <summary>
+            This is a test class for cCalculadorDataInicialDetalheTest and is intended
+            to contain all cCalculadorDataInicialDetalheTest Unit Tests
+            </summary>
+        </member>
+        <member name="P:TestProject1.testes_do_carregador_de_cotacao_diaria.TestContext">
+            <summary>
+            Gets or sets the test context which provides
+            information about and functionality for the current test run.
+            </summary>
+        </member>
         <member name="T:TestProject1.testes_do_carregador_de_ifr_sobrevendido">
             <summary>
             This is a test class for cCalculadorDataInicialDetalheTest and is intended
@@ -47,18 +64,6 @@
             </summary>
         </member>
         <member name="P:TestProject1.testes_do_carregador_de_ifr_sobrevendido.TestContext">
-            <summary>
-            Gets or sets the test context which provides
-            information about and functionality for the current test run.
-            </summary>
-        </member>
-        <member name="T:TestProject1.testes_do_verifica_se_deve_gerar_entrada">
-            <summary>
-            This is a test class for cCalculadorDataInicialDetalheTest and is intended
-            to contain all cCalculadorDataInicialDetalheTest Unit Tests
-            </summary>
-        </member>
-        <member name="P:TestProject1.testes_do_verifica_se_deve_gerar_entrada.TestContext">
             <summary>
             Gets or sets the test context which provides
             information about and functionality for the current test run.
@@ -76,18 +81,13 @@
             information about and functionality for the current test run.
             </summary>
         </member>
-        <member name="T:TestProject1.cWebTest">
+        <member name="T:TestProject1.testes_do_verifica_se_deve_gerar_entrada">
             <summary>
-            This is a test class for cWebTest and is intended
-            to contain all cWebTest Unit Tests
+            This is a test class for cCalculadorDataInicialDetalheTest and is intended
+            to contain all cCalculadorDataInicialDetalheTest Unit Tests
             </summary>
         </member>
-        <member name="M:TestProject1.cWebTest.QuandoPassarLinkValidoFuncaoTemQueRetornarQueOLinkEhValido">
-            <summary>
-            A test for ArquivoBaixar
-            </summary>
-        </member>
-        <member name="P:TestProject1.cWebTest.TestContext">
+        <member name="P:TestProject1.testes_do_verifica_se_deve_gerar_entrada.TestContext">
             <summary>
             Gets or sets the test context which provides
             information about and functionality for the current test run.

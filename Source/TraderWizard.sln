@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dominio", "Dominio", "{58730C71-9E62-4304-B244-DC2776BCDF02}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ServicosDaAplicacao", "ServicosDaAplicacao", "{8DCDEA66-8731-4EFC-BF5F-28A272BD1613}"
@@ -51,6 +51,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TesteBase", "TesteBase\TesteBase.csproj", "{C3B553DF-A41A-41B0-A58A-AC0823D2E1F3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Forms", "Forms\Forms.csproj", "{437E9094-1DAE-49E1-BA89-B08869AE7A19}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "Services\Services.csproj", "{8BAE22CC-832B-4151-8B2F-222403B12F8B}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
@@ -235,6 +237,16 @@ Global
 		{437E9094-1DAE-49E1-BA89-B08869AE7A19}.Release|Mixed Platforms.Build.0 = Release|x86
 		{437E9094-1DAE-49E1-BA89-B08869AE7A19}.Release|x86.ActiveCfg = Release|x86
 		{437E9094-1DAE-49E1-BA89-B08869AE7A19}.Release|x86.Build.0 = Release|x86
+		{8BAE22CC-832B-4151-8B2F-222403B12F8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BAE22CC-832B-4151-8B2F-222403B12F8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BAE22CC-832B-4151-8B2F-222403B12F8B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{8BAE22CC-832B-4151-8B2F-222403B12F8B}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{8BAE22CC-832B-4151-8B2F-222403B12F8B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8BAE22CC-832B-4151-8B2F-222403B12F8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BAE22CC-832B-4151-8B2F-222403B12F8B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BAE22CC-832B-4151-8B2F-222403B12F8B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{8BAE22CC-832B-4151-8B2F-222403B12F8B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{8BAE22CC-832B-4151-8B2F-222403B12F8B}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -256,5 +268,6 @@ Global
 		{CC20BB02-78E9-487E-A9EC-6BFC64D2B0CB} = {6BC89F85-F0C8-4751-94BE-8E8E6F52B90B}
 		{B9DCD706-44A1-4B5F-BF93-5C0A3F9BD6D5} = {6BC89F85-F0C8-4751-94BE-8E8E6F52B90B}
 		{A902DC79-0E9C-4C2D-894E-8301DB0D9849} = {6BC89F85-F0C8-4751-94BE-8E8E6F52B90B}
+		{8BAE22CC-832B-4151-8B2F-222403B12F8B} = {6BC89F85-F0C8-4751-94BE-8E8E6F52B90B}
 	EndGlobalSection
 EndGlobal

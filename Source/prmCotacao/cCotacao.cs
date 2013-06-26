@@ -2,9 +2,10 @@ using System.Windows.Forms;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Ionic.Zip;
+using Services;
 using prjModelo.Carregadores;
 using prjModelo;
-using prmArquivo;
 using pWeb;
 using DataBase;
 using prjDTO;
@@ -466,56 +467,20 @@ namespace prmCotacao
 		/// False = algum erro na descompactação do arquivo zip ou leitura do arquivo texto
 		/// </returns>
 		/// <remarks></remarks>
-		private bool ArquivoDescompactar(string pstrCaminho, string pstrArquivoZip, string pstrArquivoTexto, IList<string> pcolLinhaRet)
+		private bool ArquivoDescompactar(string pstrCaminho, string pstrArquivoZip, string pstrArquivoTexto, out IList<string> pcolLinhaRet)
 		{
-		    //não precisa instanciar porque as funções utilizadas foram declaradas como shared
-			//Dim objArquivo As cArquivo = New cArquivo()
+            var zipFile = new ZipFile(pstrCaminho + "\\" + pstrArquivoZip);
 
-			string strLinha = "";
+            zipFile.ExtractAll(pstrCaminho);
 
-			//se o arquivo foi baixado com sucesso, descompacta o arquivo na pasta do zip
-			cZip objZip = new cZip();
+            IFileService fileService = new FileService();
 
-			//objZip.ZipInicializar(frmCotacao, frmCotacao.txtZip)
-			objZip.ZipInicializar();
-
-			//objZip.ArquivoDescompactar(pstrCaminho & "\" & strArquivoBaixar, pstrCaminho, "bdi" & strDia & strMes)
-			objZip.DesCompactar(pstrCaminho + "\\" + pstrArquivoZip, "*.*", pstrCaminho, false);
-
-			//o conteúdo do arquivo zipado é um arquivo chamado BDIN, sem extensão
-			//abre o arquivo para leitura
-			cArquivo objArqLeitura = new cArquivo(pstrCaminho + "\\" + pstrArquivoTexto);
-
-			//abre o arquivo que foi lido.
-
-			if (!objArqLeitura.Abrir()) {
-				//se não consegue abrir o arquivo txt retorna false
-				return false;
-
-			}
-
-			//Testa se a collection já foi inicializada
-
-			if (pcolLinhaRet == null) {
-				//se ainda não foi inicializada, inicializa-a
-				pcolLinhaRet = new List<string>();
-
-			}
-
-			//para cada linha do arquivo adiciona na collection
-
-			while (!objArqLeitura.EOF()) {
-				//Lê a linha, adiciona na collection de linhas e passa para a próxima linha.
-				objArqLeitura.LerLinha(ref strLinha);
-				pcolLinhaRet.Add(strLinha);
-
-			}
-
-			//fecha o arquivo que foi lido.
-			objArqLeitura.Fechar();
+            //o conteúdo do arquivo zipado é um arquivo chamado BDIN, sem extensão
+            //abre o arquivo para leitura
+            pcolLinhaRet = fileService.ReadAllLines(pstrCaminho + "\\" + pstrArquivoTexto);
 
 			//apaga o arquivo BDIN que foi extraído do zip.
-			cArquivo.ArquivoExcluir(pstrCaminho + "\\" + pstrArquivoTexto);
+			fileService.Delete(pstrCaminho + "\\" + pstrArquivoTexto) ;
 
 			return true;
 
@@ -539,16 +504,10 @@ namespace prmCotacao
 
 			strPathZip = strPathZip + "Arquivos";
 
-			//não precisa instanciar porque as funções utilizadas foram declaradas como shared
-			//Dim objArquivo As cArquivo = New cArquivo()
-
 			//Verifica se existe o diretório para armazenar os arquivos baixados
 
-			if (!cArquivo.DiretorioExistir(strPathZip)) {
-				//se o diretório ainda não existe então cria o diretório.
-				cArquivo.DiretorioCriar(strPathZip);
-
-			}
+		    var fileService = new FileService();
+            fileService.CreateFolder(strPathZip);
 
 			//gera o nome do arquivo que deve ser baixado
 			strArquivoBaixar = cGeradorNomeArquivo.GerarNomeArquivoRemoto(pdtmData);
@@ -556,8 +515,7 @@ namespace prmCotacao
 			//Nome que será dado ao arquivo baixado :"bdi" + yyyymmdd + ".zip"
 			strArquivoZipDestino = cGeradorNomeArquivo.GerarNomeArquivoLocal(pdtmData);
 
-
-			if (cArquivo.ArquivoExistir(strPathZip + "\\" + strArquivoZipDestino)) {
+			if ( fileService.FileExists(strPathZip + "\\" + strArquivoZipDestino)) {
 				//Já existe o arquivo baixado. Tem apenas que descompactar
 				blnDescompactar = true;
 
@@ -565,10 +523,8 @@ namespace prmCotacao
 				if (objWeb.DownloadWithProxy("http://www.bmfbovespa.com.br/fechamento-pregao/bdi/" + strArquivoBaixar, strPathZip, strArquivoZipDestino)) {
 					blnDescompactar = true;
 				} else {
-					blnDescompactar = false;
 					return false;
 				}
-
 			}
 
 			//baixa o arquivo com as cotações do último dia
@@ -576,7 +532,7 @@ namespace prmCotacao
 			if (blnDescompactar) {
 				//CHAMA FUNÇÃO QUE DESCOMPACTA O ARQUIVO, ABRE O ARQUIVO TEXTO, FAZ A LEITURA E RETORNA TODAS AS LINHAS
 				//EM UMA COLLECTION.
-				blnDescompactar = ArquivoDescompactar(strPathZip, strArquivoZipDestino, "BDIN", pcolLinhaRet);
+				blnDescompactar = ArquivoDescompactar(strPathZip, strArquivoZipDestino, "BDIN", out pcolLinhaRet);
 
 			}
 
@@ -586,17 +542,13 @@ namespace prmCotacao
 
 		public decimal UltimaMediaConsultar(string pstrCodigo)
 		{
-			decimal functionReturnValue = default(decimal);
+		    cRS objRS = new cRS(objConexao);
 
-			cRS objRS = new cRS(objConexao);
-
-			string strQuery = null;
-
-			strQuery = " select ValorMedio " + " from Cotacao " + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " order by Data desc ";
+		    string strQuery = " select ValorMedio " + " from Cotacao " + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " order by Data desc ";
 
 			objRS.ExecuteQuery(strQuery);
 
-			functionReturnValue = Convert.ToDecimal(objRS.Field("ValorMedio", "0"));
+			decimal functionReturnValue = Convert.ToDecimal(objRS.Field("ValorMedio", "0"));
 
 			objRS.Fechar();
 			return functionReturnValue;
@@ -612,17 +564,9 @@ namespace prmCotacao
 		private bool CotacoesImportar(IList<string> pcolLinha, cCommand pobjCommand)
 		{
 
-			int intI = 0;
+			int intI;
 
-			string strCodigoAtivo = null;
-
-			decimal decValorAbertura = default(decimal);
-			decimal decValorFechamento = default(decimal);
-			decimal decValorMinimo = default(decimal);
-			decimal decValorMedio = default(decimal);
-			decimal decValorMaximo = default(decimal);
-
-			long lngNegocios_Total = 0;
+		    long lngNegocios_Total = 0;
 			long lngTitulos_Total = 0;
 			decimal decValor_Total = default(decimal);
 
@@ -657,14 +601,15 @@ namespace prmCotacao
 
 				//posição 25 - 27 indica o tipo  de mercado do ativo
 				//o tipo de mercado 010 é o mercado A VISTA
-				if (strLinhaAux.Substring(0, 2) + strLinhaAux.Substring(10, 2) + strLinhaAux.Substring(24, 3) == "0102010") {
-					//se é a cotação de um papel
+				if (strLinhaAux.Substring(0, 2) + strLinhaAux.Substring(10, 2) + strLinhaAux.Substring(24, 3) == "0102010")
+				{
+				    //se é a cotação de um papel
 					//e é do mercado à vista.
 
 					//busca código do ativo, posicao 13-24
-					strCodigoAtivo = strLinhaAux.Substring(12, 12).Trim();
+				    string strCodigoAtivo = strLinhaAux.Substring(12, 12).Trim();
 
-					//verifica se o ativo não deve ser desconsiderado
+				    //verifica se o ativo não deve ser desconsiderado
 					if (strAtivosDesconsiderados.IndexOf("#" + strCodigoAtivo + "#", StringComparison.InvariantCultureIgnoreCase ) < 0) {
 						//se o ativo não foi encontrado na lista dos desconsiderados.
 
@@ -678,19 +623,19 @@ namespace prmCotacao
 							dtmCotacaoData = new DateTime(Convert.ToInt32(strLinhaAux.Substring(2, 4)), Convert.ToInt32(strLinhaAux.Substring(6, 2)), Convert.ToInt32(strLinhaAux.Substring(8, 2)));
 
 							//busca valor de abertura do ativo: 57 - 67 (inteiro), 68-69 (decimal)
-							decValorAbertura = Convert.ToDecimal(strLinhaAux.Substring(56, 11) + strSeparadorDecimal + strLinhaAux.Substring(67, 2));
+							decimal decValorAbertura = Convert.ToDecimal(strLinhaAux.Substring(56, 11) + strSeparadorDecimal + strLinhaAux.Substring(67, 2));
 
 							//busca o valor máximo do ativo: 70-80 (inteiro), 81-82 (decimal)
-							decValorMaximo = Convert.ToDecimal(strLinhaAux.Substring(69, 11) + strSeparadorDecimal + strLinhaAux.Substring(80, 2));
+							decimal decValorMaximo = Convert.ToDecimal(strLinhaAux.Substring(69, 11) + strSeparadorDecimal + strLinhaAux.Substring(80, 2));
 
 							//busca o valor mínimo do ativo: 83-93 (inteiro), 94-95 (decimal)
-							decValorMinimo = Convert.ToDecimal(strLinhaAux.Substring(82, 11) + strSeparadorDecimal + strLinhaAux.Substring(93, 2));
+							decimal decValorMinimo = Convert.ToDecimal(strLinhaAux.Substring(82, 11) + strSeparadorDecimal + strLinhaAux.Substring(93, 2));
 
 							//busca o valor médio do ativo: 96-106 (inteiro), 107-108 (decimal)
-							decValorMedio = Convert.ToDecimal(strLinhaAux.Substring(95, 11) + strSeparadorDecimal + strLinhaAux.Substring(106, 2));
+							decimal decValorMedio = Convert.ToDecimal(strLinhaAux.Substring(95, 11) + strSeparadorDecimal + strLinhaAux.Substring(106, 2));
 
 							//busca o valor de fechamento do ativo: 109-119 (inteiro), 120-121 (decimal)
-							decValorFechamento = Convert.ToDecimal(strLinhaAux.Substring(108, 11) + strSeparadorDecimal + strLinhaAux.Substring(119, 2));
+							decimal decValorFechamento = Convert.ToDecimal(strLinhaAux.Substring(108, 11) + strSeparadorDecimal + strLinhaAux.Substring(119, 2));
 
 							//TOTAL DE TÍTULOS NEGOCIADOS (153-170)
 							lngTitulos_Total = Convert.ToInt64(strLinhaAux.Substring(152, 18));
@@ -711,9 +656,8 @@ namespace prmCotacao
 
 					}
 					//se o ativo não foi desconsiderado
-
 				}
-				//se é uma cotação à vista.
+			    //se é uma cotação à vista.
 
 			}
 
@@ -795,7 +739,7 @@ namespace prmCotacao
 
 			//descompactar o arquivo que contém as cotações
 
-			if (ArquivoDescompactar(strPathZip, strArquivoZipDestino, strArquivoTextoDestino, colLinha)) {
+			if (ArquivoDescompactar(strPathZip, strArquivoZipDestino, strArquivoTextoDestino, out colLinha)) {
 				CotacoesImportar(colLinha, objCommand);
 
 			}
@@ -881,7 +825,7 @@ namespace prmCotacao
 
 			//descompactar o arquivo que contém as cotações
 
-			if (ArquivoDescompactar(strPathZip, strArquivoZipDestino, strArquivoTextoDestino, colLinha)) {
+			if (ArquivoDescompactar(strPathZip, strArquivoZipDestino, strArquivoTextoDestino, out colLinha)) {
 				CotacoesImportar(colLinha, objCommand);
 
 
@@ -2464,13 +2408,8 @@ namespace prmCotacao
 					strArquivoNome = "Log_IFR_Semanal.txt";
 				}
 
-				cArquivo objArquivo = new cArquivo(cBuscarConfiguracao.ObtemCaminhoPadrao() + strArquivoNome);
-
-				objArquivo.AbrirEscrita();
-
-				objArquivo.EscreverString(strLog);
-
-				objArquivo.Fechar();
+			    var fileService = new FileService();
+                fileService.Save(cBuscarConfiguracao.ObtemCaminhoPadrao() + strArquivoNome, contents: strLog);
 
 			}
 
@@ -2489,14 +2428,14 @@ namespace prmCotacao
 		/// <summary>
 		/// Soma o campo de uma determinada tabela no período indicado.
 		/// </summary>
-		/// <param name="pstrcodigo"></param>
-		/// <param name="pdtmdatainicial"></param>
-		/// <param name="pdtmdatafinal"></param>
-		/// <param name="pstrtabela">Cotacao ou Cotacao_Semanal</param>
-		/// <param name="pstrcampo">Volume ou ValorFechamento ou outro campo que for necessário</param>
+        /// <param name="pstrCodigo"></param>
+        /// <param name="pdtmDataInicial"></param>
+        /// <param name="pdtmDataFinal"></param>
+        /// <param name="pstrTabela">Cotacao ou Cotacao_Semanal</param>
+        /// <param name="pstrCampo">Volume ou ValorFechamento ou outro campo que for necessário</param>
 		/// <returns></returns>
 		/// <remarks></remarks>
-		private decimal CotacaoPeriodoCampoSomar(string pstrCodigo, System.DateTime pdtmDataInicial, System.DateTime pdtmDataFinal, string pstrTabela, string pstrCampo)
+		private decimal CotacaoPeriodoCampoSomar(string pstrCodigo, System.DateTime pdtmDataInicial, DateTime pdtmDataFinal, string pstrTabela, string pstrCampo)
 		{
 			decimal functionReturnValue = default(decimal);
 
@@ -3466,13 +3405,8 @@ namespace prmCotacao
 					strArquivoNome = "Log_MMExp_Semanal.txt";
 				}
 
-				cArquivo objArquivo = new cArquivo(cBuscarConfiguracao.ObtemCaminhoPadrao() + strArquivoNome);
-
-				objArquivo.AbrirEscrita();
-
-				objArquivo.EscreverString(strLog);
-
-				objArquivo.Fechar();
+			    var fileService = new FileService();
+                fileService.Save(cBuscarConfiguracao.ObtemCaminhoPadrao() + strArquivoNome,contents: strLog);
 
 			}
 
@@ -4138,14 +4072,8 @@ namespace prmCotacao
 
 
 			if (!string.IsNullOrEmpty(strLog)) {
-				cArquivo objArquivo = new cArquivo(cBuscarConfiguracao.ObtemCaminhoPadrao() + "Log_Cotacao_Semanal.txt");
-
-				objArquivo.AbrirEscrita();
-
-				objArquivo.EscreverString(strLog);
-
-				objArquivo.Fechar();
-
+			    var fileService = new FileService();
+                fileService.Save(cBuscarConfiguracao.ObtemCaminhoPadrao() + "Log_Cotacao_Semanal.txt",strLog);
 			}
 
 			objRS.Fechar();
@@ -5038,10 +4966,10 @@ namespace prmCotacao
 
 
 				if (objWeb.DownloadWithProxy(strURL, strCaminhoPadrao + "temp", "cotacao.xml")) {
-					cArquivoXML objArquivoXML = new cArquivoXML(strCaminhoPadrao + "temp\\cotacao.xml");
+					var objArquivoXml = new cArquivoXML(strCaminhoPadrao + "temp\\cotacao.xml");
 
 
-					if (!objArquivoXML.Abrir()) {
+					if (!objArquivoXml.Abrir()) {
 						objCommand.RollBackTrans();
 
 						return false;
@@ -5049,26 +4977,26 @@ namespace prmCotacao
 					}
 
 
-					while ((!objArquivoXML.EOF()) & (objCommand.TransStatus)) {
-						decValorAbertura = Convert.ToDecimal(objArquivoXML.LerAtributo("Abertura", 0));
+					while ((!objArquivoXml.EOF()) & (objCommand.TransStatus)) {
+						decValorAbertura = Convert.ToDecimal(objArquivoXml.LerAtributo("Abertura", 0));
 
 
 						if (decValorAbertura != 0) {
-							strCodigo = (string) objArquivoXML.LerAtributo("Codigo");
+							strCodigo = (string) objArquivoXml.LerAtributo("Codigo");
 
 							//strDataAux = objArquivoXML.LerAtributo("Data")
 
 							//dtmData = CDate(Left(strDataAux, 10))
 
-							decValorFechamento = Convert.ToDecimal(objArquivoXML.LerAtributo("Ultimo", 0));
+							decValorFechamento = Convert.ToDecimal(objArquivoXml.LerAtributo("Ultimo", 0));
 
-							decValorMinimo = Convert.ToDecimal(objArquivoXML.LerAtributo("Minimo", 0));
+							decValorMinimo = Convert.ToDecimal(objArquivoXml.LerAtributo("Minimo", 0));
 
-							decValorMaximo = Convert.ToDecimal(objArquivoXML.LerAtributo("Maximo", 0));
+							decValorMaximo = Convert.ToDecimal(objArquivoXml.LerAtributo("Maximo", 0));
 
-							decValorMedio = Convert.ToDecimal(objArquivoXML.LerAtributo("Medio", 0));
+							decValorMedio = Convert.ToDecimal(objArquivoXml.LerAtributo("Medio", 0));
 
-							decOscilacao = Convert.ToDecimal(objArquivoXML.LerAtributo("Oscilacao", 0));
+							decOscilacao = Convert.ToDecimal(objArquivoXml.LerAtributo("Oscilacao", 0));
 
 							//CONSULTA A COTAÇÃO ANTERIOR PARA O ATIVO
 							dtmCotacaoAnteriorData = AtivoCotacaoAnteriorDataConsultar(strCodigo, pdtmData, "Cotacao");
@@ -5101,11 +5029,11 @@ namespace prmCotacao
 
 						}
 
-						objArquivoXML.LerNodo();
+						objArquivoXml.LerNodo();
 
 					}
 
-					objArquivoXML.Fechar();
+					objArquivoXml.Fechar();
 
 
 				} else {
@@ -5663,23 +5591,15 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		public bool ProventoAtualizar(System.DateTime pdtmDataFinal)
 		{
-			bool functionReturnValue = false;
-
-			//Public Function ProventoAtualizar(ByVal pdtmDataUltimaAtualizacao As Date _
-			//, Optional ByVal pdtmDataFinal As Date = DataInvalida) As Boolean
-
-
 			cCommand objCommand = new cCommand(objConexao);
 
 			cRS objRS = new cRS(objConexao);
 
 			cRS objRSAtivo = new cRS(objConexao);
 
-			string strQuery = null;
-			string strWhere = String.Empty;
+		    string strWhere = String.Empty;
 
-			System.DateTime dtmData_Primeira_Cotacao = default(System.DateTime);
-			//Dim dtmData_Ultimo_Provento As Date
+		    //Dim dtmData_Ultimo_Provento As Date
 
 			string strCodigoAtual = String.Empty;
 			System.DateTime dtmDataInicioRecalculo = frwInterface.cConst.DataInvalida;
@@ -5696,24 +5616,17 @@ namespace prmCotacao
 			string strUltimo_Nome_Pregao = String.Empty;
 			string strUltimo_Tipo_Acao = String.Empty;
 
-			double dblQuantidadeAnterior = 0;
-
-			//indica se o provento foi importado, ou seja, foi encontrado o ativo na tabela de ativos 
+		    //indica se o provento foi importado, ou seja, foi encontrado o ativo na tabela de ativos 
 			//para importá-lo.
 			bool blnImportado = false;
 
-			bool blnExecutar = false;
+		    //usado para o cálculo da primeira dat ex-provento
 
-			//usado para o cálculo da primeira dat ex-provento
-			System.DateTime dtmDataExProvento = default(System.DateTime);
+		    //contém a data da primeira cotação para o papel
 
-			//contém a data da primeira cotação para o papel
-			System.DateTime dtmDataPrimeiraCotacao = default(System.DateTime);
+		    string strTipoProvento = null;
 
-			string strTipoProvento = null;
-
-			cCalculadorData objCalculadorData = new cCalculadorData(objConexao);
-
+			var objCalculadorData = new cCalculadorData(objConexao);
 
 			//prepara os dados da tabela temporária
 			objCommand.BeginTrans();
@@ -5741,15 +5654,10 @@ namespace prmCotacao
 
 			}
 
-			//inicializa o arquivo de log.
-			cArquivo objArquivoLog = new cArquivo(cBuscarConfiguracao.ObtemCaminhoPadrao() + "Log_Proventos\\Log_Proventos_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".txt");
-
-			objArquivoLog.AbrirEscrita();
-
 			//consulta a data da primeira cotação e do último provento na tabela Resumo
 			objRS.ExecuteQuery("SELECT Data_Primeira_Cotacao " + Environment.NewLine + "FROM Resumo ");
 
-			dtmData_Primeira_Cotacao = Convert.ToDateTime(objRS.Field("Data_Primeira_Cotacao", frwInterface.cConst.DataInvalida));
+			DateTime dtmData_Primeira_Cotacao = Convert.ToDateTime(objRS.Field("Data_Primeira_Cotacao", frwInterface.cConst.DataInvalida));
 			//dtmData_Ultimo_Provento = CDate(objRS.Field("Data_Ultimo_Provento", DataInvalida))
 
 			objRS.Fechar();
@@ -5757,7 +5665,7 @@ namespace prmCotacao
 			//busca todos os proventos da tabela de proventos após a data do último provento, 
 			//caso a mesma esteja preenchida.
 
-			strQuery = "SELECT Nome_Pregao, Tipo_Acao, Tipo_Provento, Ultimo_Dia_Com " + ", Ultimo_Preco_Com" + Environment.NewLine + ", SUM(Valor_Provento) AS Valor_Provento " + "FROM Proventos_Temp PT " + Environment.NewLine + " WHERE ";
+			string strQuery = "SELECT Nome_Pregao, Tipo_Acao, Tipo_Provento, Ultimo_Dia_Com " + ", Ultimo_Preco_Com" + Environment.NewLine + ", SUM(Valor_Provento) AS Valor_Provento " + "FROM Proventos_Temp PT " + Environment.NewLine + " WHERE ";
 
 
 			strWhere = "CDBL(Ultimo_Preco_com) > 0 " + Environment.NewLine;
@@ -5792,10 +5700,10 @@ namespace prmCotacao
 
 			objRS.ExecuteQuery(strQuery);
 
+		    string conteudoDoArquivoDeLog = "";
+
 			//No loop a seguir podem existir vários registros seguidos para a mesma ação
 			//(Nome_Pregao + Tipo_Acao). Por isso a cada iteração tem que verificar se o ativo mudou
-
-
 			while ((!objRS.EOF) & (objCommand.TransStatus))
 			{
 
@@ -5806,7 +5714,7 @@ namespace prmCotacao
 					//Caso contrário o programa vai para o próximo registro pois não entrará neste IF.
 
 
-					if (strNome_Pregao_Atual != strNomePregao | strTipo_Acao_Atual != strTipoAcao) {
+				    if (strNome_Pregao_Atual != strNomePregao | strTipo_Acao_Atual != strTipoAcao) {
 						//inicia transação para trabalhar com os dados deste ativo.
 						objCommand.BeginTrans();
 
@@ -5824,8 +5732,6 @@ namespace prmCotacao
 							strNome_Pregao_Atual = (string) objRS.Field("Nome_Pregao");
 							strTipo_Acao_Atual = (string) objRS.Field("Tipo_Acao");
 
-							//busca a data da primeira cotação para o papel
-							dtmDataPrimeiraCotacao = AtivoPrimeiraCotacaoDataConsultar(strCodigoAtual);
 
 
 						} else {
@@ -5839,7 +5745,7 @@ namespace prmCotacao
 							blnImportado = false;
 
 							//lança log informando que não encontrou o ativo.
-							objArquivoLog.EscreverString("Ativo não encontrado - Nome: " + strNome_Pregao_Nao_Encontrado + " - Tipo de ação: " + strTipo_Acao_Nao_Encontrado);
+                            conteudoDoArquivoDeLog += "Ativo não encontrado - Nome: " + strNome_Pregao_Nao_Encontrado + " - Tipo de ação: " + strTipo_Acao_Nao_Encontrado;
 
 						}
 
@@ -5854,6 +5760,9 @@ namespace prmCotacao
 
 					if (strCodigoAtual != String.Empty) {
 
+                        //busca a data da primeira cotação para o papel
+                        DateTime dtmDataPrimeiraCotacao = AtivoPrimeiraCotacaoDataConsultar(strCodigoAtual);
+
 						if (Convert.ToDateTime(objRS.Field("Ultimo_Dia_Com")) >= dtmDataPrimeiraCotacao) {
 
 							if (dtmDataInicioRecalculo == frwInterface.cConst.DataInvalida) {
@@ -5863,11 +5772,11 @@ namespace prmCotacao
 
 							//calcula a data ex-provento, que é a próxima data em que houver cotação para o ativo
 							//após o "último dia com"
-							dtmDataExProvento = AtivoCotacaoPosteriorDataConsultar(strCodigoAtual, Convert.ToDateTime(objRS.Field("Ultimo_Dia_Com")));
+							DateTime dtmDataExProvento = AtivoCotacaoPosteriorDataConsultar(strCodigoAtual, Convert.ToDateTime(objRS.Field("Ultimo_Dia_Com")));
 
 
 							if (dtmDataExProvento == frwInterface.cConst.DataInvalida) {
-								objArquivoLog.EscreverString("Não foram encontradas cotações após o dia ex-provento." + "Verificar a data cadastrada na tabela Split - Código: " + strCodigoAtual + " - Data ex-provento: " + Convert.ToDateTime(objRS.Field("Ultimo_Dia_Com")).ToString("dd/MM/yyyy"));
+                                conteudoDoArquivoDeLog += "Não foram encontradas cotações após o dia ex-provento." + "Verificar a data cadastrada na tabela Split - Código: " + strCodigoAtual + " - Data ex-provento: " + Convert.ToDateTime(objRS.Field("Ultimo_Dia_Com")).ToString("dd/MM/yyyy");
 
 								//se não encontrou a data da próxima cotação é porque a atualização de proventos 
 								//veio no dia da última cotação. Neste caso busca o próximo dia útil como sendo data-ex.
@@ -5880,7 +5789,7 @@ namespace prmCotacao
 
 							}
 
-						    string strTipoDeProventoPorExtenso = (string) objRS.Field("Tipo_Provento");
+						    var strTipoDeProventoPorExtenso = (string) objRS.Field("Tipo_Provento");
 
                             if (strTipoDeProventoPorExtenso == "DIVIDENDO")
                             {
@@ -5910,7 +5819,7 @@ namespace prmCotacao
 								//Se o provento ainda não está cadastrado, cadastra-o.
 								strQuery = "INSERT INTO Split " + Environment.NewLine + "(Codigo, Data, Tipo, QuantidadeAnterior, QuantidadePosterior)" + Environment.NewLine + " VALUES " + Environment.NewLine + "(" + FuncoesBD.CampoStringFormatar(strCodigoAtual) + ", " + FuncoesBD.CampoDateFormatar(dtmDataExProvento) + ", " + FuncoesBD.CampoStringFormatar(strTipoProvento);
 
-								dblQuantidadeAnterior = Convert.ToDouble(objRS.Field("Ultimo_Preco_Com")) - Convert.ToDouble(objRS.Field("Valor_Provento"));
+								double dblQuantidadeAnterior = Convert.ToDouble(objRS.Field("Ultimo_Preco_Com")) - Convert.ToDouble(objRS.Field("Valor_Provento"));
 
 								strQuery = strQuery + ", " + FuncoesBD.CampoFloatFormatar(dblQuantidadeAnterior) + ", " + FuncoesBD.CampoFloatFormatar(Convert.ToDouble(objRS.Field("Ultimo_Preco_Com"))) + ")";
 
@@ -5923,7 +5832,7 @@ namespace prmCotacao
 
 							} else {
 								//lança log informando que já existe provento cadastrado
-								objArquivoLog.EscreverString("Já existe provento cadastrado - Codigo: " + strCodigoAtual + " - Data: " + dtmDataExProvento.ToString("dd/MM/yyyy") + " - Tipo de Provento: " + objRS.Field("Tipo_Provento"));
+                                conteudoDoArquivoDeLog += "Já existe provento cadastrado - Codigo: " + strCodigoAtual + " - Data: " + dtmDataExProvento.ToString("dd/MM/yyyy") + " - Tipo de Provento: " + objRS.Field("Tipo_Provento");
 
 								blnImportado = false;
 
@@ -5950,7 +5859,8 @@ namespace prmCotacao
 
 				objRS.MoveNext();
 
-				if (objRS.EOF) {
+			    bool blnExecutar;
+			    if (objRS.EOF) {
 					//assinala que tem que executar para que o último registro não fique sem execução
 					blnExecutar = true;
 
@@ -5982,7 +5892,7 @@ namespace prmCotacao
 					//foi encontrado na tabela Ativo e importado, portanto deve ser feito recálculo.
 
 					if (blnImportado) {
-						objArquivoLog.EscreverString("Atualizando indicadores - Código: " + strCodigoAtual + " - Data Início: " + dtmDataInicioRecalculo.ToString("dd/MM/yyyy") + "- Tipo de Provento: " + strTipoProvento);
+                        conteudoDoArquivoDeLog += "Atualizando indicadores - Código: " + strCodigoAtual + " - Data Início: " + dtmDataInicioRecalculo.ToString("dd/MM/yyyy") + "- Tipo de Provento: " + strTipoProvento;
 
 						//chamar função para fazer recálculo dos dados do ativo anterior....
 						//Não é necessário recalcular o volume médio nas periodicidades diário e semanal
@@ -5997,22 +5907,15 @@ namespace prmCotacao
 
 			}
 
-			//atualiza a data do último provento na tabela de resumo
-			//objCommand.Execute( _
-			//"UPDATE Resumo SET " & vbNewLine _
-			//& "Data_Ultimo_Provento = " & FuncoesBD.CampoDateFormatar(pdtmDataUltimaAtualizacao))
-
-			//objCommand.CommitTrans()
-
-			//fecha o arquivo de log
-			objArquivoLog.Fechar();
-
 			objRS.Fechar();
 
-			functionReturnValue = objCommand.TransStatus;
+            string caminhoDoArquivo = cBuscarConfiguracao.ObtemCaminhoPadrao() + "Log_Proventos\\Log_Proventos_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".txt";
 
-			Process.Start("c:\\windows\\notepad.exe", objArquivoLog.CaminhoCompleto);
-			return functionReturnValue;
+            IFileService fileService = new FileService();
+            fileService.Save(caminhoDoArquivo, conteudoDoArquivoDeLog);
+
+			Process.Start("c:\\windows\\notepad.exe", caminhoDoArquivo);
+            return objCommand.TransStatus;
 
 		}
 

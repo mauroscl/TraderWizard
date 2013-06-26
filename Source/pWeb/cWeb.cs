@@ -1,18 +1,17 @@
-using Microsoft.VisualBasic;
 using System;
 using System.Net;
 using System.IO;
-using prmArquivo;
 using DataBase;
 using System.Windows.Forms;
+using Services;
+
 namespace pWeb
 {
 
 	public class cWeb
 	{
-
-
 		private cWebConfiguracao objWebConfiguracao;
+	    private readonly IFileService _fileService;
 
 		public cWeb(cConexao pobjConexao)
 		{
@@ -20,6 +19,7 @@ namespace pWeb
 			//durante a instanciação já são buscadas as configurações cadastradas
 			//nos parâmetros do sistema.
 			objWebConfiguracao = new cWebConfiguracao(true, pobjConexao);
+            _fileService = new FileService();
 
 		}
 
@@ -85,11 +85,6 @@ namespace pWeb
 
 			Stream objReceivedStream = null;
 
-			cArquivo objArquivo = new cArquivo(pstrCaminhoDestino + "\\" + pstrArquivoDestino);
-
-			//Dim arrDados() As Byte = {}
-
-
 			try {
 				objHTTPWebRequest.Proxy = objWebProxy;
 
@@ -97,10 +92,7 @@ namespace pWeb
 
 				objReceivedStream = objHTTPWebResponse.GetResponseStream();
 
-				//Array.Resize(arrDados, objHTTPWebResponse.ContentLength)
-
-				//objReceivedStream.Read(arrDados, 0, objHTTPWebResponse.ContentLength)
-				objArquivo.SalvarStream(objReceivedStream);
+                _fileService.Save(pstrCaminhoDestino + "\\" + pstrArquivoDestino,objReceivedStream);    
 
 				functionReturnValue = true;
 

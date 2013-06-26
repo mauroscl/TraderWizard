@@ -32,9 +32,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="prmArquivo">
-      <HintPath>..\..\Referencias\prmArquivo\prmArquivo.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />
@@ -54,6 +51,10 @@
     <ProjectReference Include="..\DataBase\DataBase.csproj">
       <Project>{CC20BB02-78E9-487E-A9EC-6BFC64D2B0CB}</Project>
       <Name>DataBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Services\Services.csproj">
+      <Project>{8bae22cc-832b-4151-8b2f-222403b12f8b}</Project>
+      <Name>Services</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

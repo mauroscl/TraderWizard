@@ -31,8 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="prmArquivo">
-      <HintPath>..\..\Referencias\prmArquivo\prmArquivo.dll</HintPath>
+    <Reference Include="Ionic.Zip">
+      <HintPath>..\packages\DotNetZip.1.9.1.8\lib\net20\Ionic.Zip.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -81,6 +81,13 @@
       <Project>{A902DC79-0E9C-4C2D-894E-8301DB0D9849}</Project>
       <Name>pWeb</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Services\Services.csproj">
+      <Project>{8BAE22CC-832B-4151-8B2F-222403B12F8B}</Project>
+      <Name>Services</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
