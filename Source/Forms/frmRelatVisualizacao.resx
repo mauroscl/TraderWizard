@@ -120,11 +120,11 @@
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="btnCalendario.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAADWSURBVDhPY2CgFJyoN/9PCWY4UWf+/1qfB1kYpJdhb4z6f0oww8q9F/+TCyq6F/ynyIDMmkmo
-        Btx8/vU/MRjm4rTKfkwDYJIgg0AAFw2Sw2oAzAU/t635D8PoriLKBSDN/96+AhuCzSW0dwGhMPj27Rsk
-        DBZuPQlPBsTEwPWnn/+/efPm/507dyAGTFyyk+h09OPHj/8PHjz4f+zYsf/Pnj2DGNAweSVBA/79+/f/
-        w4cPYFtv3Ljx/+nTp/9///4NMSC/acb/9KoJYA4unFrR9x+EsckDAKYHKiDguFoSAAAAAElFTkSuQmCC
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAANlJREFUOE9j
+        oBicqDf/TwlmOFFn/v9anwdZGKSXYW+M+n9KMMPKvRf/kwsquhdQZkBmzSRUA24+/0oUhoG0yn5MA2AA
+        xsZFgwBWA2D457Y1cIwsDsIwgNcFII3/3r4C0yAAkyNoAAxT7AIYGxf97ds3iAELt54EC4AASJIQvv70
+        8/83b978v3PnDsSAiUt2QrUTBj9+/Pj/4MGD/8eOHfv/7NkziAENk1dCpXGDf//+/f/w4QPY1hs3bvx/
+        +vTp/9+/f0MMyG+a8T+9agKYgwunVvSBMaZc/38ApgcqID2D1ssAAAAASUVORK5CYII=
 </value>
   </data>
 </root>

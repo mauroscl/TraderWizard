@@ -228,7 +228,7 @@ namespace TraderWizard
             this.txtIFR2Maximo.Name = "txtIFR2Maximo";
             this.txtIFR2Maximo.Size = new System.Drawing.Size(122, 20);
             this.txtIFR2Maximo.TabIndex = 18;
-            this.txtIFR2Maximo.Text = "5";
+            this.txtIFR2Maximo.Text = "10";
             // 
             // Label5
             // 

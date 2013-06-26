@@ -35,9 +35,7 @@ namespace TraderWizard
 
 		private void CoresAtualizar()
 		{
-			int intSomatorioCriterios = 0;
-
-			DataGridViewCellStyle objCorVerde = new DataGridViewCellStyle();
+		    DataGridViewCellStyle objCorVerde = new DataGridViewCellStyle();
 			objCorVerde.ForeColor = Color.Green;
 			objCorVerde.SelectionForeColor = Color.Green;
 
@@ -52,7 +50,7 @@ namespace TraderWizard
 
 
 			for (int intI = 0; intI <= objDataGridView.Rows.Count - 1; intI++) {
-				intSomatorioCriterios = Convert.ToInt32(objDataGridView.Rows[intI].Cells["SomatorioCriterios"].Value);
+				int intSomatorioCriterios = Convert.ToInt32(objDataGridView.Rows[intI].Cells["SomatorioCriterios"].Value);
 
 
 				if (intSomatorioCriterios == 0) {
@@ -535,8 +533,8 @@ namespace TraderWizard
 			objDataGridView.Width = this.Width - 20;
 			objDataGridView.Location = new Point(5, 180);
 
-			//seta o combo de setups para começar com a opção "IFR Sobrevendido Personalizado"
-			cmbSetup.SelectedIndex = 4;
+			//seta o combo de setups para começar com a opção "IFR Sobrevendido Sem Filtro"
+			cmbSetup.SelectedIndex = 3;
 
 			txtData.Text = mCotacao.DataFormatoConverter(Strings.FormatDateTime(DateAndTime.Now, DateFormat.ShortDate)).ToString("dd/MM/yyyy");
 
