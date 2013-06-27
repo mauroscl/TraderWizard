@@ -256,7 +256,7 @@ namespace prmCotacao
 
 			//baixar as cotações do site da bovespa
 
-			if (ArquivoDataBaixar(pdtmData, colLinha)) {
+			if (ArquivoDataBaixar(pdtmData, out colLinha)) {
 				//busca os ativos que não devem ser consideros
 				strAtivosDesconsiderados = AtivosDesconsideradosListar();
 
@@ -264,7 +264,7 @@ namespace prmCotacao
 				//percorre todas as linhas da collection e nas linhas que forem cotações de ativos insere no banco de dados
 
 			    int intI;
-			    for (intI = 1; intI <= colLinha.Count; intI++) {
+			    for (intI = 0; intI < colLinha.Count; intI++) {
 					//coloca a linha na variável auxiliar
 					strLinhaAux = colLinha[intI];
 
@@ -487,20 +487,9 @@ namespace prmCotacao
 		}
 
 
-		private bool ArquivoDataBaixar(DateTime pdtmData, IList<string> pcolLinhaRet)
+		private bool ArquivoDataBaixar(DateTime pdtmData, out IList<string> pcolLinhaRet)
 		{
-
-			//o nome do arquivo que deve ser baixado é dado formado da seguinte forma:
-			//"bdi" + <ddmm>.zip
-
-			string strArquivoBaixar = null;
-			string strPathZip = null;
-			string strArquivoZipDestino = null;
-			//nome dado ao arquivo zip que for baixado
-
-			bool blnDescompactar = false;
-
-			strPathZip = cBuscarConfiguracao.ObtemCaminhoPadrao();
+		    string strPathZip = cBuscarConfiguracao.ObtemCaminhoPadrao();
 
 			strPathZip = strPathZip + "Arquivos";
 
@@ -510,33 +499,26 @@ namespace prmCotacao
             fileService.CreateFolder(strPathZip);
 
 			//gera o nome do arquivo que deve ser baixado
-			strArquivoBaixar = cGeradorNomeArquivo.GerarNomeArquivoRemoto(pdtmData);
+			string strArquivoBaixar = cGeradorNomeArquivo.GerarNomeArquivoRemoto(pdtmData);
 
 			//Nome que será dado ao arquivo baixado :"bdi" + yyyymmdd + ".zip"
-			strArquivoZipDestino = cGeradorNomeArquivo.GerarNomeArquivoLocal(pdtmData);
+			string strArquivoZipDestino = cGeradorNomeArquivo.GerarNomeArquivoLocal(pdtmData);
 
-			if ( fileService.FileExists(strPathZip + "\\" + strArquivoZipDestino)) {
-				//Já existe o arquivo baixado. Tem apenas que descompactar
-				blnDescompactar = true;
-
-			} else {
-				if (objWeb.DownloadWithProxy("http://www.bmfbovespa.com.br/fechamento-pregao/bdi/" + strArquivoBaixar, strPathZip, strArquivoZipDestino)) {
-					blnDescompactar = true;
-				} else {
-					return false;
+			if (!fileService.FileExists(strPathZip + "\\" + strArquivoZipDestino)) 
+            {
+			
+				if (!objWeb.DownloadWithProxy("http://www.bmfbovespa.com.br/fechamento-pregao/bdi/" + strArquivoBaixar, strPathZip, strArquivoZipDestino))
+				{
+				    pcolLinhaRet = new List<string>();
+				    return false;
 				}
-			}
+            }
 
-			//baixa o arquivo com as cotações do último dia
+		    //CHAMA FUNÇÃO QUE DESCOMPACTA O ARQUIVO, ABRE O ARQUIVO TEXTO, FAZ A LEITURA E RETORNA TODAS AS LINHAS
+		    //EM UMA COLLECTION.
+		    bool blnDescompactar = ArquivoDescompactar(strPathZip, strArquivoZipDestino, "BDIN", out pcolLinhaRet);
 
-			if (blnDescompactar) {
-				//CHAMA FUNÇÃO QUE DESCOMPACTA O ARQUIVO, ABRE O ARQUIVO TEXTO, FAZ A LEITURA E RETORNA TODAS AS LINHAS
-				//EM UMA COLLECTION.
-				blnDescompactar = ArquivoDescompactar(strPathZip, strArquivoZipDestino, "BDIN", out pcolLinhaRet);
-
-			}
-
-			return blnDescompactar;
+		    return blnDescompactar;
 
 		}
 
@@ -4724,17 +4706,17 @@ namespace prmCotacao
 						//suficientes faz rollback.
 						objCommand.RollBackTrans();
 
-						return frwInterface.cEnum.enumRetorno.RetornoErro2;
+						return cEnum.enumRetorno.RetornoErro2;
 
 					}
 
 
-				} else {
+				} /*else {
 					//busca o último dia da semana da data final para caso haja split 
 					//exatamente na semana da data final considerar até o último dia da semana.
 					dtmDataFinalSplit = AtivoCotacaoSemanalUltimoDiaSemanaCalcular(pstrCodigo, pdtmDataFinal);
 
-				}
+				}*/
 
 			}
 

@@ -1,6 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
-using System.IO;
+using System.Linq;
 using DataBase;
 using System.Windows.Forms;
 using Services;
@@ -52,7 +53,7 @@ namespace pWeb
 
 		public bool DownloadWithProxy(string pstrURL, string pstrCaminhoDestino, string pstrArquivoDestino)
 		{
-			bool functionReturnValue = false;
+			bool functionReturnValue;
 
 			WebProxy objWebProxy = null;
 
@@ -67,34 +68,48 @@ namespace pWeb
 				case "PA":
 
 					//PROXY AUTOMÁTICO. Passa o endereço e o proxy é retornado.
-					objWebProxy = new WebProxy(HttpWebRequest.DefaultWebProxy.GetProxy(new Uri(pstrURL)));
+					objWebProxy = new WebProxy(WebRequest.DefaultWebProxy.GetProxy(new Uri(pstrURL)));
 
 					break;
+
 			}
 
 
-			if (objWebConfiguracao.CredencialUtilizar) {
+			if (objWebConfiguracao.CredencialUtilizar && objWebProxy != null) {
 				objWebProxy.Credentials = new NetworkCredential(objWebConfiguracao.Usuario, objWebConfiguracao.Senha, objWebConfiguracao.Dominio);
 
 			}
 
 			// Create a new request to the mentioned URL.                
-			HttpWebRequest objHTTPWebRequest = (HttpWebRequest)WebRequest.Create(pstrURL);
-
-			HttpWebResponse objHTTPWebResponse = null;
-
-			Stream objReceivedStream = null;
+			var objHttpWebRequest = (HttpWebRequest)WebRequest.Create(pstrURL);
 
 			try {
-				objHTTPWebRequest.Proxy = objWebProxy;
+				objHttpWebRequest.Proxy = objWebProxy;
 
-				objHTTPWebResponse = (HttpWebResponse)objHTTPWebRequest.GetResponse();
+                var objHttpWebResponse = objHttpWebRequest.GetResponse();
 
-				objReceivedStream = objHTTPWebResponse.GetResponseStream();
+                var bufferTotal = new List<byte>();
 
-                _fileService.Save(pstrCaminhoDestino + "\\" + pstrArquivoDestino,objReceivedStream);    
+                const int bufferSize = 4096;
 
-				functionReturnValue = true;
+                using (var responseStream = objHttpWebResponse.GetResponseStream())
+                {
+                    var buffer = new byte[bufferSize];
+                    int bytesRead;
+                    do
+                    {
+                        bytesRead = responseStream.Read(buffer, 0, bufferSize);
+                        bufferTotal = bufferTotal.Concat(buffer.ToList().GetRange(0, bytesRead)).ToList();
+
+                    } while (bytesRead > 0);
+                }
+
+                _fileService.Save(pstrCaminhoDestino + "\\" + pstrArquivoDestino,bufferTotal.ToArray());
+
+			    objHttpWebResponse.Close();
+
+
+			    functionReturnValue = true;
 
 
 			} catch (Exception ex) {
@@ -103,24 +118,14 @@ namespace pWeb
 				functionReturnValue = false;
 
 
-			} finally {
-				if ((objReceivedStream != null)) {
-					objReceivedStream.Close();
-				}
+			} 
 
-				if ((objHTTPWebResponse != null)) {
-					objHTTPWebResponse.Close();
-				}
-
-			}
 			return functionReturnValue;
 
 		}
 
-		public bool VerificarLink(string pstrURL)
+		public bool VerificarLink(string pstrUrl)
 		{
-			bool functionReturnValue = false;
-
 			WebProxy objWebProxy = null;
 
 			switch (objWebConfiguracao.ProxyTipo) {
@@ -134,7 +139,7 @@ namespace pWeb
 				case "PA":
 
 					//PROXY AUTOMÁTICO. Passa o endereço e o proxy é retornado.
-					objWebProxy = new WebProxy(HttpWebRequest.DefaultWebProxy.GetProxy(new Uri(pstrURL)));
+					objWebProxy = new WebProxy(HttpWebRequest.DefaultWebProxy.GetProxy(new Uri(pstrUrl)));
 
 					break;
 			}
@@ -146,26 +151,27 @@ namespace pWeb
 			}
 
 			// Create a new request to the mentioned URL.                
-			HttpWebRequest objHTTPWebRequest = (HttpWebRequest)WebRequest.Create(pstrURL);
+			var objHTTPWebRequest = (HttpWebRequest)WebRequest.Create(pstrUrl);
 
-			HttpWebResponse objHTTPWebResponse = null;
+			HttpWebResponse objHttpWebResponse = null;
 
+            bool functionReturnValue;
 
 			try {
 				objHTTPWebRequest.Proxy = objWebProxy;
 
-				objHTTPWebResponse = (HttpWebResponse)objHTTPWebRequest.GetResponse();
+				objHttpWebResponse = (HttpWebResponse)objHTTPWebRequest.GetResponse();
 
-				functionReturnValue = (objHTTPWebResponse.StatusCode == HttpStatusCode.OK);
+				functionReturnValue = (objHttpWebResponse.StatusCode == HttpStatusCode.OK);
 
 
-			} catch (Exception ex) {
+			} catch (Exception) {
 				functionReturnValue = false;
 
 
 			} finally {
-				if ((objHTTPWebResponse != null)) {
-					objHTTPWebResponse.Close();
+				if ((objHttpWebResponse != null)) {
+					objHttpWebResponse.Close();
 				}
 
 			}

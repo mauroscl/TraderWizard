@@ -28,8 +28,7 @@ namespace DataBase
 
 		//GUID gerado a cada execução de query.
 
-		private string strGuid;
-		public string UltimaQuery {
+	    public string UltimaQuery {
 
 			get { return strUltimaQuery; }
 		}
@@ -305,58 +304,53 @@ namespace DataBase
 
 		private object GetField(int pintOrdinal, object pobjRetornoErro = null)
 		{
-
-			Type Tipo = null;
-
-			bool blnExecutar = false;
-
-			//executa a query somente se a transação está OK
+		    //executa a query somente se a transação está OK
 			//ou ainda se não tem transação aberta.
-			if (objConexao.TransAberta) {
-				blnExecutar = objConexao.TransStatus;
-			} else {
-				blnExecutar = true;
-			}
+			bool blnExecutar = !objConexao.TransAberta || objConexao.TransStatus;
 
+		    if (!blnExecutar)
+		    {
+		        return pobjRetornoErro;
+		    }
 
-			if (blnExecutar) {
-				Tipo = objOleDbDR.GetFieldType(pintOrdinal);
+		    Type tipo = objOleDbDR.GetFieldType(pintOrdinal);
 
-				try {
+		    try
+		    {
+		        if ( ! EOF && !objOleDbDR.IsDBNull(pintOrdinal)) {
+		            if (tipo == Type.GetType("System.Boolean", true, true)) {
+		                return objOleDbDR.GetBoolean(pintOrdinal);
+		            }
+		            if (tipo == Type.GetType("System.Int16", true, true)) {
+		                return objOleDbDR.GetInt16(pintOrdinal);
+		            }
+		            if (tipo == Type.GetType("System.Int32", true, true)) {
+		                return objOleDbDR.GetInt32(pintOrdinal);
+		            }
+		            if (tipo == Type.GetType("System.String", true, true)) {
+		                return objOleDbDR.GetString(pintOrdinal);
+		            }
+		            if (tipo == Type.GetType("System.Decimal", true, true)) {
+		                return objOleDbDR.GetDecimal(pintOrdinal);
+		            }
+		            if (tipo == Type.GetType("System.Double", true, true)) {
+		                return objOleDbDR.GetDouble(pintOrdinal);
+		            }
+		            if (tipo == Type.GetType("System.DateTime", true, true)) {
+		                return objOleDbDR.GetDateTime(pintOrdinal);
+		            }
 
-					if (!objOleDbDR.IsDBNull(pintOrdinal)) {
-						if (Tipo.Equals(Type.GetType("System.Boolean", true, true))) {
-							return objOleDbDR.GetBoolean(pintOrdinal);
-						} else if (Tipo.Equals(Type.GetType("System.Int16", true, true))) {
-							return objOleDbDR.GetInt16(pintOrdinal);
-						} else if (Tipo.Equals(Type.GetType("System.Int32", true, true))) {
-							return objOleDbDR.GetInt32(pintOrdinal);
-						} else if (Tipo.Equals(Type.GetType("System.String", true, true))) {
-							return objOleDbDR.GetString(pintOrdinal);
-						} else if (Tipo.Equals(Type.GetType("System.Decimal", true, true))) {
-							return objOleDbDR.GetDecimal(pintOrdinal);
-						} else if (Tipo.Equals(Type.GetType("System.Double", true, true))) {
-							return objOleDbDR.GetDouble(pintOrdinal);
-						} else if (Tipo.Equals(Type.GetType("System.DateTime", true, true))) {
-							return objOleDbDR.GetDateTime(pintOrdinal);
-						}
+		            return objOleDbDR.GetString(pintOrdinal);
 
-						return objOleDbDR.GetString(pintOrdinal);
+		        }
+		        return pobjRetornoErro;
+		    }
+		    catch (InvalidOperationException e) {
+		        //Esta exceção geralmente acontece quando a query não retornou dados e alguma 
+		        //coluna está sendo consultada
+		        return pobjRetornoErro;
 
-					} else {
-						return pobjRetornoErro;
-					}
-				} catch (InvalidOperationException e) {
-					//Esta exceção geralmente acontece quando a query não retornou dados e alguma 
-					//coluna está sendo consultada
-					return pobjRetornoErro;
-
-				}
-
-			} else {
-				return pobjRetornoErro;
-			}
-
+		    }
 		}
 
 		public int GetValues(object[] parrValues)

@@ -14,6 +14,16 @@ namespace Services
             File.WriteAllBytes(path, bytes);
         }
 
+        public void Save(string path, string contents)
+        {
+            File.WriteAllText(path, contents);
+        }
+
+        public void Save(string path, byte[] content)
+        {
+            File.WriteAllBytes(path, content);
+        }
+
         public void Delete(string path)
         {
             File.Delete(path);  
@@ -22,11 +32,6 @@ namespace Services
         public IList<string> ReadAllLines(string path)
         {
             return File.ReadAllLines(path).ToList();
-        }
-
-        public void Save(string path, string contents)
-        {
-            File.WriteAllText(path, contents);
         }
 
         public void CreateFolder(string path)
@@ -39,8 +44,6 @@ namespace Services
 
         public bool FileExists(string path)
         {
-            var streamWritter = File.AppendText("");
-            streamWritter.WriteLine();
             return File.Exists(path);
         }
     }
