@@ -514,46 +514,36 @@ namespace prmCotacao
 
 		}
 
-		/// <summary>
-		/// Recebe uma collection com as linhas de um arquivo
-		/// </summary>
-		/// <param name="pcolLinha">Collection contendo as linhas do arquivo de cotações</param>
-		/// <returns>status da transação</returns>
-		/// <remarks></remarks>
-		private bool CotacoesImportar(IList<string> pcolLinha, cCommand pobjCommand)
+	    /// <summary>
+	    /// Recebe uma collection com as linhas de um arquivo
+	    /// </summary>
+	    /// <param name="pcolLinha">Collection contendo as linhas do arquivo de cotações</param>
+	    /// <param name="pobjCommand"></param>
+	    /// <returns>status da transação</returns>
+	    /// <remarks></remarks>
+	    private void CotacoesImportar(IList<string> pcolLinha, cCommand pobjCommand)
 		{
-
 			int intI;
 
-		    long lngNegocios_Total = 0;
-			long lngTitulos_Total = 0;
-			decimal decValor_Total = default(decimal);
+		    System.DateTime dtmCotacaoData = default(System.DateTime);
 
+	        //utilizado para calcular o sequencial do ativo.
 
-			System.DateTime dtmCotacaoData = default(System.DateTime);
-
-			string strQuery = null;
-			string strLinhaAux = null;
-
-			string strAtivosDesconsiderados = null;
-
-			//utilizado para calcular o sequencial do ativo.
-			long lngSequencial = 0;
-
-			const char strSeparadorDecimal = ',';
+		    const char strSeparadorDecimal = ',';
 
 			//busca os ativos que não devem ser consideros
-			strAtivosDesconsiderados = AtivosDesconsideradosListar();
+			string strAtivosDesconsiderados = AtivosDesconsideradosListar();
 
 
 			//se foi possivel baixar...
 			//percorre todas as linhas da collection e nas linhas que forem cotações de ativos insere no banco de dados
 
-			for (intI = 1; intI <= pcolLinha.Count; intI++) {
-				//coloca a linha na variável auxiliar
-				strLinhaAux = pcolLinha[intI];
+			for (intI = 1; intI <= pcolLinha.Count; intI++)
+			{
+			    //coloca a linha na variável auxiliar
+			    string strLinhaAux = pcolLinha[intI];
 
-				//os dois primeiros caracteres indicam o tipo de registro.
+			    //os dois primeiros caracteres indicam o tipo de registro.
 				//o tipo de registro 01 indica que é a cotação de um papel do mercado a vista
 
 				//posição 11-12 indica o código BDI do papel. O código 02 indica que é um LOTE PADRÃO
@@ -569,15 +559,16 @@ namespace prmCotacao
 				    string strCodigoAtivo = strLinhaAux.Substring(12, 12).Trim();
 
 				    //verifica se o ativo não deve ser desconsiderado
-					if (strAtivosDesconsiderados.IndexOf("#" + strCodigoAtivo + "#", StringComparison.InvariantCultureIgnoreCase ) < 0) {
-						//se o ativo não foi encontrado na lista dos desconsiderados.
+					if (strAtivosDesconsiderados.IndexOf("#" + strCodigoAtivo + "#", StringComparison.InvariantCultureIgnoreCase ) < 0)
+					{
+					    //se o ativo não foi encontrado na lista dos desconsiderados.
 
 						//TOTAL DE NEGÓCIOS (148-152)
-						lngNegocios_Total = Convert.ToInt64(strLinhaAux.Substring(147, 5));
+					    long lngNegociosTotal = Convert.ToInt64(strLinhaAux.Substring(147, 5));
 
-						//ALGUNS ATIVOS NÃO TEM NEGÓCIOS E NÃO DEVEM SER IMPORTADOS
+					    //ALGUNS ATIVOS NÃO TEM NEGÓCIOS E NÃO DEVEM SER IMPORTADOS
 
-						if (lngNegocios_Total > 0) {
+						if (lngNegociosTotal > 0) {
 							//busca a data da cotação: 3-10 no formato YYYYMMDD
 							dtmCotacaoData = new DateTime(Convert.ToInt32(strLinhaAux.Substring(2, 4)), Convert.ToInt32(strLinhaAux.Substring(6, 2)), Convert.ToInt32(strLinhaAux.Substring(8, 2)));
 
@@ -597,34 +588,29 @@ namespace prmCotacao
 							decimal decValorFechamento = Convert.ToDecimal(strLinhaAux.Substring(108, 11) + strSeparadorDecimal + strLinhaAux.Substring(119, 2));
 
 							//TOTAL DE TÍTULOS NEGOCIADOS (153-170)
-							lngTitulos_Total = Convert.ToInt64(strLinhaAux.Substring(152, 18));
+							long lngTitulosTotal = Convert.ToInt64(strLinhaAux.Substring(152, 18));
 
 							//VALOR TOTAL NEGOCIADO: 171-186 (inteiro), 187-188 (decimal)
-							decValor_Total = Convert.ToDecimal(strLinhaAux.Substring(170, 16) + strSeparadorDecimal + strLinhaAux.Substring(186, 2));
+							decimal decValorTotal = Convert.ToDecimal(strLinhaAux.Substring(170, 16) + strSeparadorDecimal + strLinhaAux.Substring(186, 2));
 
 							//calcula o sequencial do ativo
-							lngSequencial = SequencialCalcular(strCodigoAtivo, "Cotacao", pobjCommand.Conexao);
+							long lngSequencial = SequencialCalcular(strCodigoAtivo, "Cotacao", pobjCommand.Conexao);
 
 							//insere na tabela
-							strQuery = " insert into Cotacao " + "(Codigo, Data, ValorAbertura, ValorFechamento " + ", ValorMinimo, ValorMedio, ValorMaximo " + ", Negocios_Total, Titulos_Total, Valor_Total, Sequencial) " + " values " + "(" + FuncoesBD.CampoStringFormatar(strCodigoAtivo) + "," + FuncoesBD.CampoDateFormatar(dtmCotacaoData) + "," + FuncoesBD.CampoDecimalFormatar(decValorAbertura) + "," + FuncoesBD.CampoDecimalFormatar(decValorFechamento) + "," + FuncoesBD.CampoDecimalFormatar(decValorMinimo) + "," + FuncoesBD.CampoDecimalFormatar(decValorMedio) + "," + FuncoesBD.CampoDecimalFormatar(decValorMaximo) + "," + lngNegocios_Total.ToString() + "," + lngTitulos_Total.ToString() + "," + FuncoesBD.CampoDecimalFormatar(decValor_Total) + "," + lngSequencial.ToString() + ")";
+							string strQuery = " insert into Cotacao " + "(Codigo, Data, ValorAbertura, ValorFechamento " + ", ValorMinimo, ValorMedio, ValorMaximo " + ", Negocios_Total, Titulos_Total, Valor_Total, Sequencial) " + " values " + "(" + FuncoesBD.CampoStringFormatar(strCodigoAtivo) + "," + FuncoesBD.CampoDateFormatar(dtmCotacaoData) + "," + FuncoesBD.CampoDecimalFormatar(decValorAbertura) + "," + FuncoesBD.CampoDecimalFormatar(decValorFechamento) + "," + FuncoesBD.CampoDecimalFormatar(decValorMinimo) + "," + FuncoesBD.CampoDecimalFormatar(decValorMedio) + "," + FuncoesBD.CampoDecimalFormatar(decValorMaximo) + "," + lngNegociosTotal.ToString() + "," + lngTitulosTotal.ToString() + "," + FuncoesBD.CampoDecimalFormatar(decValorTotal) + "," + lngSequencial.ToString() + ")";
 
 							pobjCommand.Execute(strQuery);
 
 						}
 						//if lngNegocios_Total > 0 then
-
 					}
-					//se o ativo não foi desconsiderado
+				    //se o ativo não foi desconsiderado
 				}
 			    //se é uma cotação à vista.
-
 			}
 
-			//atualiza a tabela de resumo
+		    //atualiza a tabela de resumo
 			TabelaResumoAtualizar(dtmCotacaoData,cConst.DataInvalida);
-
-			return pobjCommand.TransStatus;
-
 		}
 
 		/// <summary>
@@ -706,14 +692,7 @@ namespace prmCotacao
 			//**************** FIM DA TRANSAÇÃO
 			objCommand.CommitTrans();
 
-			if (objCommand.TransStatus) {
-				return frwInterface.cEnum.enumRetorno.RetornoOK;
-			} else {
-				return frwInterface.cEnum.enumRetorno.RetornoErroInesperado;
-			}
-
-			objCommand = null;
-
+			return objCommand.TransStatus ? cEnum.enumRetorno.RetornoOK : cEnum.enumRetorno.RetornoErroInesperado;
 		}
 
 		/// <summary>
@@ -735,22 +714,18 @@ namespace prmCotacao
 
 			cRS objRS = new cRS(objConexao);
 
-			IList<string> colLinha = new List<string>();
+			IList<string> colLinha;
 
-			string strPathZip = null;
+		    //nome dado ao arquivo zip que for baixado
 
-			string strArquivoZipDestino = null;
-			//nome dado ao arquivo zip que for baixado
-			string strArquivoTextoDestino = null;
-
-			strPathZip = cBuscarConfiguracao.ObtemCaminhoPadrao();
+		    string strPathZip = cBuscarConfiguracao.ObtemCaminhoPadrao();
 
 			strPathZip = strPathZip + "Arquivos";
 
 			//Nome do arquivo zip baixado :"COTAHIST_A" + YYYY + ".zip"
-			strArquivoZipDestino = "COTAHIST_A" + Convert.ToString(pintAno) + ".ZIP";
+			string strArquivoZipDestino = "COTAHIST_A" + Convert.ToString(pintAno) + ".ZIP";
 
-			strArquivoTextoDestino = "COTAHIST_A" + Convert.ToString(pintAno) + ".TXT";
+			string strArquivoTextoDestino = "COTAHIST_A" + Convert.ToString(pintAno) + ".TXT";
 
 			//**************** INICIO DA TRANSAÇÃO
 			objCommand.BeginTrans();
@@ -790,18 +765,14 @@ namespace prmCotacao
 
 			} else {
 				objCommand.RollBackTrans();
-				return frwInterface.cEnum.enumRetorno.RetornoErro3;
+				return cEnum.enumRetorno.RetornoErro3;
 
 			}
 
 			//**************** FIM DA TRANSAÇÃO
 			objCommand.CommitTrans();
 
-			if (objCommand.TransStatus) {
-				return frwInterface.cEnum.enumRetorno.RetornoOK;
-			} else {
-				return frwInterface.cEnum.enumRetorno.RetornoErroInesperado;
-			}
+			return objCommand.TransStatus ? cEnum.enumRetorno.RetornoOK : cEnum.enumRetorno.RetornoErroInesperado;
 
 		}
 
@@ -816,17 +787,13 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		public bool CotacaoDataExistir(System.DateTime pdtmData, string pstrTabela)
 		{
-			bool functionReturnValue = false;
+		    cRS objRS = new cRS(objConexao);
 
-			cRS objRS = new cRS(objConexao);
-
-			string strQuery = null;
-
-			strQuery = " select 1 " + " from " + pstrTabela + " where Data = " + FuncoesBD.CampoDateFormatar(pdtmData);
+		    string strQuery = " select 1 " + " from " + pstrTabela + " where Data = " + FuncoesBD.CampoDateFormatar(pdtmData);
 
 			objRS.ExecuteQuery(strQuery);
 
-			functionReturnValue = objRS.DadosExistir;
+			bool functionReturnValue = objRS.DadosExistir;
 
 			objRS.Fechar();
 			return functionReturnValue;
@@ -844,17 +811,13 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		public bool CotacaoDataExistir(System.DateTime pdtmData, string pstrTabela, string pstrCodigoAtivo)
 		{
-			bool functionReturnValue = false;
+		    cRS objRS = new cRS(objConexao);
 
-			cRS objRS = new cRS(objConexao);
-
-			string strQuery = null;
-
-			strQuery = " select 1 " + " FROM " + pstrTabela + " WHERE Data = " + FuncoesBD.CampoFormatar(pdtmData) + " AND Codigo = " + FuncoesBD.CampoFormatar(pstrCodigoAtivo);
+		    string strQuery = " select 1 " + " FROM " + pstrTabela + " WHERE Data = " + FuncoesBD.CampoFormatar(pdtmData) + " AND Codigo = " + FuncoesBD.CampoFormatar(pstrCodigoAtivo);
 
 			objRS.ExecuteQuery(strQuery);
 
-			functionReturnValue = objRS.DadosExistir;
+			bool functionReturnValue = objRS.DadosExistir;
 
 			objRS.Fechar();
 			return functionReturnValue;
@@ -878,26 +841,16 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		public bool CotacaoConsultar(string pstrCodigo, System.DateTime pdtmData, string pstrTabela, ref decimal pdecValorFechamentoRet, ref decimal pdecValorAberturaRet, cConexao pobjConexao = null)
 		{
-			bool functionReturnValue = false;
+		    cRS objRS = pobjConexao == null ? new cRS(objConexao) : new cRS(pobjConexao);
 
-			cRS objRS = null;
-
-			if (pobjConexao == null) {
-				objRS = new cRS(objConexao);
-			} else {
-				objRS = new cRS(pobjConexao);
-			}
-
-			string strQuery = null;
-
-			strQuery = " select ValorAbertura, ValorFechamento " + " from " + pstrTabela + " where Data = " + FuncoesBD.CampoDateFormatar(pdtmData) + " and Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo);
+		    string strQuery = " select ValorAbertura, ValorFechamento " + " from " + pstrTabela + " where Data = " + FuncoesBD.CampoDateFormatar(pdtmData) + " and Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo);
 
 			objRS.ExecuteQuery(strQuery);
 
 			pdecValorAberturaRet = Convert.ToDecimal(objRS.Field("ValorAbertura", "0"));
 			pdecValorFechamentoRet = Convert.ToDecimal(objRS.Field("ValorFechamento", "0"));
 
-			functionReturnValue = objRS.DadosExistir;
+			bool functionReturnValue = objRS.DadosExistir;
 
 			objRS.Fechar();
 			return functionReturnValue;
@@ -924,9 +877,7 @@ namespace prmCotacao
 
 			bool blnOK = true;
 
-			cEnum.enumRetorno intRetorno = default(cEnum.enumRetorno);
-
-			System.DateTime dtmData_Ultima_Cotacao = frwInterface.cConst.DataInvalida;
+		    System.DateTime dtmData_Ultima_Cotacao = frwInterface.cConst.DataInvalida;
 
 			cCalculadorData objCalculadorData = new cCalculadorData(objConexao);
 
@@ -941,7 +892,7 @@ namespace prmCotacao
 						dtmDataInicialAux = pdtmDataInicial;
 					}
 
-					intRetorno = CotacaoHistoricaDataAtualizar(pdtmDataInicial);
+					cEnum.enumRetorno intRetorno = CotacaoHistoricaDataAtualizar(pdtmDataInicial);
 
 
 					if (intRetorno == frwInterface.cEnum.enumRetorno.RetornoOK) {
@@ -989,56 +940,6 @@ namespace prmCotacao
 
 			}
 
-			//If blnOK Then
-
-			//    'calcula a oscilação por percentual e por valor.
-			//    blnOK = OscilacaoGeralCalcular(True, dtmDataInicialAux)
-
-			//End If
-
-			//If blnOK Then
-
-
-			//    If Not IFRGeralCalcular(14, "DIARIO", dtmDataInicialAux) Then
-
-			//        MsgBox("Ocorreu erro ao calcular o Indice de Força Relativa das cotações diárias." _
-			//        , MsgBoxStyle.Exclamation, "Atualizar Cotações")
-
-			//    End If
-
-			//    If Not MMExpGeralCalcular(21, "DIARIO", dtmDataInicialAux) Then
-
-			//        MsgBox("Ocorreu erro ao calcular a Média Móvel Exponencial das cotações diárias." _
-			//        , MsgBoxStyle.Exclamation, "Atualizar Cotações")
-
-			//    End If
-
-			//End If
-
-			//If blnOK Then
-
-			//    intRetorno = CotacaoSemanalDadosAtualizar(dtmDataInicialAux)
-
-			//    If intRetorno = RetornoErro2 Then
-
-			//        MsgBox("Erro ao transportar os dados das cotações diárias para as cotações semanais." _
-			//        , MsgBoxStyle.Exclamation, "Atualizar Cotações")
-
-			//    ElseIf intRetorno = RetornoErro3 Then
-
-			//        MsgBox("Ocorreu erro ao calcular o Indice de Força Relativa das cotações semanais." _
-			//        , MsgBoxStyle.Exclamation, "Atualizar Cotações")
-
-			//    ElseIf intRetorno = RetornoErro4 Then
-
-			//        MsgBox("Ocorreu erro ao calcular o Indice de Força Relativa das cotações semanais." _
-			//        , MsgBoxStyle.Exclamation, "Atualizar Cotações")
-
-			//    End If
-
-			//End If
-
-
 			if (blnOK) {
 				if (pblnCalcularDados) {
 					DadosRecalcular(true, true, true, true, true, true, true, true, true, true,
@@ -1066,17 +967,17 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		private System.DateTime AtivoCotacaoAnteriorDataConsultar(string pstrCodigo, System.DateTime pdtmDataBase, string pstrTabela, cConexao pobjConexao = null)
 		{
-			System.DateTime functionReturnValue = default(System.DateTime);
+			System.DateTime functionReturnValue;
 
-			cRS objRSData = null;
+			cRS objRsData;
 
 			if (pobjConexao == null) {
-				objRSData = new cRS(objConexao);
+				objRsData = new cRS(objConexao);
 			} else {
-				objRSData = new cRS(pobjConexao);
+				objRsData = new cRS(pobjConexao);
 			}
 
-			string strPeriodo = null;
+			string strPeriodo;
 
 			pstrTabela = pstrTabela.ToUpper();
 
@@ -1088,24 +989,24 @@ namespace prmCotacao
 				strPeriodo = String.Empty;
 			}
 
-			objRSData.ExecuteQuery("SELECT Data_Anterior" + " FROM Cotacao_Anterior" + " WHERE Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " AND Data = " + FuncoesBD.CampoDateFormatar(pdtmDataBase) + " AND Periodo = " + FuncoesBD.CampoStringFormatar(strPeriodo));
+			objRsData.ExecuteQuery("SELECT Data_Anterior" + " FROM Cotacao_Anterior" + " WHERE Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " AND Data = " + FuncoesBD.CampoDateFormatar(pdtmDataBase) + " AND Periodo = " + FuncoesBD.CampoStringFormatar(strPeriodo));
 
 
-			if (objRSData.DadosExistir) {
-				functionReturnValue = Convert.ToDateTime(objRSData.Field("Data_Anterior"));
+			if (objRsData.DadosExistir) {
+				functionReturnValue = Convert.ToDateTime(objRsData.Field("Data_Anterior"));
 
 
 			} else {
-				objRSData.Fechar();
+				objRsData.Fechar();
 
 				//Busca a data imediatamente anterior que tem uma cotação para o ativo recebido por parâmetro.
-				objRSData.ExecuteQuery(" select max(Data) as Data " + " from " + pstrTabela + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data < " + FuncoesBD.CampoDateFormatar(pdtmDataBase));
+				objRsData.ExecuteQuery(" select max(Data) as Data " + " from " + pstrTabela + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data < " + FuncoesBD.CampoDateFormatar(pdtmDataBase));
 
-				functionReturnValue = Convert.ToDateTime(objRSData.Field("Data", frwInterface.cConst.DataInvalida));
+				functionReturnValue = Convert.ToDateTime(objRsData.Field("Data", frwInterface.cConst.DataInvalida));
 
 			}
 
-			objRSData.Fechar();
+			objRsData.Fechar();
 			return functionReturnValue;
 
 		}
@@ -1119,15 +1020,13 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		private System.DateTime AtivoCotacaoPosteriorDataConsultar(string pstrCodigo, System.DateTime pdtmDataBase)
 		{
-		    cRS objRSData = null;
+		    cRS objRsData = new cRS(objConexao);
 
-			objRSData = new cRS(objConexao);
+			objRsData.ExecuteQuery(" select min(Data) as Data " + " from Cotacao " + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data > " + FuncoesBD.CampoDateFormatar(pdtmDataBase));
 
-			objRSData.ExecuteQuery(" select min(Data) as Data " + " from Cotacao " + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data > " + FuncoesBD.CampoDateFormatar(pdtmDataBase));
+			DateTime functionReturnValue = Convert.ToDateTime(objRsData.Field("Data", cConst.DataInvalida));
 
-			DateTime functionReturnValue = Convert.ToDateTime(objRSData.Field("Data", cConst.DataInvalida));
-
-			objRSData.Fechar();
+			objRsData.Fechar();
 			return functionReturnValue;
 
 		}
@@ -1159,22 +1058,14 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		public System.DateTime CotacaoAnteriorDataConsultar(System.DateTime pdtmDataBase, string pstrTabela, cConexao pobjConexao = null)
 		{
-			System.DateTime functionReturnValue = default(System.DateTime);
-
-			cRS objRSData = null;
-
-			if (pobjConexao == null) {
-				objRSData = new cRS(objConexao);
-			} else {
-				objRSData = new cRS(pobjConexao);
-			}
+		    cRS objRsData = pobjConexao == null ? new cRS(objConexao) : new cRS(pobjConexao);
 
 			//Busca a data imediatamente anterior que tem uma cotação para o ativo recebido por parâmetro.
-			objRSData.ExecuteQuery(" select max(Data) as Data " + " from " + pstrTabela + " where Data < " + FuncoesBD.CampoDateFormatar(pdtmDataBase));
+			objRsData.ExecuteQuery(" select max(Data) as Data " + " from " + pstrTabela + " where Data < " + FuncoesBD.CampoDateFormatar(pdtmDataBase));
 
-			functionReturnValue = Convert.ToDateTime(objRSData.Field("Data", frwInterface.cConst.DataInvalida));
+			DateTime functionReturnValue = Convert.ToDateTime(objRsData.Field("Data", frwInterface.cConst.DataInvalida));
 
-			objRSData.Fechar();
+			objRsData.Fechar();
 			return functionReturnValue;
 
 		}
@@ -1223,17 +1114,12 @@ namespace prmCotacao
 			cConexao objConnAux = new cConexao();
 
 
-			string strQuery = null;
-			decimal decOscilacao = default(decimal);
-			decimal decCotacaoAtual = default(decimal);
-			decimal decCotacaoAnterior = default(decimal);
+		    decimal decOscilacao = default(decimal);
+		    decimal decCotacaoAnterior = default(decimal);
 
-			string strCodigo = null;
+		    //contador do número de iterações por papel
 
-			//contador do número de iterações por papel
-			int intContador = 0;
-
-			System.DateTime dtmCalculoDataInicial = cConst.DataInvalida;
+		    DateTime dtmCalculoDataInicial = cConst.DataInvalida;
 
 			string strWhere = String.Empty;
 
@@ -1244,7 +1130,7 @@ namespace prmCotacao
 			//busca todos os ativos do período.
 			//utiliza o group by que parece ser mais eficiente que o distinct
 
-			strQuery = " select Codigo " + " from Cotacao ";
+			string strQuery = " select Codigo " + " from Cotacao ";
 
 
 			if (pdtmDataInicial != frwInterface.cConst.DataInvalida) {
@@ -1287,7 +1173,7 @@ namespace prmCotacao
 
 			while ((!objRSAtivo.EOF) && (blnRetorno)) {
 				//utiliza uma variável para não precisar chamar a função field várias vezes
-				strCodigo = (string) objRSAtivo.Field("Codigo");
+				var strCodigo = (string) objRSAtivo.Field("Codigo");
 
 
 				if (pblnConsiderarApenasDataSplit) {
@@ -1305,7 +1191,7 @@ namespace prmCotacao
 					}
 
 					//inicializa o contador para cada ativo
-					intContador = 1;
+					int intContador = 1;
 
 					objCommand.BeginTrans();
 
@@ -1337,7 +1223,7 @@ namespace prmCotacao
 
 
 					while ((!objRSCotacao.EOF) && (objCommand.TransStatus)) {
-						decCotacaoAtual = Convert.ToDecimal(objRSCotacao.Field("ValorFechamento"));
+						decimal decCotacaoAtual = Convert.ToDecimal(objRSCotacao.Field("ValorFechamento"));
 
 
 						if (intContador > 1) {
@@ -1375,12 +1261,7 @@ namespace prmCotacao
 
 
 							if (pblnPercentualCalcular) {
-								if (decCotacaoAnterior > 0) {
-									decOscilacao = Math.Round((decCotacaoAtual / decCotacaoAnterior - 1) * 100, 2);
-								} else {
-									decOscilacao = 0;
-								}
-
+								decOscilacao = decCotacaoAnterior > 0 ? Math.Round((decCotacaoAtual / decCotacaoAnterior - 1) * 100, 2) : 0;
 							}
 
 
@@ -1434,10 +1315,8 @@ namespace prmCotacao
 			}
 			//fim do while do RS que contém todos os arquivos.
 
-			if ((objConnAux != null)) {
-				objConnAux.FecharConexao();
-			}
-			objRSAtivo.Fechar();
+		    objConnAux.FecharConexao();
+		    objRSAtivo.Fechar();
 
 			return blnRetorno;
 
@@ -1453,9 +1332,7 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		private bool OscilacaoUnitCalcularApenasSplit(string pstrCodigo, System.DateTime pdtmDataInicial)
 		{
-			bool functionReturnValue = false;
-
-			cConexao objConnAux = new cConexao();
+		    cConexao objConnAux = new cConexao();
 
 			cCommand objCommand = new cCommand(objConnAux);
 
@@ -1463,47 +1340,35 @@ namespace prmCotacao
 
 			cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(objConnAux);
 
-			bool blnSplitExistir = false;
+		    cRSList objRssListSplit = null;
 
-			cRSList objRSSListSplit = null;
-
-			string strQuery = null;
-
-			System.DateTime dtmCotacaoAnteriorData = default(System.DateTime);
-
-			decimal decOscilacao = default(decimal);
-			decimal decCotacaoAtual = default(decimal);
-			decimal decCotacaoAnterior = default(decimal);
-
-			System.DateTime dtmDataAtual = default(System.DateTime);
-
-			double dblSplitAcumulado = 1;
+		    double dblSplitAcumulado = 1;
 
 			objCommand.BeginTrans();
 
-			blnSplitExistir = objCarregadorSplit.SplitConsultar(pstrCodigo, pdtmDataInicial.AddDays(1), "A", ref objRSSListSplit, cConst.DataInvalida);
+			objCarregadorSplit.SplitConsultar(pstrCodigo, pdtmDataInicial.AddDays(1), "A", ref objRssListSplit, cConst.DataInvalida);
 
 
-			while (!objRSSListSplit.EOF) {
+			while (!objRssListSplit.EOF) {
 				//fica multiplicando o split. pode haver casos em que tenho mais de um registro para a mesma data
-				dblSplitAcumulado = dblSplitAcumulado * Convert.ToDouble(objRSSListSplit.Field("Razao"));
+				dblSplitAcumulado = dblSplitAcumulado * Convert.ToDouble(objRssListSplit.Field("Razao"));
 
-				dtmDataAtual = Convert.ToDateTime(objRSSListSplit.Field("Data"));
+				System.DateTime dtmDataAtual = Convert.ToDateTime(objRssListSplit.Field("Data"));
 
 
-				if (dtmDataAtual != Convert.ToDateTime(objRSSListSplit.NextField("Data", frwInterface.cConst.DataInvalida))) {
+				if (dtmDataAtual != Convert.ToDateTime(objRssListSplit.NextField("Data", frwInterface.cConst.DataInvalida))) {
 					//Quando o próximo registro tiver data diferente tem que atualizar a oscilação e a diferença
 					// da data atual, pois na próxima iteração os cálculos já serão referentes à outra data.
 
-					dtmCotacaoAnteriorData = AtivoCotacaoAnteriorDataConsultar(pstrCodigo, dtmDataAtual, "Cotacao", objConnAux);
+					DateTime dtmCotacaoAnteriorData = AtivoCotacaoAnteriorDataConsultar(pstrCodigo, dtmDataAtual, "Cotacao", objConnAux);
 
 					//busca a cotação anterior do ativo.
-					strQuery = " select ValorFechamento " + " from Cotacao " + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data = " + FuncoesBD.CampoDateFormatar(dtmCotacaoAnteriorData);
+					string strQuery = " select ValorFechamento " + " from Cotacao " + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data = " + FuncoesBD.CampoDateFormatar(dtmCotacaoAnteriorData);
 
 					objRSCotacao.ExecuteQuery(strQuery);
 
 					//multiplica a cotação anterior ao split
-					decCotacaoAnterior = Convert.ToDecimal(objRSCotacao.Field("ValorFechamento")) * (decimal) dblSplitAcumulado;
+					decimal decCotacaoAnterior = Convert.ToDecimal(objRSCotacao.Field("ValorFechamento")) * (decimal) dblSplitAcumulado;
 
 					//fecha o RS para ser utilizado novamente.
 					objRSCotacao.Fechar();
@@ -1513,18 +1378,15 @@ namespace prmCotacao
 
 					objRSCotacao.ExecuteQuery(strQuery);
 
-					decCotacaoAtual = Convert.ToDecimal(objRSCotacao.Field("ValorFechamento"));
+					decimal decCotacaoAtual = Convert.ToDecimal(objRSCotacao.Field("ValorFechamento"));
 
 					objRSCotacao.Fechar();
 
-					if (decCotacaoAnterior > 0) {
-						decOscilacao = Math.Round((decCotacaoAtual / decCotacaoAnterior - 1) * 100, 2);
-					} else {
-						decOscilacao = 0;
-					}
+				    decimal decOscilacao = default(decimal);
+				    decOscilacao = decCotacaoAnterior > 0 ? Math.Round((decCotacaoAtual / decCotacaoAnterior - 1) * 100, 2) : 0;
 
 					//atualiza o registro com a oscilacao
-					strQuery = " UPDATE Cotacao SET " + Environment.NewLine + " Diferenca = " + FuncoesBD.CampoDecimalFormatar(decCotacaoAtual - decCotacaoAnterior) + Environment.NewLine + ", Oscilacao = " + FuncoesBD.CampoDecimalFormatar(decOscilacao) + Environment.NewLine + " WHERE Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + Environment.NewLine + " AND Data = " + FuncoesBD.CampoDateFormatar(Convert.ToDateTime(objRSSListSplit.Field("Data")));
+					strQuery = " UPDATE Cotacao SET " + Environment.NewLine + " Diferenca = " + FuncoesBD.CampoDecimalFormatar(decCotacaoAtual - decCotacaoAnterior) + Environment.NewLine + ", Oscilacao = " + FuncoesBD.CampoDecimalFormatar(decOscilacao) + Environment.NewLine + " WHERE Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + Environment.NewLine + " AND Data = " + FuncoesBD.CampoDateFormatar(Convert.ToDateTime(objRssListSplit.Field("Data")));
 
 					objCommand.Execute(strQuery);
 
@@ -1534,17 +1396,14 @@ namespace prmCotacao
 				}
 				//If dtmDataAtual <> CDate(objRSSListSplit.NextField("Data", DataInvalida)) Then
 
-				objRSSListSplit.MoveNext();
+				objRssListSplit.MoveNext();
 
 			}
 
 			objCommand.CommitTrans();
 
-			functionReturnValue = objCommand.TransStatus;
-
-			objRSSListSplit = null;
-			objConnAux.FecharConexao();
-			return functionReturnValue;
+		    objConnAux.FecharConexao();
+            return objCommand.TransStatus;
 
 		}
 
@@ -1566,40 +1425,20 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		private bool IntervaloNumPeriodosVerificar(string pstrCodigo, System.DateTime pdtmDataInicial, System.DateTime pdtmDataFinal, int pintNumPeriodos, string pstrTabela, int pintNumPeriodosTabelaDados = -1, cConexao pobjConexao = null)
 		{
-			bool functionReturnValue = false;
-
-			cRS objRS = null;
-
-			string strQuery = null;
-
-			if (pobjConexao == null) {
-				objRS = new cRS(objConexao);
-			} else {
-				objRS = new cRS(pobjConexao);
-			}
+		    cRS objRs = pobjConexao == null ? new cRS(objConexao) : new cRS(pobjConexao);
 
 			//calcula o número de períodos em que há cotações para o papel no intervalo de datas recebido.
-			strQuery = " Select count(1) as Contador " + " from " + pstrTabela + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBD.CampoDateFormatar(pdtmDataInicial) + " and Data <= " + FuncoesBD.CampoDateFormatar(pdtmDataFinal);
-
+			string strQuery = " Select count(1) as Contador " + " from " + pstrTabela + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBD.CampoDateFormatar(pdtmDataInicial) + " and Data <= " + FuncoesBD.CampoDateFormatar(pdtmDataFinal);
 
 			if (pintNumPeriodosTabelaDados != -1) {
 				strQuery = strQuery + " and NumPeriodos = " + pintNumPeriodosTabelaDados.ToString();
-
 			}
 
+			objRs.ExecuteQuery(strQuery);
 
-			objRS.ExecuteQuery(strQuery);
+			bool functionReturnValue = Convert.ToInt32(objRs.Field("Contador", "0")) == pintNumPeriodos;
 
-			if (Convert.ToInt32(objRS.Field("Contador", "0")) == pintNumPeriodos) {
-				//se o número de períodos em que há cotações é igual ao número de períodos recebidos por parâmetro
-				//retorna TRUE.
-				functionReturnValue = true;
-			} else {
-				//Se o número de periodos é diferente do esperado retorna FALSE.
-				functionReturnValue = false;
-			}
-
-			objRS.Fechar();
+			objRs.Fechar();
 			return functionReturnValue;
 
 		}
@@ -1632,24 +1471,13 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		private bool NumPeriodosDataInicialCalcular(string pstrCodigo, int pintNumPeriodos, bool pblnPrimeiraDataConsiderar, ref System.DateTime pdtmDataInicialRet, ref System.DateTime pdtmDataFinalRet, string pstrTabela, int pintNumPeriodosTabelaDados = -1, cConexao pobjConexao = null)
 		{
-			bool functionReturnValue = false;
+		    string strQuery;
 
-			//, Optional ByRef pdtmDataFinalSplitRet As Date = DataInvalida
-
-			cRS objRS = null;
-
-			string strQuery = null;
-
-			if (pobjConexao == null) {
-				objRS = new cRS(objConexao);
-			} else {
-				objRS = new cRS(pobjConexao);
-			}
+			cRS objRS = pobjConexao == null ? new cRS(objConexao) : new cRS(pobjConexao);
 
 			string strCodigoFormatado = FuncoesBD.CampoStringFormatar(pstrCodigo);
 
-			int intNumPeriodosFinal = 0;
-
+			int intNumPeriodosFinal;
 
 			if (pblnPrimeiraDataConsiderar) {
 				//se é para considerar a primeira cotação, para calcular a data inicial 
@@ -1724,20 +1552,8 @@ namespace prmCotacao
 
 			pdtmDataFinalRet = Convert.ToDateTime(objRS.Field("DataMaxima", frwInterface.cConst.DataInvalida));
 
-
-			//If pstrTabela.ToUpper = "COTACAO_SEMANAL" Then
-
-			//    pdtmDataFinalSplitRet = CDate(objRS.Field("DataFinalSplit", DataInvalida))
-
-			//Else
-
-			//    pdtmDataFinalSplitRet = CDate(objRS.Field("DataMaxima", DataInvalida))
-
-			//End If
-
-
 			//retorna resultado da função que verifica se o intervalo realmente tem o número de períodos informado.
-			functionReturnValue = IntervaloNumPeriodosVerificar(pstrCodigo, pdtmDataInicialRet, pdtmDataFinalRet, pintNumPeriodos, pstrTabela, pintNumPeriodosTabelaDados, objRS.Conexao);
+			bool functionReturnValue = IntervaloNumPeriodosVerificar(pstrCodigo, pdtmDataInicialRet, pdtmDataFinalRet, pintNumPeriodos, pstrTabela, pintNumPeriodosTabelaDados, objRS.Conexao);
 
 			objRS.Fechar();
 			return functionReturnValue;
@@ -1746,51 +1562,34 @@ namespace prmCotacao
 
 		public decimal IFRCalcular(string pstrCodigo, System.DateTime pdtmDataInicial, System.DateTime pdtmDataFinal, int pintNumPeriodos, string pstrTabela, ref double pdblMediaAltaAnteriorRet, ref double pdblMediaBaixaAnteriorRet, cConexao pobjConexao = null)
 		{
-
-			cRS objRS = null;
-
-			if (pobjConexao == null) {
-				objRS = new cRS(objConexao);
-			} else {
-				objRS = new cRS(pobjConexao);
-			}
+		    cRS objRS = pobjConexao == null ? new cRS(objConexao) : new cRS(pobjConexao);
 
 			cRSList objRSListSplit = null;
-			bool blnSplitExistir = false;
-			System.DateTime dtmDataInicialSplit = default(System.DateTime);
-			System.DateTime dtmDataFinalSplit = default(System.DateTime);
 
-			//contém a razão acumulada de todos os splits do período.
+		    //contém a razão acumulada de todos os splits do período.
 			double dblSplitAcumulado = 1;
 			double dblDiferencaPositivaAcumulada = 0;
 			double dblDiferencaNegativaAcumulada = 0;
 
-			string strQuery = null;
-
-			double dblIFR = 0;
+		    double dblIFR;
 
 			cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(objRS.Conexao);
 
 			//busca os splits do ativo no período, ordenado pelo último split.
 			//Tem que começar a buscar um dia após 
-			blnSplitExistir = objCarregadorSplit.SplitConsultar(pstrCodigo, pdtmDataInicial.AddDays(1), "D", ref objRSListSplit, pdtmDataFinal);
+			bool blnSplitExistir = objCarregadorSplit.SplitConsultar(pstrCodigo, pdtmDataInicial.AddDays(1), "D", ref objRSListSplit, pdtmDataFinal);
 
 
 			if (blnSplitExistir) {
-				dtmDataFinalSplit = pdtmDataFinal;
+				System.DateTime dtmDataFinalSplit = pdtmDataFinal;
 
 				//quando tem script todas as cotaçoes tem que ser convertidas de acordo com o split
 
-				while (!objRSListSplit.EOF) {
+			    System.DateTime dtmDataInicialSplit;
+			    while (!objRSListSplit.EOF) {
 
 					if (Convert.ToDateTime(objRSListSplit.Field("Data")) != Convert.ToDateTime(objRSListSplit.NextField("Data", frwInterface.cConst.DataInvalida))) {
-						if (pstrTabela.ToUpper() == "COTACAO") {
-							//obtém a data do split.
-							dtmDataInicialSplit = Convert.ToDateTime(objRSListSplit.Field("Data"));
-						} else {
-							//PARA AS COTAÇÕES SEMANAIS TEM QUE TRANSFORMAR NO PRIMEIRO DIA DA SEMANA
-							dtmDataInicialSplit = PrimeiraSemanaDataCalcular(Convert.ToDateTime(objRSListSplit.Field("Data")));
-						}
+						dtmDataInicialSplit = pstrTabela.ToUpper() == "COTACAO" ? Convert.ToDateTime(objRSListSplit.Field("Data")) : PrimeiraSemanaDataCalcular(Convert.ToDateTime(objRSListSplit.Field("Data")));
 
 						//acumula as diferenças positivas entre as datas do split multiplicando pelo split acumulado
 						dblDiferencaPositivaAcumulada = dblDiferencaPositivaAcumulada + (double)  CotacaoPeriodoDiferencaSomar(pstrCodigo, dtmDataInicialSplit, dtmDataFinalSplit, "P", pstrTabela) * dblSplitAcumulado;
@@ -1828,7 +1627,7 @@ namespace prmCotacao
 				//SE NÃO TEM SPLIT FAZ O CÁLCULO NORMAL.
 
 				//calcula a média do valor de fechamento nos ultimos pintNumPeriodos com cotação positiva
-				strQuery = " select ROUND(SUM(Diferenca)/" + pintNumPeriodos + ",6) as MediaPositiva " + " from " + pstrTabela + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBD.CampoDateFormatar(pdtmDataInicial) + " and Data <= " + FuncoesBD.CampoDateFormatar(pdtmDataFinal) + " and Diferenca > 0 ";
+				string strQuery = " select ROUND(SUM(Diferenca)/" + pintNumPeriodos + ",6) as MediaPositiva " + " from " + pstrTabela + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBD.CampoDateFormatar(pdtmDataInicial) + " and Data <= " + FuncoesBD.CampoDateFormatar(pdtmDataFinal) + " and Diferenca > 0 ";
 
 				objRS.ExecuteQuery(strQuery);
 
@@ -1878,7 +1677,7 @@ namespace prmCotacao
 		private double IFRCalcular(int pintNumPeriodos, double pdblMediaAltaAnterior, double pdblMediaBaixaAnterior, decimal pdecDiferenca, ref double pdblMediaAltaAtualRet, ref double pdblMediaBaixaAtualRet)
 		{
 
-			double dblIFR = 0;
+			double dblIFR;
 
 			//Mup = ((Mup anterior)*(pd-1)+M) / pd;
 			pdblMediaAltaAtualRet = (pdblMediaAltaAnterior * (pintNumPeriodos - 1) + Convert.ToDouble((pdecDiferenca > 0 ? pdecDiferenca : 0))) / pintNumPeriodos;
@@ -1973,9 +1772,7 @@ namespace prmCotacao
 			cRS objRS = new cRS(objConnAux);
 			cRSList objRSSplit = null;
 
-			string strQuery = null;
-
-			double dblIFR = 0;
+		    double dblIFR;
 			double dblMediaAltaAnterior = 0;
 			double dblMediaBaixaAnterior = 0;
 
@@ -1984,45 +1781,27 @@ namespace prmCotacao
 
 			System.DateTime dtmDataInicial = default(System.DateTime);
 			System.DateTime dtmDataFinal = default(System.DateTime);
-			System.DateTime dtmCotacaoAnteriorData = default(System.DateTime);
 
-			bool blnPeriodoCalcular = false;
+		    bool blnPeriodoCalcular = false;
 
 			//tabela onde devem ser buscados / armazenados os dados do IFR
-			string strTabelaIFR = null;
 
-			if (pstrTabela.ToUpper() == "COTACAO") {
-				strTabelaIFR = "IFR_DIARIO";
-			} else {
-				strTabelaIFR = "IFR_SEMANAL";
-			}
+		    string strTabelaIfr = pstrTabela.ToUpper() == "COTACAO" ? "IFR_DIARIO" : "IFR_SEMANAL";
 
 			//**********************inicia transação
 			objCommand.BeginTrans();
 
-			//--04/01/2009
-			//cotação anterior passou a ser recebida por parâmetro.
-
-			//verifica se existe cálculo de IFR em uma data anterior.
-			//para isso busca a cotação anterior a esta
-
-			//dtmCotacaoAnteriorData = AtivoCotacaoAnteriorDataConsultar(pstrCodigo, pdtmDataBase _
-			//, pstrTabela, objConnAux)
-
-			dtmCotacaoAnteriorData = pdtmCotacaoAnteriorData;
-
+			DateTime dtmCotacaoAnteriorData = pdtmCotacaoAnteriorData;
 
 			if (dtmCotacaoAnteriorData != frwInterface.cConst.DataInvalida) {
 				//se tem busca as médias do IFR na data
-				objRS.ExecuteQuery(" select MediaAlta, MediaBaixa " + " from " + strTabelaIFR + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data = " + FuncoesBD.CampoDateFormatar(dtmCotacaoAnteriorData) + " AND NumPeriodos = " + pintNumPeriodos.ToString());
+				objRS.ExecuteQuery(" select MediaAlta, MediaBaixa " + " from " + strTabelaIfr + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data = " + FuncoesBD.CampoDateFormatar(dtmCotacaoAnteriorData) + " AND NumPeriodos = " + pintNumPeriodos.ToString());
 
 				//verifica se os campos estão preenchidos e estão com valor maior do que zero.
 
 				if (Convert.ToDouble(objRS.Field("MediaAlta", 0)) > 0 && Convert.ToDouble(objRS.Field("MediaBaixa", 0)) > 0) {
 					dblMediaAltaAnterior = Convert.ToDouble(objRS.Field("MediaAlta"));
 					dblMediaBaixaAnterior = Convert.ToDouble(objRS.Field("MediaBaixa"));
-					blnPeriodoCalcular = false;
-
 				} else {
 					//se tem cotação mas não tem as médias calculadas, tem que calcular o período inicial.
 					blnPeriodoCalcular = true;
@@ -2048,10 +1827,10 @@ namespace prmCotacao
 					dblIFR = Convert.ToDouble( IFRCalcular(pstrCodigo, dtmDataInicial, dtmDataFinal, pintNumPeriodos, pstrTabela, ref dblMediaAltaAnterior, ref dblMediaBaixaAnterior, objConnAux));
 
 					//tem que excluir os registros caso já existam
-					objCommand.Execute(" DELETE " + " FROM " + strTabelaIFR + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBD.CampoDateFormatar(dtmDataFinal) + " and NumPeriodos = " + pintNumPeriodos.ToString());
+					objCommand.Execute(" DELETE " + " FROM " + strTabelaIfr + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBD.CampoDateFormatar(dtmDataFinal) + " and NumPeriodos = " + pintNumPeriodos.ToString());
 
 					//atualiza o IFR na tabela 
-					IFRAtualizar(pstrCodigo, dtmDataFinal, pintNumPeriodos, strTabelaIFR, dblIFR, dblMediaAltaAnterior, dblMediaBaixaAnterior, objConnAux);
+					IFRAtualizar(pstrCodigo, dtmDataFinal, pintNumPeriodos, strTabelaIfr, dblIFR, dblMediaAltaAnterior, dblMediaBaixaAnterior, objConnAux);
 
 					//neste caso a data base tem que ser um dia posterior à data final da data calculada
 					//pdtmDataBase = DateAdd(DateInterval.Day, 1, dtmDataFinal)
@@ -2077,13 +1856,13 @@ namespace prmCotacao
 				if (!blnPeriodoCalcular) {
 					//tem que excluir os registros caso já existam e não tenha sido necessário calcular o período.
 					//se o período foi calculado, os registros já foram excluidos
-					objCommand.Execute(" DELETE " + " FROM " + strTabelaIFR + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBD.CampoDateFormatar(pdtmDataBase) + " and NumPeriodos = " + pintNumPeriodos.ToString());
+					objCommand.Execute(" DELETE " + " FROM " + strTabelaIfr + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBD.CampoDateFormatar(pdtmDataBase) + " and NumPeriodos = " + pintNumPeriodos.ToString());
 
 				}
 
 				//busca todas as cotações a partir da data base. Busca a diferença, pois o IFR é calculado em cima deste valor.
 
-				strQuery = " select Data, Diferenca";
+				string strQuery = " select Data, Diferenca";
 
 
 				if (pstrTabela.ToUpper() == "COTACAO_SEMANAL") {
@@ -2104,7 +1883,7 @@ namespace prmCotacao
 				while (!objRS.EOF) {
 
 					if (!objRSSplit.EOF) {
-						bool blnContinuarLoop = false;
+						bool blnContinuarLoop;
 
 
 						if (pstrTabela.ToUpper() == "COTACAO") {
@@ -2173,7 +1952,7 @@ namespace prmCotacao
 					dblIFR = IFRCalcular(pintNumPeriodos, dblMediaAltaAnterior, dblMediaBaixaAnterior, Convert.ToDecimal(objRS.Field("Diferenca")), ref dblMediaAlta, ref dblMediaBaixa);
 
 					//atualiza na tabela o IFR e as médias dos períodos de alta e baixa
-					IFRAtualizar(pstrCodigo, Convert.ToDateTime(objRS.Field("Data")), pintNumPeriodos, strTabelaIFR, dblIFR, dblMediaAlta, dblMediaBaixa, objConnAux);
+					IFRAtualizar(pstrCodigo, Convert.ToDateTime(objRS.Field("Data")), pintNumPeriodos, strTabelaIfr, dblIFR, dblMediaAlta, dblMediaBaixa, objConnAux);
 
 					//atribui a média calculada como média anterior para a próxima iteração;
 					dblMediaAltaAnterior = dblMediaAlta;
@@ -2229,11 +2008,7 @@ namespace prmCotacao
 
 		    bool blnRetorno = true;
 
-		    System.DateTime dtmData = default(System.DateTime);
-
-			string strQuery = null;
-
-			string strWhere = String.Empty;
+		    string strWhere = String.Empty;
 
 			string strLog = "";
 
@@ -2247,7 +2022,7 @@ namespace prmCotacao
 			}
 
 			//busca todos os ativos do período e a menor data para ser utilizada como data base.
-			strQuery = " select Codigo, min(Data) as DataInicial " + " from " + strTabela;
+			string strQuery = " select Codigo, min(Data) as DataInicial " + " from " + strTabela;
 
 
 			if (pdtmDataInicial != frwInterface.cConst.DataInvalida) {
@@ -2300,18 +2075,14 @@ namespace prmCotacao
 
 			objRSAtivo.ExecuteQuery(strQuery);
 
-		    System.DateTime dtmCotacaoAnteriorData;
 
+		    while ((!objRSAtivo.EOF)) {
+				var strCodigo = (string) objRSAtivo.Field("Codigo");
+				DateTime dtmData = Convert.ToDateTime(objRSAtivo.Field("DataInicial"));
 
-			while ((!objRSAtivo.EOF)) {
-				string strCodigo = (string) objRSAtivo.Field("Codigo");
-				dtmData = Convert.ToDateTime(objRSAtivo.Field("DataInicial"));
+				DateTime dtmCotacaoAnteriorData = AtivoCotacaoAnteriorDataConsultar(strCodigo, dtmData, strTabela);
 
-				dtmCotacaoAnteriorData = AtivoCotacaoAnteriorDataConsultar(strCodigo, dtmData, strTabela);
-
-
-				foreach (int intNumPeriodos_loopVariable in pcolPeriodos) {
-					int intNumPeriodos = intNumPeriodos_loopVariable;
+				foreach (int intNumPeriodos in pcolPeriodos) {
 					cEnum.enumRetorno intRetorno = IFRRetroativoUnitCalcular(strCodigo, dtmData, intNumPeriodos, strTabela, dtmCotacaoAnteriorData);
 
 
@@ -2373,13 +2144,11 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		private decimal CotacaoPeriodoCampoSomar(string pstrCodigo, System.DateTime pdtmDataInicial, DateTime pdtmDataFinal, string pstrTabela, string pstrCampo)
 		{
-			decimal functionReturnValue = default(decimal);
-
-			cRS objRS = new cRS(objConexao);
+		    cRS objRS = new cRS(objConexao);
 
 			objRS.ExecuteQuery(" select sum(" + pstrCampo + ") as total " + " from " + pstrTabela + " where codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and data >= " + FuncoesBD.CampoDateFormatar(pdtmDataInicial) + " and data <= " + FuncoesBD.CampoDateFormatar(pdtmDataFinal));
 
-			functionReturnValue = Convert.ToDecimal(objRS.Field("total"));
+			decimal functionReturnValue = Convert.ToDecimal(objRS.Field("total"));
 
 			objRS.Fechar();
 			return functionReturnValue;
@@ -2405,14 +2174,10 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		private decimal CotacaoPeriodoDiferencaSomar(string pstrCodigo, System.DateTime pdtmDataInicial, System.DateTime pdtmDataFinal, string pstrSinal, string pstrTabela)
 		{
-			decimal functionReturnValue = default(decimal);
+		    cRS objRS = new cRS(objConexao);
 
-			cRS objRS = new cRS(objConexao);
-
-			string strQuery = null;
-
-			//TEM QUE SER O VALOR ABSOLUTO, POIS NO CÁLCULO OS VALORES TEM QUE SER SEMPRE POSITIVOS.
-			strQuery = " select sum(ABS(Diferenca)) as Total " + " from " + pstrTabela + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBD.CampoDateFormatar(pdtmDataInicial) + " and Data <= " + FuncoesBD.CampoDateFormatar(pdtmDataFinal);
+		    //TEM QUE SER O VALOR ABSOLUTO, POIS NO CÁLCULO OS VALORES TEM QUE SER SEMPRE POSITIVOS.
+			string strQuery = " select sum(ABS(Diferenca)) as Total " + " from " + pstrTabela + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBD.CampoDateFormatar(pdtmDataInicial) + " and Data <= " + FuncoesBD.CampoDateFormatar(pdtmDataFinal);
 
 
 			if (pstrSinal == "P") {
@@ -2426,7 +2191,7 @@ namespace prmCotacao
 
 			objRS.ExecuteQuery(strQuery);
 
-			functionReturnValue = Convert.ToDecimal(objRS.Field("Total"));
+			decimal functionReturnValue = Convert.ToDecimal(objRS.Field("Total"));
 
 			objRS.Fechar();
 			return functionReturnValue;
@@ -2453,33 +2218,19 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		private double MMAritmeticaCalcular(string pstrCodigo, System.DateTime pdtmDataInicial, System.DateTime pdtmDataFinal, int pintNumPeriodos, string pstrTabela, string pstrDado, cConexao pobjConexao = null)
 		{
-			double functionReturnValue = 0;
+			double functionReturnValue;
 
-			//, ByVal pdtmDataFinalSplit As Date
-
-			cRS objRS = null;
-
-			if (pobjConexao == null) {
-				objRS = new cRS(objConexao);
-			} else {
-				objRS = new cRS(pobjConexao);
-			}
+		    cRS objRS = pobjConexao == null ? new cRS(objConexao) : new cRS(pobjConexao);
 
 			cRSList objRSListSplit = null;
 
 			bool blnSplitExistir = false;
 
-			string strQuery = null;
-
-			System.DateTime dtmDataInicialSplit = default(DateTime);
-			System.DateTime dtmDataFinalSplit = default(DateTime);
-			System.DateTime dtmDataFinalBuscaSplit = default(DateTime);
-
-			//contém a razão acumulada de todos os splits do período.
+		    //contém a razão acumulada de todos os splits do período.
 			double dblSplitAcumulado = 1;
 			double dblDadoAcumulado = 0;
 
-			string strCampo = null;
+			string strCampo;
 
 			int intIFRNumPeriodos = -1;
 
@@ -2507,7 +2258,8 @@ namespace prmCotacao
 
 
 			if (intIFRNumPeriodos == -1) {
-				if (pstrTabela.ToUpper() == "COTACAO_SEMANAL") {
+			    System.DateTime dtmDataFinalBuscaSplit;
+			    if (pstrTabela.ToUpper() == "COTACAO_SEMANAL") {
 					//quando o período é semanal busca a data da última cotação da semana 
 					//para utilizar como data máxima de busca do splitporque o mesmo pode ocorrer
 					//em qualquer dia da semana.
@@ -2522,21 +2274,16 @@ namespace prmCotacao
 				//Tem que começar a buscar um dia após 
 				blnSplitExistir = objCarregadorSplit.SplitConsultar(pstrCodigo, pdtmDataInicial.AddDays(1), "D", ref objRSListSplit, dtmDataFinalBuscaSplit, strSplitTipo);
 
-
-			} else {
-				//quando a média é do IFR não considera os splits, pois os splits já foram considerados 
-				//no cálculo do IFR.
-				blnSplitExistir = false;
-
 			}
 
 
-			if (blnSplitExistir) {
-				dtmDataFinalSplit = pdtmDataFinal;
+		    if (blnSplitExistir) {
+				System.DateTime dtmDataFinalSplit = pdtmDataFinal;
 
 				//quando tem split todas as cotaçoes tem que ser convertidas de acordo com o split
 
-				while (!objRSListSplit.EOF) {
+		        System.DateTime dtmDataInicialSplit;
+		        while (!objRSListSplit.EOF) {
 
 					if (Convert.ToDateTime(objRSListSplit.Field("Data")) != Convert.ToDateTime(objRSListSplit.NextField("Data", frwInterface.cConst.DataInvalida))) {
 						if (pstrTabela.ToUpper() == "COTACAO") {
@@ -2584,7 +2331,7 @@ namespace prmCotacao
 
 			} else {
 				//se não tem split calcula a média no próprio banco.
-				strQuery = " select avg(CDBL(" + strCampo + ")) as Media " + " from " + pstrTabela + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBD.CampoDateFormatar(pdtmDataInicial) + " and Data <= " + FuncoesBD.CampoDateFormatar(pdtmDataFinal);
+				string strQuery = " select avg(CDBL(" + strCampo + ")) as Media " + " from " + pstrTabela + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBD.CampoDateFormatar(pdtmDataInicial) + " and Data <= " + FuncoesBD.CampoDateFormatar(pdtmDataFinal);
 
 
 				if (intIFRNumPeriodos != -1) {
@@ -2606,27 +2353,9 @@ namespace prmCotacao
 
 		}
 
-		/// <summary>
-		/// Calcula a média móvel exponencial para um determinado ativo
-		/// </summary>
-		/// <param name="pstrCodigo">Código do ativo</param>
-		/// <param name="pdtmData"> Data em que deve ser calculada a média móvel</param>
-		/// <param name="pintPeriodo">Periodo que deve ser calculado a média</param>
-		/// <param name="pdecMMExpAnterior">Média móvel do período anterior</param>
-		/// <returns>retorna a média móvel exponencial calculada</returns>
-		/// <remarks></remarks>
-		private decimal MMExponencialCalcular(string pstrCodigo, System.DateTime pdtmData, int pintPeriodo, decimal pdecMMExpAnterior, string pstrTabela)
-		{
-
-			cRSList objRSSplit = null;
-
-			bool blnSplitExistir = false;
-
-			decimal decValorFechamento = default(decimal);
-			decimal decConstanteK = default(decimal);
-
-
-			//MMEx = ME(x-1) + K x {Fech(x) – ME(x-1)} 
+	    private double MMExponencialCalcular(decimal pdecValorFechamento, int pintPeriodo, decimal pdecMMExpAnterior)
+	    {
+	        //MMEx = ME(x-1) + K x {Fech(x) – ME(x-1)} 
 
 			//* MMEx representa a média móvel exponencial no dia x
 			//* ME(x-1) representa a média móvel exponencial no dia x-1
@@ -2634,66 +2363,29 @@ namespace prmCotacao
 			//* Constante K = {2 ÷ (N+1)} 
 
 			// calcula a constante K
-			decConstanteK = 2 / (pintPeriodo + 1);
+	        decimal decConstanteK = new decimal(2) / (pintPeriodo + 1);
 
-			//consulta a cotação de fechamento do ativo na data recebida por parâmetro.
-		    var pdecValorAberturaRet = new decimal();
-		    CotacaoConsultar(pstrCodigo, pdtmData, pstrTabela, ref decValorFechamento , ref pdecValorAberturaRet, new cConexao());
-
-			cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(objConexao);
-
-			//verifica se a data tem algum split
-			blnSplitExistir = objCarregadorSplit.SplitConsultar(pstrCodigo, pdtmData, "A", ref objRSSplit, pdtmData);
+	        return Convert.ToDouble(pdecMMExpAnterior + decConstanteK * (pdecValorFechamento - pdecMMExpAnterior));
+	    }
 
 
-			if (blnSplitExistir) {
-
-				while (!objRSSplit.EOF) {
-					//se existe split então tem que multiplicar a média anterior pelo split.
-					pdecMMExpAnterior = pdecMMExpAnterior * Convert.ToDecimal(objRSSplit.Field("Razao"));
-
-				}
-
-			}
-
-			return pdecMMExpAnterior + decConstanteK * (decValorFechamento - (decimal) pdecMMExpAnterior);
-
-		}
-
-		private double MMExponencialCalcular(decimal pdecValorFechamento, int pintPeriodo, decimal pdecMMExpAnterior)
-		{
-
-			decimal decConstanteK = default(decimal);
-
-			//MMEx = ME(x-1) + K x {Fech(x) – ME(x-1)} 
-
-			//* MMEx representa a média móvel exponencial no dia x
-			//* ME(x-1) representa a média móvel exponencial no dia x-1
-			//* N é o número de dias para os quais se quer o cálculo
-			//* Constante K = {2 ÷ (N+1)} 
-
-			// calcula a constante K
-			decConstanteK = 2 / (pintPeriodo + 1);
-
-            return Convert.ToDouble(pdecMMExpAnterior + decConstanteK * (pdecValorFechamento - pdecMMExpAnterior));
-
-		}
-
-
-		/// <summary>
-		/// Atualiza a média no banco de dados na tabela de média diária e média semanal
-		/// </summary>
-		/// <param name="pstrCodigo">Código do ativo</param>
-		/// <param name="pdtmData">data da média</param>
-		/// <param name="pdblMedia">Valor da média que será atualizada
-		/// </param>
-		/// <param name="pstrTabela">
-		/// Cotacao
-		/// Cotacao_Semanal
-		/// </param>
-		/// <returns></returns>
-		/// <remarks></remarks>
-		private bool MMAtualizar(string pstrCodigo, System.DateTime pdtmData, int pintNumPeriodos, string pstrTabela, double pdblMedia, string pstrMediaTipo, cConexao pobjConexao = null)
+	    /// <summary>
+	    /// Atualiza a média no banco de dados na tabela de média diária e média semanal
+	    /// </summary>
+	    /// <param name="pstrCodigo">Código do ativo</param>
+	    /// <param name="pdtmData">data da média</param>
+	    /// <param name="pintNumPeriodos"></param>
+	    /// <param name="pstrTabela">
+	    ///     Cotacao
+	    ///     Cotacao_Semanal
+	    /// </param>
+	    /// <param name="pdblMedia">Valor da média que será atualizada
+	    /// </param>
+	    /// <param name="pstrMediaTipo"></param>
+	    /// <param name="pobjConexao"></param>
+	    /// <returns></returns>
+	    /// <remarks></remarks>
+	    private void MMAtualizar(string pstrCodigo, DateTime pdtmData, int pintNumPeriodos, string pstrTabela, double pdblMedia, string pstrMediaTipo, cConexao pobjConexao = null)
 		{
 		    cCommand objCommand = pobjConexao == null ? new cCommand(objConexao) : new cCommand(pobjConexao);
 
@@ -2702,9 +2394,6 @@ namespace prmCotacao
 			string strQuery = " INSERT INTO " + pstrTabela + "(Codigo, Data, NumPeriodos, Tipo, Valor)" + " VALUES " + "(" + FuncoesBD.CampoStringFormatar(pstrCodigo) + ", " + FuncoesBD.CampoDateFormatar(pdtmData) + ", " + pintNumPeriodos.ToString() + ", " + FuncoesBD.CampoStringFormatar(pstrMediaTipo) + ", " + FuncoesBD.CampoFloatFormatar(pdblMedia) + ")";
 
 			objCommand.Execute(strQuery);
-
-			return objCommand.TransStatus;
-
 		}
 
 	    /// <summary>
@@ -2773,33 +2462,18 @@ namespace prmCotacao
 			cCommand objCommand = new cCommand(objConnAux);
 
 			cRS objRS = new cRS(objConnAux);
-			cRSList objRSSplit = null;
+			cRSList objRsSplit = null;
 
-			string strQuery = null;
+		    string strTabelaMedia = pstrTabela.ToUpper() == "COTACAO" ? "Media_Diaria" : "Media_Semanal";
 
-			string strTabelaMedia = null;
-
-
-			if (pstrTabela.ToUpper() == "COTACAO") {
-				strTabelaMedia = "Media_Diaria";
-
-
-			} else {
-				strTabelaMedia = "Media_Semanal";
-
-			}
-
-			double dblMMExpAnterior = 0;
-			double dblMMExp = 0;
-			System.DateTime dtmDataInicial = default(System.DateTime);
+			double dblMmExpAnterior = 0;
+		    System.DateTime dtmDataInicial = default(System.DateTime);
 			System.DateTime dtmDataFinal = default(System.DateTime);
 			//Dim dtmDataFinalSplit As Date = DataInvalida
-			System.DateTime dtmCotacaoAnteriorData = default(System.DateTime);
 
-			bool blnPeriodoCalcular = false;
+		    bool blnPeriodoCalcular = false;
 
-			int intNumRegistros = 0;
-			//número de registros para os quais a média será calculada
+		    //número de registros para os quais a média será calculada
 			int intArrayIndice = 0;
 			//controla o array do indice
 
@@ -2809,16 +2483,17 @@ namespace prmCotacao
 			//If pintNumPeriodos = 21 Then
 
 
-			if (pdtmDataBase != frwInterface.cConst.DataInvalida) {
-				//verifica se existe uma média móvel em uma data anterior.
+			if (pdtmDataBase != frwInterface.cConst.DataInvalida)
+			{
+			    //verifica se existe uma média móvel em uma data anterior.
 				//para isso busca a cotação anterior a esta
 
 				//--04/01/2010
 				//alterado para receber a data da cotação anterior por parâmetro.
 				//dtmCotacaoAnteriorData = AtivoCotacaoAnteriorDataConsultar(pstrCodigo, pdtmDataBase, pstrTabela, objConnAux)
 
-				dtmCotacaoAnteriorData = pdtmCotacaoAnteriorData;
-				//--fim da alteração do dia 04/01/2010
+			    System.DateTime dtmCotacaoAnteriorData = pdtmCotacaoAnteriorData;
+			    //--fim da alteração do dia 04/01/2010
 
 
 				if (dtmCotacaoAnteriorData != frwInterface.cConst.DataInvalida) {
@@ -2830,8 +2505,7 @@ namespace prmCotacao
 					//If CDec(objRS.Field("MMExp21", 0)) > 0 Then
 					if (Convert.ToDecimal(objRS.Field("Valor", 0)) > 0) {
 						//dblMMExpAnterior = CDbl(objRS.Field("MMExp21"))
-						dblMMExpAnterior = Convert.ToDouble(objRS.Field("Valor"));
-						blnPeriodoCalcular = false;
+						dblMmExpAnterior = Convert.ToDouble(objRS.Field("Valor"));
 					} else {
 						//se tem cotação mas não tem média calculada, tem que calcular o período inicial.
 						blnPeriodoCalcular = true;
@@ -2845,9 +2519,8 @@ namespace prmCotacao
 					blnPeriodoCalcular = true;
 
 				}
-
-
-			} else {
+			}
+			else {
 				//se não recebeu uma data válida para utilizar como data base, então tem que calcular o período
 				blnPeriodoCalcular = true;
 
@@ -2860,12 +2533,12 @@ namespace prmCotacao
 
 				if (NumPeriodosDataInicialCalcular(pstrCodigo, pintNumPeriodos, true, ref dtmDataInicial, ref dtmDataFinal, pstrTabela,-1 , objConnAux)) {
 					//calcula a média simples no periodo, que será usado como primeira média
-					dblMMExpAnterior = MMAritmeticaCalcular(pstrCodigo, dtmDataInicial, dtmDataFinal, pintNumPeriodos, pstrTabela, "VALOR", objConnAux);
+					dblMmExpAnterior = MMAritmeticaCalcular(pstrCodigo, dtmDataInicial, dtmDataFinal, pintNumPeriodos, pstrTabela, "VALOR", objConnAux);
 
 					objCommand.Execute(" DELETE " + " FROM " + strTabelaMedia + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBD.CampoDateFormatar(dtmDataFinal) + " and Tipo = " + FuncoesBD.CampoStringFormatar("MME") + " and NumPeriodos = " + pintNumPeriodos.ToString());
 
 					//atualiza a média na tabela 
-					MMAtualizar(pstrCodigo, dtmDataFinal, pintNumPeriodos, strTabelaMedia, dblMMExpAnterior, "MME", objConnAux);
+					MMAtualizar(pstrCodigo, dtmDataFinal, pintNumPeriodos, strTabelaMedia, dblMmExpAnterior, "MME", objConnAux);
 
 					//Calcula a data da próxima cotação conforme a periodicidade do cálculo.
 					cCalculadorData objCalculadorData = new cCalculadorData(objConnAux);
@@ -2888,9 +2561,9 @@ namespace prmCotacao
 				if (pstrArmazenamentoLocal == "MEMORIA") {
 					//SE É PARA RETORNAR UM ARRAY COM OS RESULTADOS CALCULADOS, CALCULA O NÚMERO DE REGISTROS 
 					//QUE SERÃO INSERIDOS PARA DIMENSIONAR O ARRAY
-					intNumRegistros = NumCotacoesCalcular(pstrCodigo, pdtmDataBase, pstrTabela, objConnAux);
+					int intNumRegistros = NumCotacoesCalcular(pstrCodigo, pdtmDataBase, pstrTabela, objConnAux);
 
-					if (dblMMExpAnterior > 0) {
+					if (dblMmExpAnterior > 0) {
 						intNumRegistros = intNumRegistros + 1;
 					}
 
@@ -2898,11 +2571,11 @@ namespace prmCotacao
 					Array.Resize(ref parrMediaRet, intNumRegistros);
 
 
-					if (dblMMExpAnterior > 0) {
+					if (dblMmExpAnterior > 0) {
 						//se teve que calcular um período adiciona na collection o primeiro dia calculado, que foi calculado a 
 						//partir de uma média móvel simples.
 
-						parrMediaRet[intArrayIndice] = dblMMExpAnterior;
+						parrMediaRet[intArrayIndice] = dblMmExpAnterior;
 
 						intArrayIndice = intArrayIndice + 1;
 
@@ -2919,7 +2592,7 @@ namespace prmCotacao
 				}
 
 				//busca todas as cotações a partir da data base. Busca o valor de fechamento, pois a média é calculada em cima deste valor.
-				strQuery = " select Data, ValorFechamento ";
+				string strQuery = " select Data, ValorFechamento ";
 
 
 				if (pstrTabela.ToUpper() == "COTACAO_SEMANAL") {
@@ -2936,19 +2609,19 @@ namespace prmCotacao
 				cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(objConnAux);
 
 				//busca todos os splits a partir da data base em ordem ascendente
-				objCarregadorSplit.SplitConsultar(pstrCodigo, pdtmDataBase, "A", ref objRSSplit, cConst.DataInvalida);
+				objCarregadorSplit.SplitConsultar(pstrCodigo, pdtmDataBase, "A", ref objRsSplit, cConst.DataInvalida);
 
 				//loop para calcular a média exponencial em todas as datas subsequentes
 
 				while (!objRS.EOF) {
 
-					if (!objRSSplit.EOF) {
-						bool blnContinuarLoop = false;
+					if (!objRsSplit.EOF) {
+						bool blnContinuarLoop;
 
 
 						if (pstrTabela.ToUpper() == "COTACAO") {
 							//********TRATAMENTO PARA A COTAÇÃO DIÁRIA
-							blnContinuarLoop = (Convert.ToDateTime(objRS.Field("Data")) == Convert.ToDateTime(objRSSplit.Field("Data")));
+							blnContinuarLoop = (Convert.ToDateTime(objRS.Field("Data")) == Convert.ToDateTime(objRsSplit.Field("Data")));
 
 							//verifica se tem split na data.
 
@@ -2956,16 +2629,16 @@ namespace prmCotacao
 								//se a data do split é a mesma data do cálculo da média
 
 								//multiplica a média anterior pelo split
-								dblMMExpAnterior = dblMMExpAnterior * Convert.ToDouble(objRSSplit.Field("Razao"));
+								dblMmExpAnterior = dblMmExpAnterior * Convert.ToDouble(objRsSplit.Field("Razao"));
 
 								//passa para o próximo registro
-								objRSSplit.MoveNext();
+								objRsSplit.MoveNext();
 
-								if (objRSSplit.EOF) {
+								if (objRsSplit.EOF) {
 									blnContinuarLoop = false;
 								} else {
 
-									if (Convert.ToDateTime(objRS.Field("Data")) != Convert.ToDateTime(objRSSplit.Field("Data"))) {
+									if (Convert.ToDateTime(objRS.Field("Data")) != Convert.ToDateTime(objRsSplit.Field("Data"))) {
 										blnContinuarLoop = false;
 
 									}
@@ -2980,21 +2653,21 @@ namespace prmCotacao
 							//para aplicar o split na cotação semanal, a data do split tem que estar entre 
 							//o primeiro e ó último dia da semana.
 
-							blnContinuarLoop = (Convert.ToDateTime(objRSSplit.Field("Data")) >= Convert.ToDateTime(objRS.Field("Data")) && Convert.ToDateTime(objRSSplit.Field("Data")) <= Convert.ToDateTime(objRS.Field("DataFinal")));
+							blnContinuarLoop = (Convert.ToDateTime(objRsSplit.Field("Data")) >= Convert.ToDateTime(objRS.Field("Data")) && Convert.ToDateTime(objRsSplit.Field("Data")) <= Convert.ToDateTime(objRS.Field("DataFinal")));
 
 
 							while (blnContinuarLoop) {
 								//multiplica a média anterior pelo split
-								dblMMExpAnterior = dblMMExpAnterior * Convert.ToDouble(objRSSplit.Field("Razao"));
+								dblMmExpAnterior = dblMmExpAnterior * Convert.ToDouble(objRsSplit.Field("Razao"));
 
 								//passa para o próximo registro
-								objRSSplit.MoveNext();
+								objRsSplit.MoveNext();
 
-								if (objRSSplit.EOF) {
+								if (objRsSplit.EOF) {
 									blnContinuarLoop = false;
 
 								} else {
-									blnContinuarLoop = (Convert.ToDateTime(objRSSplit.Field("Data")) >= Convert.ToDateTime(objRS.Field("Data")) && Convert.ToDateTime(objRSSplit.Field("Data")) <= Convert.ToDateTime(objRS.Field("DataFinal")));
+									blnContinuarLoop = (Convert.ToDateTime(objRsSplit.Field("Data")) >= Convert.ToDateTime(objRS.Field("Data")) && Convert.ToDateTime(objRsSplit.Field("Data")) <= Convert.ToDateTime(objRS.Field("DataFinal")));
 
 								}
 
@@ -3005,7 +2678,7 @@ namespace prmCotacao
 					}
 
 					//calcula a média 
-					dblMMExp = MMExponencialCalcular(Convert.ToDecimal(objRS.Field("ValorFechamento", 0)), pintNumPeriodos, (decimal) dblMMExpAnterior);
+					double dblMMExp = MMExponencialCalcular(Convert.ToDecimal(objRS.Field("ValorFechamento", 0)), pintNumPeriodos, (decimal) dblMmExpAnterior);
 
 					// = "DATABASE" Then
 					if (pstrArmazenamentoLocal == "DATABASE") {
@@ -3023,20 +2696,7 @@ namespace prmCotacao
 					}
 
 					//atribui a média calculada como média anterior para a próxima iteração;
-					dblMMExpAnterior = dblMMExp;
-
-					//'cálculo dos valores mínimo e máximo
-					//If dblMMExpAnterior > pdblValorMaximoRet Then
-					//    pdblValorMaximoRet = dblMMExpAnterior
-					//End If
-
-					//If pdblValorMinimoRet = 0 Then
-					//    pdblValorMinimoRet = dblMMExpAnterior
-					//Else
-					//    If dblMMExpAnterior < pdblValorMinimoRet Then
-					//        pdblValorMinimoRet = dblMMExpAnterior
-					//    End If
-					//End If
+					dblMmExpAnterior = dblMMExp;
 
 					objRS.MoveNext();
 
@@ -3099,24 +2759,17 @@ namespace prmCotacao
 
 		    bool blnRetorno = true;
 
-			string strQuery = null;
-
-			string strWhere = String.Empty;
+		    string strWhere = String.Empty;
 
 			string strLog = "";
 
 			//indica o nome da tabela de cotações, de acordo com a duração do período das cotações
-			string strTabela = null;
 
-			if (pstrPeriodoDuracao == "DIARIO") {
-				strTabela = "Cotacao";
-			} else {
-				strTabela = "Cotacao_Semanal";
-			}
+		    string strTabela = pstrPeriodoDuracao == "DIARIO" ? "Cotacao" : "Cotacao_Semanal";
 
 
 			//busca todos os ativos do período e a menor data para ser utilizada como data base.
-			strQuery = " select Codigo";
+			string strQuery = " select Codigo";
 
 			if (pdtmDataInicial != frwInterface.cConst.DataInvalida) {
 				//se foi passado uma data inicial válida, calcula a data inicial a partir desta data.
@@ -3178,15 +2831,12 @@ namespace prmCotacao
 
 			//Dim objStructMedia As structIndicadorEscolha
 
-			System.DateTime dtmDataInicialAux = default(System.DateTime);
-
-			System.DateTime dtmCotacaoAnteriorData = frwInterface.cConst.DataInvalida;
+		    System.DateTime dtmCotacaoAnteriorData = frwInterface.cConst.DataInvalida;
 
 
 			while ((!objRSAtivo.EOF)) {
-
-
-				if (pdtmDataInicial == frwInterface.cConst.DataInvalida) {
+			    System.DateTime dtmDataInicialAux;
+			    if (pdtmDataInicial == frwInterface.cConst.DataInvalida) {
 					//se não recebeu uma data inicial válida, não faz sentido buscar a menor data
 					//porque estas datas não serão utilizadas pelas funções de cálculo de média, 
 					//já que as funções terão que calcular o período inicial. Neste caso, a query
@@ -3208,21 +2858,16 @@ namespace prmCotacao
 
 				//For Each objStructMedia In pcolMedia
 
-				foreach (cMediaDTO objMediaDTO in plstMedias) {
-					//If objStructMedia.strTipo = "E" Then
+				foreach (cMediaDTO objMediaDTO in plstMedias)
+				{
+				    //If objStructMedia.strTipo = "E" Then
 
-				    cEnum.enumRetorno intRetorno = default(cEnum.enumRetorno);
-				    if (objMediaDTO.Tipo == "E") {
-						intRetorno = MMExponencialRetroativaUnitCalcular((string) objRSAtivo.Field("Codigo"), dtmDataInicialAux, objMediaDTO.NumPeriodos, strTabela, pstrArmazenamentoLocal, parrMediaRet, ref pdblValorMinimoRet, ref pdblValorMaximoRet, dtmCotacaoAnteriorData);
-
-
-					} else {
-						intRetorno = MMAritmeticaRetroativoUnitCalcular((string) objRSAtivo.Field("Codigo"), objMediaDTO.Dado, pstrPeriodoDuracao, objMediaDTO.NumPeriodos, dtmDataInicialAux);
-
-					}
+				    cEnum.enumRetorno intRetorno = objMediaDTO.Tipo == "E" ? 
+				        MMExponencialRetroativaUnitCalcular((string) objRSAtivo.Field("Codigo"), dtmDataInicialAux, objMediaDTO.NumPeriodos, strTabela, pstrArmazenamentoLocal, parrMediaRet, ref pdblValorMinimoRet, ref pdblValorMaximoRet, dtmCotacaoAnteriorData) : 
+				        MMAritmeticaRetroativoUnitCalcular((string) objRSAtivo.Field("Codigo"), objMediaDTO.Dado, pstrPeriodoDuracao, objMediaDTO.NumPeriodos, dtmDataInicialAux);
 
 
-					if (intRetorno != frwInterface.cEnum.enumRetorno.RetornoOK) {
+				    if (intRetorno != frwInterface.cEnum.enumRetorno.RetornoOK) {
 						blnRetorno = false;
 
 						if (!string.IsNullOrEmpty(strLog)) {
@@ -3239,10 +2884,9 @@ namespace prmCotacao
 						}
 
 					}
-
 				}
 
-				objRSAtivo.MoveNext();
+			    objRSAtivo.MoveNext();
 
 			}
 
@@ -3307,13 +2951,11 @@ namespace prmCotacao
 		{
 		    cRS objRs = pobjConexao == null ? new cRS(objConexao) : new cRS(pobjConexao);
 
-	        int intDiaSemana = 0;
-
 	        objRs.ExecuteQuery(" select min(Data) as Data " + " from Cotacao " + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo));
 
 			DateTime dtmDataAux = Convert.ToDateTime(objRs.Field("Data"));
 
-			intDiaSemana = (int) dtmDataAux.DayOfWeek - 1;
+			int intDiaSemana = (int) dtmDataAux.DayOfWeek - 1;
 
 			while ((intDiaSemana != 1)) {
 				dtmDataAux = dtmDataAux.AddDays(-1);
@@ -3339,16 +2981,13 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		private System.DateTime PrimeiraSemanaDataCalcular(System.DateTime pdtmDataBase)
 		{
-
-			System.DateTime dtmDataAux = default(System.DateTime);
-
 		    //intervalor de incremento das datas
 
 		    //tem que descontar para bater com os valores do enum.
 			int intDiaSemana = (int)pdtmDataBase.DayOfWeek - 1;
 
 			//se a data é uma segunda-feira retorna a própria data
-			dtmDataAux = pdtmDataBase;
+			DateTime dtmDataAux = pdtmDataBase;
 
 
 			if (intDiaSemana != (int) DayOfWeek.Monday) {
@@ -3428,13 +3067,11 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		public System.DateTime AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular(string pstrCodigo, System.DateTime pdtmDataBase)
 		{
-			System.DateTime functionReturnValue = default(System.DateTime);
-
-			cRS objRS = new cRS(objConexao);
+		    cRS objRS = new cRS(objConexao);
 
 			objRS.ExecuteQuery(" select max(Data) as Data " + Environment.NewLine + " from Cotacao_Semanal" + Environment.NewLine + " where Codigo = " + FuncoesBD.CampoFormatar(pstrCodigo) + Environment.NewLine + " and Data <= " + FuncoesBD.CampoFormatar(pdtmDataBase));
 
-			functionReturnValue = Convert.ToDateTime(objRS.Field("Data", frwInterface.cConst.DataInvalida));
+			DateTime functionReturnValue = Convert.ToDateTime(objRS.Field("Data", frwInterface.cConst.DataInvalida));
 
 			objRS.Fechar();
 			return functionReturnValue;
@@ -3450,17 +3087,15 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		private System.DateTime AtivoCotacaoSemanalUltimoDiaSemanaCalcular(string pstrCodigo, System.DateTime pdtmPrimeiroDiaSemana)
 		{
-			System.DateTime functionReturnValue = default(System.DateTime);
-
-			cRS objRS = new cRS(objConexao);
+		    cRS objRS = new cRS(objConexao);
 
 			objRS.ExecuteQuery("SELECT DataFinal " + Environment.NewLine + " FROM Cotacao_Semanal " + Environment.NewLine + " WHERE Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + Environment.NewLine + " AND Data = " + FuncoesBD.CampoDateFormatar(pdtmPrimeiroDiaSemana));
 
-			functionReturnValue = (DateTime) objRS.Field("DataFinal");
+			DateTime dataDoUltimoDiaDaSemana = (DateTime) objRS.Field("DataFinal");
 
 			objRS.Fechar();
 
-		    return functionReturnValue;
+		    return dataDoUltimoDiaDaSemana;
 
 		}
 
@@ -3480,9 +3115,7 @@ namespace prmCotacao
 		    //indica se tem splits na semana do cálculo
 			bool blnSplitSemana = false;
 
-		    System.DateTime dtmDataPrimeiraCotacaoSemana = default(System.DateTime);
-
-			cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(pobjConnAux);
+		    cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(pobjConnAux);
 
 			//busca os splits. 
 			bool blnSplitExistir = objCarregadorSplit.SplitConsultar(pstrCodigo, pdtmDataSegundaFeira, "D", ref objRsSplit, pdtmDataSextaFeira);
@@ -3492,7 +3125,7 @@ namespace prmCotacao
 				//busca a primeira data da semana que tem cotação
 				objRS.ExecuteQuery(" select min(Data) as DataInicial " + " from Cotacao " + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBD.CampoDateFormatar(pdtmDataSegundaFeira) + " and Data <= " + FuncoesBD.CampoDateFormatar(pdtmDataSextaFeira));
 
-				dtmDataPrimeiraCotacaoSemana = Convert.ToDateTime(objRS.Field("DataInicial"));
+				System.DateTime dtmDataPrimeiraCotacaoSemana = Convert.ToDateTime(objRS.Field("DataInicial"));
 
 				objRS.Fechar();
 
@@ -3513,13 +3146,6 @@ namespace prmCotacao
 					}
 
 					dblSplitRazaoCotacaoAnterior *= Convert.ToDouble(objRsSplit.Field("Razao"));
-
-					//If objRSSplit.Field("Tipo") = "DESD" Then
-					//    'razão invertida só deve ser considerada nos splits de desdobramento
-					//    dblSplitRazaoInvertida = dblSplitRazaoInvertida * CDbl(objRSSplit.Field("RazaoInvertida"))
-
-					//End If
-
 
 					//se encontrou passa para o próximo split.
 					objRsSplit.MoveNext();
@@ -3551,8 +3177,6 @@ namespace prmCotacao
 
 				}
 
-
-
 				//se tem split as data anteriores ao split tem que ser convertidas
 				//a primeira parte da query traz as cotações anteriores ao split. 
 				//Estas cotações tem que ser multiplicadas pela razão do split
@@ -3567,12 +3191,11 @@ namespace prmCotacao
 
 			}
 
-
 			if (Convert.ToInt32(objRS.Field("Contador")) > 0) {
 				decimal decValorAbertura = default(decimal);
 				decimal decValorFechamento = default(decimal);
-				decimal decOscilacao = default(decimal);
-				decimal decDiferenca = default(decimal);
+				decimal decOscilacao;
+				decimal decDiferenca;
 
 				//busca o valor de abertura da primeira data da semana
 			    decimal pdecValorFechamentoRet = -1M;
@@ -3600,20 +3223,14 @@ namespace prmCotacao
 					decOscilacao = 0;
 				}
 
-				//Debug.Print(CStr(objRS.Field("DataInicial")))
+				if (pstrOperacaoBD == "INSERT")
+				{
+				    //calcula o sequencial do ativo
+				    long lngSequencial = SequencialCalcular(pstrCodigo, "Cotacao_Semanal", objCommand.Conexao);
 
-
-				if (pstrOperacaoBD == "INSERT") {
-					//utilizado para calcular o sequencial do ativo.
-					long lngSequencial = 0;
-
-					//calcula o sequencial do ativo
-					lngSequencial = SequencialCalcular(pstrCodigo, "Cotacao_Semanal", objCommand.Conexao);
-
-					objCommand.Execute(" INSERT INTO Cotacao_Semanal " + "(Codigo, Data, DataFinal, ValorAbertura, ValorMinimo, ValorMaximo, ValorFechamento " + ", Diferenca, Oscilacao, Negocios_Total, Titulos_Total, Valor_Total, Sequencial) " + " values " + "( " + FuncoesBD.CampoStringFormatar(pstrCodigo) + ", " + FuncoesBD.CampoDateFormatar(Convert.ToDateTime(objRS.Field("DataInicial"))) + ", " + FuncoesBD.CampoDateFormatar(Convert.ToDateTime(objRS.Field("DataFinal"))) + ", " + FuncoesBD.CampoDecimalFormatar(decValorAbertura) + ", " + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRS.Field("ValorMinimo"))) + ", " + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRS.Field("ValorMaximo"))) + ", " + FuncoesBD.CampoDecimalFormatar(decValorFechamento) + ", " + FuncoesBD.CampoDecimalFormatar(decDiferenca) + ", " + FuncoesBD.CampoDecimalFormatar(decOscilacao) + ", " + FuncoesBD.CampoFloatFormatar(Convert.ToDouble(objRS.Field("Negocios_Total"))) + ", " + FuncoesBD.CampoFloatFormatar(Convert.ToDouble(objRS.Field("Titulos_Total"))) + ", " + FuncoesBD.CampoFloatFormatar(Convert.ToDouble(objRS.Field("Valor_Total"))) + ", " + lngSequencial.ToString() + ")");
-
-
-				} else {
+				    objCommand.Execute(" INSERT INTO Cotacao_Semanal " + "(Codigo, Data, DataFinal, ValorAbertura, ValorMinimo, ValorMaximo, ValorFechamento " + ", Diferenca, Oscilacao, Negocios_Total, Titulos_Total, Valor_Total, Sequencial) " + " values " + "( " + FuncoesBD.CampoStringFormatar(pstrCodigo) + ", " + FuncoesBD.CampoDateFormatar(Convert.ToDateTime(objRS.Field("DataInicial"))) + ", " + FuncoesBD.CampoDateFormatar(Convert.ToDateTime(objRS.Field("DataFinal"))) + ", " + FuncoesBD.CampoDecimalFormatar(decValorAbertura) + ", " + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRS.Field("ValorMinimo"))) + ", " + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRS.Field("ValorMaximo"))) + ", " + FuncoesBD.CampoDecimalFormatar(decValorFechamento) + ", " + FuncoesBD.CampoDecimalFormatar(decDiferenca) + ", " + FuncoesBD.CampoDecimalFormatar(decOscilacao) + ", " + FuncoesBD.CampoFloatFormatar(Convert.ToDouble(objRS.Field("Negocios_Total"))) + ", " + FuncoesBD.CampoFloatFormatar(Convert.ToDouble(objRS.Field("Titulos_Total"))) + ", " + FuncoesBD.CampoFloatFormatar(Convert.ToDouble(objRS.Field("Valor_Total"))) + ", " + lngSequencial.ToString() + ")");
+				}
+				else {
 					objCommand.Execute(" UPDATE Cotacao_Semanal SET " + " DataFinal = " + FuncoesBD.CampoDateFormatar(Convert.ToDateTime(objRS.Field("DataFinal"))) + ", ValorAbertura = " + FuncoesBD.CampoDecimalFormatar(decValorAbertura) + ", ValorMinimo = " + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRS.Field("ValorMinimo"))) + ", ValorMaximo = " + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRS.Field("ValorMaximo"))) + ", ValorFechamento = " + FuncoesBD.CampoDecimalFormatar(decValorFechamento) + ", Diferenca = " + FuncoesBD.CampoDecimalFormatar(decDiferenca) + ", Oscilacao = " + FuncoesBD.CampoDecimalFormatar(decOscilacao) + ", Negocios_Total = " + FuncoesBD.CampoFloatFormatar(Convert.ToDouble(objRS.Field("Negocios_Total"))) + ", Titulos_Total = " + FuncoesBD.CampoFloatFormatar(Convert.ToDouble(objRS.Field("Titulos_Total"))) + ", Valor_Total = " + FuncoesBD.CampoFloatFormatar(Convert.ToDouble(objRS.Field("Valor_Total"))) + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data = " + FuncoesBD.CampoDateFormatar(Convert.ToDateTime(objRS.Field("DataInicial"))));
 
 				}
@@ -3638,9 +3255,7 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		private bool CotacaoSemanalUnitRetroativoCalcular(string pstrCodigo, System.DateTime pdtmDataBase)
 		{
-			bool functionReturnValue = false;
-
-			cConexao objConnAux = new cConexao();
+		    cConexao objConnAux = new cConexao();
 
 			cCommand objCommand = new cCommand(objConnAux);
 			cRS objRS = new cRS(objConnAux);
@@ -3652,7 +3267,7 @@ namespace prmCotacao
 			//busca a maior data em que há cotação para o ativo recebido por parâmetro
 			System.DateTime dtmDataMaxima = objCalculadorData.CotacaoDataMaximaConsultar(pstrCodigo, "Cotacao");
 
-			System.DateTime dtmDataSegundaFeira = default(System.DateTime);
+			System.DateTime dtmDataSegundaFeira;
 
 			if (pdtmDataBase != frwInterface.cConst.DataInvalida) {
 				dtmDataSegundaFeira = PrimeiraSemanaDataCalcular(pdtmDataBase);
@@ -3660,10 +3275,8 @@ namespace prmCotacao
 				dtmDataSegundaFeira = PrimeiraSemanaDataCalcular(pstrCodigo, objConnAux);
 			}
 
-			System.DateTime dtmDataSextaFeira = default(System.DateTime);
-
-			//a data maior da semana é sempre a data de sexta-feira, que são quatro dias após a segunda
-			dtmDataSextaFeira = dtmDataSegundaFeira.AddDays(4);
+		    //a data maior da semana é sempre a data de sexta-feira, que são quatro dias após a segunda
+			DateTime dtmDataSextaFeira = dtmDataSegundaFeira.AddDays(4);
 
 			//EXCLUI OS DADOS A PARTIR DA PRIMEIRA SEGUNDA-FEIRA, POIS ESTES DADOS SERÃO RECALCULADOS.
 			objCommand.Execute(" DELETE " + " FROM Cotacao_Semanal " + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBD.CampoDateFormatar(dtmDataSegundaFeira));
@@ -3676,14 +3289,12 @@ namespace prmCotacao
 
 
 			if (pdtmDataBase != frwInterface.cConst.DataInvalida) {
-				System.DateTime dtmCotacaoAnteriorData = default(System.DateTime);
-
-				//consulta a primeira data anterior que tem cotação.
+			    //consulta a primeira data anterior que tem cotação.
 
 				//dtmCotacaoAnteriorData = AtivoCotacaoAnteriorDataConsultar(pstrCodigo, pdtmDataBase _
 				//, "Cotacao_Semanal", objConnAux)
 
-				dtmCotacaoAnteriorData = AtivoCotacaoAnteriorDataConsultar(pstrCodigo, dtmDataSegundaFeira, "Cotacao_Semanal", objConnAux);
+				DateTime dtmCotacaoAnteriorData = AtivoCotacaoAnteriorDataConsultar(pstrCodigo, dtmDataSegundaFeira, "Cotacao_Semanal", objConnAux);
 
                 decimal valorDeAbertura = 0;
 				//busca o valor de fechamento nesta data.
@@ -3695,34 +3306,15 @@ namespace prmCotacao
 				decCotacaoAnterior = 0;
 			}
 
+		    objRS.ExecuteQuery(" select count(1) as contador " + " from Cotacao_Semanal " + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBD.CampoDateFormatar(dtmDataSegundaFeira) + " and Data <= " + FuncoesBD.CampoDateFormatar(dtmDataSextaFeira));
 
-			//Dim dtmSplitData As Date
-			//Dim dblSplitRazao As Double
-			//Dim dblSplitRazaoInvertida As Double
-
-			//indica se a operação no banco de dados deve ser um INSERT ou um UPDATE.
-			string strOperacaoBD = null;
-
-			objRS.ExecuteQuery(" select count(1) as contador " + " from Cotacao_Semanal " + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBD.CampoDateFormatar(dtmDataSegundaFeira) + " and Data <= " + FuncoesBD.CampoDateFormatar(dtmDataSextaFeira));
-
-			if (Convert.ToInt32(objRS.Field("Contador")) > 0) {
-				//se já tem cotação para a primeira semana tem que fazer apenas um UPDATE
-				strOperacaoBD = "UPDATE";
-			} else {
-				strOperacaoBD = "INSERT";
-			}
+            //indica se a operação no banco de dados deve ser um INSERT ou um UPDATE.
+            string strOperacaoBd = Convert.ToInt32(objRS.Field("Contador")) > 0 ? "UPDATE" : "INSERT";
 
 			objRS.Fechar();
 
-			//Dim dtmDataPrimeiraCotacaoSemana As Date
-
-			//Dim lstQueries As List(Of String) = Nothing
-
-			//Dim strFrom As String
-
-
 			while ((dtmDataSegundaFeira <= dtmDataMaxima) && (objCommand.TransStatus)) {
-				CotacaoSemanalDadosGerar(pstrCodigo, dtmDataSegundaFeira, dtmDataSextaFeira, strOperacaoBD, objConnAux, ref decCotacaoAnterior);
+				CotacaoSemanalDadosGerar(pstrCodigo, dtmDataSegundaFeira, dtmDataSextaFeira, strOperacaoBd, objConnAux, ref decCotacaoAnterior);
 
 				//incrementa a data de segunda-feira em uma semana.
 				dtmDataSegundaFeira = dtmDataSegundaFeira.AddDays(7);
@@ -3731,7 +3323,7 @@ namespace prmCotacao
 				dtmDataSextaFeira = dtmDataSextaFeira.AddDays(7);
 
 				//depois da primeira iteração a operação é sempre INSERT
-				strOperacaoBD = "INSERT";
+				strOperacaoBd = "INSERT";
 
 				objRS.Fechar();
 
@@ -3739,7 +3331,7 @@ namespace prmCotacao
 
 			objCommand.CommitTrans();
 
-			functionReturnValue = objCommand.TransStatus;
+			bool functionReturnValue = objCommand.TransStatus;
 
 			objConnAux.FecharConexao();
 			return functionReturnValue;
@@ -3757,9 +3349,7 @@ namespace prmCotacao
 
 		    decimal decCotacaoAnterior = default(decimal);
 
-			System.DateTime dtmCotacaoAnteriorData = default(System.DateTime);
-
-			objCommand.BeginTrans();
+		    objCommand.BeginTrans();
 
 			DateTime dtmDataSegundaFeira = PrimeiraSemanaDataCalcular(pdtmDataBase);
 
@@ -3775,9 +3365,9 @@ namespace prmCotacao
 				dtmDataSegundaFeira = PrimeiraSemanaDataCalcular(Convert.ToDateTime(objRSSplit.Field("Data")));
 
 				//a data maior da semana é sempre a data de sexta-feira, que são quatro dias após a segunda
-				System.DateTime dtmDataSextaFeira = dtmDataSegundaFeira.AddDays(4);
+				DateTime dtmDataSextaFeira = dtmDataSegundaFeira.AddDays(4);
 
-				dtmCotacaoAnteriorData = AtivoCotacaoAnteriorDataConsultar(pstrCodigo, dtmDataSegundaFeira, "Cotacao_Semanal", objConnAux);
+				DateTime dtmCotacaoAnteriorData = AtivoCotacaoAnteriorDataConsultar(pstrCodigo, dtmDataSegundaFeira, "Cotacao_Semanal", objConnAux);
 
 				//busca o valor de fechamento nesta data.
 			    decimal pdecValorAberturaRet = -1M;
@@ -3819,20 +3409,15 @@ namespace prmCotacao
 
 			string strLog = "";
 
-			string strQuery = null;
-
-		    strQuery = " select Codigo " + " from Cotacao " + " where not exists " + "(" + " select 1 " + " from Ativos_Desconsiderados " + " where Cotacao.Codigo = Ativos_Desconsiderados.Codigo " + ")";
+		    string strQuery = " select Codigo " + " from Cotacao " + " where not exists " + "(" + " select 1 " + " from Ativos_Desconsiderados " + " where Cotacao.Codigo = Ativos_Desconsiderados.Codigo " + ")";
 
 
 			if (pdtmData != frwInterface.cConst.DataInvalida) {
 				strQuery = strQuery + " and Data >= " + FuncoesBD.CampoDateFormatar(pdtmData);
-
 			}
-
 
 			if (pstrAtivos != String.Empty) {
 				strQuery = strQuery + " and INSTR(" + FuncoesBD.CampoStringFormatar(pstrAtivos) + ", '#' & Codigo & '#') > 0";
-
 			}
 
 			strQuery = strQuery + " group by Codigo ";
@@ -4303,7 +3888,7 @@ namespace prmCotacao
 		    //Dim objstructMediaEscolha As structIndicadorEscolha
 
 			//Dim colMediaEscolhaAux As Collection = New Collection
-			List<cMediaDTO> lstMediasSelecionadasAux = new List<cMediaDTO>();
+			var lstMediasSelecionadasAux = new List<cMediaDTO>();
 
 			//For Each objstructMediaEscolha In pcolMediaEscolha
 
@@ -4378,9 +3963,7 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		private cEnum.enumRetorno MMAritmeticaRetroativoUnitCalcular(string pstrCodigo, string pstrDado, string pstrPeriodoDuracao, int pintNumPeriodos, System.DateTime pdtmDataFinal)
 		{
-			cEnum.enumRetorno functionReturnValue;
-
-			cConexao objConnAux = new cConexao();
+		    cConexao objConnAux = new cConexao();
 
 			cCommand objCommand = new cCommand(objConnAux);
 
@@ -4390,7 +3973,7 @@ namespace prmCotacao
 
 			System.DateTime dtmDataInicial = default(System.DateTime);
 
-		    string strTabelaDados = null;
+		    string strTabelaDados;
 			//TABELA ONDE SERÃO BUSCADOS OS DADOS PARA CALCULAR A MÉDIA
 			string strTabelaMedia = null;
 			//TABELA ONDE O CÁLCULO DA MÉDIA SERÁ ARMAZENADO
@@ -4437,7 +4020,7 @@ namespace prmCotacao
 
 			}
 
-			string strMediaTipo = null;
+			string strMediaTipo;
 
 			if (pstrDado == "VALOR") {
 				strMediaTipo = "MMA";
@@ -4532,9 +4115,7 @@ namespace prmCotacao
 			cRS objRSDataInicial = new cRS(objConnAux);
 			cRS objRSDataFinal = new cRS(objConnAux);
 
-			double dblMedia = 0;
-
-			//executa o recordset de datas iniciais
+		    //executa o recordset de datas iniciais
 
 			strQuery = "select Data " + " from " + strTabelaDados + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBD.CampoDateFormatar(dtmDataInicial);
 
@@ -4571,7 +4152,7 @@ namespace prmCotacao
 
 			while (!objRSDataFinal.EOF) {
 				//calcula a média entre os dois recordsets
-				dblMedia = MMAritmeticaCalcular(pstrCodigo, Convert.ToDateTime(objRSDataInicial.Field("Data")), Convert.ToDateTime(objRSDataFinal.Field("Data")), pintNumPeriodos, strTabelaDados, pstrDado, objConnAux);
+				double dblMedia = MMAritmeticaCalcular(pstrCodigo, Convert.ToDateTime(objRSDataInicial.Field("Data")), Convert.ToDateTime(objRSDataFinal.Field("Data")), pintNumPeriodos, strTabelaDados, pstrDado, objConnAux);
 
 				//atualiza a média no banco de dados
 				MMAtualizar(pstrCodigo, Convert.ToDateTime(objRSDataFinal.Field("Data")), pintNumPeriodos, strTabelaMedia, dblMedia, strMediaTipo, objConnAux);
@@ -4587,14 +4168,8 @@ namespace prmCotacao
 
 			objCommand.CommitTrans();
 
-			if (objCommand.TransStatus) {
-				functionReturnValue = frwInterface.cEnum.enumRetorno.RetornoOK;
-			} else {
-				functionReturnValue = frwInterface.cEnum.enumRetorno.RetornoErroInesperado;
-			}
-
 			objConnAux.FecharConexao();
-			return functionReturnValue;
+            return objCommand.TransStatus ? cEnum.enumRetorno.RetornoOK : cEnum.enumRetorno.RetornoErroInesperado;
 
 		}
 
@@ -4699,7 +4274,7 @@ namespace prmCotacao
 
 			objRS.Fechar();
 
-			cWeb objWeb = new cWeb(objConexao);
+			cWeb objWebLocal = new cWeb(objConexao);
 
 		    System.DateTime dtmData = pdtmData;
 			//Dim strDataAux As String
@@ -4713,15 +4288,13 @@ namespace prmCotacao
 			int intContadorLoop = 0;
 
 
-			foreach (string strAtivos_loopVariable in colAtivos) {
-				strAtivos = strAtivos_loopVariable;
+			foreach (string strAtivosLoop in colAtivos) {
 				intContadorLoop += 1;
-				Trace.WriteLine(intContadorLoop.ToString() + ": " + strAtivos);
 
-				string strURL = "http://www.bmfbovespa.com.br/Pregao-Online/ExecutaAcaoAjax.asp?CodigoPapel=" + strAtivos;
+				string strUrl = "http://www.bmfbovespa.com.br/Pregao-Online/ExecutaAcaoAjax.asp?CodigoPapel=" + strAtivosLoop;
 
 
-				if (objWeb.DownloadWithProxy(strURL, strCaminhoPadrao + "temp", "cotacao.xml")) {
+				if (objWebLocal.DownloadWithProxy(strUrl, strCaminhoPadrao + "temp", "cotacao.xml")) {
 					var objArquivoXml = new cArquivoXML(strCaminhoPadrao + "temp\\cotacao.xml");
 
 
@@ -4738,7 +4311,7 @@ namespace prmCotacao
 
 
 						if (decValorAbertura != 0) {
-							string strCodigo = (string) objArquivoXml.LerAtributo("Codigo");
+							var strCodigo = (string) objArquivoXml.LerAtributo("Codigo");
 
 							//strDataAux = objArquivoXML.LerAtributo("Data")
 
@@ -4755,7 +4328,7 @@ namespace prmCotacao
 							decimal decOscilacao = Convert.ToDecimal(objArquivoXml.LerAtributo("Oscilacao", 0));
 
 							//CONSULTA A COTAÇÃO ANTERIOR PARA O ATIVO
-							System.DateTime dtmCotacaoAnteriorData = AtivoCotacaoAnteriorDataConsultar(strCodigo, pdtmData, "Cotacao");
+							DateTime dtmCotacaoAnteriorData = AtivoCotacaoAnteriorDataConsultar(strCodigo, pdtmData, "Cotacao");
 
 
 							if (dtmCotacaoAnteriorData != frwInterface.cConst.DataInvalida) {
@@ -4837,19 +4410,20 @@ namespace prmCotacao
 
 		}
 
-		/// <summary>
-		/// Exclui as cotações das datas recebidas por parâmetros e recalcula os dados semanais se
-		/// for necessário
-		/// </summary>
-		/// <param name="parrData">Array contendo a data das cotações que devem ser excluídas.
-		/// O array está ordenado em ordem crescente.</param>
-		/// <returns>
-		/// RetornoOK = operação executada com sucesso.
-		/// RetornoErroInesperado = algum erro de banco de dados ou de programação.
-		/// RetornoErro2 = existem cotações posteriores às datas recebidas por parâmetro.
-		/// </returns>
-		/// <remarks></remarks>
-		public cEnum.enumRetorno CotacaoExcluir(System.DateTime[] parrData, bool pblnDadosSemanaisRecalcular)
+	    /// <summary>
+	    /// Exclui as cotações das datas recebidas por parâmetros e recalcula os dados semanais se
+	    /// for necessário
+	    /// </summary>
+	    /// <param name="parrData">Array contendo a data das cotações que devem ser excluídas.
+	    /// O array está ordenado em ordem crescente.</param>
+	    /// <param name="pblnDadosSemanaisRecalcular"></param>
+	    /// <returns>
+	    /// RetornoOK = operação executada com sucesso.
+	    /// RetornoErroInesperado = algum erro de banco de dados ou de programação.
+	    /// RetornoErro2 = existem cotações posteriores às datas recebidas por parâmetro.
+	    /// </returns>
+	    /// <remarks></remarks>
+	    public cEnum.enumRetorno CotacaoExcluir(System.DateTime[] parrData, bool pblnDadosSemanaisRecalcular)
 		{
 			cEnum.enumRetorno functionReturnValue;
 
@@ -4979,18 +4553,11 @@ namespace prmCotacao
 
 			cRS objRS = new cRS(objConexaoAux);
 
-			cRS objRSSemanal = new cRS(objConexaoAux);
+			cRS objRsSemanal = new cRS(objConexaoAux);
 
-			string strQuery = null;
+		    //indica o nome da tabela de cotações, de acordo com a duração do período das cotações
 
-			//indica o nome da tabela de cotações, de acordo com a duração do período das cotações
-			string strTabela = null;
-
-			if (pstrPeriodo == "DIARIO") {
-				strTabela = "Cotacao";
-			} else {
-				strTabela = "Cotacao_Semanal";
-			}
+		    string strTabela = pstrPeriodo == "DIARIO" ? "Cotacao" : "Cotacao_Semanal";
 
 			string strWhere = String.Empty;
 
@@ -5003,7 +4570,7 @@ namespace prmCotacao
 			objCommand.Execute("DELETE " + " FROM Cotacao_Anterior ");
 
 			//busca todos os ativos do período e a menor data para ser utilizada como data base.
-			strQuery = " select Codigo, max(Data) as DataAnterior " + " from " + strTabela;
+			string strQuery = " select Codigo, max(Data) as DataAnterior " + " from " + strTabela;
 
 			if (!string.IsNullOrEmpty(strWhere))
 				strWhere = strWhere + " and ";
@@ -5046,11 +4613,11 @@ namespace prmCotacao
 				} else {
 					//busca da primeira data da semana, pois pdtmDataInicial recebido por parâmetro pode 
 					//uma data de meio de semana
-					objRSSemanal.ExecuteQuery(" SELECT Data " + "FROM Cotacao_Semanal " + "WHERE Codigo = " + FuncoesBD.CampoStringFormatar(objRS.Field("Codigo").ToString()) + " AND Data <= " + FuncoesBD.CampoDateFormatar(pdtmDataInicial) + " AND DataFinal >= " + FuncoesBD.CampoDateFormatar(pdtmDataInicial));
+					objRsSemanal.ExecuteQuery(" SELECT Data " + "FROM Cotacao_Semanal " + "WHERE Codigo = " + FuncoesBD.CampoStringFormatar(objRS.Field("Codigo").ToString()) + " AND Data <= " + FuncoesBD.CampoDateFormatar(pdtmDataInicial) + " AND DataFinal >= " + FuncoesBD.CampoDateFormatar(pdtmDataInicial));
 
-					dtmData = Convert.ToDateTime(objRSSemanal.Field("Data"));
+					dtmData = Convert.ToDateTime(objRsSemanal.Field("Data"));
 
-					objRSSemanal.Fechar();
+					objRsSemanal.Fechar();
 
 				}
 
@@ -5428,8 +4995,8 @@ namespace prmCotacao
 			while ((!objRS.EOF) && (objCommand.TransStatus))
 			{
 
-			    string strNomePregao = (string) objRS.Field("Nome_Pregao");
-			    string strTipoAcao = (string) objRS.Field("Tipo_Acao");
+			    var strNomePregao = (string) objRS.Field("Nome_Pregao");
+			    var strTipoAcao = (string) objRS.Field("Tipo_Acao");
 				if (strNome_Pregao_Nao_Encontrado != strNomePregao || strTipo_Acao_Nao_Encontrado != strTipoAcao) {
 					//se a ação não está marcada como não encontrada na tabela de ativos prossegue.
 					//Caso contrário o programa vai para o próximo registro pois não entrará neste IF.
@@ -6176,20 +5743,17 @@ namespace prmCotacao
 		/// <param name="pintVolumeMedioNumRegistrosRet">Número de registros do volume que serão mostrados</param>
 		/// <remarks></remarks>
 		private void ValoresExtremosUnitarioCalcular(string pstrCodigoAtivo, string pstrPeriodicidade, bool pblnMMDesenhar, List<cMediaDTO> plstMediasSelecionadas, bool pblnVolumeDesenhar, bool pblnIFRDesenhar, int pintIFRNumPeriodos, System.DateTime pdtmDataInicial, System.DateTime pdtmDataFinal, double pdblOperador,
-
 		double pdblOperadorInvertido, ref decimal pdecValorMinimoRet, ref decimal pdecValorMaximoRet, ref double pdblVolumeMinimoRet, ref double pdblVolumeMaximoRet, ref int pintContadorIFRRet, ref int pintContadorIFRMedioRet, ref int pintVolumeMedioNumRegistrosRet, ref List<cMediaDTO> plstMediasRet)
 		{
 			cRS objRS = new cRS(objConexao);
 
-			string strQuery = null;
-
-			string strTabelaCotacao = string.Empty;
+		    string strTabelaCotacao = string.Empty;
 			string strTabelaMedia = string.Empty;
 			string strTabelaIFR = string.Empty;
 
 			cCalculadorTabelas.TabelasCalcular(pstrPeriodicidade, ref strTabelaCotacao, ref strTabelaMedia, ref strTabelaIFR);
 
-			strQuery = ConsultaUnitariaGerar(pstrCodigoAtivo, pdtmDataInicial, pdtmDataFinal, strTabelaCotacao, pdblOperador, pdblOperadorInvertido, "EXTREMOS");
+			string strQuery = ConsultaUnitariaGerar(pstrCodigoAtivo, pdtmDataInicial, pdtmDataFinal, strTabelaCotacao, pdblOperador, pdblOperadorInvertido, "EXTREMOS");
 
 			objRS.ExecuteQuery(strQuery);
 
@@ -6555,20 +6119,9 @@ namespace prmCotacao
 
 						objRSListSplit.MoveNext();
 
-
-						if (objRSListSplit.EOF) {
-							//se chegou ao fim do RS de splits, marca como data mínima para próxima iteração
-							dtmDataMinima = pdtmDataInicial;
-
-
-						} else {
-							//a data mínima é a data do split
-							dtmDataMinima = Convert.ToDateTime(objRSListSplit.Field("Data"));
-
-						}
+						dtmDataMinima = objRSListSplit.EOF ? pdtmDataInicial : Convert.ToDateTime(objRSListSplit.Field("Data"));
 
 					}
-					//If Not objRSSplit.EOF Then
 
 				}
 
@@ -6586,9 +6139,7 @@ namespace prmCotacao
 		{
 			cRSList objRS = new cRSList(objConexao);
 
-			string strSQL = null;
-
-			strSQL = " SELECT CODIGO, Min(DATA)  As DATA " + "FROM " + "(" + " SELECT CODIGO, DATA " + " FROM Split " + " WHERE TIPO Not In('DESD', 'CISAO')" + " And codigo Not In ('BBAS3', 'BBDC4', 'BRAP4', 'CIEL3', 'COCE5', 'CSNA3', 'ELET3', 'FFTL4', 'ITSA4', 'ITUB3', 'ITUB4', 'POMO4', 'TNLP4', 'USIM5', 'VALE3', 'VALE5', 'BVMF3' " + ", 'PINE4', 'TMAR5', 'BEES3', 'PSSA3', 'ITSA3', 'POSI3', 'USIM3', 'PETR3', 'PETR4', 'ETER3', 'TLPP3', 'TLPP4', 'NATU3', 'GETI3', 'GETI4', 'AMAR3', 'VIVO4') " + " And data <= #2011-05-02# " + " GROUP BY CODIGO, DATA " + " HAVING(Count(1) > 1) " + ") " + "GROUP BY CODIGO " + "ORDER BY Min(data) ";
+		    string strSQL = " SELECT CODIGO, Min(DATA)  As DATA " + "FROM " + "(" + " SELECT CODIGO, DATA " + " FROM Split " + " WHERE TIPO Not In('DESD', 'CISAO')" + " And codigo Not In ('BBAS3', 'BBDC4', 'BRAP4', 'CIEL3', 'COCE5', 'CSNA3', 'ELET3', 'FFTL4', 'ITSA4', 'ITUB3', 'ITUB4', 'POMO4', 'TNLP4', 'USIM5', 'VALE3', 'VALE5', 'BVMF3' " + ", 'PINE4', 'TMAR5', 'BEES3', 'PSSA3', 'ITSA3', 'POSI3', 'USIM3', 'PETR3', 'PETR4', 'ETER3', 'TLPP3', 'TLPP4', 'NATU3', 'GETI3', 'GETI4', 'AMAR3', 'VIVO4') " + " And data <= #2011-05-02# " + " GROUP BY CODIGO, DATA " + " HAVING(Count(1) > 1) " + ") " + "GROUP BY CODIGO " + "ORDER BY Min(data) ";
 
 			objRS.AdicionarQuery(strSQL);
 			objRS.ExecuteQuery();
