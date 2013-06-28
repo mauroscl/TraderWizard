@@ -9,7 +9,8 @@ namespace ServicosDeInterface
 	public class GeradorToolTip
 	{
 
-		public static string GerarToolTipRelatorioSetupEntrada(string pstrCodigo, cEnum.enumSetup pintIDSetup, cIFRSobrevendido pobjIFRSobrevendido, cEnum.enumClassifMedia pintID_CM, cEnum.enumCriterioClassificacaoMedia pintIDCriterioCM, DateTime pdtmData)
+		public static string GerarToolTipRelatorioSetupEntrada(string pstrCodigo, cEnum.enumSetup pintIdSetup, cIFRSobrevendido pobjIfrSobrevendido, 
+            cEnum.enumClassifMedia pintIdClassificaoMedia, cEnum.enumCriterioClassificacaoMedia pintIdCriterioClassificacaoMedia, DateTime pdtmData)
 		{
 
 			cConexao objConexao = new cConexao();
@@ -19,23 +20,19 @@ namespace ServicosDeInterface
 			cCarregadorCriterioClassificacaoMedia objCarregadorCriterioCM = new cCarregadorCriterioClassificacaoMedia();
 			cCarregadorIFRDiarioFaixa objCarregadorIFRDiarioFaixa = new cCarregadorIFRDiarioFaixa(objConexao);
 
-			Setup objSetup = objCarregadorSetup.CarregaPorID(pintIDSetup);
-			cClassifMedia objCM = objCarregadorCM.CarregaPorID(pintID_CM);
-			cCriterioClassifMedia objCriterioCM = objCarregadorCriterioCM.CarregaPorID(pintIDCriterioCM);
+			Setup objSetup = objCarregadorSetup.CarregaPorID(pintIdSetup);
+			cClassifMedia objCM = objCarregadorCM.CarregaPorID(pintIdClassificaoMedia);
+			cCriterioClassifMedia objCriterioCM = objCarregadorCriterioCM.CarregaPorID(pintIdCriterioClassificacaoMedia);
 
-			IList<cIFRSimulacaoDiariaFaixa> lstFaixas = objCarregadorIFRDiarioFaixa.CarregaUltimaFaixaAteDataPorCriterioClassificacaoMedia(pstrCodigo, objSetup, objCM, objCriterioCM, pobjIFRSobrevendido, pdtmData);
+			IList<cIFRSimulacaoDiariaFaixa> lstFaixas = objCarregadorIFRDiarioFaixa.CarregaUltimaFaixaAteDataPorCriterioClassificacaoMedia(pstrCodigo, objSetup, objCM, objCriterioCM, pobjIfrSobrevendido, pdtmData);
 
 			objConexao.FecharConexao();
 
-			int intI = 0;
-
 			string strDescricao = string.Empty;
 
-			cIFRSimulacaoDiariaFaixa objFaixa = null;
 
-
-			for (intI = 0; intI <= lstFaixas.Count - 1; intI++) {
-				objFaixa = lstFaixas[intI];
+		    for (int intI = 0; intI <= lstFaixas.Count - 1; intI++) {
+				cIFRSimulacaoDiariaFaixa objFaixa = lstFaixas[intI];
 
 				if (strDescricao != string.Empty) {
 					strDescricao += Environment.NewLine;

@@ -120,6 +120,7 @@ namespace TraderWizard
             this.CalendarioInicial.Name = "CalendarioInicial";
             this.CalendarioInicial.TabIndex = 10;
             this.CalendarioInicial.Visible = false;
+            this.CalendarioInicial.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.CalendarioInicial_DateSelected);
             // 
             // GroupBox1
             // 
@@ -142,6 +143,7 @@ namespace TraderWizard
             this.CalendarioFinal.Name = "CalendarioFinal";
             this.CalendarioFinal.TabIndex = 12;
             this.CalendarioFinal.Visible = false;
+            this.CalendarioFinal.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.CalendarioFinal_DateSelected);
             // 
             // cmbAtivo
             // 
