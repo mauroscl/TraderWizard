@@ -41,7 +41,6 @@ namespace TraderWizard
             this.pnlAtualizacaoDiaria = new System.Windows.Forms.Panel();
             this.CalendarioInicial = new System.Windows.Forms.MonthCalendar();
             this.GroupBox1 = new System.Windows.Forms.GroupBox();
-            this.CalendarioFinal = new System.Windows.Forms.MonthCalendar();
             this.cmbAtivo = new System.Windows.Forms.ComboBox();
             this.lblAtivo = new System.Windows.Forms.Label();
             this.rdbIntraday = new System.Windows.Forms.RadioButton();
@@ -59,6 +58,7 @@ namespace TraderWizard
             this.txtAno = new System.Windows.Forms.TextBox();
             this.lblAno = new System.Windows.Forms.Label();
             this.chkCalcularDados = new System.Windows.Forms.CheckBox();
+            this.CalendarioFinal = new System.Windows.Forms.MonthCalendar();
             this.Panel1.SuspendLayout();
             this.pnlAtualizacaoDiaria.SuspendLayout();
             this.GroupBox1.SuspendLayout();
@@ -71,7 +71,7 @@ namespace TraderWizard
             this.Panel1.Controls.Add(this.btnCancelar);
             this.Panel1.Controls.Add(this.btnOK);
             this.Panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.Panel1.Location = new System.Drawing.Point(0, 297);
+            this.Panel1.Location = new System.Drawing.Point(0, 327);
             this.Panel1.Name = "Panel1";
             this.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.Panel1.Size = new System.Drawing.Size(472, 40);
@@ -101,6 +101,7 @@ namespace TraderWizard
             // pnlAtualizacaoDiaria
             // 
             this.pnlAtualizacaoDiaria.Controls.Add(this.CalendarioInicial);
+            this.pnlAtualizacaoDiaria.Controls.Add(this.CalendarioFinal);
             this.pnlAtualizacaoDiaria.Controls.Add(this.GroupBox1);
             this.pnlAtualizacaoDiaria.Controls.Add(this.btnCalendarioFinal);
             this.pnlAtualizacaoDiaria.Controls.Add(this.btnCalendarioInicial);
@@ -110,12 +111,13 @@ namespace TraderWizard
             this.pnlAtualizacaoDiaria.Controls.Add(this.Label1);
             this.pnlAtualizacaoDiaria.Location = new System.Drawing.Point(0, 28);
             this.pnlAtualizacaoDiaria.Name = "pnlAtualizacaoDiaria";
-            this.pnlAtualizacaoDiaria.Size = new System.Drawing.Size(472, 166);
+            this.pnlAtualizacaoDiaria.Size = new System.Drawing.Size(472, 196);
             this.pnlAtualizacaoDiaria.TabIndex = 1;
             // 
             // CalendarioInicial
             // 
-            this.CalendarioInicial.Location = new System.Drawing.Point(230, 0);
+            this.CalendarioInicial.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.CalendarioInicial.Location = new System.Drawing.Point(236, 0);
             this.CalendarioInicial.MaxSelectionCount = 1;
             this.CalendarioInicial.Name = "CalendarioInicial";
             this.CalendarioInicial.TabIndex = 10;
@@ -124,26 +126,17 @@ namespace TraderWizard
             // 
             // GroupBox1
             // 
-            this.GroupBox1.Controls.Add(this.CalendarioFinal);
             this.GroupBox1.Controls.Add(this.cmbAtivo);
             this.GroupBox1.Controls.Add(this.lblAtivo);
             this.GroupBox1.Controls.Add(this.rdbIntraday);
             this.GroupBox1.Controls.Add(this.rdbHistorica);
             this.GroupBox1.Controls.Add(this.rdbOnline);
-            this.GroupBox1.Location = new System.Drawing.Point(12, 59);
+            this.GroupBox1.Location = new System.Drawing.Point(6, 59);
             this.GroupBox1.Name = "GroupBox1";
-            this.GroupBox1.Size = new System.Drawing.Size(457, 103);
+            this.GroupBox1.Size = new System.Drawing.Size(457, 134);
             this.GroupBox1.TabIndex = 4;
             this.GroupBox1.TabStop = false;
             this.GroupBox1.Text = "Tipo de Atualização";
-            // 
-            // CalendarioFinal
-            // 
-            this.CalendarioFinal.Location = new System.Drawing.Point(218, -59);
-            this.CalendarioFinal.Name = "CalendarioFinal";
-            this.CalendarioFinal.TabIndex = 12;
-            this.CalendarioFinal.Visible = false;
-            this.CalendarioFinal.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.CalendarioFinal_DateSelected);
             // 
             // cmbAtivo
             // 
@@ -246,7 +239,7 @@ namespace TraderWizard
             // Label1
             // 
             this.Label1.AutoSize = true;
-            this.Label1.Location = new System.Drawing.Point(13, 11);
+            this.Label1.Location = new System.Drawing.Point(13, 7);
             this.Label1.Name = "Label1";
             this.Label1.Size = new System.Drawing.Size(63, 13);
             this.Label1.TabIndex = 5;
@@ -268,7 +261,7 @@ namespace TraderWizard
             // rdbAtualizacaoAnual
             // 
             this.rdbAtualizacaoAnual.AutoSize = true;
-            this.rdbAtualizacaoAnual.Location = new System.Drawing.Point(16, 200);
+            this.rdbAtualizacaoAnual.Location = new System.Drawing.Point(12, 230);
             this.rdbAtualizacaoAnual.Name = "rdbAtualizacaoAnual";
             this.rdbAtualizacaoAnual.Size = new System.Drawing.Size(109, 17);
             this.rdbAtualizacaoAnual.TabIndex = 2;
@@ -281,7 +274,7 @@ namespace TraderWizard
             this.pnlAtualizacaoAnual.Controls.Add(this.txtAno);
             this.pnlAtualizacaoAnual.Controls.Add(this.lblAno);
             this.pnlAtualizacaoAnual.Enabled = false;
-            this.pnlAtualizacaoAnual.Location = new System.Drawing.Point(0, 223);
+            this.pnlAtualizacaoAnual.Location = new System.Drawing.Point(-4, 253);
             this.pnlAtualizacaoAnual.Name = "pnlAtualizacaoAnual";
             this.pnlAtualizacaoAnual.Size = new System.Drawing.Size(364, 46);
             this.pnlAtualizacaoAnual.TabIndex = 3;
@@ -308,12 +301,20 @@ namespace TraderWizard
             this.chkCalcularDados.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.chkCalcularDados.Checked = true;
             this.chkCalcularDados.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkCalcularDados.Location = new System.Drawing.Point(12, 275);
+            this.chkCalcularDados.Location = new System.Drawing.Point(8, 305);
             this.chkCalcularDados.Name = "chkCalcularDados";
             this.chkCalcularDados.Size = new System.Drawing.Size(98, 17);
             this.chkCalcularDados.TabIndex = 4;
             this.chkCalcularDados.Text = "Calcular Dados";
             this.chkCalcularDados.UseVisualStyleBackColor = true;
+            // 
+            // CalendarioFinal
+            // 
+            this.CalendarioFinal.Location = new System.Drawing.Point(236, 31);
+            this.CalendarioFinal.Name = "CalendarioFinal";
+            this.CalendarioFinal.TabIndex = 13;
+            this.CalendarioFinal.Visible = false;
+            this.CalendarioFinal.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.CalendarioFinal_DateSelected);
             // 
             // frmCotacaoAtualizarPeriodo
             // 
@@ -321,7 +322,7 @@ namespace TraderWizard
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancelar;
-            this.ClientSize = new System.Drawing.Size(472, 337);
+            this.ClientSize = new System.Drawing.Size(472, 367);
             this.Controls.Add(this.chkCalcularDados);
             this.Controls.Add(this.pnlAtualizacaoAnual);
             this.Controls.Add(this.rdbAtualizacaoAnual);
@@ -362,11 +363,11 @@ namespace TraderWizard
 		private System.Windows.Forms.Label lblAno;
 		private System.Windows.Forms.RadioButton rdbIntraday;
 		private System.Windows.Forms.ComboBox cmbAtivo;
-		private System.Windows.Forms.Label lblAtivo;
-		private System.Windows.Forms.MonthCalendar CalendarioFinal;
+        private System.Windows.Forms.Label lblAtivo;
 		private System.Windows.Forms.MonthCalendar CalendarioInicial;
 		private System.Windows.Forms.Button btnCalendarioFinal;
 		private System.Windows.Forms.Button btnCalendarioInicial;
 		internal System.Windows.Forms.CheckBox chkCalcularDados;
+        private MonthCalendar CalendarioFinal;
 	}
 }

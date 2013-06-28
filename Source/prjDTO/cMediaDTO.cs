@@ -73,7 +73,7 @@ namespace prjDTO
 			//Return MyBase.Equals(obj)
             cMediaDTO objAux = (cMediaDTO)obj;
 
-            if (strTipo == objAux.Tipo & intNumPeriodos == objAux.NumPeriodos & strDado == objAux.Dado)
+            if (strTipo == objAux.Tipo && intNumPeriodos == objAux.NumPeriodos && strDado == objAux.Dado)
             {
 				//Se o tipo da média e o número de peridos são iguais, os objetos são considerados iguais.
 				return true;

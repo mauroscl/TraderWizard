@@ -1,10 +1,4 @@
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
 using DataBase;
 namespace prmCotacao
 {
@@ -33,10 +27,8 @@ namespace prmCotacao
 
 			cRS objRSAux = new cRS(objConexao);
 
-			string strQuery = null;
-
-			string strTabelaCotacao = null;
-			string strTabelaMedia = null;
+		    string strTabelaCotacao;
+			string strTabelaMedia;
 
 			if (pstrPeriodo == "DIARIO") {
 				strTabelaCotacao = "COTACAO";
@@ -48,11 +40,9 @@ namespace prmCotacao
 
 			objCommand.BeginTrans();
 
-			strQuery = "Select codigo " + "FROM ativo " + "WHERE codigo Not In " + "(" + " SELECT codigo " + "FROM ativos_desconsiderados" + ")" + " And " + " (( " + " Select Count(1) " + " FROM " + strTabelaCotacao + " WHERE ativo.codigo = " + strTabelaCotacao + ".codigo " + " ) >= 15)" + " And (( " + " Select Count(1) " + " FROM " + strTabelaCotacao + " WHERE ativo.codigo = " + strTabelaCotacao + ".codigo " + ") - " + "(" + " Select Count(1) " + " FROM " + strTabelaMedia + " WHERE ativo.codigo = " + strTabelaMedia + ".codigo " + " And tipo = 'IFR2' " + " And numperiodos = 13 " + ") <> 14) " + " And Exists " + "(" + " Select 1 " + " FROM " + strTabelaCotacao + " WHERE ATIVO.CODIGO = " + strTabelaCotacao + ".CODIGO " + " And " + strTabelaCotacao + ".DATA = #12-14-2009# " + ")";
+			string strQuery = "Select codigo " + "FROM ativo " + "WHERE codigo Not In " + "(" + " SELECT codigo " + "FROM ativos_desconsiderados" + ")" + " And " + " (( " + " Select Count(1) " + " FROM " + strTabelaCotacao + " WHERE ativo.codigo = " + strTabelaCotacao + ".codigo " + " ) >= 15)" + " And (( " + " Select Count(1) " + " FROM " + strTabelaCotacao + " WHERE ativo.codigo = " + strTabelaCotacao + ".codigo " + ") - " + "(" + " Select Count(1) " + " FROM " + strTabelaMedia + " WHERE ativo.codigo = " + strTabelaMedia + ".codigo " + " And tipo = 'IFR2' " + " And numperiodos = 13 " + ") <> 14) " + " And Exists " + "(" + " Select 1 " + " FROM " + strTabelaCotacao + " WHERE ATIVO.CODIGO = " + strTabelaCotacao + ".CODIGO " + " And " + strTabelaCotacao + ".DATA = #12-14-2009# " + ")";
 
 			objRS.ExecuteQuery(strQuery);
-
-
 
 			while (!objRS.EOF) {
                 strQuery = " SELECT TOP 2 DATA " + " FROM " + "(" + " SELECT DATA " + " FROM " + strTabelaMedia + " WHERE CODIGO = " + FuncoesBD.CampoStringFormatar(Convert.ToString(objRS.Field("Codigo"))) + " and Tipo = " + FuncoesBD.CampoStringFormatar("IFR2") + " And NumPeriodos = 13 " + " order by data " + ")";

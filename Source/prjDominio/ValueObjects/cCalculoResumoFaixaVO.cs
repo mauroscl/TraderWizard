@@ -35,7 +35,7 @@ namespace prjModelo.ValueObjects
 		public override bool Equals(object obj)
 		{
 			var objCalculadorFaixaResumoVO = (cCalculoFaixaResumoVO)obj;
-			return (objCalculadorFaixaResumoVO.DataSaida == dtmDataSaida & objCalculadorFaixaResumoVO.ClassifMedia.Equals(objClassifMedia));
+			return (objCalculadorFaixaResumoVO.DataSaida == dtmDataSaida && objCalculadorFaixaResumoVO.ClassifMedia.Equals(objClassifMedia));
 		}
 
 

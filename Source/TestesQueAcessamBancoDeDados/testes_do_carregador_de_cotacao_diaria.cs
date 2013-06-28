@@ -107,10 +107,10 @@ namespace TestProject1
 			var objAtivo = FuncoesGerais.RetornaAtivo("BBAS3");
 			var objCotacao = objCarregadorDeCotacoes.CarregarPorPeriodo(objAtivo, new System.DateTime(2011, 8, 3), new System.DateTime(2011, 8, 3), string.Empty, lstMediasParaCarregar, false).Single();
 
-			Assert.AreEqual(48.3343228670924, objCotacao.Medias.Where(x => x.Tipo == "IFR2" & x.NumPeriodos == 13).Single().Valor);
-			Assert.AreEqual(26.2214200591533, objCotacao.Medias.Where(x => x.Tipo == "MME" & x.NumPeriodos == 21).Single().Valor);
-			Assert.AreEqual(26.7531931064397, objCotacao.Medias.Where(x => x.Tipo == "MME" & x.NumPeriodos == 49).Single().Valor);
-			Assert.AreEqual(27.8102979102056, objCotacao.Medias.Where(x => x.Tipo == "MME" & x.NumPeriodos == 200).Single().Valor);
+			Assert.AreEqual(48.3343228670924, objCotacao.Medias.Single(x => x.Tipo == "IFR2" && x.NumPeriodos == 13).Valor);
+			Assert.AreEqual(26.2214200591533, objCotacao.Medias.Single(x => x.Tipo == "MME" && x.NumPeriodos == 21).Valor);
+			Assert.AreEqual(26.7531931064397, objCotacao.Medias.Single(x => x.Tipo == "MME" && x.NumPeriodos == 49).Valor);
+			Assert.AreEqual(27.8102979102056, objCotacao.Medias.Single(x => x.Tipo == "MME" && x.NumPeriodos == 200).Valor);
 
 		}
 

@@ -232,7 +232,7 @@ namespace prjModelo.Entidades
 			foreach (cIFRSobrevendido objIfrSobrevendido in lstIFRSobrevendidoAux) {
 				//se o ifr sobrevendido ainda não está na lista tenta buscar a última simulação que contenha este ifr anterior à data de referência.
 
-				if (!Simulacoes.Any(x => x.Value.DataEntradaEfetiva < pdtmDataReferencia & x.Value.Detalhes.Any(y => y.IFRSobreVendido.Equals(objIfrSobrevendido)))) {
+				if (!Simulacoes.Any(x => x.Value.DataEntradaEfetiva < pdtmDataReferencia && x.Value.Detalhes.Any(y => y.IFRSobreVendido.Equals(objIfrSobrevendido)))) {
 					var lstSimulacao = objCarregador.CarregarUltimasSimulacoesPorIFRSobrevendido(this, pobjSetup, objIfrSobrevendido, pdtmDataReferencia);
 
 
@@ -255,7 +255,7 @@ namespace prjModelo.Entidades
 
 		public IList<cDesdobramento> RetornaListaParcialDeDesdobramentos(DateTime pdtmDataInicial, DateTime pdtmDataFinal)
 		{
-			return Desdobramentos.Where(x => x.Data >= pdtmDataInicial & x.Data <= pdtmDataFinal).ToList();
+			return Desdobramentos.Where(x => x.Data >= pdtmDataInicial && x.Data <= pdtmDataFinal).ToList();
 		}
 
 		public IList<cDesdobramento> RetornaDesdobramentosDeUmaData(DateTime pdtmData)

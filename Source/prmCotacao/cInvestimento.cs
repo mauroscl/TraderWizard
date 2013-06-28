@@ -1,5 +1,4 @@
 using System.Windows.Forms;
-using Microsoft.VisualBasic;
 using System;
 using System.Data;
 using DataBase;
@@ -14,21 +13,21 @@ namespace prmCotacao
 
 		private DataTable dtbCotacao;
 
-		private cConexao objConexao;
+		private readonly cConexao _conexao;
 		public cInvestimento(cConexao pobjConexao)
 		{
-			objConexao = pobjConexao;
+			_conexao = pobjConexao;
 		}
 
 		public bool CotacoesBuscar()
 		{
 			bool functionReturnValue = false;
 
-			cWeb objWeb = new cWeb(objConexao);
+			cWeb objWeb = new cWeb(_conexao);
 
 			DataSet dtsCotacao = new DataSet();
 
-			string strAtivo = "PETR3|PETR4|VALE3|VALE5|BBAS3";
+			const string strAtivo = "PETR3|PETR4|VALE3|VALE5|BBAS3";
 
 
 			try {
@@ -59,16 +58,12 @@ namespace prmCotacao
 
 		public bool FundoVALECalcular(int pintFormaCalculo, ref decimal pdecOscilacaoRet, ref decimal pdecVALE3MediaAtualRet, ref decimal pdecVALE5MediaAtualRet, ref decimal pdecVALE3MediaAnteriorRet, ref decimal pdecVALE5MediaAnteriorRet)
 		{
-			bool functionReturnValue = false;
+			bool functionReturnValue;
 
-			cCotacao objCotacao = new cCotacao(objConexao);
-
-			decimal decVALE3Oscilacao = default(decimal);
-			decimal decVALE5Oscilacao = default(decimal);
+			cCotacao objCotacao = new cCotacao(_conexao);
 
 
-
-			try {
+		    try {
 				//medias da vale nas posições 2 e 3 do datatable
 			    decimal decValorMedio;
 			    if (decimal.TryParse((string) dtbCotacao.Rows[2]["Medio"], out decValorMedio)) {
@@ -90,19 +85,21 @@ namespace prmCotacao
 
 				if (pintFormaCalculo == 0) {
 				    decimal decOscilacao;
+				    decimal decVale3Oscilacao;
 				    if (decimal.TryParse((string) dtbCotacao.Rows[2]["Oscilacao"], out decOscilacao)) {
-						decVALE3Oscilacao = decOscilacao;
+						decVale3Oscilacao = decOscilacao;
 					} else {
-						decVALE3Oscilacao = 0;
+						decVale3Oscilacao = 0;
 					}
 
-					if (decimal.TryParse((string)dtbCotacao.Rows[3]["Oscilacao"],out decOscilacao)) {
-						decVALE5Oscilacao = decOscilacao;
+				    decimal decVale5Oscilacao;
+				    if (decimal.TryParse((string)dtbCotacao.Rows[3]["Oscilacao"],out decOscilacao)) {
+						decVale5Oscilacao = decOscilacao;
 					} else {
-						decVALE5Oscilacao = 0;
+						decVale5Oscilacao = 0;
 					}
 
-					pdecOscilacaoRet = Math.Round(decVALE3Oscilacao * 0.6948M + decVALE5Oscilacao * 0.3052M, 3);
+					pdecOscilacaoRet = Math.Round(decVale3Oscilacao * 0.6948M + decVale5Oscilacao * 0.3052M, 3);
 
 
 				} else {
@@ -139,15 +136,12 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		public bool FundoPETROBRASCalcular(int pintFormaCalculo, ref decimal pdecOscilacaoRet, ref decimal pdecPETR3MediaAtualRet, ref decimal pdecPETR4MediaAtualRet, ref decimal pdecPETR3MediaAnteriorRet, ref decimal pdecPETR4MediaAnteriorRet)
 		{
-			bool functionReturnValue = false;
+			bool functionReturnValue;
 
-			cCotacao objCotacao = new cCotacao(objConexao);
-
-			decimal decPETR3Oscilacao = default(decimal);
-			decimal decPETR4Oscilacao = default(decimal);
+			cCotacao objCotacao = new cCotacao(_conexao);
 
 
-			try {
+		    try {
 				//medias da PETROBRAS nas posições 0 e 1 do datatable
 			    decimal decValorMedio;
 			    if (decimal.TryParse((string)dtbCotacao.Rows[0]["Medio"], out decValorMedio))
@@ -171,13 +165,15 @@ namespace prmCotacao
 					//forma de cálculo pelo fechamento
 
 				    decimal decOscilacao;
+				    decimal decPETR3Oscilacao = default(decimal);
 				    if (decimal.TryParse((string) dtbCotacao.Rows[0]["Oscilacao"], out decOscilacao)) {
 						decPETR3Oscilacao = decOscilacao;
 					} else {
 						decPETR3Oscilacao = 0;
 					}
 
-					if (decimal.TryParse((string)dtbCotacao.Rows[1]["Oscilacao"], out decOscilacao)) {
+				    decimal decPETR4Oscilacao = default(decimal);
+				    if (decimal.TryParse((string)dtbCotacao.Rows[1]["Oscilacao"], out decOscilacao)) {
 						decPETR4Oscilacao = decOscilacao;
 					} else {
 						decPETR4Oscilacao = 0;
@@ -213,7 +209,7 @@ namespace prmCotacao
 		{
 			bool functionReturnValue = false;
 
-			cCotacao objCotacao = new cCotacao(objConexao);
+			cCotacao objCotacao = new cCotacao(_conexao);
 
 
 			try {

@@ -18,25 +18,6 @@ namespace prjModelo.Carregadores
 		{
 		}
 
-		//Public Function Excluir(ByVal pstrCodigo As String, ByVal pobjSetup As cSetup, pobjIFRSobreVendido As cIFRSobrevendido) As Boolean
-
-		//    Dim objCommand As New cCommand(Me.Conexao)
-
-		//    Dim strSQL As String
-
-		//    strSQL = "DELETE " & vbNewLine
-		//    strSQL = strSQL & " FROM IFR_Simulacao_Diaria_Detalhe " & vbNewLine
-		//    strSQL = strSQL & " WHERE Codigo = " & FuncoesBD.CampoFormatar(pstrCodigo) & vbNewLine
-		//    strSQL = strSQL & " AND ID_Setup = " & FuncoesBD.CampoFormatar(pobjSetup.ID)
-		//    strSQL = strSQL & " AND ID_IFR_Sobrevendido = " & FuncoesBD.CampoFormatar(pobjIFRSobreVendido.ID)
-
-		//    objCommand.Execute(strSQL)
-
-		//    Return objCommand.TransStatus
-
-		//End Function
-
-
 		public override string GeraInsert(cModelo pobjModelo)
 		{
 

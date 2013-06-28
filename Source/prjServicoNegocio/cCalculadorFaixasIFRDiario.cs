@@ -53,7 +53,7 @@ namespace prjServicoNegocio
 
 
 			if (intNumTradesTotal != 0) {
-				int intNumTradesVerdadeiro = (from itens in plstTrades where (itens.Valor >= pdblValorMinimo) & (itens.Valor <= pdblValorMaximo) && (itens.Verdadeiro) select itens ).Count();
+				int intNumTradesVerdadeiro = (from itens in plstTrades where (itens.Valor >= pdblValorMinimo) && (itens.Valor <= pdblValorMaximo) && (itens.Verdadeiro) select itens ).Count();
 
 				int intNumTradesMelhorEntrada = (from itens in plstTradesMelhorEntrada where (itens.Valor >= dblValorMinimoAux) && (itens.Valor <= dblValorMaximoAux) select itens).Count();
 
@@ -201,7 +201,7 @@ namespace prjServicoNegocio
 								if ((objFaixaInferiorDTOAux.NumTradesMelhorEntrada + objFaixaSuperiorDTOAux.NumTradesMelhorEntrada) == intQuantidadeMelhorEntrada) {
 
 
-									if (objFaixaInferiorDTORetorno == null | objFaixaSuperiorDTORetorno == null) {
+									if (objFaixaInferiorDTORetorno == null || objFaixaSuperiorDTORetorno == null) {
 										//Primeira faixa calculada 
 										objFaixaInferiorDTORetorno = objFaixaInferiorDTOAux;
 										objFaixaSuperiorDTORetorno = objFaixaSuperiorDTOAux;
@@ -231,7 +231,7 @@ namespace prjServicoNegocio
 									//If objFaixaInferiorDTORetorno Is Nothing Or objFaixaSuperiorDTORetorno Is Nothing Then
 
 
-									if (((objFaixaInferiorDTOAux.NumTradesTotal + objFaixaSuperiorDTOAux.NumTradesTotal) == intQuantidadeMelhorEntrada) | (objFaixaInferiorDTOAux.NumTradesMelhorEntrada == 1) | (objFaixaInferiorDTOAux.ValorMaximo - objFaixaInferiorDTOAux.ValorMinimo == 0.5) | (objFaixaInferiorDTOAux.NumTradesTotal == objFaixaInferiorDTOAux.NumTradesMelhorEntrada)) {
+									if (((objFaixaInferiorDTOAux.NumTradesTotal + objFaixaSuperiorDTOAux.NumTradesTotal) == intQuantidadeMelhorEntrada) || (objFaixaInferiorDTOAux.NumTradesMelhorEntrada == 1) || (objFaixaInferiorDTOAux.ValorMaximo - objFaixaInferiorDTOAux.ValorMinimo == 0.5) || (objFaixaInferiorDTOAux.NumTradesTotal == objFaixaInferiorDTOAux.NumTradesMelhorEntrada)) {
 										//Se a faixa inferior atual já tem o número de trades igual ao número de trades com melhor entrada
 										//ou se tem apenas 1 trade de melhor entrada
 										//ou se a distância entre seus valores máximos e mínimos é 0.5, que é a menor diferença que pode haver numa faixa
@@ -258,7 +258,7 @@ namespace prjServicoNegocio
 				}
 
 
-			    if ((objFaixaInferiorDTORetorno != null) & (objFaixaSuperiorDTORetorno != null)) {
+			    if ((objFaixaInferiorDTORetorno != null) && (objFaixaSuperiorDTORetorno != null)) {
 					int intNumTradesDuasFaixas = objFaixaInferiorDTORetorno.NumTradesTotal + objFaixaSuperiorDTORetorno.NumTradesTotal;
 
 					//verifica qual a melhor faixa: faixa única ou a melhor com duas faixas. Se terminarem empatados, a preferência é da faixa única.
@@ -366,7 +366,7 @@ namespace prjServicoNegocio
 					//Só é necessário calcular as faixas se existem simulações para a classificação de média desta iteração.
 
 					//Calcula o número de trades que são melhor entrada.
-					var intQuantidadeMelhorEntrada = objRSTrades.Dados.Where(linha => Convert.ToBoolean(linha["MelhorEntrada"])).Count();
+					var intQuantidadeMelhorEntrada = objRSTrades.Dados.Count(linha => Convert.ToBoolean(linha["MelhorEntrada"]));
 
 
 					if (intQuantidadeMelhorEntrada > 0) {
@@ -406,235 +406,11 @@ namespace prjServicoNegocio
 			} catch (Exception ex) {
 			    MessageBox.Show(ex.Message,"Trader Wizard", MessageBoxButtons.OK,MessageBoxIcon.Error);
 
-				//Debug.Print("Codigo: " & strCodigo)
-
 				return false;
 
 			}
 
 		}
-
-
-		#region "Deprecated"
-
-		/// <summary>
-		/// Comentada por Mauro, 17/07/2011. Foi criada uma nova função para calcular as faixas
-		/// Calcula a(s) faixa(s) de um dos critérios de classificação de média
-		/// </summary>
-		/// <param name="pobjCM">objeto que indica a classificação das média, ou seja o alinhamento das médias e dos preços entre si</param>
-		/// <param name="pobjCriterioCM">objeto que indica o criterio que deve ser calculado</param>
-		/// <param name="pintQuantidadeMelhorEntrada">quantidade total de trades com melhor entrada</param>
-		/// <param name="pdtmData">Data para a qual será calculada a faixa. Considera os trades realizados até esta faixa</param>
-		/// <returns>Uma ou duas faixas contendo o(s) melhor(es) valores para o critério recebido por parâmetro</returns>
-		/// <remarks></remarks>
-		//Private Function CalcularFaixasParaUmCriterio(ByVal pobjCM As cClassifMedia, ByVal pobjCriterioCM As cCriterioClassifMedia _
-		//, ByVal pintQuantidadeMelhorEntrada As Integer, pobjIFRSobrevendido As cIFRSobrevendido) As IList(Of cIFRSimulacaoDiariaFaixa)
-
-		//    Dim lstRetorno As IList(Of cIFRSimulacaoDiariaFaixa)
-		//    lstRetorno = New List(Of cIFRSimulacaoDiariaFaixa)
-
-		//    Dim strRetorno As String = vbNullString
-
-		//    Dim structFaixaUnica As structFaixa
-		//    Dim structFaixaInferiorMedia As structFaixa
-		//    Dim structFaixaSuperiorMedia As structFaixa
-		//    Dim structFaixaInferiorPontoMedio As structFaixa
-		//    Dim structFaixaSuperiorPontoMedio As structFaixa
-
-		//    Dim dblMedia As Double
-		//    Dim dblPontoMedio As Double
-
-		//    'Calcula a faixa única
-		//    structFaixaUnica = FaixaCalcular(pobjCM, pobjCriterioCM, , , dblMedia, dblPontoMedio)
-
-		//    If structFaixaUnica.intNumTrades = pintQuantidadeMelhorEntrada Then
-
-		//        'indica que o retorno será a faixa única.
-		//        strRetorno = "U"
-
-		//    Else
-
-		//        'calcula as duas faixas geradas pela divisão pelo ponto médio
-		//        structFaixaInferiorPontoMedio = FaixaCalcular(pobjCM, pobjCriterioCM, structFaixaUnica.dblValorMinimo, dblPontoMedio)
-
-		//        structFaixaSuperiorPontoMedio = FaixaCalcular(pobjCM, pobjCriterioCM, dblPontoMedio, structFaixaUnica.dblValorMaximo)
-
-		//        If (structFaixaInferiorPontoMedio.intNumTrades + structFaixaSuperiorPontoMedio.intNumTrades) = pintQuantidadeMelhorEntrada Then
-		//            strRetorno = "PM"
-		//        Else
-
-		//            If (dblMedia >= structFaixaInferiorPontoMedio.dblValorMinimo And dblMedia <= structFaixaInferiorPontoMedio.dblValorMaximo) _
-		//            Or (dblMedia >= structFaixaSuperiorPontoMedio.dblValorMinimo And dblMedia <= structFaixaSuperiorPontoMedio.dblValorMaximo) Then
-
-		//                'só é necessário calcular as faixas pela média se a média estiver contida em uma das faixas calculadas pelo ponto médio.
-		//                'Caso a média estiver fora das duas faixas, a divisão de faixas será igual e não é necessário calcular novamente.
-		//                structFaixaInferiorMedia = FaixaCalcular(pobjCM, pobjCriterioCM, structFaixaUnica.dblValorMinimo, dblMedia)
-		//                structFaixaSuperiorMedia = FaixaCalcular(pobjCM, pobjCriterioCM, dblMedia, structFaixaUnica.dblValorMaximo)
-		//                If (structFaixaInferiorMedia.intNumTrades + structFaixaSuperiorMedia.intNumTrades) = pintQuantidadeMelhorEntrada Then
-		//                    strRetorno = "M"
-		//                End If
-
-		//            Else
-
-		//                'para não ocorrer erros de controle, se a faixa estabelecida pela média for igual a faixa estabelecida pelo ponto médio
-		//                'vamos atribuir as faixas do ponto médio nas faixas da média.
-		//                structFaixaInferiorMedia = structFaixaInferiorPontoMedio
-		//                structFaixaSuperiorMedia = structFaixaSuperiorPontoMedio
-
-		//            End If
-
-		//        End If
-
-		//    End If
-
-
-		//    If strRetorno = vbNullString Then
-
-		//        'Se o controle do retorno ainda não foi setado, significa que nenhuma das estratégias conseguiu retornar somente as melhores entradas.
-		//        If (structFaixaInferiorMedia.intNumTrades + structFaixaSuperiorMedia.intNumTrades) _
-		//        < (structFaixaInferiorPontoMedio.intNumTrades + structFaixaSuperiorPontoMedio.intNumTrades) _
-		//        And (structFaixaInferiorMedia.intNumTrades + structFaixaSuperiorMedia.intNumTrades) < structFaixaUnica.intNumTrades Then
-		//            strRetorno = "M"
-		//        ElseIf (structFaixaInferiorPontoMedio.intNumTrades + structFaixaSuperiorPontoMedio.intNumTrades) < structFaixaUnica.intNumTrades Then
-		//            strRetorno = "PM"
-		//        Else
-		//            strRetorno = "U"
-		//        End If
-
-		//    End If
-
-		//    Select Case strRetorno
-
-		//        Case "U"
-
-		//            'Se a faixa única já traz apenas os trades de melhor entrada, retorna esta faixa
-		//            lstRetorno.Add(New cIFRSimulacaoDiariaFaixa(strCodigo, objSetup, pobjCM, pobjCriterioCM, pobjIFRSobrevendido _
-		//            , structFaixaUnica.intNumTentativasMinimo, structFaixaUnica.dblValorMinimo, structFaixaUnica.dblValorMaximo))
-
-		//        Case "PM"
-
-		//            'Retorna as faixas do ponto médio
-		//            lstRetorno.Add(New cIFRSimulacaoDiariaFaixa(strCodigo, objSetup, pobjCM, pobjCriterioCM, pobjIFRSobrevendido _
-		//            , structFaixaInferiorPontoMedio.intNumTentativasMinimo, structFaixaInferiorPontoMedio.dblValorMinimo _
-		//            , structFaixaInferiorPontoMedio.dblValorMaximo))
-
-		//            lstRetorno.Add(New cIFRSimulacaoDiariaFaixa(strCodigo, objSetup, pobjCM, pobjCriterioCM, pobjIFRSobrevendido _
-		//            , structFaixaSuperiorPontoMedio.intNumTentativasMinimo, structFaixaSuperiorPontoMedio.dblValorMinimo _
-		//            , structFaixaSuperiorPontoMedio.dblValorMaximo))
-
-		//        Case "M"
-
-		//            'Retorna as faixas da média
-		//            lstRetorno.Add(New cIFRSimulacaoDiariaFaixa(strCodigo, objSetup, pobjCM, pobjCriterioCM, pobjIFRSobrevendido _
-		//            , structFaixaInferiorMedia.intNumTentativasMinimo, structFaixaInferiorMedia.dblValorMinimo _
-		//            , structFaixaInferiorMedia.dblValorMaximo))
-
-		//            lstRetorno.Add(New cIFRSimulacaoDiariaFaixa(strCodigo, objSetup, pobjCM, pobjCriterioCM, pobjIFRSobrevendido _
-		//            , structFaixaSuperiorMedia.intNumTentativasMinimo, structFaixaSuperiorMedia.dblValorMinimo _
-		//            , structFaixaSuperiorMedia.dblValorMaximo))
-
-		//    End Select
-
-		//    Return lstRetorno
-
-		//End Function
-
-		//Private Function FaixaCalcular(ByVal pobjCM As cClassifMedia, ByVal pobjCriterioCM As cCriterioClassifMedia, Optional ByVal pdblPontoInferior As Double = -1 _
-		//, Optional ByVal pdblPontoSuperior As Double = -1, Optional ByRef pdblMediaRet As Double = -1, Optional ByRef pdblPontoMedioRet As Double = -1) As structFaixa
-
-		//    Dim structFaixaRet As structFaixa
-		//    Dim objRS As cRS = New cRS(objConexao)
-
-		//    Dim strSQL As String
-
-		//    strSQL = " SELECT MIN(" & pobjCriterioCM.CampoBD & ") AS Valor_Minimo, MAX(" & pobjCriterioCM.CampoBD & ") AS Valor_Maximo" & vbNewLine
-		//    strSQL = strSQL & ", MIN(NumTentativas) AS NumTentativas_Minimo " & vbNewLine
-
-		//    If pdblPontoInferior = -1 _
-		//    And pdblPontoSuperior = -1 Then
-		//        'Só a necessidade de calcular média é ponto médio quando não são passados pontos superiores e inferiores
-		//        strSQL = strSQL & ", AVG(CDBL(" & pobjCriterioCM.CampoBD & ")) AS Media" & vbNewLine
-		//        strSQL = strSQL & ", (MIN(" & pobjCriterioCM.CampoBD & ") +  MAX(" & pobjCriterioCM.CampoBD & "))/2 AS Ponto_Medio " & vbNewLine
-
-		//    End If
-
-		//    strSQL = strSQL & "FROM IFR_Simulacao_Diaria " & vbNewLine
-		//    strSQL = strSQL & "WHERE Codigo = " & FuncoesBD.CampoFormatar(objAtivo.Codigo) & vbNewLine
-		//    strSQL = strSQL & " AND ID_Setup = " & FuncoesBD.CampoFormatar(objSetup.ID) & vbNewLine
-		//    strSQL = strSQL & " AND ID_CM = " & FuncoesBD.CampoFormatar(pobjCM.ID) & vbNewLine
-		//    strSQL = strSQL & " AND MelhorEntrada = " & FuncoesBD.CampoFormatar(True) & vbNewLine
-
-		//    If pdblPontoInferior <> -1 Then
-
-		//        strSQL = strSQL & " AND " & pobjCriterioCM.CampoBD & " >= " & FuncoesBD.CampoFormatar(pdblPontoInferior) & vbNewLine
-
-		//    End If
-
-		//    If pdblPontoSuperior <> -1 Then
-
-		//        strSQL = strSQL & " AND " & pobjCriterioCM.CampoBD & " <= " & FuncoesBD.CampoFormatar(pdblPontoSuperior) & vbNewLine
-
-		//    End If
-
-		//    objRS.ExecuteQuery(strSQL)
-
-		//    structFaixaRet.dblValorMinimo = cUtil.PontoInferiorCalcular(CDbl(objRS.Field("Valor_Minimo")))
-		//    structFaixaRet.dblValorMaximo = cUtil.PontoSuperiorCalcular(CDbl(objRS.Field("Valor_Maximo")))
-		//    structFaixaRet.intNumTentativasMinimo = CInt(objRS.Field("NumTentativas_Minimo"))
-
-		//    If pdblPontoInferior = -1 _
-		//    And pdblPontoSuperior = -1 Then
-
-		//        'Só a necessidade de retornar média é ponto médio quando não são passados pontos superiores e inferiores
-		//        pdblMediaRet = CDbl(objRS.Field("Media"))
-		//        pdblPontoMedioRet = CDbl(objRS.Field("Ponto_Medio"))
-
-		//    End If
-
-		//    objRS.Fechar()
-
-		//    'Calcula o número de trades que será realizado por esta faixa. 
-		//    NumTradesFaixaCalcular(pobjCM, pobjCriterioCM, structFaixaRet)
-
-		//    Return structFaixaRet
-
-		//End Function
-
-		//Private Sub NumTradesFaixaCalcular(ByVal pobjCM As cClassifMedia, ByVal pobjCriterioCM As cCriterioClassifMedia, ByRef pstructFaixaRet As structFaixa)
-
-		//    Dim objRS As cRS = New cRS(objConexao)
-
-		//    Dim strSQL As String
-
-		//    strSQL = "SELECT COUNT(1) AS NumTrades " & vbNewLine
-		//    strSQL = strSQL & "FROM IFR_Simulacao_Diaria " & vbNewLine
-		//    strSQL = strSQL & "WHERE Codigo = " & FuncoesBD.CampoFormatar(objAtivo.Codigo) & vbNewLine
-		//    strSQL = strSQL & " AND ID_Setup = " & FuncoesBD.CampoFormatar(objSetup.ID) & vbNewLine
-		//    strSQL = strSQL & " AND ID_CM = " & FuncoesBD.CampoFormatar(pobjCM.ID) & vbNewLine
-		//    strSQL = strSQL & " AND " & pobjCriterioCM.CampoBD & " >= " & FuncoesBD.CampoFormatar(pstructFaixaRet.dblValorMinimo) & vbNewLine
-		//    strSQL = strSQL & " AND " & pobjCriterioCM.CampoBD & " <= " & FuncoesBD.CampoFormatar(pstructFaixaRet.dblValorMaximo) & vbNewLine
-		//    strSQL = strSQL & " AND NumTentativas >= " & pstructFaixaRet.intNumTentativasMinimo
-
-		//    objRS.ExecuteQuery(strSQL)
-
-		//    pstructFaixaRet.intNumTrades = CInt(objRS.Field("NumTrades"))
-
-		//    objRS.Fechar()
-
-		//End Sub
-
-		//Private Structure structFaixa
-		//    Dim dblValorMinimo As Double
-		//    Dim dblValorMaximo As Double
-		//    Dim intNumTentativasMinimo As Integer
-		//    Dim intNumTrades As Integer
-		//    Dim intNumTradesVerdadeiro As Integer
-		//End Structure
-
-		#endregion
-
-
-
 
 	}
 }

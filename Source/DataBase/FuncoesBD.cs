@@ -32,14 +32,6 @@ namespace DataBase
 
 		}
 
-		//Comentado em 29/12/2010 porque não é mais utilizado.
-		//Public Function CampoStringAsplasDuplasFormatar(ByVal pstrNome As String) As String
-
-		//    'aqui formata para colocar aspas duplas antes e depois do nome
-		//    Return """" & pstrNome & """"
-
-		//End Function
-
 		//Descrição: Gera o código chave para uma tabela, adicionando 1 ao código máximo já existente
 		//Parâmetros:
 
@@ -76,11 +68,6 @@ namespace DataBase
 
 		public static string CampoDateFormatar(System.DateTime pdtmData)
 		{
-
-			//Return Format(pdtmData, "dd/mm/yyyy")
-			//Return "#" & Microsoft.VisualBasic.FormatDateTime(pdtmData, DateFormat.ShortDate) & "#"
-			//Return "#" & CStr(pdtmData) & "#"
-
 			return "#" + pdtmData.Month + "/" + pdtmData.Day + "/" + pdtmData.Year + "#";
 
 		}

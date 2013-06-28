@@ -90,7 +90,7 @@ namespace prjModelo.Regras
 
 			if ((objSimulacaoComMelhorEntradaNaMesmaDataDeSaida != null) && !objSimulacaoComMelhorEntradaNaMesmaDataDeSaida.Equals(objSimulacaoComMelhorEntradaPorAgrupadorDeTentativas)) {
 				if (pobjSimulacaoDiariaDetalhe.IFRSimulacaoDiaria.EhMelhorEntrada(objSimulacaoComMelhorEntradaNaMesmaDataDeSaida)) {
-					objDetalheAlterado = objSimulacaoComMelhorEntradaNaMesmaDataDeSaida.Detalhes.Where(x => x.IFRSobreVendido.Equals(pobjSimulacaoDiariaDetalhe.IFRSobreVendido)).FirstOrDefault();
+					objDetalheAlterado = objSimulacaoComMelhorEntradaNaMesmaDataDeSaida.Detalhes.FirstOrDefault(x => x.IFRSobreVendido.Equals(pobjSimulacaoDiariaDetalhe.IFRSobreVendido));
 					objDetalheAlterado.AlterarMelhorEntrada(false);
 					objManipuladorDetalhe.Adicionar(objDetalheAlterado, "UPDATE");
 				} else {

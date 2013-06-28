@@ -76,28 +76,10 @@ namespace prjModelo.DomainServices
 
 				strTabelaMME49 = '\t' + "SELECT Codigo, Data, Valor " + Environment.NewLine + '\t' + " FROM " + pstrTabelaMedia + Environment.NewLine + '\t' + " WHERE Codigo = " + FuncoesBD.CampoStringFormatar(objAtivo.Codigo) + Environment.NewLine + '\t' + " AND Tipo = " + FuncoesBD.CampoStringFormatar("MME") + Environment.NewLine + '\t' + " AND NumPeriodos = 49 " + Environment.NewLine + '\t' + " AND Data >= " + FuncoesBD.CampoDateFormatar(dtmDataInicial) + Environment.NewLine + '\t' + " AND Data <= " + FuncoesBD.CampoDateFormatar(dtmDataFinal) + Environment.NewLine;
 
-				//strTabelaMME200 = _
-				//vbTab & "SELECT Codigo, Data, Valor " & vbNewLine _
-				//& vbTab & " FROM " & pstrTabelaMedia & vbNewLine _
-				//& vbTab & " WHERE Codigo = " & FuncoesBD.CampoStringFormatar(pstrCodigo) & vbNewLine _
-				//& vbTab & " AND Tipo = " & FuncoesBD.CampoStringFormatar("MME") & vbNewLine _
-				//& vbTab & " AND NumPeriodos = 200 " & vbNewLine _
-				//& vbTab & " AND Data >= " & FuncoesBD.CampoDateFormatar(dtmDataInicial) & vbNewLine _
-				//& vbTab & " AND Data <= " & FuncoesBD.CampoDateFormatar(dtmDataFinal) & vbNewLine
-
 				//Busca as cotações em ordem decrescente.
 				strQuery = "SELECT C.ValorFechamento, C.Oscilacao, IFR.Valor, MME21.Valor AS MME21, MME49.Valor AS MME49 " + Environment.NewLine;
 
-				//& ", MME200.Valor AS MME200 " & vbNewLine
-
 				strQuery += " FROM (((" + pstrTabelaCotacao + " C INNER JOIN " + pstrTabelaIFR + " IFR" + Environment.NewLine + " ON C.Codigo = IFR.Codigo " + Environment.NewLine + " AND C.Data = IFR.Data) " + Environment.NewLine + " LEFT JOIN " + Environment.NewLine + "(" + Environment.NewLine + strTabelaMME21 + ") MME21 " + Environment.NewLine + " ON C.Codigo = MME21.Codigo " + Environment.NewLine + " AND C.Data = MME21.Data) " + Environment.NewLine + " LEFT JOIN " + Environment.NewLine + "(" + Environment.NewLine + strTabelaMME49 + ") MME49 " + Environment.NewLine + " ON C.Codigo = MME49.Codigo " + Environment.NewLine + " AND C.Data = MME49.Data " + Environment.NewLine;
-
-				//& " LEFT JOIN " & vbNewLine
-				//& "(" & vbNewLine _
-				//& strTabelaMME200 _
-				//& ") MME200 " & vbNewLine _
-				//& " ON C.Codigo = MME200.Codigo " & vbNewLine _
-				//& " AND C.Data = MME200.Data " & vbNewLine 
 
 				strQuery += " WHERE C.Codigo = " + FuncoesBD.CampoStringFormatar(objAtivo.Codigo) + Environment.NewLine + " AND IFR.NumPeriodos = 2 " + Environment.NewLine + " AND C.Data >= " + FuncoesBD.CampoDateFormatar(dtmDataInicial) + Environment.NewLine + " AND C.Data <= " + FuncoesBD.CampoDateFormatar(dtmDataFinal) + Environment.NewLine + " ORDER BY C.Data DESC";
 
@@ -109,7 +91,7 @@ namespace prjModelo.DomainServices
 
 				//While (Not objRS.EOF) And ((Not blnEncontrouPositivo) Or (Not blnEncontrouNegativo))
 
-				while ((!objRS.EOF) & (!blnEncontrouNegativo)) {
+				while ((!objRS.EOF) && (!blnEncontrouNegativo)) {
 
 					if (Convert.ToDouble(objRS.Field("Oscilacao")) < 0) {
 						//Se encontrou uma oscilação menor do que zero, marca que a mesma foi encontrada.
@@ -158,7 +140,7 @@ namespace prjModelo.DomainServices
 
 				//If objRS.EOF And ((Not blnEncontrouPositivo) Or (Not blnEncontrouNegativo)) Then
 
-				if (objRS.EOF & (!blnEncontrouNegativo)) {
+				if (objRS.EOF && (!blnEncontrouNegativo)) {
 					//se chegou no fim do RecordSet e não encontrou as oscilações positivas e negativas.
 					//busca as datas do primeiro e último dia do mês anterior
 
@@ -310,10 +292,10 @@ namespace prjModelo.DomainServices
 
 				objAtivo.CarregarCotacoes(dtmDataInicial, dtmDataFinal, lstMediasParaCarregar, true);
 
-				lstCotacoes = objAtivo.CotacoesDiarias.Where(x => x.Data >= dtmDataInicial & x.Data <= dtmDataFinal).ToList();
+				lstCotacoes = objAtivo.CotacoesDiarias.Where(x => x.Data >= dtmDataInicial && x.Data <= dtmDataFinal).ToList();
 
 
-				if (lstCotacoes.Count() == 0) {
+				if (!lstCotacoes.Any()) {
 					return null;
 
 				}
@@ -359,7 +341,7 @@ namespace prjModelo.DomainServices
 
 					//********FIM DO TRATAMENTO DOS DESDOBRAMENTOS
 
-					objMediaDoIFR =  (cMediaDiaria) objCotacaoDoFluxoDaSimulacao.Medias.Where(x => x.Tipo == "IFR2" && x.NumPeriodos == 13).Single();
+					objMediaDoIFR =  (cMediaDiaria) objCotacaoDoFluxoDaSimulacao.Medias.Single(x => x.Tipo == "IFR2" && x.NumPeriodos == 13);
 
 
 					if (objCotacaoDeEntrada == null) {
@@ -370,14 +352,14 @@ namespace prjModelo.DomainServices
 						//Para isso o valor de entrada tem que estar entre o valor máximo e valor mínimo 
 						//do período.
 
-						if (decValorEntradaAjustado >= objCotacaoDoFluxoDaSimulacao.ValorMinimo & decValorEntradaAjustado <= objCotacaoDoFluxoDaSimulacao.ValorMaximo) {
+						if (decValorEntradaAjustado >= objCotacaoDoFluxoDaSimulacao.ValorMinimo && decValorEntradaAjustado <= objCotacaoDoFluxoDaSimulacao.ValorMaximo) {
 							//marca na variável que ocorreu a entrada
 							blnEntradaEfetiva = true;
 
 							objCotacaoDeEntrada = objCotacaoDoFluxoDaSimulacao.Clonar();
 
 
-						} else if (decValorEntradaAjustado < objCotacaoDoFluxoDaSimulacao.ValorMinimo | objCotacaoDoFluxoDaSimulacao.IFR.Valor < objMediaDoIFR.Valor) {
+						} else if (decValorEntradaAjustado < objCotacaoDoFluxoDaSimulacao.ValorMinimo || objCotacaoDoFluxoDaSimulacao.IFR.Valor < objMediaDoIFR.Valor) {
 							//se o valor de entrada ficou abaixo do valor mínimo então ocorreu um gap de alta.
 							//neste caso sai da operação.
 							//ou se o valor do IFR cruzou a média para baixo então a entrada foi abortada
@@ -428,14 +410,14 @@ namespace prjModelo.DomainServices
 								//Não há como ter certeza disso. Para ter certeza só se tivessemos acesso a um gráfico
 								//de menor periodicidade;
 
-								if (!(objCotacaoDoFluxoDaSimulacao.ValorFechamento > objCotacaoDoFluxoDaSimulacao.ValorAbertura & objCotacaoDoFluxoDaSimulacao.ValorFechamento > objInformacoesDoTradeDTO.ValorDoStopLoss & objCotacaoDoFluxoDaSimulacao.ValorAbertura < decValorEntradaAjustado)) {
+								if (!(objCotacaoDoFluxoDaSimulacao.ValorFechamento > objCotacaoDoFluxoDaSimulacao.ValorAbertura 
+                                    && objCotacaoDoFluxoDaSimulacao.ValorFechamento > objInformacoesDoTradeDTO.ValorDoStopLoss 
+                                    && objCotacaoDoFluxoDaSimulacao.ValorAbertura < decValorEntradaAjustado)) {
 									//nega as três afirmações citadas. Se pelo menos uma delas retornar FALSE, vai entrar aqui
 									//e encerrar a operação. Caso contrário a operação continua.
 									blnOperacaoEncerrada = true;
 									objCotacaoDeSaida = objCotacaoDoFluxoDaSimulacao;
-
 								}
-
 
 							} else {
 								//se a data de entrada na operação não é a data atual do RS então sempre estopa a operação.

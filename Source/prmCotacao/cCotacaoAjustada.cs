@@ -1,14 +1,8 @@
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
 using prjModelo.Carregadores;
 using DataBase;
 using frwInterface;
-using prjModelo;
+
 namespace prmCotacao
 {
 
@@ -19,7 +13,7 @@ namespace prmCotacao
 
 		private readonly string strCodigoAtivo;
 
-		public cCotacaoAjustada(cConexao pobjConexao, string pstrCaminhoPadrao, string pstrCodigoAtivo)
+		public cCotacaoAjustada(cConexao pobjConexao, string pstrCodigoAtivo)
 		{
 			objConexao = pobjConexao;
 			strCodigoAtivo = pstrCodigoAtivo;
@@ -43,47 +37,45 @@ namespace prmCotacao
 				cRSList objRSSplit = null;
 				cRS objRSCotacao = new cRS(objConexao);
 
-				string strSQL = null;
-
-				//Multiplicador gerado pela acumulação de splits
+			    //Multiplicador gerado pela acumulação de splits
 				double dblMultiplicador = 1;
 
 				objCommand.BeginTrans();
 
-				cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(objConexao);
+				var objCarregadorSplit = new cCarregadorSplit(objConexao);
 
 				//busca os splits em ordem descrescente
 				objCarregadorSplit.SplitConsultar(strCodigoAtivo, new DateTime(2007, 1, 1), "D", ref objRSSplit,cConst.DataInvalida);
 
 				//busca todas as cotações da tabela "COTACAO" em ordem decrescente
-				strSQL = "SELECT Data, ValorAbertura, ValorFechamento, ValorMaximo, ValorMinimo, Diferenca, Oscilacao, Negocios_Total, Titulos_Total, Valor_Total, Sequencial " + Environment.NewLine;
-				strSQL = strSQL + "FROM Cotacao " + Environment.NewLine;
-				strSQL = strSQL + "WHERE Codigo = " + FuncoesBD.CampoStringFormatar(strCodigoAtivo);
-				strSQL = strSQL + " ORDER BY Data DESC";
+				string strSql = "SELECT Data, ValorAbertura, ValorFechamento, ValorMaximo, ValorMinimo, Diferenca, Oscilacao, Negocios_Total, Titulos_Total, Valor_Total, Sequencial " + Environment.NewLine;
+				strSql = strSql + "FROM Cotacao " + Environment.NewLine;
+				strSql = strSql + "WHERE Codigo = " + FuncoesBD.CampoStringFormatar(strCodigoAtivo);
+				strSql = strSql + " ORDER BY Data DESC";
 
-				objRSCotacao.ExecuteQuery(strSQL);
+				objRSCotacao.ExecuteQuery(strSql);
 
 
-				while ((!objRSCotacao.EOF) & objCommand.TransStatus) {
-					strSQL = "INSERT INTO Cotacao_Ajustada " + Environment.NewLine;
-					strSQL = strSQL + "(Codigo, Data, Sequencial, ValorAbertura, ValorFechamento, ValorMaximo, ValorMinimo, Diferenca " + Environment.NewLine;
-					strSQL = strSQL + ", Oscilacao, Negocios_Total, Titulos_Total, Valor_Total) " + Environment.NewLine;
-					strSQL = strSQL + "VALUES " + Environment.NewLine;
-					strSQL = strSQL + "(" + FuncoesBD.CampoStringFormatar(strCodigoAtivo);
-					strSQL = strSQL + "," + FuncoesBD.CampoDateFormatar(Convert.ToDateTime(objRSCotacao.Field("Data")));
-					strSQL = strSQL + "," + objRSCotacao.Field("Sequencial");
-					strSQL = strSQL + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("ValorAbertura")) * (decimal) dblMultiplicador);
-					strSQL = strSQL + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("ValorFechamento")) * (decimal) dblMultiplicador);
-					strSQL = strSQL + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("ValorMaximo")) * (decimal) dblMultiplicador);
-					strSQL = strSQL + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("ValorMinimo")) * (decimal) dblMultiplicador);
-					strSQL = strSQL + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("Diferenca")));
-					strSQL = strSQL + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("Oscilacao")));
-					strSQL = strSQL + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("Negocios_Total")));
-					strSQL = strSQL + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("Titulos_Total")) / (decimal) dblMultiplicador);
-					strSQL = strSQL + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("Valor_Total")));
-					strSQL = strSQL + ")";
+				while ((!objRSCotacao.EOF) && objCommand.TransStatus) {
+					strSql = "INSERT INTO Cotacao_Ajustada " + Environment.NewLine;
+					strSql = strSql + "(Codigo, Data, Sequencial, ValorAbertura, ValorFechamento, ValorMaximo, ValorMinimo, Diferenca " + Environment.NewLine;
+					strSql = strSql + ", Oscilacao, Negocios_Total, Titulos_Total, Valor_Total) " + Environment.NewLine;
+					strSql = strSql + "VALUES " + Environment.NewLine;
+					strSql = strSql + "(" + FuncoesBD.CampoStringFormatar(strCodigoAtivo);
+					strSql = strSql + "," + FuncoesBD.CampoDateFormatar(Convert.ToDateTime(objRSCotacao.Field("Data")));
+					strSql = strSql + "," + objRSCotacao.Field("Sequencial");
+					strSql = strSql + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("ValorAbertura")) * (decimal) dblMultiplicador);
+					strSql = strSql + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("ValorFechamento")) * (decimal) dblMultiplicador);
+					strSql = strSql + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("ValorMaximo")) * (decimal) dblMultiplicador);
+					strSql = strSql + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("ValorMinimo")) * (decimal) dblMultiplicador);
+					strSql = strSql + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("Diferenca")));
+					strSql = strSql + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("Oscilacao")));
+					strSql = strSql + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("Negocios_Total")));
+					strSql = strSql + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("Titulos_Total")) / (decimal) dblMultiplicador);
+					strSql = strSql + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("Valor_Total")));
+					strSql = strSql + ")";
 
-					objCommand.Execute(strSQL);
+					objCommand.Execute(strSql);
 
 					//verifica se o RS de split ainda possui registros não percorridos
 

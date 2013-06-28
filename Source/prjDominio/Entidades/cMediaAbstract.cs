@@ -30,7 +30,7 @@ namespace prjModelo.Entidades
 		{
 
 			var objMedia = (cMediaAbstract)obj;
-			if (Cotacao.Equals(objMedia.Cotacao) & Tipo == objMedia.Tipo & NumPeriodos == objMedia.NumPeriodos) {
+			if (Cotacao.Equals(objMedia.Cotacao) && Tipo == objMedia.Tipo && NumPeriodos == objMedia.NumPeriodos) {
 				return true;
 			} else {
 				return false;

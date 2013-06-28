@@ -214,7 +214,7 @@ namespace DataBase
 
 					} catch (OleDbException ex) {
 
-						if (ex.ErrorCode == -2147467259 & blnContinuarExecutando) {
+						if (ex.ErrorCode == -2147467259 && blnContinuarExecutando) {
 							//Erro de objeto bloqueado
 							System.Threading.Thread.Sleep(1000);
 
@@ -282,123 +282,8 @@ namespace DataBase
 			//blnTransStatus = False
 			intLinhasAfetadas = -1;
 
-			//marca a conexão para ser mantida até que a transação seja encerrada
-			//Me.ManterConexao = False
-
-			//ALTERADO POR MAURO, 11/08/2009
-			//NÃO PRECISA FECHAR A CONEXÃO AO FAZER ROLLBACK
-			//fecha a conexão com o banco de dados
-			//FecharConexao()
-
 		}
 
 
-		//Public Sub ExecuteQuery(ByVal pstrQuery As String)
-
-		//    Dim cmd As OracleCommand
-
-		//    Try
-
-		//        'executa a query somente se a transação está OK.
-		//        'Caso esta query esteja sendo executada fora de uma transação, 
-		//        'a propriedade blnTransStatus vai estar sempre True e não haverá problema
-		//        If Me.TransStatus Then
-
-		//            cmd = CriarComando(pstrQuery)
-		//            objOracleDR = cmd.ExecuteReader()
-		//            blnQueryStatus = True
-
-		//            'Chama o método read para o primeiro registro ficar disponível
-		//            'Se consegue ler, é porque tem dados
-		//            blnDadosExistir = objOracleDR.Read()
-		//            'quando não conseguir mais ler nenhum registro chegou ao fim (EOF).
-		//            blnEOF = Not blnDadosExistir
-
-		//        End If
-
-		//    Catch ex As OracleException
-
-		//        If Me.TransAberta Then
-		//            RollBackTrans()
-		//        End If
-
-		//        blnQueryStatus = False
-		//        blnDadosExistir = False
-		//        blnEOF = True
-
-		//        MsgBox("Erro: " & ex.Number & " - Descrição: " & ex.Message & " - Query: " & pstrQuery _
-		//        , MsgBoxStyle.Critical, "Erro de Banco de Dados")
-
-		//    Finally
-
-		//        strUltimoComando = pstrQuery
-
-		//    End Try
-
-		//End Sub
-
-		//Public Sub MoveNext()
-
-		//    blnEOF = Not objOracleDR.Read()
-
-		//End Sub
-
-		//Public Function Field(ByVal pstrCampo As String, Optional ByVal pstrRetornoErro As String = "") As String
-
-		//    Dim intOrdinal As Integer
-
-		//    Dim Tipo As Type
-
-		//    Try
-		//        If blnTransStatus Then
-		//            intOrdinal = objOracleDR.GetOrdinal(pstrCampo)
-		//        End If
-		//    Catch e As IndexOutOfRangeException
-		//        MsgBox("Erro ao consultar Campo: " & e.Message, MsgBoxStyle.Critical, "Executar Query")
-		//        Return pstrRetornoErro
-		//        Exit Function
-
-		//    Catch e As System.NullReferenceException
-		//        MsgBox("Erro ao consultar Campo: " & e.Message, MsgBoxStyle.Critical, "Executar Query")
-		//        Return pstrRetornoErro
-		//        Exit Function
-
-		//    End Try
-
-		//    If blnTransStatus Then
-
-		//        Tipo = objOracleDR.GetFieldType(intOrdinal)
-
-		//        If Not objOracleDR.IsDBNull(intOrdinal) Then
-
-		//            If Tipo.Equals(Type.GetType("System.Boolean", True, True)) Then
-		//                Return CStr(objOracleDR.GetBoolean(intOrdinal))
-		//            ElseIf Tipo.Equals(Type.GetType("System.Int16", True, True)) Then
-		//                Return CStr(objOracleDR.GetInt16(intOrdinal))
-		//            ElseIf Tipo.Equals(Type.GetType("System.String", True, True)) Then
-		//                Return CStr(objOracleDR.GetString(intOrdinal))
-		//            ElseIf Tipo.Equals(Type.GetType("System.Decimal", True, True)) Then
-		//                Return CStr(objOracleDR.GetDecimal(intOrdinal))
-		//            ElseIf Tipo.Equals(Type.GetType("System.DateTime", True, True)) Then
-		//                Return CStr(objOracleDR.GetDateTime(intOrdinal))
-		//            End If
-
-		//            Return objOracleDR.GetString(intOrdinal)
-		//        Else
-		//            Return pstrRetornoErro
-		//        End If
-
-		//    Else
-		//        Return pstrRetornoErro
-		//    End If
-
-		//End Function
-
-
-		/*protected override void Finalize()
-		{
-			//FecharConexao()
-			base.Finalize();
-		}*/
 	}
 }

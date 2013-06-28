@@ -20,7 +20,7 @@ namespace TraderWizard
 				//busca o dia anterior
 				dtmData = DateAndTime.DateAdd(DateInterval.Day, -1, dtmData);
 
-				if ((DateAndTime.Weekday(dtmData) > 1) & (DateAndTime.Weekday(dtmData) < 7)) {
+				if ((DateAndTime.Weekday(dtmData) > 1) && (DateAndTime.Weekday(dtmData) < 7)) {
 					blnOK = true;
 				}
 

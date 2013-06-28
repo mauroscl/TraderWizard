@@ -1,6 +1,5 @@
 using System.Globalization;
 using System.Windows.Forms;
-using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -191,10 +190,6 @@ namespace prmCotacao
 
 			//--NÃO PRECISA DESTE WHERE PORQUE FORAM CRIADAS VIEWS PARA AS MÉDIAS DE 21 DIAS, DIÁRIA E SEMANAL.
 			//WHERE DA MÉDIA DE 21 PERIODOS
-
-			//& " AND MME21.NumPeriodos = 21 " _
-			//& " AND MME21.Tipo = " & FuncoesBD.CampoStringFormatar("MME")
-
 
 			if (pdblTitulosTotal != -1) {
 				strQuery = strQuery + " And MV.Tipo = " + FuncoesBD.CampoStringFormatar("VMA") + " And MV.NumPeriodos = 21 " + " And MV.Valor >= " + FuncoesBD.CampoFloatFormatar(pdblTitulosTotal);
@@ -663,8 +658,6 @@ namespace prmCotacao
 
 
 			if (pintNegociosTotal != -1) {
-				//strQuery = strQuery _
-				//& " And " & pstrTabelaCotacao & ".negocios_total >= " & FuncoesBD.CampoFloatFormatar(pintNegociosTotal)
 
 				strQuery = strQuery + " AND " + FiltroVolumeNegociosGerar(pstrTabelaCotacao, pstrTabelaCotacao, pintNegociosTotal);
 
@@ -672,8 +665,6 @@ namespace prmCotacao
 
 
 			if (pdecValorTotal != -1) {
-				//strQuery = strQuery _
-				//& " And " & pstrTabelaCotacao & ".valor_total >= " & FuncoesBD.CampoDecimalFormatar(pdecValorTotal)
 
 				strQuery = strQuery + " AND " + FiltroVolumeFinanceiroGerar(pstrTabelaCotacao, pstrTabelaCotacao, pdecValorTotal);
 
@@ -700,16 +691,14 @@ namespace prmCotacao
 
 			cRS objRS = new cRS(objConexao);
 
-			string strSQL = null;
-
-			dynamic lngSequencialAtual = plngSequencialInicial;
+		    dynamic lngSequencialAtual = plngSequencialInicial;
 			bool blnOK = false;
 			dynamic lngUltimoSequencialSobrevendido = plngSequencialInicial;
 
 			//Enquanto não encontrar o número de tentativas
 
 			while (!blnOK) {
-				strSQL = "SELECT TOP 5 Sequencial, Valor " + Environment.NewLine;
+				string strSQL = "SELECT TOP 5 Sequencial, Valor " + Environment.NewLine;
 				strSQL = strSQL + " FROM Cotacao C INNER JOIN IFR_Diario IFR " + Environment.NewLine;
 				strSQL = strSQL + " ON C.Codigo = IFR.Codigo " + Environment.NewLine;
 				strSQL = strSQL + " AND C.Data = IFR.Data " + Environment.NewLine;
@@ -720,7 +709,7 @@ namespace prmCotacao
 				objRS.ExecuteQuery(strSQL);
 
 
-				while ((!objRS.EOF) & (!blnOK)) {
+				while ((!objRS.EOF) && (!blnOK)) {
 
 
 					if (Convert.ToDouble(objRS.Field("Valor")) <= pdblValorMaximoIFRSobrevendido) {
@@ -1067,8 +1056,6 @@ namespace prmCotacao
 				System.Threading.ThreadPool.SetMinThreads(intMinWorkThreads, intMinIOThreads);
 				System.Threading.ThreadPool.SetMaxThreads(intMaxWorkThreads, intMaxIOThreads);
 
-				//MsgBox("Tempo de Duração da Simulação:" & Format((Now - dtmHoraInicial).ToString("g")), , "Trader Wizard")
-
 				return true;
 
 
@@ -1271,7 +1258,7 @@ namespace prmCotacao
 
 			//Para cada um dos itens que está com IFR sobrevendido.
 
-			while ((!objRS.EOF) & (objConexao.TransStatus)) {
+			while ((!objRS.EOF) && (objConexao.TransStatus)) {
 				lstFaixas.Clear();
 
 				strValorRealizacaoParcial = string.Empty;
@@ -1525,14 +1512,6 @@ namespace prmCotacao
 
 			}
 
-
-			//--NÃO PRECISA DESTE WHERE PORQUE FORAM CRIADAS VIEWS PARA AS MÉDIAS DE 21 DIAS, DIÁRIA E SEMANAL.
-			//strQuery = strQuery _
-			//& " AND MME21.NumPeriodos = 21 " _
-			//& " AND MME21.Tipo = " & FuncoesBD.CampoStringFormatar("MME")
-
-
-
 			if (pdblTitulosTotal != -1) {
 				strQuery = strQuery + '\t' + " And MV.Tipo = " + FuncoesBD.CampoStringFormatar("VMA") + Environment.NewLine + '\t' + " And MV.NumPeriodos = 21 " + Environment.NewLine + '\t' + " And MV.Valor >= " + FuncoesBD.CampoFloatFormatar(pdblTitulosTotal) + Environment.NewLine;
 
@@ -1540,16 +1519,12 @@ namespace prmCotacao
 
 
 			if (pintNegociosTotal != -1) {
-				//strQuery = strQuery _
-				//& vbTab & " And " & pstrTabelaCotacao & ".negocios_total >= " & FuncoesBD.CampoFloatFormatar(pintNegociosTotal) & vbNewLine
 				strQuery = strQuery + " AND " + FiltroVolumeNegociosGerar(pstrTabelaCotacao, pstrTabelaCotacao, pintNegociosTotal);
 
 			}
 
 
 			if (pdecValorTotal != -1) {
-				//strQuery = strQuery _
-				//& vbTab & " And " & pstrTabelaCotacao & ".valor_total >= " & FuncoesBD.CampoDecimalFormatar(pdecValorTotal) & vbNewLine
 				strQuery = strQuery + " AND " + FiltroVolumeFinanceiroGerar(pstrTabelaCotacao, pstrTabelaCotacao, pdecValorTotal);
 
 
@@ -1640,7 +1615,7 @@ namespace prmCotacao
 			//verifica se o setup utiliza cotacao de data anterior. se utiliza tem que buscar a data anterior.
 			//o único que não utiliza é o IFR 2 abaixo de 5.
 
-			if (pintSetup != cEnum.enumSetup.IFRSemFiltro & pintSetup != cEnum.enumSetup.IFRSemFiltroRP) {
+			if (pintSetup != cEnum.enumSetup.IFRSemFiltro && pintSetup != cEnum.enumSetup.IFRSemFiltroRP) {
 
 				if (pstrPeriodo == "DIARIO") {
 					dtmDataAnterior = objCotacao.CotacaoAnteriorDataConsultar(dtmDataAtual, strTabelaCotacao);
@@ -1658,7 +1633,7 @@ namespace prmCotacao
 
 			if (pstrPeriodo == "SEMANAL") {
 
-				if (pdblTitulosTotal != -1 | pintNegociosTotal != -1 | pdecValorTotal != -1) {
+				if (pdblTitulosTotal != -1 || pintNegociosTotal != -1 || pdecValorTotal != -1) {
 					//Os filtros referentes ao volume negociado são informados em dias.
 					//Quando as cotações são semanais, tem que verificar quantos dias tem na semana e multiplicar
 					//os valores informados pelo número de dias
@@ -1855,7 +1830,7 @@ namespace prmCotacao
 				//final recebida por parâmetro ou encontrar um cruzamento.
 				//Se um cruzamento for encontrado, os próximos splits não precisam ser procurados.
 
-				while (!objRSSplit.EOF & !blnCruzamentoEncontrado) {
+				while (!objRSSplit.EOF && !blnCruzamentoEncontrado) {
 					//busca a data um dia anteriro à data do split
 					dtmDataFinal = Convert.ToDateTime(objRSSplit.Field("Data")).AddDays(-1);
 
@@ -2121,7 +2096,7 @@ namespace prmCotacao
 				dtmDataInicial = pdtmDataInicial;
 
 
-				while (!objRSSplit.EOF & !blnAcionamentoEncontrado) {
+				while (!objRSSplit.EOF && !blnAcionamentoEncontrado) {
 					//a data final é sempre um dia antes da data do split
 
 					dtmDataFinal = Convert.ToDateTime(objRSSplit.Field("Data")).AddDays(-1);
@@ -2216,7 +2191,7 @@ namespace prmCotacao
 			string strQuery = null;
 
 
-			if (pintRealizacaoParcialTipo == cEnum.enumRealizacaoParcialTipo.AlijamentoRisco | pintRealizacaoParcialTipo == cEnum.enumRealizacaoParcialTipo.PercentualFixo) {
+			if (pintRealizacaoParcialTipo == cEnum.enumRealizacaoParcialTipo.AlijamentoRisco || pintRealizacaoParcialTipo == cEnum.enumRealizacaoParcialTipo.PercentualFixo) {
 				//*********MONTA QUERY PARA A REALIZAÇÃO PARCIAL COM ALIJAMENTO DE RISCO OU COM PERCENTUAL FIXO*******
 
 				//Para estes dois tipos de realização temos que usar a tabela de cotações diárias, 
@@ -2521,7 +2496,7 @@ namespace prmCotacao
 
 				//While Not blnPeriodoTotalPercorrido And (Not blnStopCalculado Or Not blnRealizacaoParcialCalculada)
 
-				while (!blnPeriodoTotalPercorrido & (!blnStopCalculado)) {
+				while (!blnPeriodoTotalPercorrido && (!blnStopCalculado)) {
 
 					if (objRSSplit.EOF) {
 
@@ -2682,7 +2657,7 @@ namespace prmCotacao
 
 					//só haverá realização parcial se o parâmetro estiver configurado e se houver mais do que um lote na operação,
 
-					if ((pintRealizacaoParcialTipo != cEnum.enumRealizacaoParcialTipo.SemRealizacaoParcial) & (intNumLotes >= 2)) {
+					if ((pintRealizacaoParcialTipo != cEnum.enumRealizacaoParcialTipo.SemRealizacaoParcial) && (intNumLotes >= 2)) {
 						//Se a data em que o stop real será acionado já é conhecida (dtmDataStopReal <> DataInvalida),
 						//esta é a data limite para buscar a realização parcial. Caso esta data ainda não tenha sido
 						//conhecida a data máxima para buscar a realização parcial está na variável dtmPeriodoDataFinal.
@@ -2776,7 +2751,7 @@ namespace prmCotacao
 					//****************FIM DO TRATAMENTO PARA A REALIZAÇÃO PARCIAL*******************
 
 
-					if ((!blnStopCalculado) & (!objRSSplit.EOF)) {
+					if ((!blnStopCalculado) && (!objRSSplit.EOF)) {
 						//só tem que fazer as alterações da quantidade de ações EM CARTEIRA em função do split,
 						//se não conseguiu fazer o stop antes do split.
 
@@ -3105,7 +3080,7 @@ namespace prmCotacao
 
 			//para cada operação encontrada chama a função que executa ou não conforme a disponibilidade de saldo na "conta"
 
-			while ((!objRSOperacao.EOF) & blnOK) {
+			while ((!objRSOperacao.EOF) && blnOK) {
 				//calculo para saber em qual indice está o setup que será executado.
 
 				for (intI = 0; intI <= parrSetup.Length - 1; intI++) {
@@ -3137,18 +3112,6 @@ namespace prmCotacao
 			}
 
 			objRSOperacao.Fechar();
-
-			//********COMENTADO EM 27/04/2010 - INICIO
-
-			//ALTERADO REGRA PARA CALCULAR O SALDO FINAL
-			//'busca a maior data em que a operação já está fechada.
-			//'Para isso busca o registro em que o campo DATA_SAIDA está preenchida
-			//objRSOperacao.ExecuteQuery( _
-			//"SELECT MAX(DATA_SAIDA) AS DATA_SAIDA " _
-			//& " FROM " & strTabelaBackTest _
-			//& " WHERE COD_RELATORIO = " & plngCodRelatorioRet.ToString())
-
-			//********COMENTADO EM 27/04/2010 - FIM
 
 			//busca a quantidade de ações que estão em carteira, ou seja, em que a data de saída
 			//ainda não está preenchida. 
@@ -3183,12 +3146,6 @@ namespace prmCotacao
 
 			//insere o registro principal da operação na tabela RELATORIOS_SPOOL
 			objCommand.Execute("INSERT INTO RELATORIOS_SPOOL " + "(COD_RELATORIO, DESCRICAO, CODIGO_SETUP, CODIGO, PERIODO, SALDO_INICIAL " + ", SALDO_FINAL, PERCENTUAL_ACUMULADO, DATA)" + " VALUES " + "(" + plngCodRelatorioRet.ToString() + ", " + FuncoesBD.CampoStringFormatar(pstrRelatoriosSpoolDescricao) + ", " + FuncoesBD.CampoStringFormatar(strCodigoSetup) + ", " + FuncoesBD.CampoStringFormatar(pstrCodigo) + ", " + FuncoesBD.CampoStringFormatar(pstrPeriodicidade) + ", " + FuncoesBD.CampoDecimalFormatar(pdecValorCapitalInicial) + ", " + FuncoesBD.CampoDecimalFormatar(decSaldoFinal) + ", " + FuncoesBD.CampoDecimalFormatar((decSaldoFinal / pdecValorCapitalInicial - 1) * 100) + ", NOW)");
-
-			//limpa os registros da tabela TMP_CONTA para esta operação
-			//objCommand.Execute( _
-			//"DELETE " _
-			//& "FROM TMP_CONTA " _
-			//& "WHERE COD_RELATORIO = " & lngCodRelatorio.ToString())
 
 			objCommand.CommitTrans();
 

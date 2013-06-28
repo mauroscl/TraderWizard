@@ -397,7 +397,7 @@ namespace TraderWizard
 		/// <remarks></remarks>
 		private bool AreaDadosPontoPertencer(Point pobjPonto)
 		{
-		    bool functionReturnValue = pobjPonto.X >= intCandle1X && pobjPonto.X <= intAreaRight - 3 && pobjPonto.Y >= intAreaTop + 3 & pobjPonto.Y <= intAreaCotacaoBottom - 6;
+		    bool functionReturnValue = pobjPonto.X >= intCandle1X && pobjPonto.X <= intAreaRight - 3 && pobjPonto.Y >= intAreaTop + 3 && pobjPonto.Y <= intAreaCotacaoBottom - 6;
 
 
 		    return functionReturnValue;
@@ -628,7 +628,7 @@ namespace TraderWizard
 
 
 			if (ToolStripbtnVolume.Checked) {
-				if (blnCotacaoBuscar | !blnVolumeDesenhar) {
+				if (blnCotacaoBuscar || !blnVolumeDesenhar) {
 					blnVolumeBuscar = true;
 				} else {
 					blnVolumeBuscar = false;
@@ -669,7 +669,7 @@ namespace TraderWizard
 				intIFRNumPeriodos = Convert.ToInt32(ToolStripcmbIFRNumPeriodos.Text);
 			}
 
-			blnMMExpDesenhar = (TSmnuMMExibir.Checked) & ((lstMediasSelecionadas != null));
+			blnMMExpDesenhar = (TSmnuMMExibir.Checked) && ((lstMediasSelecionadas != null));
 
 			cCandle objCandle = null;
 
@@ -996,7 +996,7 @@ namespace TraderWizard
 
 						foreach (cMediaDTO objMediaDTO in lstMediasSelecionadas) {
 
-							if (objstructMediaValor.intPeriodo == objMediaDTO.NumPeriodos & objstructMediaValor.strTipo == objMediaDTO.Tipo) {
+							if (objstructMediaValor.intPeriodo == objMediaDTO.NumPeriodos && objstructMediaValor.strTipo == objMediaDTO.Tipo) {
 								blnMediaRemover = false;
 
 								break; // TODO: might not be correct. Was : Exit For
@@ -1404,7 +1404,7 @@ namespace TraderWizard
 			    IniciarFerramentaDeDesenho();
 			}
 
-			if (blnPontosAtualizar & blnOK) {
+			if (blnPontosAtualizar && blnOK) {
 				PontosAtualizar();
 
 			}
@@ -1891,7 +1891,7 @@ namespace TraderWizard
 				//REMOVIDO LABEL DO IFR = 30
 				//'If blnDadosAtualizar Then
 
-				if (blnPontosAtualizar & intIFRNumPeriodos == 2) {
+				if (blnPontosAtualizar && intIFRNumPeriodos == 2) {
 					LabelVerticalAdicionar("30", intAreaRight, intReferenciaY);
 
 				}
@@ -1913,7 +1913,7 @@ namespace TraderWizard
 
 				//If blnDadosAtualizar Then
 
-				if (blnPontosAtualizar & intIFRNumPeriodos == 2) {
+				if (blnPontosAtualizar && intIFRNumPeriodos == 2) {
 					LabelVerticalAdicionar("70", intAreaRight, intReferenciaY);
 
 				}
@@ -2096,9 +2096,6 @@ namespace TraderWizard
 
 			double dblMedia = 0;
 
-			//objArquivo.EscreverString("Mouse X: " & CStr(intX) & " Mouse Y: " & CStr(intY) _
-			//& " CANDLE1 X: " & CStr(intCandle1X) & " - AreaRight: " & CStr(intAreaRight) _
-			//& " AreaTop: " & CStr(intAreaTop) & " AreaBottom: " & CStr(intAreaBottom))
 
 			//verifica se a posição do mouse está na área de impressão do gráfico
 			//If AreaDadosPontoPertencer(e.Location) Then
@@ -2131,13 +2128,6 @@ namespace TraderWizard
 				//intPosicaoArray = intArrayCandlePosicaoInicial + intNumCandles - 1
 
 				objCandle = arrCandle[intPosicaoArray];
-
-				//objArquivo.EscreverString("MOUSE X: " & CStr(intX) & " - MOUSE Y: " & CStr(intY) _
-				//& " - Posicao Array: " & intPosicaoArray.ToString _
-				//& " - RET X: " & CStr(objCandle.RectAreaTotal.X) & " - RET Y: " & CStr(objCandle.RectAreaTotal.Y) _
-				//& " - RET WIDTH: " & CStr(objCandle.RectAreaTotal.Width) _
-				//& " - RET HEIGHT: " & CStr(objCandle.RectAreaTotal.Height))
-
 
 				if (objCandle.RectAreaTotal.Contains(intX, intY)) {
 					StatusStrip.Items.Clear();
@@ -3017,7 +3007,7 @@ namespace TraderWizard
 					//só imprime splits quando forem de desdobramento.
 
 					if ((string) ToolStripcmbPeriodoDuracao.SelectedItem == "Semanal") {
-						if (Convert.ToDateTime(objRSSplit.Field("Data")) >= arrCandle[intI].Data & Convert.ToDateTime(objRSSplit.Field("Data")) <= arrCandle[intI].DataFinal) {
+						if (Convert.ToDateTime(objRSSplit.Field("Data")) >= arrCandle[intI].Data && Convert.ToDateTime(objRSSplit.Field("Data")) <= arrCandle[intI].DataFinal) {
 							blnSplitAdicionar = true;
 						} else {
 							blnSplitAdicionar = false;
@@ -3378,7 +3368,7 @@ namespace TraderWizard
 				foreach (KeyValuePair<string,cEstrutura.structMediaValor> objstructMediaValor_loopVariable in colstructMediaValor) {
 					objstructMediaValor = objstructMediaValor_loopVariable.Value;
 
-					if (pobjMediaDTO.NumPeriodos == objstructMediaValor.intPeriodo & pobjMediaDTO.Tipo == objstructMediaValor.strTipo) {
+					if (pobjMediaDTO.NumPeriodos == objstructMediaValor.intPeriodo && pobjMediaDTO.Tipo == objstructMediaValor.strTipo) {
 						blnMediaExistir = true;
 
 						break; // TODO: might not be correct. Was : Exit For

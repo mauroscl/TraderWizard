@@ -187,7 +187,7 @@ namespace TraderWizard
 					intHeaderIndex = intHeaderIndex + 1;
 
 
-					if (intSetup == cEnum.enumSetup.MM91 | intSetup == cEnum.enumSetup.MM92 | intSetup == cEnum.enumSetup.MM93) {
+					if (intSetup == cEnum.enumSetup.MM91 || intSetup == cEnum.enumSetup.MM92 || intSetup == cEnum.enumSetup.MM93) {
 						//setups de média móvel de 9 períodos: 
 						//mostra o valor da MME 9 e o percentual do valor de fechamento em relação 
 						//às mesmas.
@@ -207,7 +207,7 @@ namespace TraderWizard
 					}
 
 
-					if (intSetup == cEnum.enumSetup.IFRSemFiltro | intSetup == cEnum.enumSetup.IFRComFiltro) {
+					if (intSetup == cEnum.enumSetup.IFRSemFiltro || intSetup == cEnum.enumSetup.IFRComFiltro) {
 						objDataGridView.Columns[intHeaderIndex].HeaderText = "MME 49";
 						objDataGridView.Columns[intHeaderIndex].DefaultCellStyle.Format = "###,###0.00";
 						intHeaderIndex = intHeaderIndex + 1;
@@ -222,7 +222,7 @@ namespace TraderWizard
 					intHeaderIndex = intHeaderIndex + 1;
 
 
-					if (intSetup != cEnum.enumSetup.IFRSemFiltro & intSetup != cEnum.enumSetup.IFRSemFiltroRP) {
+					if (intSetup != cEnum.enumSetup.IFRSemFiltro && intSetup != cEnum.enumSetup.IFRSemFiltroRP) {
 						//para o IFR 2 SOBREVENDIDO não tem % de entrada, porque a entrada já é feita no fechamento.
 						objDataGridView.Columns[intHeaderIndex].HeaderText = "% Entrada";
 						intHeaderIndex = intHeaderIndex + 1;
@@ -286,7 +286,7 @@ namespace TraderWizard
 		{
 			cEnum.enumSetup intSetup = ComboSetupMapear();
 
-			if (intSetup == cEnum.enumSetup.IFRSemFiltro | intSetup == cEnum.enumSetup.IFRSemFiltroRP) {
+			if (intSetup == cEnum.enumSetup.IFRSemFiltro || intSetup == cEnum.enumSetup.IFRSemFiltroRP) {
 				//setup ifr 2 sobrevendido
 				txtIFR2Maximo.Enabled = true;
 			} else {
@@ -294,7 +294,7 @@ namespace TraderWizard
 				txtIFR2Maximo.Enabled = false;
 			}
 
-			if (intSetup == cEnum.enumSetup.IFRSemFiltro | intSetup == cEnum.enumSetup.IFRComFiltro) {
+			if (intSetup == cEnum.enumSetup.IFRSemFiltro || intSetup == cEnum.enumSetup.IFRComFiltro) {
 				chkAcimaMME49.Enabled = true;
 			} else {
 				chkAcimaMME49.Enabled = false;
@@ -341,7 +341,7 @@ namespace TraderWizard
 			cEnum.enumSetup intSetup = ComboSetupMapear();
 
 
-			if (intSetup == cEnum.enumSetup.IFRSemFiltro | intSetup == cEnum.enumSetup.IFRSemFiltroRP) {
+			if (intSetup == cEnum.enumSetup.IFRSemFiltro || intSetup == cEnum.enumSetup.IFRSemFiltroRP) {
 
 				if (!Information.IsNumeric(txtIFR2Maximo.Text)) {
 					Interaction.MsgBox("Campo " + Strings.Chr(39) + "IFR 2 abaixo de" + Strings.Chr(39) + " não preenchido ou com valor inválido.", MsgBoxStyle.Exclamation, this.Text);
@@ -569,7 +569,7 @@ namespace TraderWizard
 			cEnum.enumSetup intSetup = ComboSetupMapear();
 
 
-			if (intSetup == cEnum.enumSetup.IFRSemFiltroRP & e.RowIndex >= 0) {
+			if (intSetup == cEnum.enumSetup.IFRSemFiltroRP && e.RowIndex >= 0) {
 				cEnum.enumCriterioClassificacaoMedia intIDCriterioCM = default(cEnum.enumCriterioClassificacaoMedia);
 
 

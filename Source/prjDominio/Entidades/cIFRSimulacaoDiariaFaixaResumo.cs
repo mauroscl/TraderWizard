@@ -120,7 +120,7 @@ namespace prjModelo.Entidades
 
 			//Somente salva se houve algum trade com ou sem filtro.
 
-			if (intNumTradesSemFiltro > 0 | intNumTradesComFiltro > 0) {
+			if (intNumTradesSemFiltro > 0 || intNumTradesComFiltro > 0) {
 				strSQL = "INSERT INTO IFR_Simulacao_Diaria_Faixa_Resumo" + Environment.NewLine;
 				strSQL = strSQL + "(Codigo, ID_Setup, ID_CM, ID_IFR_Sobrevendido, Data, NumTradesSemFiltro, NumAcertosSemFiltro, PercentualAcertosSemFiltro " + Environment.NewLine;
 				strSQL = strSQL + ", NumTradesComFiltro, NumAcertosComFiltro, PercentualAcertosComFiltro)" + Environment.NewLine;

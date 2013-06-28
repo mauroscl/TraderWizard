@@ -1,10 +1,3 @@
-using Microsoft.VisualBasic;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Xml.Linq;
 namespace prjModelo.Entidades
 {
 
@@ -27,7 +20,7 @@ namespace prjModelo.Entidades
 
 			var objIFR = (cIFR)obj;
 
-			if (Cotacao.Equals(objIFR.Cotacao) & NumPeriodos == objIFR.NumPeriodos) {
+			if (Cotacao.Equals(objIFR.Cotacao) && NumPeriodos == objIFR.NumPeriodos) {
 				return true;
 			} else {
 				return false;

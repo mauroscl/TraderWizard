@@ -123,7 +123,7 @@ namespace prjModelo.Entidades
 			ValorRealizacaoParcial = pobjInformacoesDoTradeDTO.ValorRealizacaoParcial;
 			Verdadeiro = (ValorMaximo >= ValorRealizacaoParcial);
 			ValorAmplitude = (int) pobjCotacaoDeAcionamentoDoSetup.Amplitude;
-			MediaIFR = pobjCotacaoDeAcionamentoDoSetup.Medias.Where(x => x.Tipo == "IFR2" & x.NumPeriodos == 13).Single().Valor;
+			MediaIFR = pobjCotacaoDeAcionamentoDoSetup.Medias.Single(x => x.Tipo == "IFR2" && x.NumPeriodos == 13).Valor;
 
 			ValorFechamentoMinimo =  pobjInformacoesDoTradeDTO.ValorFechamentoMinimo.Value;
 			ValorMME21Minima = pobjInformacoesDoTradeDTO.MME21Minima;
@@ -151,7 +151,7 @@ namespace prjModelo.Entidades
 
 			var objIFRSimulacaoDiaria = (cIFRSimulacaoDiaria)obj;
 
-			if (Ativo.Equals(objIFRSimulacaoDiaria.Ativo) & Setup.Equals(objIFRSimulacaoDiaria.Setup) & DataEntradaEfetiva == objIFRSimulacaoDiaria.DataEntradaEfetiva) {
+			if (Ativo.Equals(objIFRSimulacaoDiaria.Ativo) && Setup.Equals(objIFRSimulacaoDiaria.Setup) && DataEntradaEfetiva == objIFRSimulacaoDiaria.DataEntradaEfetiva) {
 				return true;
 			} else {
 				return false;

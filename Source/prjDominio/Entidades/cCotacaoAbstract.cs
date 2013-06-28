@@ -38,7 +38,7 @@ namespace prjModelo.Entidades
 		public override bool Equals(object obj)
 		{
             cCotacaoAbstract objAux = (cCotacaoAbstract)obj;
-			if (Ativo.Codigo == objAux.Ativo.Codigo & Data == objAux.Data) {
+			if (Ativo.Codigo == objAux.Ativo.Codigo && Data == objAux.Data) {
 				return true;
 			} else {
 				return false;
@@ -120,16 +120,16 @@ namespace prjModelo.Entidades
 
 			cCotacaoAbstract objCotacaoAnterior = null;
 
-			objCotacaoAnterior = Ativo.CotacoesDiarias.Where(x => x.Sequencial == Sequencial - 1).SingleOrDefault();
+			objCotacaoAnterior = Ativo.CotacoesDiarias.SingleOrDefault(x => x.Sequencial == Sequencial - 1);
 
 
-			if ((objCotacaoAnterior == null) & Sequencial > 1) {
+			if ((objCotacaoAnterior == null) && Sequencial > 1) {
 				CarregarCotacoesAnteriores();
 
 			}
 
 			//retorna a cotação cujo sequencial é uma posição anterior ao sequencial da cotação atual.
-			return Ativo.CotacoesDiarias.Where(x => x.Sequencial == Sequencial - 1).SingleOrDefault();
+			return Ativo.CotacoesDiarias.SingleOrDefault(x => x.Sequencial == Sequencial - 1);
 
 		}
 

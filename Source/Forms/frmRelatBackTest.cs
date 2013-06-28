@@ -195,7 +195,7 @@ namespace TraderWizard
 				colSubItems.Add(strRealizacaoParcialDescricao);
 
 
-				if (pstructBackTestSetup.intRealizacaoParcialTipo == cEnum.enumRealizacaoParcialTipo.SemRealizacaoParcial | pstructBackTestSetup.intRealizacaoParcialTipo == cEnum.enumRealizacaoParcialTipo.AlijamentoRisco) {
+				if (pstructBackTestSetup.intRealizacaoParcialTipo == cEnum.enumRealizacaoParcialTipo.SemRealizacaoParcial || pstructBackTestSetup.intRealizacaoParcialTipo == cEnum.enumRealizacaoParcialTipo.AlijamentoRisco) {
 					//se não houver realização parcial, ou for alijamento de risco não preenche as colunas de percentual
 					//fixo ou percentual mínimo
 					colSubItems.Add("N/A");

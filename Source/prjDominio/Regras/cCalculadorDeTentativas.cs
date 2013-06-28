@@ -38,7 +38,8 @@ namespace prjModelo.Regras
 				IList<cCotacaoDiaria> lstCotacoesEntreSimulacoes = null;
 
 				//Busca as cotações entre a data efetiva da simulação anterior e a data efetiva da simulação atual (inclusive)
-				lstCotacoesEntreSimulacoes = objSimulacaoAnterior.Ativo.CotacoesDiarias.Where(c => c.IFR.Valor <= pobjIFRSobreVendido.ValorMaximo & c.Data > objDetalheAnterior.IFRSimulacaoDiaria.DataEntradaEfetiva & c.Data <= pobjSimulacaoParaCalcular.DataEntradaEfetiva).ToList();
+				lstCotacoesEntreSimulacoes = objSimulacaoAnterior.Ativo.CotacoesDiarias.Where(c => c.IFR.Valor <= pobjIFRSobreVendido.ValorMaximo 
+                    && c.Data > objDetalheAnterior.IFRSimulacaoDiaria.DataEntradaEfetiva && c.Data <= pobjSimulacaoParaCalcular.DataEntradaEfetiva).ToList();
 
 
 				foreach (cCotacaoDiaria objCotacao in lstCotacoesEntreSimulacoes) {

@@ -50,7 +50,7 @@ namespace prjModelo.Regras
 
 			foreach (cIFRSimulacaoDiariaFaixa objIFRFaixa in lstFaixas) {
 
-				if (dblValorCriterio >= objIFRFaixa.ValorMinimo & dblValorCriterio <= objIFRFaixa.ValorMaximo) {
+				if (dblValorCriterio >= objIFRFaixa.ValorMinimo && dblValorCriterio <= objIFRFaixa.ValorMaximo) {
 					objRetorno = objIFRFaixa;
 
 					if (pobjSimulacaoDiariaVO.NumTentativas >= objIFRFaixa.NumTentativasMinimo) {

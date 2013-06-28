@@ -180,19 +180,19 @@ namespace prjModelo.Entidades
 		public override decimal CalculaValorStopLossDeSaida(cCotacaoAbstract pobjCotacao, InformacoesDoTradeDTO pobjInformacoesDoTradeDTO)
 		{
 
-			if (!pobjInformacoesDoTradeDTO.IFRCruzouMediaParaCima | !pobjInformacoesDoTradeDTO.PermitiuRealizarParcial) {
+			if (!pobjInformacoesDoTradeDTO.IFRCruzouMediaParaCima || !pobjInformacoesDoTradeDTO.PermitiuRealizarParcial) {
 				//caso ainda não tenha cruzado a média para cima ou ainda não tenha permitido realização parcial retorna o mesmo valor do stop loss
 				return pobjInformacoesDoTradeDTO.ValorDoStopLoss;
 			}
 
-			IList<cMediaAbstract> lstMedias = pobjCotacao.Medias.Where(x => (x.NumPeriodos == 21 | x.NumPeriodos == 49 | x.NumPeriodos == 200) & x.Tipo == "MME").ToList();
+			IList<cMediaAbstract> lstMedias = pobjCotacao.Medias.Where(x => (x.NumPeriodos == 21 || x.NumPeriodos == 49 || x.NumPeriodos == 200) && x.Tipo == "MME").ToList();
 
 			decimal decMaiorMedia = (decimal) lstMedias.Max(x => x.Valor);
 
 			decimal decNovoValorDoStop;
 
 
-			if (pobjCotacao.ValorFechamento > decMaiorMedia | cVerificadorMediasAlinhadas.Verificar(ref lstMedias)) {
+			if (pobjCotacao.ValorFechamento > decMaiorMedia || cVerificadorMediasAlinhadas.Verificar(ref lstMedias)) {
 				cCotacaoAbstract objCotacaoDoValorMinimoAnterior = BuscaCotacaoValorMinimoAnterior.Buscar(pobjCotacao);
 				decNovoValorDoStop = objCotacaoDoValorMinimoAnterior.ValorMinimo - CalcularValorMargem(objCotacaoDoValorMinimoAnterior.ValorMinimo);
 

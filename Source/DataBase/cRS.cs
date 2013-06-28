@@ -159,12 +159,6 @@ namespace DataBase
 						//blnDadosExistir = objOleDbDR.Read()
 						objOleDbDR.Read();
 
-						//----alterado por mauro, 26/07/2009
-						//modificado lógica para testar se tem linhas atingidas,
-						//pois o método RecordsAffected não funciona em selects
-
-						//blnDadosExistir = (objOleDbDR.RecordsAffected > 0)
-
 						DadosExistir = objOleDbDR.HasRows;
 
 						//----fim do código alterado por mauro, 26/07/2009
@@ -174,56 +168,8 @@ namespace DataBase
 						blnContinuarExecutando = false;
 
 					}
-					//fim do If blnExecutar Then...
 
-
-				} /*catch (OleDbException ex) {
-
-
-					if (ex.ErrorCode == -2147467259 & blnContinuarExecutando) {
-						//Erro de objeto bloqueado
-						System.Threading.Thread.Sleep(1000);
-
-
-					} else {
-						RollBackTrans();
-
-						blnQueryStatus = false;
-						DadosExistir = false;
-						EOF = true;
-
-						//MsgBox("Erro - Descrição: " & ex.Message & " - Query: " & pstrQuery _
-						//, MsgBoxStyle.Critical, "Erro de Banco de Dados")
-						frmInformacao objfrmInformacao = new frmInformacao("Código: " + ex.ErrorCode.ToString() + " - Descrição: " + ex.Message + Environment.NewLine + " - Query: " + pstrQuery);
-
-						objfrmInformacao.ShowDialog();
-
-					}
-
-
-				} catch (InvalidOperationException ex2) {
-					RollBackTrans();
-
-					blnQueryStatus = false;
-					DadosExistir = false;
-					EOF = true;
-
-                    MessageBox.Show(ex2.Message, "Trader Wizard", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-
-				} catch (Exception ex3) {
-
-					RollBackTrans();
-
-					blnQueryStatus = false;
-					DadosExistir = false;
-					EOF = true;
-
-                    MessageBox.Show(ex3.Message, "Trader Wizard", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-
-				}*/
-
+				} 
                 catch
                 {
                     RollBackTrans();
@@ -468,55 +414,6 @@ namespace DataBase
 
 		}
 
-		//Private Function GUIDInserir() As Boolean
-
-		//    Dim objConnAux As cConexao = New cConexao()
-
-		//    Dim objCommand As New cCommand(objConnAux)
-
-		//    objCommand.BeginTrans()
-
-		//    objCommand.Execute( _
-		//    "INSERT INTO CONTROLE " _
-		//    & "(GUID2, STATUS)" _
-		//    & " VALUES " _
-		//    & "(" & FuncoesBD.CampoStringFormatar(strGuid) _
-		//    & ", " & FuncoesBD.CampoStringFormatar("01") & ")")
-
-		//    objCommand.CommitTrans()
-
-		//    GUIDInserir = objCommand.TransStatus
-
-		//    objConnAux.FecharConexao()
-
-		//End Function
-
-		//Private Function GUIDAtualizar() As Boolean
-
-		//    Dim objConnAux As cConexao = New cConexao()
-
-		//    Dim objCommand As New cCommand(objConnAux)
-
-		//    objCommand.BeginTrans()
-
-		//    objCommand.Execute( _
-		//    "UPDATE CONTROLE SET " _
-		//    & "STATUS = " & FuncoesBD.CampoStringFormatar("02") _
-		//    & " WHERE GUID2 = " & FuncoesBD.CampoStringFormatar(strGuid))
-
-		//    objCommand.CommitTrans()
-
-		//    GUIDAtualizar = objCommand.TransStatus
-
-		//    objConnAux.FecharConexao()
-
-		//End Function
-
-		/*protected override void Finalize()
-		{
-			//Fechar()
-			base.Finalize();
-		}*/
 
 		public int GetFieldCount()
 		{

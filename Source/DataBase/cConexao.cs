@@ -31,18 +31,11 @@ namespace DataBase
 		/// <remarks></remarks>
 
 		private bool blnTransAberta;
-		//Private intConexaoEstado As enumConexaoEstado
-
 		//String de conexão com o BD
 
-		private string strConnectionString;
-		//Property Get e Set da ConnectionString
-		public string ConnectionString {
-			get { return this.strConnectionString; }
-			set { this.strConnectionString = value; }
-		}
+	    public string ConnectionString { get; set; }
 
-		public bool TransStatus {
+	    public bool TransStatus {
 			get { return blnTransStatus; }
 		}
 
@@ -63,9 +56,6 @@ namespace DataBase
 		{
 
 			try {
-				//Dim strCaminhoBD As String
-				//strCaminhoBD = cBuscarConfiguracao.ObtemCaminhoPadrao()
-				//ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & strCaminhoBD & "Bolsa.mdb"
 
 				ConnectionString = cBuscarConfiguracao.ObterConnectionStringPadrao();
 
@@ -82,24 +72,6 @@ namespace DataBase
 			}
 
 		}
-
-		/// <summary>
-		/// Utilizar somente para testes, pois nos testes o arquivo de configuração não existe.
-		/// </summary>
-		/// <param name="pstrCaminhoBD"></param>
-		/// <remarks></remarks>
-		//Public Sub New(pstrCaminhoBD As String)
-
-		//    Me.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & pstrCaminhoBD & "Bolsa.mdb"
-
-		//    Me.objConn = New OleDbConnection(Me.ConnectionString)
-
-		//    'inicialização das propriedades
-		//    Me.blnTransAberta = False
-		//    Me.blnTransStatus = True
-
-		//End Sub
-
 
 		public void VerificarConexao()
 		{

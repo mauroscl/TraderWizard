@@ -166,7 +166,7 @@ namespace prjServicoNegocio
 
 				if ((objRetorno != null)) {
 					//Verifica se já existe existe registro com data de saida e classificação média na lista
-					var objCalculoFaixaResumoVOParaAdicionar = lstDatasParaCalculosAdicionais.Where(x => x.DataSaida == objRetorno.DataSaida & x.ClassifMedia.Equals(objRetorno.ClassificacaoMedia)).SingleOrDefault();
+					var objCalculoFaixaResumoVOParaAdicionar = lstDatasParaCalculosAdicionais.SingleOrDefault(x => x.DataSaida == objRetorno.DataSaida && x.ClassifMedia.Equals(objRetorno.ClassificacaoMedia));
 
 					if ((objCalculoFaixaResumoVOParaAdicionar == null)) {
 						//se ainda não existe cria VO e adiciona na lista

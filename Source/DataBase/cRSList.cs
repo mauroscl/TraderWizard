@@ -100,7 +100,7 @@ namespace DataBase
 
 
 			try {
-				if (Dados.Count > 0 & lngPosicaoAtual < Dados.Count) {
+				if (Dados.Count > 0 && lngPosicaoAtual < Dados.Count) {
 					//Se o List tem dados e não ultrapassou a última posição retorna o conteudo do campo
 					return Dados[lngPosicaoAtual].SingleOrDefault(x => x.Key.ToLower() ==  pstrCampo.ToLower()).Value;
 				} else {
@@ -116,7 +116,7 @@ namespace DataBase
         public Dictionary<string, object> RetornaLinhaAtual()
 		{
 
-			if (Dados.Count > 0 & lngPosicaoAtual < Dados.Count) {
+			if (Dados.Count > 0 && lngPosicaoAtual < Dados.Count) {
 				//Se o List tem dados e não ultrapassou a última posição retorna o conteudo do campo
 				return Dados[lngPosicaoAtual];
 			} else {
@@ -137,7 +137,7 @@ namespace DataBase
 		{
 
 			try {
-				if (Dados.Count > 0 & lngPosicaoAtual + 1 < Dados.Count) {
+				if (Dados.Count > 0 && lngPosicaoAtual + 1 < Dados.Count) {
 					//Se o List tem dados e não ultrapassou a última posição retorna o conteudo do campo
 					return Dados[lngPosicaoAtual + 1][pstrCampo];
 				} else {

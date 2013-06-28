@@ -133,7 +133,7 @@ namespace TraderWizard
 				}
 
 
-				if (strNovoPeriodo == Strings.Trim(lstPeriodoSelecionado.Items[intI].Text) & strNovoTipo == Strings.Trim(lstPeriodoSelecionado.Items[intI].SubItems[1].Text)) {
+				if (strNovoPeriodo == Strings.Trim(lstPeriodoSelecionado.Items[intI].Text) && strNovoTipo == Strings.Trim(lstPeriodoSelecionado.Items[intI].SubItems[1].Text)) {
 					Interaction.MsgBox("A Média Móvel " + strNovoTipo + " de " + strNovoPeriodo + " já foi inserida.", MsgBoxStyle.Exclamation, this.Text);
 
 					return false;

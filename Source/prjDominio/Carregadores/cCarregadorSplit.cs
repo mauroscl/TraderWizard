@@ -28,7 +28,7 @@ namespace prjModelo.Carregadores
 			string strQuery = string.Empty;
 
 
-			if (pstrTipo == String.Empty | pstrTipo == "DIV" | pstrTipo == "JCP" | pstrTipo == "REND" | pstrTipo == "RCDIN") {
+			if (pstrTipo == String.Empty || pstrTipo == "DIV" || pstrTipo == "JCP" || pstrTipo == "REND" || pstrTipo == "RCDIN") {
 				//Tratamento para outros tipos 
 
 				strQuery = " select Data, (Avg(QuantidadePosterior) - Sum(QuantidadePosterior - QuantidadeAnterior)) / AVG(QuantidadePosterior) as Razao " + Environment.NewLine + ", AVG(QuantidadePosterior) / (Avg(QuantidadePosterior) - Sum(QuantidadePosterior - QuantidadeAnterior)) as RazaoInvertida " + Environment.NewLine + ", CSTR((Avg(QuantidadePosterior) - Sum(QuantidadePosterior - QuantidadeAnterior))) & " + FuncoesBD.CampoStringFormatar("/") + " & CSTR(AVG(QuantidadePosterior)) as Razao2 " + Environment.NewLine + ", CSTR(AVG(QuantidadePosterior)) & " + FuncoesBD.CampoStringFormatar("/") + " & CSTR((Avg(QuantidadePosterior) - Sum(QuantidadePosterior - QuantidadeAnterior))) as RazaoInvertida2 " + Environment.NewLine + ", " + FuncoesBD.CampoStringFormatar("PROV") + " AS Tipo " + " from Split " + Environment.NewLine + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + Environment.NewLine + " and Data >= " + FuncoesBD.CampoDateFormatar(pdtmDataInicial) + Environment.NewLine;
@@ -57,7 +57,7 @@ namespace prjModelo.Carregadores
 			}
 
 
-			if (pstrTipo == String.Empty | pstrTipo == "DESD" | pstrTipo == "CISAO") {
+			if (pstrTipo == String.Empty || pstrTipo == "DESD" || pstrTipo == "CISAO") {
 				//Tratamento para desdobramentos e cisão. Só há um desdobramento ou cisão por dia.
 				//Por isso não é necessário fazer somatórios das quantidades 
 				//anteriores e posteriores agrupados por data

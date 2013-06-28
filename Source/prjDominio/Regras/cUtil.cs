@@ -1,10 +1,5 @@
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Xml.Linq;
 using prjModelo.Entidades;
 
 namespace prjModelo.DomainServices
@@ -33,20 +28,20 @@ namespace prjModelo.DomainServices
 			//6)  preço > mme 200 > mme 49
 			//7) indefinido
 
-			decimal decValorMM49 = (decimal) pobjCotacao.Medias.Where(x => x.NumPeriodos == 49 & x.Tipo == "MME").Single().Valor;
-			decimal decValorMM200 = (decimal) pobjCotacao.Medias.Where(x => x.NumPeriodos == 200 & x.Tipo == "MME").Single().Valor;
+			decimal decValorMM49 = (decimal) pobjCotacao.Medias.Single(x => x.NumPeriodos == 49 && x.Tipo == "MME").Valor;
+			decimal decValorMM200 = (decimal) pobjCotacao.Medias.Single(x => x.NumPeriodos == 200 && x.Tipo == "MME").Valor;
 
-			if (pobjCotacao.ValorFechamento > decValorMM49 & decValorMM49 > decValorMM200) {
+			if (pobjCotacao.ValorFechamento > decValorMM49 && decValorMM49 > decValorMM200) {
 				return new cClassifMediaAltaAlinhada();
-			} else if (decValorMM49 > pobjCotacao.ValorFechamento & pobjCotacao.ValorFechamento > decValorMM200) {
+			} else if (decValorMM49 > pobjCotacao.ValorFechamento && pobjCotacao.ValorFechamento > decValorMM200) {
 				return new cClassifMediaPrimAltaSecBaixa();
-			} else if (decValorMM200 > pobjCotacao.ValorFechamento & pobjCotacao.ValorFechamento > decValorMM49) {
+			} else if (decValorMM200 > pobjCotacao.ValorFechamento && pobjCotacao.ValorFechamento > decValorMM49) {
 				return new cClassifMediaPrimBaixaSecAlta();
-			} else if (decValorMM200 > decValorMM49 & decValorMM49 > pobjCotacao.ValorFechamento) {
+			} else if (decValorMM200 > decValorMM49 && decValorMM49 > pobjCotacao.ValorFechamento) {
 				return new cClassifMediaBaixaAlinhada();
-			} else if (decValorMM49 > decValorMM200 & decValorMM200 > pobjCotacao.ValorFechamento) {
+			} else if (decValorMM49 > decValorMM200 && decValorMM200 > pobjCotacao.ValorFechamento) {
 				return new cClassifMediaBaixaDesalinhada();
-			} else if (pobjCotacao.ValorFechamento > decValorMM200 & decValorMM200 > decValorMM49) {
+			} else if (pobjCotacao.ValorFechamento > decValorMM200 && decValorMM200 > decValorMM49) {
 				return new cClassifMediaAltaDesalinhada();
 			} else {
 				return new cClassifMediaIndefinida();

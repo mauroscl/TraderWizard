@@ -176,54 +176,71 @@
     </Compile>
     <EmbeddedResource Include="frmConfiguracao.resx">
       <DependentUpon>frmConfiguracao.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="frmCotacao.resx">
       <DependentUpon>frmCotacao.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="frmCotacaoAtualizarPeriodo.resx">
       <DependentUpon>frmCotacaoAtualizarPeriodo.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="frmCotacaoExcluir.resx">
       <DependentUpon>frmCotacaoExcluir.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="frmDadosRecalcular.resx">
       <DependentUpon>frmDadosRecalcular.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="frmGrafico.resx">
       <DependentUpon>frmGrafico.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="frmIFRCalcular.resx">
       <DependentUpon>frmIFRCalcular.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="frmIFRDiarioSimular.resx">
       <DependentUpon>frmIFRDiarioSimular.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="frmIndicadorEscolha.resx">
       <DependentUpon>frmIndicadorEscolha.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="frmPrincipal.resx">
       <DependentUpon>frmPrincipal.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="frmProventoAtualizar.resx">
       <DependentUpon>frmProventoAtualizar.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="frmProventoCadastrar.resx">
       <DependentUpon>frmProventoCadastrar.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="frmRelatBackTest.resx">
       <DependentUpon>frmRelatBackTest.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="frmRelatBackTestDetalhe.resx">
       <DependentUpon>frmRelatBackTestDetalhe.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="frmRelatCrystal.resx">
       <DependentUpon>frmRelatCrystal.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="frmRelatorioSpool.resx">
       <DependentUpon>frmRelatorioSpool.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="frmRelatVisualizacao.resx">
       <DependentUpon>frmRelatVisualizacao.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -234,7 +251,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="ClassDiagram1.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

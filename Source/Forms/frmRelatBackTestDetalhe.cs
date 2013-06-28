@@ -45,7 +45,7 @@ namespace TraderWizard
 			cmbSetup.Text = mCotacao.SetupDescricaoGerar(pstructBackTestSetup.strCodigoSetup);
 
 
-			if (pstructBackTestSetup.strCodigoSetup == "IFR2SOBREVEND" | pstructBackTestSetup.strCodigoSetup == "IFR2>MMA13") {
+			if (pstructBackTestSetup.strCodigoSetup == "IFR2SOBREVEND" || pstructBackTestSetup.strCodigoSetup == "IFR2>MMA13") {
 				chkAcimaMME49.Checked = pstructBackTestSetup.blnMME49Filtrar;
 
 			}
@@ -93,7 +93,7 @@ namespace TraderWizard
 		{
 			//agora ajusta os campos de acordo com a realização parcial
 
-			if (rdbSemRealizacaoParcial.Checked | rdbRealizacaoParcialAlijamento.Checked) {
+			if (rdbSemRealizacaoParcial.Checked || rdbRealizacaoParcialAlijamento.Checked) {
 				txtPercentualFixo.Enabled = false;
 				txtPrimeiroFechamentoPercentualMinimo.Enabled = false;
 
