@@ -1008,26 +1008,19 @@ namespace prmCotacao
 				//Dim arrayAutoResetEvent(lstAtivos.Count - 1) As Threading.WaitHandle
 
 				//obtém os valores antes de alterar para depois da execução restaurar
-				int intMinWorkThreads = 0;
-				int intMinIOThreads = 0;
-				System.Threading.ThreadPool.GetMinThreads(out intMinWorkThreads, out intMinIOThreads);
+				int intMinWorkThreads;
+				int intMinIoThreads;
+				System.Threading.ThreadPool.GetMinThreads(out intMinWorkThreads, out intMinIoThreads);
 
-				int intMaxWorkThreads = 0;
-				int intMaxIOThreads = 0;
-				System.Threading.ThreadPool.GetMaxThreads(out intMaxWorkThreads, out intMaxIOThreads);
+				int intMaxWorkThreads;
+				int intMaxIoThreads;
+				System.Threading.ThreadPool.GetMaxThreads(out intMaxWorkThreads, out intMaxIoThreads);
 
 				System.Threading.ThreadPool.SetMinThreads(4, 2);
 				System.Threading.ThreadPool.SetMaxThreads(4, 2);
 
-				int intI = 0;
-
-				string strCodigoAtivo = null;
-
-				DateTime dtmHoraInicial = DateTime.Now.Date;
-
-
-				for (intI = 0; intI <= plstAtivos.Count - 1; intI++) {
-					strCodigoAtivo = plstAtivos[intI];
+			    for (int intI = 0; intI <= plstAtivos.Count - 1; intI++) {
+					string strCodigoAtivo = plstAtivos[intI];
 
 					cSetupIFR2SimularCodigoDTO objSetupIFR2SimularCodigoDTO = new cSetupIFR2SimularCodigoDTO(pobjSetupIFRSimularDTO, strCodigoAtivo);
 
@@ -1046,15 +1039,15 @@ namespace prmCotacao
 				// Threading.WaitHandle.WaitAll(arrayAutoResetEvent)
 
 
-				for (intI = 0; intI <= arrayAutoResetEvent.Count() - 1; intI++) {
+				for (int intI = 0; intI <= arrayAutoResetEvent.Count() - 1; intI++) {
 					//Threading.WaitHandle.WaitAny(arrayAutoResetEvent.GetValue(intI))
 					((System.Threading.AutoResetEvent)arrayAutoResetEvent.GetValue(intI)).WaitOne();
 
 				}
 
 				//Restaura os valores anteriores
-				System.Threading.ThreadPool.SetMinThreads(intMinWorkThreads, intMinIOThreads);
-				System.Threading.ThreadPool.SetMaxThreads(intMaxWorkThreads, intMaxIOThreads);
+				System.Threading.ThreadPool.SetMinThreads(intMinWorkThreads, intMinIoThreads);
+				System.Threading.ThreadPool.SetMaxThreads(intMaxWorkThreads, intMaxIoThreads);
 
 				return true;
 
@@ -2350,12 +2343,8 @@ namespace prmCotacao
 			System.DateTime dtmDataRealizacaoParcial = cConst.DataInvalida;
 
 			//valor da realização parcial
-			decimal decValorRealizacaoParcial = default(decimal);
 
-			//valor da realização parcial convertido pelos splits quando houver.
-			decimal decValorRealizacaoParcialAux = 0;
-
-			//é imprescindivel inicializar com 0 porque não sabemos se haverá realização parcial
+		    //é imprescindivel inicializar com 0 porque não sabemos se haverá realização parcial
 			int intQuantidadeRealizacaoParcial = 0;
 
 			//quantidade de ações compradas na operação inicial 
@@ -2375,18 +2364,11 @@ namespace prmCotacao
 			//DATA EM QUE A COTAÇÃO ATINGIRÁ O VALOR DO STOP INICIAL
 			//Dim dtmDataStopInicial As Date
 
-			//DATA INICIAL UTILIZADA NOS CÁLCULOS DE VIRADA DE MÉDIA.
-			//BUSCA AS DATAS SEMPRE A PARTIR DESTA.
-			System.DateTime dtmViradaMediaDataInicial = default(System.DateTime);
-
-			//DATA EM QUE OCORRERÁ A VIRADA DA MÉDIA. NÃO É A DATA EM QUE OCORRE O STOP E SIM A DATA EM QUE
+		    //DATA EM QUE OCORRERÁ A VIRADA DA MÉDIA. NÃO É A DATA EM QUE OCORRE O STOP E SIM A DATA EM QUE
 			//A MÉDIA VIROU, GERANDO UM NOVO VALOR DE STOP LOSS
 			System.DateTime dtmDataViradaMedia = default(System.DateTime);
 
-			//DATA EM QUE A OPERAÇÃO SERÁ ESTOPADA PELA VIRADA DA MÉDIA
-			System.DateTime dtmDataStopViradaMedia = default(System.DateTime);
-
-			//VALOR DO STOP QUANDO OCORRER A VIRADA DA MÉDIA. 
+		    //VALOR DO STOP QUANDO OCORRER A VIRADA DA MÉDIA. 
 			//O VALOR DO STOP É SEMPRE 3 CENTAVOS ABAIXO DA MÍNIMA DO CANDLE EM QUE OCORRER A VIRADA DA MÉDIA.
 			decimal decValorStopViradaMedia = default(decimal);
 
@@ -2394,10 +2376,7 @@ namespace prmCotacao
 			//COMO PELA VIRADA DA MÉDIA
 			System.DateTime dtmDataStopReal = frwInterface.cConst.DataInvalida;
 
-			//DATA EM QUE OCORRERÁ O ACIONAMENTO DO STOP NO VALOR DO PARÂMETRO "pdecValorStopInicial"
-			System.DateTime dtmDataAcionamentoStopInicial = default(System.DateTime);
-
-			//variável de controle que indica se o stop foi ou não acionado.
+		    //variável de controle que indica se o stop foi ou não acionado.
 			bool blnStopCalculado = false;
 
 			//variável de controle que indica se a realização parcial ´foi calculada.
@@ -2413,31 +2392,24 @@ namespace prmCotacao
 			//Dim decValorMinimoAux As Decimal
 			//Dim decValorMaximoAux As Decimal
 
-			int intNumLotes = 0;
-			int intNumAcoesEMCARTEIRA = 0;
-			double dblNumAcoesEMCARTEIRAAux = 0;
-			//utilizada para o cálculo do novo número de ações em carteira quando há splits.
+		    //utilizada para o cálculo do novo número de ações em carteira quando há splits.
 			decimal decValorFechamentoAux = default(decimal);
 			//utilizado na busca do valor de fechamento de uma cotação.
 
 			//data final utilizada nas buscas de stop e realização parcial.
-			System.DateTime dtmPeriodoDataFinal = default(System.DateTime);
 
-			//contém a data final de busca para a realização parcial
-			System.DateTime dtmRealizacaoParcialDataFinalBusca = default(System.DateTime);
+		    //contém a data final de busca para a realização parcial
 
-			//variável auxiliar utilizada na busca da data de realização parcial.
+		    //variável auxiliar utilizada na busca da data de realização parcial.
 			//inicializa com a data de entrada.
 			//Se houver splits na operação a data inicial vai ser a data de cada split.
 			System.DateTime dtmRealizacaoParcialDataInicial = pdtmDataEntrada;
 
 			//variável auxiliar utilizada em loop.
-			bool blnDataEncontradaAux = false;
 
-			//Data máxima em que há cotação para o papel.
-			System.DateTime dtmCotacaoDataMaxima = default(System.DateTime);
+		    //Data máxima em que há cotação para o papel.
 
-			//valor de entrada corrigido pelos splits.
+		    //valor de entrada corrigido pelos splits.
 			//inicializa atribuindo o valor de entrada. Se houver splits vai corrigindo o valor.
 			decimal decValorEntradaAux = pdecValorEntrada;
 
@@ -2445,14 +2417,14 @@ namespace prmCotacao
 			decSaldo = TMP_CONTA_Saldo_Anterior_Consultar(plngCodigoRelatorio, pdtmDataEntrada);
 
 			//calcula quantos lotes de ações pode comprar.
-			intNumLotes = (int) Truncar((double) (decSaldo / pdecValorEntrada / pintNumAcoesLote));
+			int intNumLotes = (int) Truncar((double) (decSaldo / pdecValorEntrada / pintNumAcoesLote));
 
 			//verifica se pode comprar pelo menos um lote
 
 			if (intNumLotes >= 1) {
 				//calcula o número exato de ações pode comprar.
 				//para obter este valor, multiplica o número de lotes pelo nº de ações que compõem um lote.
-				intNumAcoesEMCARTEIRA = intNumLotes * pintNumAcoesLote;
+				int intNumAcoesEMCARTEIRA = intNumLotes * pintNumAcoesLote;
 
 				//variável que armazena a quantidade de entrada inicial para depois lançar no registro da operação
 				intQuantidadeEntrada = intNumAcoesEMCARTEIRA;
@@ -2469,10 +2441,10 @@ namespace prmCotacao
 				//***************VERIFICA EM QUAL DATA OCORRERÁ O STOP**********************
 
 				//inicializa a data inicial de busca da virada da média com a data de entrada na operação
-				dtmViradaMediaDataInicial = pdtmDataEntrada;
+				DateTime dtmViradaMediaDataInicial = pdtmDataEntrada;
 
 				//calcula a data de acionamento do stop pelo valor do stop inicial da operação.
-				dtmDataAcionamentoStopInicial = StopAcionamentoDataCalcular(pstrCodigo, pdecValorStopInicial, dtmViradaMediaDataInicial);
+				DateTime dtmDataAcionamentoStopInicial = StopAcionamentoDataCalcular(pstrCodigo, pdecValorStopInicial, dtmViradaMediaDataInicial);
 
 				cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(this.objConexao);
 
@@ -2481,7 +2453,8 @@ namespace prmCotacao
 
 
 				//****calcula o valor da realização parcial
-				if (pintRealizacaoParcialTipo == cEnum.enumRealizacaoParcialTipo.AlijamentoRisco) {
+			    decimal decValorRealizacaoParcial;
+			    if (pintRealizacaoParcialTipo == cEnum.enumRealizacaoParcialTipo.AlijamentoRisco) {
 					//soma na entrada o valor que pagaria de stop
 					//decValorRealizacaoParcial = pdecValorEntrada + (pdecValorEntrada - pdecValorStopInicial)
 					decValorRealizacaoParcial = decValorEntradaAux + (decValorEntradaAux - pdecValorStopInicial);
@@ -2497,8 +2470,8 @@ namespace prmCotacao
 				//While Not blnPeriodoTotalPercorrido And (Not blnStopCalculado Or Not blnRealizacaoParcialCalculada)
 
 				while (!blnPeriodoTotalPercorrido && (!blnStopCalculado)) {
-
-					if (objRSSplit.EOF) {
+				    DateTime dtmPeriodoDataFinal;
+				    if (objRSSplit.EOF) {
 
 						if (dtmDataAcionamentoStopInicial != frwInterface.cConst.DataInvalida) {
 							//Se encontrou uma data para o acionamento do stop inicial.
@@ -2512,19 +2485,19 @@ namespace prmCotacao
 
 
 
-						} else {
-							//se não encontrou uma data de acionamento para o stop inicial, 
+						} else
+						{
+						    //se não encontrou uma data de acionamento para o stop inicial, 
 							//busca a data máxima que há cotação para o papel para definir como data limite de busca
-							dtmCotacaoDataMaxima = objCalculadorData.CotacaoDataMaximaConsultar(pstrCodigo, strTabelaCotacao);
+						    DateTime dtmCotacaoDataMaxima = objCalculadorData.CotacaoDataMaximaConsultar(pstrCodigo, strTabelaCotacao);
 
-							dtmPeriodoDataFinal = dtmCotacaoDataMaxima;
+						    dtmPeriodoDataFinal = dtmCotacaoDataMaxima;
 
 							//****comentado porque foi removido para fora do loop já que tem sempre o mesmo comportamento.
 							//dtmRealizacaoParcialDataFinalBusca = dtmCotacaoDataMaxima
-
 						}
 
-						//se já percorreu todo o RS de splits marca a variavel para que na próxima iteração saia do loop
+					    //se já percorreu todo o RS de splits marca a variavel para que na próxima iteração saia do loop
 						blnPeriodoTotalPercorrido = true;
 
 
@@ -2563,11 +2536,11 @@ namespace prmCotacao
 					// If objRSSplit.EOF Then
 
 					//atribuição da data final de busca da realização parcial.
-					dtmRealizacaoParcialDataFinalBusca = dtmPeriodoDataFinal;
+					DateTime dtmRealizacaoParcialDataFinalBusca = dtmPeriodoDataFinal;
 
 					//inicializa com true, para entrar no loop na primeira iteração.
 					//caso não encontre data, retorna false.
-					blnDataEncontradaAux = true;
+					bool blnDataEncontradaAux = true;
 
 					//While (blnDataEncontradaAux) And (dtmDataStopReal = DataInvalida)
 					//While (blnDataEncontradaAux) And (Not blnStopCalculado)
@@ -2602,7 +2575,7 @@ namespace prmCotacao
 
 							//busca a data em que o stop loss calculado pela função chamada anteriormente será acionado
 							//Passa a data de virada da média como data inicial para essa busca
-							dtmDataStopViradaMedia = StopAcionamentoDataCalcular(pstrCodigo, decValorStopViradaMedia, dtmViradaMediaDataInicial);
+							DateTime dtmDataStopViradaMedia = StopAcionamentoDataCalcular(pstrCodigo, decValorStopViradaMedia, dtmViradaMediaDataInicial);
 
 
 							if (dtmDataStopViradaMedia != cConst.DataInvalida) {
@@ -2722,7 +2695,7 @@ namespace prmCotacao
 							//número inteiro abaixo do resultado da divisão do número de lotes total por 2.
 							//Ou seja, neste caso vai realizar menos que a metade.
 							//Este número tem que ser multiplicado por pelo número de ações que compõe o lote minimo.
-							intQuantidadeRealizacaoParcial = (int) (Truncar(intNumLotes / 2) * pintNumAcoesLote);
+							intQuantidadeRealizacaoParcial = (int) (Truncar((double) intNumLotes / 2) * pintNumAcoesLote);
 
 							//calcula o percentual de ganho da realização parcial em função do valor de entrada.
 							decPercentualRealizacaoParcial = (decValorRealizacaoParcial / decValorEntradaAux - 1) * 100;
@@ -2759,7 +2732,7 @@ namespace prmCotacao
 						//****************ATENÇÃO:O ajuste tem que ser feito antes de mover o RS para o próximo registro.
 
 						//para obter a nova quantidade de ações multiplica a quantidade atual pela razão invertida do split.
-						dblNumAcoesEMCARTEIRAAux = intNumAcoesEMCARTEIRA * Convert.ToDouble(objRSSplit.Field("RazaoInvertida"));
+						double dblNumAcoesEMCARTEIRAAux = intNumAcoesEMCARTEIRA * Convert.ToDouble(objRSSplit.Field("RazaoInvertida"));
 
 						//ajusta também o valor auxiliar de entrada em função do split, para não gerar erro quando for
 						//calcular o percentual de saída da operação.

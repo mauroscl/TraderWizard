@@ -107,7 +107,7 @@ namespace DataBase
 					//Caso contrário retorna o erro.
 					return pobjRetornoErro;
 				}
-			} catch (Exception ex) {
+			} catch (Exception) {
 				return pobjRetornoErro;
 			}
 
@@ -140,11 +140,10 @@ namespace DataBase
 				if (Dados.Count > 0 && lngPosicaoAtual + 1 < Dados.Count) {
 					//Se o List tem dados e não ultrapassou a última posição retorna o conteudo do campo
 					return Dados[lngPosicaoAtual + 1][pstrCampo];
-				} else {
-					//Caso contrário retorna o erro.
-					return pobjRetornoErro;
 				}
-			} catch (Exception ex) {
+			    //Caso contrário retorna o erro.
+			    return pobjRetornoErro;
+			} catch (Exception) {
 				return pobjRetornoErro;
 			}
 

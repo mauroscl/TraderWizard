@@ -291,7 +291,7 @@ namespace DataBase
 		        }
 		        return pobjRetornoErro;
 		    }
-		    catch (InvalidOperationException e) {
+		    catch (InvalidOperationException) {
 		        //Esta exceção geralmente acontece quando a query não retornou dados e alguma 
 		        //coluna está sendo consultada
 		        return pobjRetornoErro;
@@ -326,7 +326,7 @@ namespace DataBase
 
 				}
 
-			} catch (InvalidOperationException ex) {
+			} catch (InvalidOperationException) {
                 MessageBox.Show("Não foi possível ler o próximo registro.", "Banco de Dados", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			} catch (Exception ex) {
                 MessageBox.Show("Não foi possível ler o próximo registro. Erro: " + ex.Message, "Banco de Dados", MessageBoxButtons.OK, MessageBoxIcon.Error);

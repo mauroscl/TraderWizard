@@ -30,19 +30,17 @@ namespace pWeb
 
 			string strAux = "";
 
-			int intI = 0;
-
-			try {
+		    try {
 				//Create a UnicodeEncoder to convert between byte array and string.
 				UnicodeEncoding ByteConverter = new UnicodeEncoding();
 
 				//Create byte arrays to hold original, encrypted, and decrypted data.
 				byte[] dataToEncrypt = ByteConverter.GetBytes(pstrTexto);
-				byte[] encryptedData = null;
+				byte[] encryptedData;
 
 				//Create a new instance of RSACryptoServiceProvider to generate
 				//public and private key data.
-				RSACryptoServiceProvider RSA = new RSACryptoServiceProvider();
+				//RSACryptoServiceProvider RSA = new RSACryptoServiceProvider();
 
 				//Pass the data to ENCRYPT, the public key information 
 				//(using RSACryptoServiceProvider.ExportParameters(false),
@@ -50,18 +48,16 @@ namespace pWeb
 				encryptedData = RSAEncrypt(dataToEncrypt, objPublicParameters, false);
 
 
-				for (intI = 0; intI <= encryptedData.Length - 1; intI++) {
+			    for (int intI = 0; intI <= encryptedData.Length - 1; intI++) {
 					//converte o byte para hexadecimal. Quando a conversão retornar apenas um caracter
 					//coloca um zero à esquerda, usando a função PadLeft;
 					strAux = strAux + Conversion.Hex(encryptedData[intI]).PadLeft(2, '0');
-                    
-
 				}
 
 				//return the decrypted plaintext in hexadecimal format
 				return strAux;
 
-			} catch (ArgumentNullException e) {
+			} catch (ArgumentNullException) {
 				return string.Empty;
 			}
 
@@ -75,19 +71,13 @@ namespace pWeb
 		/// <remarks></remarks>
 		public string Descriptograr(string pstrTexto)
 		{
-
-			string strAux = "";
-
-			byte[] dataToDecrypt = {
+		    byte[] dataToDecrypt = {
 				
 			};
 
 			Array.Resize(ref dataToDecrypt, 128);
 
-			int intI = 0;
-
 			int intArrayPosition = 0;
-
 
 			try {
 				//Create a UnicodeEncoder to convert between byte array and string.
@@ -99,7 +89,7 @@ namespace pWeb
 				//percorre a string de caracteres dois a dois, que é um conjunto de caracteres em hexadecimal.
 				//Converte cada número de hexadecimal para byte
 
-				for (intI = 1; intI <= pstrTexto.Length; intI += 2) {
+				for (int intI = 1; intI <= pstrTexto.Length; intI += 2) {
 					//usa base 16 (hexadecimal) para converter de hexadecimal para byte.
                     dataToDecrypt[intArrayPosition] = Convert.ToByte(pstrTexto.Substring(intI, 2), 16);
 
@@ -107,21 +97,19 @@ namespace pWeb
 
 				}
 
-				byte[] decryptedData = null;
-
-				//Create a new instance of RSACryptoServiceProvider to generate
+			    //Create a new instance of RSACryptoServiceProvider to generate
 				//public and private key data.
-				RSACryptoServiceProvider RSA = new RSACryptoServiceProvider();
+				//RSACryptoServiceProvider RSA = new RSACryptoServiceProvider();
 
 				//Pass the data to DECRYPT, the private key information 
 				//(using RSACryptoServiceProvider.ExportParameters(true),
 				//and a boolean flag specifying no OAEP padding.
-				decryptedData = RSADecrypt(dataToDecrypt, objPrivateParameters, false);
+				byte[] decryptedData = RSADecrypt(dataToDecrypt, objPrivateParameters, false);
 
 				return ByteConverter.GetString(decryptedData);
 
 
-			} catch (Exception ex) {
+			} catch (Exception) {
 				return string.Empty;
 
 			}
