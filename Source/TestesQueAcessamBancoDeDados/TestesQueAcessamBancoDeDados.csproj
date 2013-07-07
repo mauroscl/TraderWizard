@@ -76,6 +76,7 @@
     <Compile Include="testes_do_carregador_de_ifr_sobrevendido.cs" />
     <Compile Include="testes_do_carregador_de_simulacao_do_ifr_diario.cs" />
     <Compile Include="testes_do_verifica_se_deve_gerar_entrada.cs" />
+    <Compile Include="TestesDeFuncoesBD.cs" />
   </ItemGroup>
   <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />

@@ -14,7 +14,6 @@ namespace TesteBase
 	{
 
 		public static cConexao objConexao { get; set; }
-
 		public static void Inicializa()
 		{
 			objConexao = new cConexao();

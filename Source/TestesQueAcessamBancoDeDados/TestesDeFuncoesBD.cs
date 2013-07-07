@@ -1,14 +1,40 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TesteBase;
+using DataBase;
 
 namespace TestProject1
 {
     [TestClass]
-    public class TestesDeFuncoesBD
+    public class TestesDeFuncoesBD : Inicializacao
     {
-        [TestMethod]
-        public void TestMethod1()
+
+        //Use TestInitialize to run code before running each test
+        [ClassInitialize()]
+        public static void MyClassInitialize(TestContext testContext)
         {
+            Inicializa();
+        }
+
+        //Use TestCleanup to run code after each test has run
+        [ClassCleanup()]
+        public static void MyClassCleanup()
+        {
+            Finaliza();
+        }
+        [TestMethod]
+        public void ConsigoConsultarOAtivoPadrao()
+        {
+            var dadosDB = new cDadosDB(objConexao, "Configuracao");
+
+            dadosDB.CampoAdicionar("Parametro", true, "AtivoPadrao");
+
+            dadosDB.CampoAdicionar("Valor", false, "");
+
+            dadosDB.DadosBDConsultar();
+            string ativoPadrao;
+            ativoPadrao = dadosDB.CampoConsultar("Valor");            
+            Assert.AreEqual("ELPL4", ativoPadrao);
         }
     }
 }

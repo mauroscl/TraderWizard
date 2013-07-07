@@ -21,10 +21,9 @@ namespace TestProject1
 	[TestClass()]
 	public class testes_do_carregador_de_ifr_sobrevendido : Inicializacao
 	{
-
 		private TestContext testContextInstance;
 
-		private cConexao objConexao;
+		//private cConexao objConexao;
 		///<summary>
 		///Gets or sets the test context which provides
 		///information about and functionality for the current test run.

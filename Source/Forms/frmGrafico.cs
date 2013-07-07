@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
@@ -40,28 +41,12 @@ namespace TraderWizard
 			//código do ativo que está impresso na tela
 		private string strCodigoAtivo;
 
-		//Private arrMediaPonto As Point() = {} 'array contendo os pontos de média móvel
+		private cCandle[] arrCandle = {};
 
-		private cCandle[] arrCandle = {
-			
-			//array contendo os candles
-		};
-
-		private PointF[] arrIFRPonto = {
-			
-
-		};
-		private PointF[] arrIFRMedioPonto = {
-			
-
-		};
-		private Rectangle[] arrVolumeRectangle = {
-			
-		};
-		private PointF[] arrVolumeMedio = {
-			
-			//array que contém as médias do volume.
-		};
+		private PointF[] arrIFRPonto = {};
+		private PointF[] arrIFRMedioPonto = {};
+		private Rectangle[] arrVolumeRectangle = {};
+		private PointF[] arrVolumeMedio = {};
 
 		//collection contendo as médias que serão impressas. A collection será preenchida com itens da estrutura structMedia
 
@@ -132,26 +117,25 @@ namespace TraderWizard
 		//INDICA SE É PARA DESENHAR O IFR. FICA ARMAZENADO  EM VARIÁVEL PARA QUANDO FOR ATUALIZAR
 		//O GRÁFICO VERIFICAR SE HOUVE ALTERAÇÕES E VERIFICAR SE É NECESSÁRIO BUSCAR NOVAMENTE OS DADOS
 
-		bool blnIFRDesenhar = false;
+		bool blnIFRDesenhar;
 		//CONTÉM O NÚMERO DE PERÍODOS SELECIONADO PARA APRESENTAR O GRÁFICO DO IFR
 
 		int intIFRNumPeriodos = -1;
 
 		bool blnMMExpDesenhar;
-		int intIFRAreaTop = 0;
+		int intIFRAreaTop;
 
-		int intVolumeAreaTop = 0;
+		int intVolumeAreaTop;
 		//indica se os dados estão sendo atualizados, para evitar loops
 
-		bool blnAtualizandoDados = false;
+		bool blnAtualizandoDados;
 		//indica se os pontos estão sendo atualizados, para evitar loops
 
-		bool blnAtualizandoPontos = false;
-		//Indica se o gráfico está sendo desenhado, para evitar loops.
+		bool blnAtualizandoPontos;		//Indica se o gráfico está sendo desenhado, para evitar loops.
 
-		bool blnGraficoDesenhando = false;
+		bool blnGraficoDesenhando;
 
-		bool blnGraficoGerando = false;
+		bool blnGraficoGerando;
 
 		int intVolumePosicaoSelecionada = -1;
 
@@ -180,7 +164,7 @@ namespace TraderWizard
 
 		//lista que contém os objetos que são desenhadas na tela 
 		//pelo usuário: linha horizontal, linha de tendência, canal, fibonacci
-		private IList<Desenho> _desenhosCriados;
+		private readonly IList<Desenho> _desenhosCriados;
 		//posição X do primeiro candle da esquerda para a direita.
 
 		int intCandle1X;
@@ -203,15 +187,15 @@ namespace TraderWizard
 		int intArrayCandlePosicaoFinal;
 		//data mínima de todos os candles que estão carregados no array de dados (arrCandle).
 
-		System.DateTime dtmDataMinimaAreaDados;
+		DateTime dtmDataMinimaAreaDados;
 		//data máxima de todos os candles que estão carregados no array de dados (arrCandle).
 
-		System.DateTime dtmDataMaximaAreaDados;
+		DateTime dtmDataMaximaAreaDados;
 		//data da última cotação do papel independentemente se está ou não na área de dados.
 
 	    //Quando TRUE indica se o botão do mouse foi preessionado e ainda não foi solto e o mouse
 		//ainda está na área de desenho.
-		bool blnMouseDown = false;
+		bool blnMouseDown;
 		//ponto em que o mouse foi clicado.
 
 		Point objMouseDownPonto;
@@ -430,15 +414,13 @@ namespace TraderWizard
 		    _ferramentaSelecionada = null;
 
 			bool blnCotacaoBuscar;
-			bool blnIFRBuscar;
+			bool blnIfrBuscar;
 			bool blnVolumeBuscar;
 
 			long lngSequencialBuscaInicial = 0;
 			long lngSequencialBuscaFinal = 0;
 
-			string strPeriodoDuracaoAux;
-
-			strPeriodoDuracaoAux = (string) ToolStripcmbPeriodoDuracao.SelectedItem == "Diário" ? "DIARIO" : "SEMANAL";
+		    string strPeriodoDuracaoAux = (string) ToolStripcmbPeriodoDuracao.SelectedItem == "Diário" ? "DIARIO" : "SEMANAL";
 
 
 			if ((string) ToolStripcmbPeriodoDuracao.SelectedItem == "Diário") {
@@ -595,7 +577,7 @@ namespace TraderWizard
 				if (blnCotacaoBuscar) {
 					//SE É PARA BUSCAR AS COTAÇÕES NOVAMENTE OU
 					//TEM QUE BUSCAR OS DADOS DO IFR
-					blnIFRBuscar = true;
+					blnIfrBuscar = true;
 
 
 				} else {
@@ -605,17 +587,17 @@ namespace TraderWizard
 						//SÃO IGUAIS OU DIFERENTES
 						if (intIFRNumPeriodos == Convert.ToInt32(ToolStripcmbIFRNumPeriodos.Text)) {
 							//SE OS PERÍODOS SÃO OS MESMOS NÃO PRECISA BUSCAR OS DADOS DO IFR
-							blnIFRBuscar = false;
+							blnIfrBuscar = false;
 						} else {
 							//SE OS PERÍODOS SÃO DIFERENTES PRECISA BUSCAR OS DADOS DO IFR
-							blnIFRBuscar = true;
+							blnIfrBuscar = true;
 						}
 
 
 					} else {
 						//SE ANTES DESTA ATUALIZAÇAO O IFR NÃO ESTAVA SENDO DESENHADO,
 						//TEM QUE BUSCAR OS DADOS DO IFR
-						blnIFRBuscar = true;
+						blnIfrBuscar = true;
 
 					}
 
@@ -623,7 +605,7 @@ namespace TraderWizard
 
 			} else {
 				//não está marcado para buscar o IFR.
-				blnIFRBuscar = false;
+				blnIfrBuscar = false;
 			}
 
 
@@ -671,14 +653,7 @@ namespace TraderWizard
 
 			blnMMExpDesenhar = (TSmnuMMExibir.Checked) && ((lstMediasSelecionadas != null));
 
-			cCandle objCandle = null;
-
-			decimal decValorMinimo;
-			decimal decValorMaximo;
-			decimal decValorAbertura;
-			decimal decValorFechamento;
-
-			if (strCodigoAtivo != mdlGeral.ObtemCodigoDoAtivoSelecionadoNoCombo((string) ToolStripcmbAtivo.SelectedItem)) {
+		    if (strCodigoAtivo != mdlGeral.ObtemCodigoDoAtivoSelecionadoNoCombo((string) ToolStripcmbAtivo.SelectedItem)) {
 
 				_desenhosCriados.Clear();
 
@@ -689,10 +664,8 @@ namespace TraderWizard
 
 			this.Text = "Gráfico " + ToolStripcmbPeriodoDuracao.SelectedItem + " - " + ToolStripcmbAtivo.SelectedItem;
 
-			string strQuery = String.Empty;
 
-
-			//inicializa a variável com o indice final dos dados que devem ser buscados,
+		    //inicializa a variável com o indice final dos dados que devem ser buscados,
 			//pois a atualização do array é feita do final para o início.
 			int intArrayCandleIndice = intIndiceFinal;
 
@@ -748,7 +721,7 @@ namespace TraderWizard
 
 
 				} else {
-					Interaction.MsgBox("Existem " + objRS.Field("Contador").ToString() + " cotações com Valor Mínimo zerado. " + Environment.NewLine + "Verifique as cotações.", MsgBoxStyle.Information, this.Text);
+					Interaction.MsgBox("Existem " + objRS.Field("Contador") + " cotações com Valor Mínimo zerado. " + Environment.NewLine + "Verifique as cotações.", MsgBoxStyle.Information, this.Text);
 
 				}
 
@@ -775,15 +748,15 @@ namespace TraderWizard
 							//If objRSList.Field("ValorMinimo") <> 0 Then
 
 							//valores em R$
-							decValorMaximo = Convert.ToDecimal(objRSList.Field("ValorMaximo"));
-							decValorMinimo = Convert.ToDecimal(objRSList.Field("ValorMinimo"));
-							decValorAbertura = Convert.ToDecimal(objRSList.Field("ValorAbertura"));
-							decValorFechamento = Convert.ToDecimal(objRSList.Field("ValorFechamento"));
+							decimal decValorMaximo = Convert.ToDecimal(objRSList.Field("ValorMaximo"));
+							decimal decValorMinimo = Convert.ToDecimal(objRSList.Field("ValorMinimo"));
+							decimal decValorAbertura = Convert.ToDecimal(objRSList.Field("ValorAbertura"));
+							decimal decValorFechamento = Convert.ToDecimal(objRSList.Field("ValorFechamento"));
 
 							//instância o candle com as propriedades em escala decimal, antes de passar para a escala logarítmica,
 							//caso o gráfico seja impresso em escala logarítmica.
 
-							objCandle = new cCandle(Convert.ToDateTime(objRSList.Field("Data")), decValorAbertura, decValorFechamento, decValorMaximo, decValorMinimo, Convert.ToDecimal(objRSList.Field("Oscilacao")), blnMMExpDesenhar);
+							cCandle objCandle = new cCandle(Convert.ToDateTime(objRSList.Field("Data")), decValorAbertura, decValorFechamento, decValorMaximo, decValorMinimo, Convert.ToDecimal(objRSList.Field("Oscilacao")), blnMMExpDesenhar);
 
 
 							if (strPeriodoDuracao == "SEMANAL") {
@@ -834,10 +807,10 @@ namespace TraderWizard
 
 			//*********************************INICIO DO TRATAMENTO PARA O IFR*********************************
 
-			if (blnIFRBuscar) {
+			if (blnIfrBuscar) {
 				//****************VER SE ESTÁ FUNCIONANDO QUANDO O PERÍODO DO IFR FOR TROCADO.
 
-				strQuery = " SELECT Valor " + Environment.NewLine + " FROM " + strTabelaIFR + Environment.NewLine + " WHERE Codigo = " + FuncoesBD.CampoStringFormatar(strCodigoAtivo) + Environment.NewLine + " AND NumPeriodos = " + intIFRNumPeriodos.ToString() + Environment.NewLine + " AND Data >= " + FuncoesBD.CampoDateFormatar(dtmDataMinimaBusca) + Environment.NewLine + " AND Data <= " + FuncoesBD.CampoDateFormatar(dtmDataMaximaBusca) + Environment.NewLine + " ORDER BY Data DESC ";
+				string strQuery = " SELECT Valor " + Environment.NewLine + " FROM " + strTabelaIFR + Environment.NewLine + " WHERE Codigo = " + FuncoesBD.CampoStringFormatar(strCodigoAtivo) + Environment.NewLine + " AND NumPeriodos = " + intIFRNumPeriodos + Environment.NewLine + " AND Data >= " + FuncoesBD.CampoDateFormatar(dtmDataMinimaBusca) + Environment.NewLine + " AND Data <= " + FuncoesBD.CampoDateFormatar(dtmDataMaximaBusca) + Environment.NewLine + " ORDER BY Data DESC ";
 
 				//mauro, 21/02/2010
 				//tratamento para tentar remover a exceção ao executar esta query.
@@ -854,7 +827,7 @@ namespace TraderWizard
 					try {
 						arrCandle[intArrayCandleIndice].IFR14 = Convert.ToDouble(objRS.Field("Valor"));
 					} catch (Exception ex) {
-						Interaction.MsgBox("Erro ao atribuir o IFR no índice: " + intArrayCandleIndice.ToString() + " - Tamanho total do array: " + arrCandle.Length.ToString(), MsgBoxStyle.Critical, this.Text);
+						Interaction.MsgBox("Erro ao atribuir o IFR no índice: " + intArrayCandleIndice + " - Tamanho total do array: " + arrCandle.Length, MsgBoxStyle.Critical, this.Text);
 					}
 
 					intArrayCandleIndice = intArrayCandleIndice - 1;
@@ -963,13 +936,12 @@ namespace TraderWizard
 				//pois quando as cotações forem buscadas novos candles serão gerados.
 				//Para isso tem que pegar as médias do último candle e verificar 
 				//quais delas não estão mais entre as médias escolhidas pelo usuário
-				Dictionary<string, cEstrutura.structMediaValor> colMediaValorAux;
 
-				cEstrutura.structMediaValor objstructMediaValor = default(cEstrutura.structMediaValor);
+			    cEstrutura.structMediaValor objstructMediaValor = default(cEstrutura.structMediaValor);
 				//Dim objstructMediaEscolha As structIndicadorEscolha
 
 			    //busca a collection de média do último candle preenchido.
-				colMediaValorAux = UltimoCandlePreenchidoCollectionMediaBuscar(blnCotacaoBuscar, intIndiceInicial, intIndiceFinal);
+				Dictionary<string, cEstrutura.structMediaValor> colMediaValorAux = UltimoCandlePreenchidoCollectionMediaBuscar(blnCotacaoBuscar, intIndiceInicial, intIndiceFinal);
 
 				//só precisa limpar a collection de médias quando não estiver vazia
 
@@ -984,8 +956,8 @@ namespace TraderWizard
 					//AFIRMAÇÃO A SEGUIR NÃO É MAIS VÁLIDA: só precisa limpar a collection de médias se não for 
 					//para buscar as cotações. Se buscar todas as cotações novos candles serão criados.
 
-					foreach (KeyValuePair<string, cEstrutura.structMediaValor> objstructMediaValor_loopVariable in colMediaValorAux) {
-						objstructMediaValor = objstructMediaValor_loopVariable.Value;
+					foreach (KeyValuePair<string, cEstrutura.structMediaValor> mediaValor in colMediaValorAux) {
+						objstructMediaValor = mediaValor.Value;
 						//para cada uma das médias encontradas, percorre a estrutura de médias escolhidas pelo usuário
 						//para ver se a média ainda está selecionada
 
@@ -1008,7 +980,7 @@ namespace TraderWizard
 
 						if (blnMediaRemover) {
 							//se for para remover monta a chave da collection e faz um for removendo as médias
-							string strCollectionKey = objstructMediaValor.intPeriodo.ToString() + objstructMediaValor.strTipo;
+							string strCollectionKey = objstructMediaValor.intPeriodo + objstructMediaValor.strTipo;
 
 
 							for (intI = 0; intI <= arrCandle.Length - 1; intI++) {
@@ -1163,20 +1135,18 @@ namespace TraderWizard
 		}
 
 
-		/// <summary>
-		/// Calcula os pontos principais de valores para serem inseridos na área do gráfico e orientar o gráfico
-		/// </summary>
-		/// <param name="pdecValorMinimo">Menor valor que será impresso no gráfico</param>
-		/// <param name="pdecValorMaximo">Maior valor que será impresso no gráfico</param>
-		/// <param name="pdecValorInicialRet">Retorna o maior valor em que será impresso uma reta horizontal de orientação</param>
-		/// <param name="pdecIntervaloRet">Retorna o intervalo a qual deve ser impresso novas retas</param>
-		/// <remarks></remarks>
-
-		private void PontosPrincipaisCalcular(decimal pdecValorMinimo, decimal pdecValorMaximo, int pintNumPontos, ref decimal pdecValorInicialRet, ref decimal pdecIntervaloRet)
+	    /// <summary>
+	    /// Calcula os pontos principais de valores para serem inseridos na área do gráfico e orientar o gráfico
+	    /// </summary>
+	    /// <param name="pdecValorMinimo">Menor valor que será impresso no gráfico</param>
+	    /// <param name="pdecValorMaximo">Maior valor que será impresso no gráfico</param>
+	    /// <param name="pintNumPontos"></param>
+	    /// <param name="pdecValorInicialRet">Retorna o maior valor em que será impresso uma reta horizontal de orientação</param>
+	    /// <param name="pdecIntervaloRet">Retorna o intervalo a qual deve ser impresso novas retas</param>
+	    /// <remarks></remarks>
+	    private void PontosPrincipaisCalcular(decimal pdecValorMinimo, decimal pdecValorMaximo, int pintNumPontos, out decimal pdecValorInicialRet, out decimal pdecIntervaloRet)
 		{
-			int intRazaoInteira = 0;
-
-			//divide a diferença entre o maior e o menor valores pelo número de retas que será impressa, 
+	        //divide a diferença entre o maior e o menor valores pelo número de retas que será impressa, 
 			//subtraindo de 1, pois tem que desconsiderar umas das retas para fechar o cálculo
 			pdecIntervaloRet = (pdecValorMaximo - pdecValorMinimo) / (pintNumPontos - 1);
 
@@ -1202,7 +1172,7 @@ namespace TraderWizard
 				//o primeiro valor que deve ser impresso deve ser maior ou igual ao valor mínimo
 
 				//divide o valor mínimo pelo intervalo utilizando apenas a parte inteira
-				intRazaoInteira = (int)  Math.Round(pdecValorMinimo / pdecIntervaloRet, 0);
+				var intRazaoInteira = (int)  Math.Round(pdecValorMinimo / pdecIntervaloRet, 0);
 
 				//agora multiplica a razão inteira pelo intervalo e verifica se retorna um número maior ou igual ao valor mínimo
 
@@ -1219,7 +1189,7 @@ namespace TraderWizard
 
 
 				if (pdecValorInicialRet <= 0) {
-					Interaction.MsgBox("intRazaoInteira: " + intRazaoInteira.ToString() + " pdecIntervaloRet" + pdecIntervaloRet.ToString() + " pdecValorMaximo: " + pdecValorMaximo.ToString() + " pintNumPontos: " + pintNumPontos.ToString(), MsgBoxStyle.Critical, this.Text);
+					Interaction.MsgBox("intRazaoInteira: " + intRazaoInteira + " pdecIntervaloRet" + pdecIntervaloRet + " pdecValorMaximo: " + pdecValorMaximo + " pintNumPontos: " + pintNumPontos, MsgBoxStyle.Critical, this.Text);
 
 				}
 
@@ -1231,7 +1201,7 @@ namespace TraderWizard
 
 
 				if (pdecValorInicialRet <= 0) {
-					Interaction.MsgBox("pdecValorMinimo: " + pdecValorMinimo.ToString(), MsgBoxStyle.Critical, this.Text);
+					Interaction.MsgBox("pdecValorMinimo: " + pdecValorMinimo, MsgBoxStyle.Critical, this.Text);
 
 				}
 
@@ -1246,10 +1216,7 @@ namespace TraderWizard
 
 		private void PontosPrincipaisCalcular(double pdblValorMinimo, double pdblValorMaximo, int pintNumPontos, ref double pdblValorInicialRet, ref double pdblIntervaloRet)
 		{
-			int intRazaoInteira = 0;
-
-
-			if (pdblValorMinimo != pdblValorMaximo) {
+		    if (pdblValorMinimo != pdblValorMaximo) {
 				//divide a diferença entre o maior e o menor valores pelo número de retas que será impressa, 
 				//subtraindo de 1, pois tem que desconsiderar umas das retas para fechar o cálculo
 				pdblIntervaloRet = (pdblValorMaximo - pdblValorMinimo) / (pintNumPontos - 1);
@@ -1274,7 +1241,7 @@ namespace TraderWizard
 				//o primeiro valor que deve ser impresso deve ser maior ou igual ao valor mínimo
 
 				//divide o valor mínimo pelo intervalo utilizando apenas a parte inteira
-				intRazaoInteira = (int) Math.Round(pdblValorMinimo / pdblIntervaloRet, 0);
+				int intRazaoInteira = (int) Math.Round(pdblValorMinimo / pdblIntervaloRet, 0);
 
 				//agora multiplica a razão inteira pelo intervalo e verifica se retorna um número maior ou igual ao valor mínimo
 
@@ -1309,18 +1276,15 @@ namespace TraderWizard
 
 		private void ControlesRemover()
 		{
-			Control objControl;
+		    //percorre collection de índices
 
-			//percorre collection de índices
-
-			foreach (Control objControl_loopVariable in colLabelVertical) {
-				objControl = objControl_loopVariable;
-				//remove o componente do índice específico.
-				this.Controls.Remove(objControl);
-
+			foreach (Control control in colLabelVertical)
+			{
+			    //remove o componente do índice específico.
+				this.Controls.Remove(control);
 			}
 
-			colLabelVertical.Clear();
+		    colLabelVertical.Clear();
 
 		}
 
@@ -1343,8 +1307,6 @@ namespace TraderWizard
 			colLabelVertical.Add(objLabel);
 
 		}
-
-
 
 		private void LabelHorizontalAdicionar(string pstrText, int pintAreaBottom, int pintAreaLeft, int pintPosicaoX, Color pobjColor)
 		{
@@ -1445,6 +1407,20 @@ namespace TraderWizard
 	    }
 
 
+        private void DesenharLinhaDoIfr(PaintEventArgs e, int valorDoIfr)
+        {
+            //IFR = 10
+            var intReferenciaY = intIFRAreaTop + intIndicadoresMargem + Convert.ToInt32((100 - valorDoIfr) * dblPixelPorIFR);
+
+            e.Graphics.DrawLine(Pens.LightSeaGreen, intAreaLeft, intReferenciaY, intAreaRight, intReferenciaY);
+
+            if (blnPontosAtualizar)
+            {
+                LabelVerticalAdicionar(Convert.ToString (valorDoIfr), intAreaRight, intReferenciaY);
+            }
+
+        }
+
 	    private void GraficoDesenhar(PaintEventArgs e)
 		{
 
@@ -1463,9 +1439,7 @@ namespace TraderWizard
 			e.Graphics.FillRectangle(Brushes.LightYellow, objGraficoArea);
 			e.Graphics.DrawRectangle(Pens.Black, objGraficoArea);
 
-			double dblValorReferencia = 0;
-
-			int intReferenciaY = 0;
+	        int intReferenciaY = 0;
 			//coordenada Y do ponto de referência
 
 			//If blnDadosAtualizar Then
@@ -1492,17 +1466,7 @@ namespace TraderWizard
 			//faz um loop inserindo as retas horizontais e os labels para as cotações
 
 			while (decValorInicialReferenciaAux <= decValorMaximoPeriodoReferencia) {
-
-				if (ToolStripbtnEscalaLogaritmica.Checked) {
-					//se tem que converter para a escala logaritmica
-					dblValorReferencia = Math.Log(Convert.ToDouble( decValorInicialReferenciaAux));
-
-
-				} else {
-					dblValorReferencia = Convert.ToDouble(decValorInicialReferenciaAux);
-
-				}
-
+			    double dblValorReferencia = ToolStripbtnEscalaLogaritmica.Checked ? Math.Log(Convert.ToDouble( decValorInicialReferenciaAux)) : Convert.ToDouble(decValorInicialReferenciaAux);
 
 				try {
 					//calcula a coordena y da reta a ser impressa
@@ -1510,7 +1474,7 @@ namespace TraderWizard
 
 
 				} catch (Exception ex) {
-					Interaction.MsgBox("Erro ************** decValorMaximoPeriodo: " + decValorMaximoPeriodo.ToString() + " dblValorReferencia: " + dblValorReferencia.ToString() + " decValorInicialReferenciaAux: " + decValorInicialReferenciaAux.ToString() + " dblpixelporreal: " + dblPixelPorReal.ToString(), MsgBoxStyle.Critical, this.Text);
+					Interaction.MsgBox("Erro ************** decValorMaximoPeriodo: " + decValorMaximoPeriodo + " dblValorReferencia: " + dblValorReferencia + " decValorInicialReferenciaAux: " + decValorInicialReferenciaAux + " dblpixelporreal: " + dblPixelPorReal, MsgBoxStyle.Critical, this.Text);
 
 				}
 
@@ -1537,17 +1501,15 @@ namespace TraderWizard
 			//----------------------------------------------------------------------
 			double dblVolumeInicialReferenciaAux = dblVolumeInicialReferencia;
 
-			double dblVolumeReferencia = 0;
-
-			double dblVolumeReferenciaAnterior = 0;
+	        double dblVolumeReferenciaAnterior = 0;
 
 
 			if (blnVolumeDesenhar) {
 				//faz um loop inserindo as retas horizontais e os labels para as cotações
 
 				while (dblVolumeInicialReferenciaAux <= dblVolumeMaximoPeriodoReferencia) {
-
-					if (dblVolumeInicialReferenciaAux >= 1000000) {
+				    double dblVolumeReferencia = 0;
+				    if (dblVolumeInicialReferenciaAux >= 1000000) {
 						dblVolumeReferencia = Math.Round(dblVolumeInicialReferenciaAux / 1000000, 0) * 1000000;
 
 
@@ -1613,8 +1575,8 @@ namespace TraderWizard
 
 			if ((colSplit != null)) {
 
-				foreach (frmGrafico.structSplit objSplit_loopVariable in colSplit) {
-					objSplit = objSplit_loopVariable;
+				foreach (structSplit split in colSplit) {
+					objSplit = split;
 					e.Graphics.DrawLine(Pens.LightSalmon, objSplit.intPosicaoX, intAreaTop, objSplit.intPosicaoX, intAreaBottom);
 
 					//If blnDadosAtualizar Then
@@ -1631,12 +1593,8 @@ namespace TraderWizard
 			}
 
 			//utilizado para controle de labels de referência
-			DateTime dtmDataAtual;
-			DateTime dtmData;
 
-			int intCaudaX = 0;
-
-			//indica o número de mêses que deve ter o intervalo de cada label.
+	        //indica o número de mêses que deve ter o intervalo de cada label.
 			//Inicializa com 1 porque tanto no diário quanto no semanal o primeiro label 
 			//é inserido na primeira troca de mês.
 			//Dim intNumMesesIntervaloLabels As Integer = 1
@@ -1647,100 +1605,44 @@ namespace TraderWizard
 
 				case 1:
 
-
-					if (strPeriodoDuracao == "DIARIO") {
-						intNumDiasIntervaloLabels = 105;
-
-
-					} else {
-						intNumDiasIntervaloLabels = 315;
-
-					}
+					intNumDiasIntervaloLabels = strPeriodoDuracao == "DIARIO" ? 105 : 315;
 
 					break;
 				case 2:
 
-
-					if (strPeriodoDuracao == "DIARIO") {
-						intNumDiasIntervaloLabels = 70;
-
-
-					} else {
-						intNumDiasIntervaloLabels = 210;
-
-					}
+					intNumDiasIntervaloLabels = strPeriodoDuracao == "DIARIO" ? 70 : 210;
 
 					break;
 				case 3:
 
-
-					if (strPeriodoDuracao == "DIARIO") {
-						intNumDiasIntervaloLabels = 42;
-
-
-					} else {
-						intNumDiasIntervaloLabels = 126;
-
-					}
+					intNumDiasIntervaloLabels = strPeriodoDuracao == "DIARIO" ? 42 : 126;
 
 					break;
 				case 4:
 
-
-					if (strPeriodoDuracao == "DIARIO") {
-						intNumDiasIntervaloLabels = 30;
-
-
-					} else {
-						intNumDiasIntervaloLabels = 90;
-
-					}
+					intNumDiasIntervaloLabels = strPeriodoDuracao == "DIARIO" ? 30 : 90;
 
 					break;
 				case 5:
 
-
-					if (strPeriodoDuracao == "DIARIO") {
-						intNumDiasIntervaloLabels = 25;
-
-
-					} else {
-						intNumDiasIntervaloLabels = 75;
-
-					}
+					intNumDiasIntervaloLabels = strPeriodoDuracao == "DIARIO" ? 25 : 75;
 
 					break;
 				case 6:
 
-
-					if (strPeriodoDuracao == "DIARIO") {
-						intNumDiasIntervaloLabels = 20;
-
-
-					} else {
-						intNumDiasIntervaloLabels = 60;
-
-					}
+					intNumDiasIntervaloLabels = strPeriodoDuracao == "DIARIO" ? 20 : 60;
 
 					break;
 				case 7:
 
-
-					if (strPeriodoDuracao == "DIARIO") {
-						intNumDiasIntervaloLabels = 15;
-
-
-					} else {
-						intNumDiasIntervaloLabels = 45;
-
-					}
+					intNumDiasIntervaloLabels = strPeriodoDuracao == "DIARIO" ? 15 : 45;
 
 					break;
 			}
 
 			//pega o mês do primeiro candle para quando trocar de mês imprimir a última data do mês.
 			//e adiciona um mês.
-			dtmDataAtual = DateAndTime.DateAdd(DateInterval.Month, 1, arrCandle[intArrayCandlePosicaoInicial].Data);
+			DateTime dtmDataAtual = DateAndTime.DateAdd(DateInterval.Month, 1, arrCandle[intArrayCandlePosicaoInicial].Data);
 
 			//pega a primeira data do próximo mês
 			dtmDataAtual = DateAndTime.DateSerial(DateAndTime.DatePart(DateInterval.Year, dtmDataAtual), DateAndTime.DatePart(DateInterval.Month, dtmDataAtual), 1);
@@ -1750,10 +1652,10 @@ namespace TraderWizard
 
 			for (intI = intArrayCandlePosicaoInicial; intI <= intArrayCandlePosicaoFinal; intI++) {
 				//busca a data do candle no array
-				dtmData = arrCandle[intI].Data;
+				DateTime dtmData = arrCandle[intI].Data;
 
 				//busca o ponto x da cauda do candle no array
-				intCaudaX = arrCandle[intI].LinhaCaudaX;
+				int intCaudaX = arrCandle[intI].LinhaCaudaX;
 
 				//verifica se tem que imprimir a linha vertical de referência de mês
 				//If DateDiff(DateInterval.Month, dtmDataAtual, dtmData) = intNumMesesIntervaloLabels Then
@@ -1808,19 +1710,15 @@ namespace TraderWizard
 			if (blnMMExpDesenhar) {
 				Rectangle objRectAreaLegenda = new Rectangle(intAreaRight + 45, intAreaTop, 42, colMedia.Count * 20);
 
-				Rectangle objRectItemLegenda = default(Rectangle);
-
-				int intRectItemLegendaTop = intAreaTop + 5;
+			    int intRectItemLegendaTop = intAreaTop + 5;
 
 				e.Graphics.FillRectangle(Brushes.LightYellow, objRectAreaLegenda);
 
 				e.Graphics.DrawRectangle(Pens.Black, objRectAreaLegenda);
 
-				cIndicador objMedia = null;
 
-
-				foreach (cIndicador objMedia_loopVariable in colMedia) {
-					objMedia = objMedia_loopVariable;
+			    foreach (cIndicador objMedia_loopVariable in colMedia) {
+					cIndicador objMedia = objMedia_loopVariable;
 					//desenha todas as médias móveis.
 
 					if (objMedia.IndicadorPonto.Length > 1) {
@@ -1831,13 +1729,13 @@ namespace TraderWizard
 					}
 
 					//desenha a legenda no canto superior direito da tela - INICIO
-					objRectItemLegenda = new Rectangle(intAreaRight + 47, intRectItemLegendaTop, 10, 10);
+					var objRectItemLegenda = new Rectangle(intAreaRight + 47, intRectItemLegendaTop, 10, 10);
 
 					e.Graphics.FillRectangle(new SolidBrush(objMedia.Cor), objRectItemLegenda);
 
 					e.Graphics.DrawRectangle(Pens.Black, objRectItemLegenda);
 
-					e.Graphics.DrawString(objMedia.NumPeriodos.ToString() + objMedia.Tipo, SystemFonts.DefaultFont, Brushes.Black, intAreaRight + 59, intRectItemLegendaTop);
+					e.Graphics.DrawString(objMedia.NumPeriodos + objMedia.Tipo, SystemFonts.DefaultFont, Brushes.Black, intAreaRight + 59, intRectItemLegendaTop);
 
 					//incrementa a posição top do retângulo para desenhar o próximo
 					intRectItemLegendaTop = intRectItemLegendaTop + 15;
@@ -1855,97 +1753,31 @@ namespace TraderWizard
 
 				//adiciona as linhas e os labels de referência do IFR
 
-
 				if (intIFRNumPeriodos == 2) {
-					//IFR = 5
-					intReferenciaY = intIFRAreaTop + intIndicadoresMargem + Convert.ToInt32((100 - 5) * dblPixelPorIFR);
-
-					e.Graphics.DrawLine(Pens.LightSeaGreen, intAreaLeft, intReferenciaY, intAreaRight, intReferenciaY);
-
+                    DesenharLinhaDoIfr(e, 10);
 				}
 
-
 				if (intIFRNumPeriodos != 2) {
-					//IFR = 20
-					intReferenciaY = intIFRAreaTop + intIndicadoresMargem + Convert.ToInt32((100 - 20) * dblPixelPorIFR);
-
-					//If blnDadosAtualizar Then
-
-
-					if (blnPontosAtualizar) {
-						LabelVerticalAdicionar("20", intAreaRight, intReferenciaY);
-
-					}
-
+                    DesenharLinhaDoIfr(e, 20);
 				}
 
 				//imprime a reta na horizontal
 				e.Graphics.DrawLine(Pens.LightSeaGreen, intAreaLeft, intReferenciaY, intAreaRight, intReferenciaY);
 
-				//IFR = 30
-				intReferenciaY = intIFRAreaTop + intIndicadoresMargem + Convert.ToInt32((100 - 30) * dblPixelPorIFR);
+                DesenharLinhaDoIfr(e,30);
 
-				e.Graphics.DrawLine(Pens.LightSeaGreen, intAreaLeft, intReferenciaY, intAreaRight, intReferenciaY);
+                DesenharLinhaDoIfr(e, 50);
 
-				//MAURO, 21/02/2010
-				//REMOVIDO LABEL DO IFR = 30
-				//'If blnDadosAtualizar Then
-
-				if (blnPontosAtualizar && intIFRNumPeriodos == 2) {
-					LabelVerticalAdicionar("30", intAreaRight, intReferenciaY);
-
-				}
-
-				//IFR = 50
-				intReferenciaY = intIFRAreaTop + intIndicadoresMargem + Convert.ToInt32((100 - 50) * dblPixelPorIFR);
-
-				e.Graphics.DrawLine(Pens.LightSeaGreen, intAreaLeft, intReferenciaY, intAreaRight, intReferenciaY);
-
-				//If blnDadosAtualizar Then
-
-				if (blnPontosAtualizar) {
-					LabelVerticalAdicionar("50", intAreaRight, intReferenciaY);
-
-				}
-
-				//IFR = 70
-				intReferenciaY = intIFRAreaTop + intIndicadoresMargem + Convert.ToInt32((100 - 70) * dblPixelPorIFR);
-
-				//If blnDadosAtualizar Then
-
-				if (blnPontosAtualizar && intIFRNumPeriodos == 2) {
-					LabelVerticalAdicionar("70", intAreaRight, intReferenciaY);
-
-				}
-
-				e.Graphics.DrawLine(Pens.LightSeaGreen, intAreaLeft, intReferenciaY, intAreaRight, intReferenciaY);
-
+                DesenharLinhaDoIfr(e, 70);
 
 				if (intIFRNumPeriodos != 2) {
-					//IFR = 80
-					intReferenciaY = intIFRAreaTop + intIndicadoresMargem + Convert.ToInt32((100 - 80) * dblPixelPorIFR);
-
-					e.Graphics.DrawLine(Pens.LightSeaGreen, intAreaLeft, intReferenciaY, intAreaRight, intReferenciaY);
-
-					//If blnDadosAtualizar Then
-
-					if (blnPontosAtualizar) {
-						LabelVerticalAdicionar("80", intAreaRight, intReferenciaY);
-
-					}
-
+                    DesenharLinhaDoIfr(e, 80);
 				}
 
 
 				if (intIFRNumPeriodos == 2) {
-					//IFR = 95
-					intReferenciaY = intIFRAreaTop + intIndicadoresMargem + Convert.ToInt32((100 - 95) * dblPixelPorIFR);
-
-					e.Graphics.DrawLine(Pens.LightSeaGreen, intAreaLeft, intReferenciaY, intAreaRight, intReferenciaY);
-
+                    DesenharLinhaDoIfr(e, 90);
 				}
-
-
 				//desenha os pontos do IFR
 
 				if (arrIFRPonto.Length > 1) {
@@ -1957,7 +1789,6 @@ namespace TraderWizard
 					e.Graphics.DrawLine(Pens.Blue, arrIFRPonto[0], arrIFRPonto[0]);
 
 				}
-
 
 				if (intIFRNumPeriodos == 2) {
 
@@ -2031,11 +1862,8 @@ namespace TraderWizard
 
 			if (AreaDadosPontoPertencer(pobjPonto)) {
 				int intX = pobjPonto.X;
-				int intY = pobjPonto.Y;
 
-				int intPosicaoArray = 0;
-
-				int intNumCandles = 0;
+			    int intNumCandles;
 
 				//se está na área de impressão do gráfico, verifica se está sobre um candle
 				//para fazer isso, primeiro verifica qual posição do array de candles corresponde a posição X do mouse
@@ -2069,7 +1897,7 @@ namespace TraderWizard
 
 
 				//decrementa um da posição final porque o array é base 0 
-				intPosicaoArray = intArrayCandlePosicaoInicial + intNumCandles - 1;
+				int intPosicaoArray = intArrayCandlePosicaoInicial + intNumCandles - 1;
 
 				pintIndiceRet = intPosicaoArray;
 
@@ -2092,17 +1920,14 @@ namespace TraderWizard
 
 			int intPosicaoArray = 0;
 
-			cCandle objCandle = null;
 
-			double dblMedia = 0;
-
-
-			//verifica se a posição do mouse está na área de impressão do gráfico
+		    //verifica se a posição do mouse está na área de impressão do gráfico
 			//If AreaDadosPontoPertencer(e.Location) Then
 
 
-			if (MousePositionArrayCandleIndiceCalcular(e.Location, ref intPosicaoArray)) {
-				//se está na área de impressão do gráfico, verifica se está sobre um candle
+			if (MousePositionArrayCandleIndiceCalcular(e.Location, ref intPosicaoArray))
+			{
+			    //se está na área de impressão do gráfico, verifica se está sobre um candle
 				//para fazer isso, primeiro verifica qual posição do array de candles corresponde a posição X do mouse
 
 				//a impressão dos candles começa da direita para esquerda com uma posição intLargura sendo descontada
@@ -2127,9 +1952,9 @@ namespace TraderWizard
 				//'decrementa um da posição final porque o array é base 0 
 				//intPosicaoArray = intArrayCandlePosicaoInicial + intNumCandles - 1
 
-				objCandle = arrCandle[intPosicaoArray];
+			    cCandle objCandle = arrCandle[intPosicaoArray];
 
-				if (objCandle.RectAreaTotal.Contains(intX, intY)) {
+			    if (objCandle.RectAreaTotal.Contains(intX, intY)) {
 					StatusStrip.Items.Clear();
 
 					StatusStrip.Items.Add("DATA: " + Strings.Format(objCandle.Data, "dd/MM/yyyy") + "  ABE: " + Strings.FormatNumber(objCandle.ValorAbertura, 2) + "  MIN: " + Strings.FormatNumber(objCandle.ValorMinimo, 2) + "  MAX: " + Strings.FormatNumber(objCandle.ValorMaximo, 2) + "  FECH: " + Strings.FormatNumber(objCandle.ValorFechamento, 2) + "  OSC: " + Strings.FormatNumber(objCandle.Oscilacao));
@@ -2142,23 +1967,23 @@ namespace TraderWizard
 
 						//For Each objstructMMExp In colStructIndicadorMMExp
 
-						foreach (cMediaDTO objMediaDTO in lstMediasSelecionadas) {
-							dblMedia = objCandle.MediaBuscar(objMediaDTO.NumPeriodos, objMediaDTO.Tipo);
+						foreach (cMediaDTO objMediaDTO in lstMediasSelecionadas)
+						{
+						    double dblMedia = objCandle.MediaBuscar(objMediaDTO.NumPeriodos, objMediaDTO.Tipo);
 
 
-							if (dblMedia > 0) {
+						    if (dblMedia > 0) {
 								if (strTexto != String.Empty) {
 									strTexto = strTexto + "  ";
 								}
 
-								strTexto = strTexto + "[" + objMediaDTO.NumPeriodos.ToString() + objMediaDTO.Tipo + "] " + Strings.FormatNumber(dblMedia, 2);
+								strTexto = strTexto + "[" + objMediaDTO.NumPeriodos + objMediaDTO.Tipo + "] " + Strings.FormatNumber(dblMedia, 2);
 
 							}
-
 						}
 
 
-						if (strTexto != String.Empty) {
+					    if (strTexto != String.Empty) {
 							StatusStrip.Items.Add(new ToolStripSeparator());
 
 							strTexto = "Médias:  " + strTexto;
@@ -2171,7 +1996,7 @@ namespace TraderWizard
 
 
 					if (blnIFRDesenhar) {
-						StatusStrip.Items[0].Text = StatusStrip.Items[0].Text + "  IFR " + intIFRNumPeriodos.ToString() + ": " + Strings.FormatNumber(objCandle.IFR14, 2);
+						StatusStrip.Items[0].Text = StatusStrip.Items[0].Text + "  IFR " + intIFRNumPeriodos + ": " + Strings.FormatNumber(objCandle.IFR14, 2);
 
 
 						if (intIFRNumPeriodos == 2) {
@@ -2202,7 +2027,6 @@ namespace TraderWizard
 
 						}
 
-
 						//marca a nova posição selecionada: subtrai a posição inicial porque o array de volumes
 						//contém apenas os volumes da área de dados que está sendo desenhada. Ao contrário dos
 						//candles que contêm toda a área de dados.
@@ -2216,16 +2040,8 @@ namespace TraderWizard
 
 					}
 
-					//objArquivo.EscreverString("ENCONTRADO")
-
-					//Else
-
-					//objArquivo.EscreverString("NAO ENCONTRADO")
-
 				}
-
 			}
-
 		}
 
 	    private bool TemFerramentaDeDesenhoSelecionada
@@ -2287,7 +2103,7 @@ namespace TraderWizard
 		/// <remarks></remarks>
 		private string ValorAbreviar(double pdblValor)
 		{
-			string functionReturnValue = null;
+			string functionReturnValue;
 
 			if (pdblValor >= 1000000) {
 				functionReturnValue = Strings.FormatNumber((pdblValor / 1000000), 2) + " M";
@@ -2552,18 +2368,12 @@ namespace TraderWizard
 			System.DateTime dtmDataMinima = arrCandle[intArrayCandlePosicaoInicial].Data;
 			System.DateTime dtmDataMaxima = arrCandle[intArrayCandlePosicaoFinal].Data;
 
-			System.DateTime dtmDataMaximaSplit = default(System.DateTime);
-
-			if (strPeriodoDuracao == "DIARIO") {
-				dtmDataMaximaSplit = arrCandle[intArrayCandlePosicaoFinal].Data;
-			} else {
-				dtmDataMaximaSplit = arrCandle[intArrayCandlePosicaoFinal].DataFinal;
-			}
+		    DateTime dtmDataMaximaSplit = strPeriodoDuracao == "DIARIO" ? arrCandle[intArrayCandlePosicaoFinal].Data : arrCandle[intArrayCandlePosicaoFinal].DataFinal;
 
 			decimal decValorMinimoPeriodo = default(decimal);
 			double dblVolumeMinimoPeriodo = 0;
 
-			int intI = 0;
+			int intI;
 
 			//***********************TRATAMENTO PARA OS VALORES MÍNIMO E MÁXIMO DO GRÁFICO***************************
 
@@ -2621,7 +2431,7 @@ namespace TraderWizard
 			}
 
 			//redimensiona o array
-			cIndicador objMedia = null;
+			cIndicador objMedia;
 
 			//Dim objStructIndicadorMMExp As structIndicadorEscolha
 
@@ -2702,7 +2512,7 @@ namespace TraderWizard
 			//O IFR SEMPRE TEM UMA ÁREA DE 100 PONTOS, POIS SEMPRE OSCILA ENTRE 0 E 100
 			//TEM QUE DESCONTAR AS MARGENS SUPERIOR E INFERIOR
 			if (blnIFRDesenhar) {
-				dblPixelPorIFR = (intIndicadoresAreaHeight - intIndicadoresMargem * 2) / 100;
+				dblPixelPorIFR = (intIndicadoresAreaHeight - intIndicadoresMargem * 2) / 100.0;
 			}
 
 			//CALCULA OS PONTOS DE REFERÊNCIA DE VALOR QUE DEVEM SER IMPRESSOS.
@@ -2710,8 +2520,7 @@ namespace TraderWizard
 			//MÁXIMO SEREM PASSADOS PARA A ESCALA LOGARITMICA, CASO SEJA NECESSÁRIO
 			decValorMaximoPeriodoReferencia = decValorMaximoPeriodo;
 
-			PontosPrincipaisCalcular(decValorMinimoPeriodo, decValorMaximoPeriodoReferencia, 8, ref decValorInicialReferencia, ref decIntervaloReferencia);
-
+			PontosPrincipaisCalcular(decValorMinimoPeriodo, decValorMaximoPeriodoReferencia, 8, out decValorInicialReferencia, out decIntervaloReferencia);
 
 			if (ToolStripbtnEscalaLogaritmica.Checked) {
 				decValorMaximoPeriodo = Convert.ToDecimal(Math.Log(Convert.ToDouble(decValorMaximoPeriodo)));
@@ -2719,7 +2528,7 @@ namespace TraderWizard
 
 			}
 
-			cRSList objRSSplit = null;
+			cRSList objRsSplit = null;
 			structSplit objSplit = default(structSplit);
 
 			if (colSplit == null) {
@@ -2731,7 +2540,7 @@ namespace TraderWizard
 			cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(this.objConexao);
 
 			//busca os splits do papel em ordem decrescente
-			objCarregadorSplit.SplitConsultar(strCodigoAtivo, dtmDataMinima, "D", ref objRSSplit, dtmDataMaximaSplit, "DESD");
+			objCarregadorSplit.SplitConsultar(strCodigoAtivo, dtmDataMinima, "D", ref objRsSplit, dtmDataMaximaSplit, "DESD");
 
 			//calcula quantos pixes cada um real vale para poder imprimir cada pixel posteriormente
 			//remove duas bordas para os candles inferior e superior não ficar muito grudados, da mesma forma
@@ -2747,31 +2556,22 @@ namespace TraderWizard
 
 			//****FIM DO TRECHO CRIADO PARA ENCONTRAR ERROS
 
-			PointF objPonto;
-			//pontos da média móvel exponencial
+		    //pontos da média móvel exponencial
 
 			//*********************CALCULA AS MÉDIAS MÓVEIS ESCOLHIDAS PELO USUÁRIO***********************
 
 			//limpa a collection que contém as médias calculadas anteriormente
 
-			decimal decValorMinimo = default(decimal);
-			decimal decValorMaximo = default(decimal);
-			decimal decValorAbertura = default(decimal);
-			decimal decValorFechamento = default(decimal);
-
-			double dblMMExp = 0;
-			//utilizado no loop
+		    //utilizado no loop
 
 			Rectangle objRectCandleCorpo = new Rectangle();
 
 			//Dim intCorpoX As Integer = FlowLayoutPanel1.Width - intBorda
 			int intCorpoX = intAreaRight - intCandleWidth / 2;
 
-			int intCorpoY = 0;
-			//Dim dblCorpoWidth As Double
-			int intCorpoHeight = 0;
+		    //Dim dblCorpoWidth As Double
 
-			//IMPRIME OS CANDLES DA DIREITA PARA A ESQUERDA, PARA OS CASOS EM QUE NÃO TEM CANDLES SUFICIENTES
+		    //IMPRIME OS CANDLES DA DIREITA PARA A ESQUERDA, PARA OS CASOS EM QUE NÃO TEM CANDLES SUFICIENTES
 			//PARA TODO O PERÍODO
 
 			//CALCULA A POSIÇÃO X DA PRIMEIRA CAUDA. A CAUDA TEM QUE SER IMPRESSA NO MEIO DO CANDLE
@@ -2781,25 +2581,18 @@ namespace TraderWizard
 			int intCaudaX = intAreaRight;
 			//+ intBorda
 
-			int intCaudaY1 = 0;
-			int intCaudaY2 = 0;
-
-			double dblVolume = 0;
-			double dblIFR14 = 0;
-
-			//contém o maior valor entre o valor de abertura e valor de fechamento
-			decimal decValorMaior = default(decimal);
+		    //contém o maior valor entre o valor de abertura e valor de fechamento
 
 
-			for (intI = intArrayCandlePosicaoFinal; intI >= intArrayCandlePosicaoInicial; intI += -1) {
+		    for (intI = intArrayCandlePosicaoFinal; intI >= intArrayCandlePosicaoInicial; intI += -1) {
 				intCaudaX = intCaudaX - intLarguraTotal;
 				intCorpoX = intCorpoX - intLarguraTotal;
 
 				//valores em R$
-				decValorMaximo = arrCandle[intI].ValorMaximo;
-				decValorMinimo = arrCandle[intI].ValorMinimo;
-				decValorAbertura = arrCandle[intI].ValorAbertura;
-				decValorFechamento = arrCandle[intI].ValorFechamento;
+				decimal decValorMaximo = arrCandle[intI].ValorMaximo;
+				decimal decValorMinimo = arrCandle[intI].ValorMinimo;
+				decimal decValorAbertura = arrCandle[intI].ValorAbertura;
+				decimal decValorFechamento = arrCandle[intI].ValorFechamento;
 
 
 				if (ToolStripbtnEscalaLogaritmica.Checked) {
@@ -2811,17 +2604,19 @@ namespace TraderWizard
 				}
 
 
-				if (blnMMExpDesenhar) {
+			    PointF objPonto;
+			    if (blnMMExpDesenhar) {
 
 					foreach (cIndicador objMedia_loopVariable in colMedia) {
 						objMedia = objMedia_loopVariable;
 
-						if (objMedia.ArrayIndicadorPontoIndice >= 0) {
-							//busca a média do candle
-							dblMMExp = arrCandle[intI].MediaBuscar(objMedia.NumPeriodos, objMedia.Tipo);
+						if (objMedia.ArrayIndicadorPontoIndice >= 0)
+						{
+						    //busca a média do candle
+						    double dblMMExp = arrCandle[intI].MediaBuscar(objMedia.NumPeriodos, objMedia.Tipo);
 
 
-							if (dblMMExp > 0) {
+						    if (dblMMExp > 0) {
 
 								if (ToolStripbtnEscalaLogaritmica.Checked) {
 									dblMMExp = Math.Log(dblMMExp);
@@ -2834,9 +2629,8 @@ namespace TraderWizard
 								objMedia.ArrayIndicadorPontoIndiceDecrementar();
 
 							}
-
 						}
-						//If objMedia.ArrayIndicadorPontoIndice >= 0 Then
+					    //If objMedia.ArrayIndicadorPontoIndice >= 0 Then
 
 					}
 
@@ -2846,18 +2640,14 @@ namespace TraderWizard
 
 				if (blnVolumeDesenhar) {
 					//************INICIO DO TRATAMENTO PARA A BARRA DO VOLUME*************
-					dblVolume = arrCandle[intI].Volume;
+					double dblVolume = arrCandle[intI].Volume;
 
-					int intVolumeHeight = 0;
-					int intVolumeTop = 0;
-					Rectangle objVolumeRect = default(Rectangle);
-
-					intVolumeTop = intVolumeAreaTop + intIndicadoresMargem + Convert.ToInt32((dblVolumeMaximoPeriodo - dblVolume) * dblPixelPorNegocio);
+				    int intVolumeTop = intVolumeAreaTop + intIndicadoresMargem + Convert.ToInt32((dblVolumeMaximoPeriodo - dblVolume) * dblPixelPorNegocio);
 
 					//tem que descontar a margem inferior
-					intVolumeHeight = intAreaBottom - intIndicadoresMargem - intVolumeTop;
+					int intVolumeHeight = intAreaBottom - intIndicadoresMargem - intVolumeTop;
 
-					objVolumeRect = new Rectangle(intCorpoX, intVolumeTop, intCandleWidth, intVolumeHeight);
+					Rectangle objVolumeRect = new Rectangle(intCorpoX, intVolumeTop, intCandleWidth, intVolumeHeight);
 
 					arrVolumeRectangle[intArrayVolumeIndice] = objVolumeRect;
 
@@ -2883,14 +2673,13 @@ namespace TraderWizard
 
 
 
-				if (blnIFRDesenhar) {
-					dblIFR14 = arrCandle[intI].IFR14;
+				if (blnIFRDesenhar)
+				{
+				    double dblIFR14 = arrCandle[intI].IFR14;
 
 
-					if (dblIFR14 > -1) {
-						int intIFRY = 0;
-
-						intIFRY = intIFRAreaTop + intIndicadoresMargem + Convert.ToInt32((100 - dblIFR14) * dblPixelPorIFR);
+				    if (dblIFR14 > -1) {
+					    int intIFRY = intIFRAreaTop + intIndicadoresMargem + Convert.ToInt32((100 - dblIFR14) * dblPixelPorIFR);
 
 						objPonto = new Point(intCaudaX, intIFRY);
 
@@ -2900,11 +2689,8 @@ namespace TraderWizard
 
 
 						if (intIFRNumPeriodos == 2) {
-							int intIFRMedioY = 0;
-
-
-							if (arrCandle[intI].IFRMedio > -1) {
-								intIFRMedioY = intIFRAreaTop + intIndicadoresMargem + Convert.ToInt32((100 - arrCandle[intI].IFRMedio) * dblPixelPorIFR);
+						    if (arrCandle[intI].IFRMedio > -1) {
+								int intIFRMedioY = intIFRAreaTop + intIndicadoresMargem + Convert.ToInt32((100 - arrCandle[intI].IFRMedio) * dblPixelPorIFR);
 
 								objPonto = new Point(intCaudaX, intIFRMedioY);
 
@@ -2917,12 +2703,11 @@ namespace TraderWizard
 						}
 
 					}
-
 				}
 
-				//CALCULA OS PONTOS DA CAUDA. A CAUDA SERÁ DESENHADA DO VALOR MÁXIMO ATÉ O VALOR MÍNIMO
-				intCaudaY1 = intAreaTop + intMargemSuperior + Convert.ToInt32((decValorMaximoPeriodo - decValorMaximo) * (decimal) dblPixelPorReal);
-				intCaudaY2 = intAreaTop + intMargemSuperior + Convert.ToInt32((decValorMaximoPeriodo - decValorMinimo) * (decimal) dblPixelPorReal);
+		        //CALCULA OS PONTOS DA CAUDA. A CAUDA SERÁ DESENHADA DO VALOR MÁXIMO ATÉ O VALOR MÍNIMO
+				int intCaudaY1 = intAreaTop + intMargemSuperior + Convert.ToInt32((decValorMaximoPeriodo - decValorMaximo) * (decimal) dblPixelPorReal);
+				int intCaudaY2 = intAreaTop + intMargemSuperior + Convert.ToInt32((decValorMaximoPeriodo - decValorMinimo) * (decimal) dblPixelPorReal);
 
 				//seta nos objetos do candle as propriedades da cauda
 				arrCandle[intI].LinhaCaudaX = intCaudaX;
@@ -2935,10 +2720,12 @@ namespace TraderWizard
 
 				//If decValorAbertura <> decValorFechamento Then
 
-				if (Convert.ToInt32(Math.Abs(decValorAbertura - decValorFechamento) * (decimal) dblPixelPorReal) > 0) {
+		        int intCorpoY = 0;
+		        if (Convert.ToInt32(Math.Abs(decValorAbertura - decValorFechamento) * (decimal) dblPixelPorReal) > 0) {
 					//TRATAMENTO DE VARIÁVEIS UTILIZADAS NO CORPO E NA CAUDA
 
-					if (decValorAbertura > decValorFechamento) {
+				    decimal decValorMaior;
+				    if (decValorAbertura > decValorFechamento) {
 						decValorMaior = decValorAbertura;
 
 						//SE A ABERTURA É MAIOR QUE O FECHAMENTO O CANDLE É PRETO
@@ -2955,7 +2742,7 @@ namespace TraderWizard
 
 
 					intCorpoY = intAreaTop + intMargemSuperior + Convert.ToInt32((decValorMaximoPeriodo - decValorMaior) * (decimal) dblPixelPorReal);
-					intCorpoHeight = Convert.ToInt32(Math.Abs(decValorAbertura - decValorFechamento) * (decimal) dblPixelPorReal);
+					int intCorpoHeight = Convert.ToInt32(Math.Abs(decValorAbertura - decValorFechamento) * (decimal) dblPixelPorReal);
 
 					objRectCandleCorpo.X = intCorpoX;
 					objRectCandleCorpo.Y = intCorpoY;
@@ -2999,15 +2786,13 @@ namespace TraderWizard
 
 				//*************TRATAMENTO DE SPLITS*************
 
-				if (!objRSSplit.EOF) {
-					bool blnSplitAdicionar = false;
-
-					//If objRSSplit.Field("Tipo") = "DESD" Then
+				if (!objRsSplit.EOF) {
+					bool blnSplitAdicionar;
 
 					//só imprime splits quando forem de desdobramento.
 
 					if ((string) ToolStripcmbPeriodoDuracao.SelectedItem == "Semanal") {
-						if (Convert.ToDateTime(objRSSplit.Field("Data")) >= arrCandle[intI].Data && Convert.ToDateTime(objRSSplit.Field("Data")) <= arrCandle[intI].DataFinal) {
+						if (Convert.ToDateTime(objRsSplit.Field("Data")) >= arrCandle[intI].Data && Convert.ToDateTime(objRsSplit.Field("Data")) <= arrCandle[intI].DataFinal) {
 							blnSplitAdicionar = true;
 						} else {
 							blnSplitAdicionar = false;
@@ -3015,11 +2800,7 @@ namespace TraderWizard
 
 
 					} else {
-						if (Convert.ToDateTime(objRSSplit.Field("Data")) == arrCandle[intI].Data) {
-							blnSplitAdicionar = true;
-						} else {
-							blnSplitAdicionar = false;
-						}
+						blnSplitAdicionar = Convert.ToDateTime(objRsSplit.Field("Data")) == arrCandle[intI].Data;
 
 					}
 
@@ -3027,13 +2808,12 @@ namespace TraderWizard
 
 					if (blnSplitAdicionar) {
 						//se as datas são iguais criar uma estrutura
-						Convert.ToDateTime(objRSSplit.Field("Data"));
-						objSplit.strRazao = (string) objRSSplit.Field("Razao2");
+						objSplit.strRazao = (string) objRsSplit.Field("Razao2");
 						objSplit.intPosicaoX = intCaudaX;
 
 						colSplit.Add(objSplit);
 
-						objRSSplit.MoveNext();
+						objRsSplit.MoveNext();
 
 					}
 
@@ -3153,86 +2933,6 @@ namespace TraderWizard
 
 		}
 
-		/// <summary>
-		/// Recebe uma data e verifica a posição desta data no array de candles
-		/// </summary>
-		/// <param name="pdtmData"></param>
-		/// <returns></returns>
-		/// <remarks></remarks>
-		private int DataIndiceArrayCandleCalcular(System.DateTime pdtmData)
-		{
-			int functionReturnValue = 0;
-
-
-			if (pdtmData <= arrCandle[intArrayCandlePosicaoInicial].Data) {
-				//se a data informada é menor ou igual a primeira data que está aparecendo
-				//retorna o primeiro indice
-				functionReturnValue = intArrayCandlePosicaoInicial;
-
-
-			} else if (pdtmData >= arrCandle[intArrayCandlePosicaoFinal].Data) {
-				//se a data informada é menor ou igual à última data que está aparecendo
-				//retorna o último indice
-				functionReturnValue = intArrayCandlePosicaoFinal;
-
-
-			} else {
-				//se a data informada está entre os dois indices, tem que procurar a nota
-
-				long lngDiferenca = 0;
-
-				//calcula a diferença para tentar encontrar mais rapidamente a posição do array.
-				//a difença nã vai dar a posição correta porque só temos cotações nos dias úteis.
-				lngDiferenca = DateAndTime.DateDiff(DateInterval.Day, arrCandle[intArrayCandlePosicaoInicial].Data, pdtmData);
-                
-
-				if (strPeriodoDuracao == "SEMANAL") {
-					//se o período é semanal, divide a  diferença porque a cada 7 dias temos uma cotação.
-					lngDiferenca = lngDiferenca / 7;
-
-				}
-
-				int intPosicaoBusca = 0;
-				int intPosicaoInicial = intArrayCandlePosicaoInicial;
-				int intPosicaoFinal = intArrayCandlePosicaoInicial + (int) lngDiferenca;
-
-				//começa buscando na posição final.
-				intPosicaoBusca = intArrayCandlePosicaoInicial + (int) lngDiferenca;
-
-				//enquanto na
-
-				while (arrCandle[intPosicaoBusca].Data != pdtmData) {
-
-					if (pdtmData < arrCandle[intPosicaoBusca].Data) {
-						//se a data é anterior à data da procura...
-
-						//a posição final é a posição onde foi feita a última busca sem sucesso
-						intPosicaoFinal = intPosicaoBusca;
-
-						//a posição de busca é a metade da posição entre a posição inicial e a última posição de busca
-						intPosicaoBusca = (intPosicaoInicial + intPosicaoBusca) / 2;
-
-
-					} else {
-						//se a data é posterior à data da procura...
-
-						//a posição inicial é a posição onde foi feita a última busca sem sucesso
-						intPosicaoInicial = intPosicaoBusca;
-
-						//a posição de busca é a metade da posição entre a posição final e a última posição de busca
-						intPosicaoBusca = (intPosicaoFinal + intPosicaoBusca) / 2;
-
-					}
-
-				}
-
-				functionReturnValue = intPosicaoBusca;
-
-			}
-			return functionReturnValue;
-
-		}
-
 		private void frmGrafico_MouseLeave(object sender, System.EventArgs e)
 		{
 			this.Cursor = Cursors.Default;
@@ -3317,13 +3017,7 @@ namespace TraderWizard
 					//se buscou candle novo para a última posição, então pega a collection de médias
 					//do candle anterior ao  indice inicial que está sendo buscado, desde que 
 					//este indice seja maior do que zero
-					if (pintBuscaIndiceInicial > 0) {
-						functionReturnValue = arrCandle[pintBuscaIndiceInicial - 1].Media;
-					} else {
-						//caso a posição inicial seja a primeira então não temos nenhum candle para buscar
-						//as médias. Neste caso atribui nothing para a collection.
-						functionReturnValue = null;
-					}
+					functionReturnValue = pintBuscaIndiceInicial > 0 ? arrCandle[pintBuscaIndiceInicial - 1].Media : null;
 
 				}
 
@@ -3350,32 +3044,21 @@ namespace TraderWizard
 		/// <remarks></remarks>
 		private bool UltimoCandleMediaExistir(cMediaDTO pobjMediaDTO, bool pblnCotacoesBuscou, int pintBuscaIndiceInicial, int pintBuscaIndiceFinal)
 		{
-
-			cEstrutura.structMediaValor objstructMediaValor;
-
-            Dictionary<string, cEstrutura.structMediaValor> colstructMediaValor = null;
-
-			//inicializa marcando que a média não existe.
+		    //inicializa marcando que a média não existe.
 			//Caso encontre a média no candle, desmarca
 			bool blnMediaExistir = false;
 
 			//busca a collection de média do último candle.
-			colstructMediaValor = UltimoCandlePreenchidoCollectionMediaBuscar(pblnCotacoesBuscou, pintBuscaIndiceInicial, pintBuscaIndiceFinal);
+			Dictionary<string, cEstrutura.structMediaValor> colstructMediaValor = UltimoCandlePreenchidoCollectionMediaBuscar(pblnCotacoesBuscou, pintBuscaIndiceInicial, pintBuscaIndiceFinal);
 
+			if (colstructMediaValor != null) {
 
-			if ((colstructMediaValor != null)) {
-
-				foreach (KeyValuePair<string,cEstrutura.structMediaValor> objstructMediaValor_loopVariable in colstructMediaValor) {
-					objstructMediaValor = objstructMediaValor_loopVariable.Value;
-
-					if (pobjMediaDTO.NumPeriodos == objstructMediaValor.intPeriodo && pobjMediaDTO.Tipo == objstructMediaValor.strTipo) {
-						blnMediaExistir = true;
-
-						break; // TODO: might not be correct. Was : Exit For
-
-					}
-
-				}
+			    blnMediaExistir =
+			        colstructMediaValor.Select(mediaValor => mediaValor.Value)
+			            .Any(
+			                objstructMediaValor =>
+			                    pobjMediaDTO.NumPeriodos == objstructMediaValor.intPeriodo &&
+			                    pobjMediaDTO.Tipo == objstructMediaValor.strTipo);
 			}
 
 		    return blnMediaExistir;
@@ -3502,107 +3185,96 @@ namespace TraderWizard
             }
             else if (ToolStripbtnZoomAumentar.Checked)
             {
+                if (intZoom >= 7) return;
 
-                if (intZoom < 7)
+                intZoom = intZoom + 1;
+
+                //calcula a largura total e do corpo dos candles em função zoom
+                ZoomMedidasCandleCalcular();
+
+                //calcula o número de candles que é possível desenhar
+                intAreaDesenhoNumCandles = AreaDesenhoNumCandlesCalcular();
+
+                //quando o zoom está aumentando fixamos a área à esquerda e movemos a parte direita da janela
+
+                if ((lngAreaDesenhoSequencialInicial + intAreaDesenhoNumCandles - 1) <= lngSequencialMaximo)
                 {
-                    intZoom = intZoom + 1;
+                    //caso tenha espaço aumenta a área de desenho para à direita
+                    lngAreaDesenhoSequencialFinal = lngAreaDesenhoSequencialInicial + intAreaDesenhoNumCandles - 1;
 
-                    //calcula a largura total e do corpo dos candles em função zoom
-                    ZoomMedidasCandleCalcular();
-
-                    //calcula o número de candles que é possível desenhar
-                    intAreaDesenhoNumCandles = AreaDesenhoNumCandlesCalcular();
-
-                    //quando o zoom está aumentando fixamos a área à esquerda e movemos a parte direita da janela
-
-                    if ((lngAreaDesenhoSequencialInicial + intAreaDesenhoNumCandles - 1) <= lngSequencialMaximo)
-                    {
-                        //caso tenha espaço aumenta a área de desenho para à direita
-                        lngAreaDesenhoSequencialFinal = lngAreaDesenhoSequencialInicial + intAreaDesenhoNumCandles - 1;
-
-
-                    }
-                    else
-                    {
-                        //caso nao tenha espaço para aumentar toda a área aumenta até o máximo
-                        lngAreaDesenhoSequencialFinal = lngSequencialMaximo;
-
-
-                        if ((lngAreaDesenhoSequencialFinal - intAreaDesenhoNumCandles + 1) >= 1)
-                        {
-                            //se tem espaço para mover a área de desenho para a esquerda
-                            lngAreaDesenhoSequencialInicial = lngAreaDesenhoSequencialFinal - intAreaDesenhoNumCandles + 1;
-
-
-                        }
-                        else
-                        {
-                            lngAreaDesenhoSequencialInicial = 1;
-
-                        }
-
-                    }
-
-                    blnDadosAtualizar = true;
-                    blnPontosAtualizar = true;
-
-                    this.Refresh();
 
                 }
-
-
-            }
-            else if (ToolStripbtnZoomDiminuir.Checked)
-            {
-
-                if (intZoom > 1)
+                else
                 {
-                    intZoom = intZoom - 1;
+                    //caso nao tenha espaço para aumentar toda a área aumenta até o máximo
+                    lngAreaDesenhoSequencialFinal = lngSequencialMaximo;
 
-                    //calcula a largura total e do corpo dos candles em função zoom
-                    ZoomMedidasCandleCalcular();
-
-                    //calcula o número de candles que é possível desenhar
-                    intAreaDesenhoNumCandles = AreaDesenhoNumCandlesCalcular();
-
-                    //quando o zoom está diminuindo fixamos a área à direita e movemos a parte esquerda da janela
 
                     if ((lngAreaDesenhoSequencialFinal - intAreaDesenhoNumCandles + 1) >= 1)
                     {
-                        //caso tenha espaço aumenta a área de desenho para à direita
+                        //se tem espaço para mover a área de desenho para a esquerda
                         lngAreaDesenhoSequencialInicial = lngAreaDesenhoSequencialFinal - intAreaDesenhoNumCandles + 1;
 
 
                     }
                     else
                     {
-                        //caso nao tenha espaço para aumentar toda a área aumenta até a mínimo
                         lngAreaDesenhoSequencialInicial = 1;
-
-
-                        if ((lngAreaDesenhoSequencialInicial + intAreaDesenhoNumCandles - 1) <= lngSequencialMaximo)
-                        {
-                            //se tem espaço para mover a área de desenho para a esquerda
-                            lngAreaDesenhoSequencialFinal = lngAreaDesenhoSequencialInicial + intAreaDesenhoNumCandles - 1;
-
-
-                        }
-                        else
-                        {
-                            lngAreaDesenhoSequencialFinal = lngSequencialMaximo;
-
-                        }
 
                     }
 
-                    blnDadosAtualizar = true;
-                    blnPontosAtualizar = true;
+                }
 
-                    this.Refresh();
+                blnDadosAtualizar = true;
+                blnPontosAtualizar = true;
+
+                this.Refresh();
+            }
+            else if (ToolStripbtnZoomDiminuir.Checked)
+            {
+                if (intZoom <= 1) return;
+                intZoom = intZoom - 1;
+
+                //calcula a largura total e do corpo dos candles em função zoom
+                ZoomMedidasCandleCalcular();
+
+                //calcula o número de candles que é possível desenhar
+                intAreaDesenhoNumCandles = AreaDesenhoNumCandlesCalcular();
+
+                //quando o zoom está diminuindo fixamos a área à direita e movemos a parte esquerda da janela
+
+                if ((lngAreaDesenhoSequencialFinal - intAreaDesenhoNumCandles + 1) >= 1)
+                {
+                    //caso tenha espaço aumenta a área de desenho para à direita
+                    lngAreaDesenhoSequencialInicial = lngAreaDesenhoSequencialFinal - intAreaDesenhoNumCandles + 1;
+
+
+                }
+                else
+                {
+                    //caso nao tenha espaço para aumentar toda a área aumenta até a mínimo
+                    lngAreaDesenhoSequencialInicial = 1;
+
+
+                    if ((lngAreaDesenhoSequencialInicial + intAreaDesenhoNumCandles - 1) <= lngSequencialMaximo)
+                    {
+                        //se tem espaço para mover a área de desenho para a esquerda
+                        lngAreaDesenhoSequencialFinal = lngAreaDesenhoSequencialInicial + intAreaDesenhoNumCandles - 1;
+
+
+                    }
+                    else
+                    {
+                        lngAreaDesenhoSequencialFinal = lngSequencialMaximo;
+
+                    }
 
                 }
 
+                blnDadosAtualizar = true;
+                blnPontosAtualizar = true;
 
+                this.Refresh();
             }
             else
             {

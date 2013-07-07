@@ -75,26 +75,17 @@ namespace DataBase
 
 		public void VerificarConexao()
 		{
-
-			//try {
-				if (objConn == null) {
-					objConn = new OleDbConnection(this.ConnectionString);
-					objConn.Open();
-				} else {
-					//se a conexão não está aberta, só pode abrir se o TransStatus está OK.
-					if (blnTransStatus) {
-						if (objConn.State != ConnectionState.Open) {
-							objConn.Open();
-						}
+			if (objConn == null) {
+				objConn = new OleDbConnection(this.ConnectionString);
+				objConn.Open();
+			} else {
+				//se a conexão não está aberta, só pode abrir se o TransStatus está OK.
+				if (blnTransStatus) {
+					if (objConn.State != ConnectionState.Open) {
+						objConn.Open();
 					}
 				}
-
-
-			/*} catch (Exception ex) {
-				frmInformacao objfrmInformacao = new frmInformacao(ex.Message);
-				objfrmInformacao.ShowDialog();
-
-			}*/
+			}
 
 		}
 
