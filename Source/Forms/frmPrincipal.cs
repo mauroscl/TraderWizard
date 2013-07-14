@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Forms;
 using DataBase;
+using Forms.Properties;
 using Microsoft.VisualBasic;
 using prmCotacao;
 
@@ -126,9 +127,6 @@ namespace TraderWizard
 
         private void frmPrincipal_Load(Object sender, EventArgs e)
         {
-
-            objConexao = new cConexao();
-
             WindowState = FormWindowState.Maximized;
         }
 
@@ -238,23 +236,6 @@ namespace TraderWizard
 
             frmChildForm.Show();
         }
-
-
-        private void OutrasOperaçõesToolStripMenuItem_Click(Object sender, EventArgs e)
-        {
-            var objCotacao = new ServicoDeCotacao(objConexao);
-
-            //If objCotacao.SequencialPreencher() Then
-
-            //MsgBox("Operação executada com sucesso.", MsgBoxStyle.Information, Me.Text)
-
-            //Else
-            //MsgBox("Ocorreram erros ao executar a operação.", MsgBoxStyle.Information, Me.Text)
-            //End If
-
-            objCotacao = null;
-        }
-
 
         private void mnuitemCotacaoExcluir_Click(Object sender, EventArgs e)
         {
@@ -398,6 +379,20 @@ namespace TraderWizard
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void frmPrincipal_Shown(object sender, EventArgs e)
+        {
+            try
+            {
+                objConexao = new cConexao();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, Resources.ApplicationMessageCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Close();
+            }
         }
     }
 }

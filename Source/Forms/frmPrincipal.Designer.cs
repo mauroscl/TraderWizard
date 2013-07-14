@@ -151,7 +151,7 @@ namespace TraderWizard
             this.NewToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
             this.NewToolStripMenuItem.Name = "NewToolStripMenuItem";
             this.NewToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.NewToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.NewToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.NewToolStripMenuItem.Text = "&New";
             this.NewToolStripMenuItem.Visible = false;
             // 
@@ -161,14 +161,14 @@ namespace TraderWizard
             this.OpenToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
             this.OpenToolStripMenuItem.Name = "OpenToolStripMenuItem";
             this.OpenToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.OpenToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.OpenToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.OpenToolStripMenuItem.Text = "&Open";
             this.OpenToolStripMenuItem.Visible = false;
             // 
             // ToolStripSeparator3
             // 
             this.ToolStripSeparator3.Name = "ToolStripSeparator3";
-            this.ToolStripSeparator3.Size = new System.Drawing.Size(149, 6);
+            this.ToolStripSeparator3.Size = new System.Drawing.Size(143, 6);
             this.ToolStripSeparator3.Visible = false;
             // 
             // SaveToolStripMenuItem
@@ -177,21 +177,21 @@ namespace TraderWizard
             this.SaveToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
             this.SaveToolStripMenuItem.Name = "SaveToolStripMenuItem";
             this.SaveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.SaveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.SaveToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.SaveToolStripMenuItem.Text = "&Save";
             this.SaveToolStripMenuItem.Visible = false;
             // 
             // SaveAsToolStripMenuItem
             // 
             this.SaveAsToolStripMenuItem.Name = "SaveAsToolStripMenuItem";
-            this.SaveAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.SaveAsToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.SaveAsToolStripMenuItem.Text = "Save &As";
             this.SaveAsToolStripMenuItem.Visible = false;
             // 
             // ToolStripSeparator4
             // 
             this.ToolStripSeparator4.Name = "ToolStripSeparator4";
-            this.ToolStripSeparator4.Size = new System.Drawing.Size(149, 6);
+            this.ToolStripSeparator4.Size = new System.Drawing.Size(143, 6);
             this.ToolStripSeparator4.Visible = false;
             // 
             // PrintToolStripMenuItem
@@ -200,7 +200,7 @@ namespace TraderWizard
             this.PrintToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
             this.PrintToolStripMenuItem.Name = "PrintToolStripMenuItem";
             this.PrintToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
-            this.PrintToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.PrintToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.PrintToolStripMenuItem.Text = "&Print";
             this.PrintToolStripMenuItem.Visible = false;
             // 
@@ -209,27 +209,27 @@ namespace TraderWizard
             this.PrintPreviewToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("PrintPreviewToolStripMenuItem.Image")));
             this.PrintPreviewToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
             this.PrintPreviewToolStripMenuItem.Name = "PrintPreviewToolStripMenuItem";
-            this.PrintPreviewToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.PrintPreviewToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.PrintPreviewToolStripMenuItem.Text = "Print Pre&view";
             this.PrintPreviewToolStripMenuItem.Visible = false;
             // 
             // PrintSetupToolStripMenuItem
             // 
             this.PrintSetupToolStripMenuItem.Name = "PrintSetupToolStripMenuItem";
-            this.PrintSetupToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.PrintSetupToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.PrintSetupToolStripMenuItem.Text = "Print Setup";
             this.PrintSetupToolStripMenuItem.Visible = false;
             // 
             // ToolStripSeparator5
             // 
             this.ToolStripSeparator5.Name = "ToolStripSeparator5";
-            this.ToolStripSeparator5.Size = new System.Drawing.Size(149, 6);
+            this.ToolStripSeparator5.Size = new System.Drawing.Size(143, 6);
             this.ToolStripSeparator5.Visible = false;
             // 
             // ExitToolStripMenuItem
             // 
             this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
-            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.ExitToolStripMenuItem.Text = "&Sair";
             this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
@@ -711,6 +711,8 @@ namespace TraderWizard
             this.MainMenuStrip = this.MenuStrip;
             this.Name = "frmPrincipal";
             this.Text = "Trader Wizard";
+            this.Load += new System.EventHandler(this.frmPrincipal_Load);
+            this.Shown += new System.EventHandler(this.frmPrincipal_Shown);
             this.MenuStrip.ResumeLayout(false);
             this.MenuStrip.PerformLayout();
             this.ToolStrip.ResumeLayout(false);

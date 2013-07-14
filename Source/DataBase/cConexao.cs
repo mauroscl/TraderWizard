@@ -7,14 +7,15 @@ using prjConfiguracao;
 namespace DataBase
 {
 
-	public class cConexao
+	public class 
+        cConexao
 	{
 
 	    private readonly cEnum.BancoDeDados _bancoDeDados;
 
 	    public cConexao()
 	    {
-	        _bancoDeDados = cEnum.BancoDeDados.SqlServer;
+	        _bancoDeDados = cBuscarConfiguracao.ObterBancoDeDados();
 
 			try {
 
