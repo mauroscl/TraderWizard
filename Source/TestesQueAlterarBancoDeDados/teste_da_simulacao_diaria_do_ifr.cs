@@ -70,9 +70,7 @@ namespace TestesQueAlterarBancoDeDados
 		{
 			cRS objRS = new cRS(objConexao);
 
-			string strSQL = null;
-
-			strSQL = "SELECT IFR.CODIGO, Data_Entrada_Efetiva, ID_Setup, ValorFechamento " + Environment.NewLine;
+		    string strSQL = "SELECT IFR.CODIGO, Data_Entrada_Efetiva, ID_Setup, ValorFechamento " + Environment.NewLine;
 			strSQL = strSQL + " FROM IFR_Simulacao_Diaria IFR INNER JOIN Cotacao C " + Environment.NewLine;
 			strSQL = strSQL + " ON IFR.Codigo = C.Codigo " + Environment.NewLine;
 			strSQL = strSQL + " AND IFR.Data_Entrada_Efetiva = C.Data " + Environment.NewLine;
@@ -81,15 +79,16 @@ namespace TestesQueAlterarBancoDeDados
 
 			cCommand objCommand = new cCommand(objConexao);
 
+            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
 
 			while (!objRS.EOF) {
 				strSQL = "UPDATE IFR_Simulacao_Diaria SET " + Environment.NewLine;
-				strSQL = strSQL + " Valor_Entrada_Original = " + FuncoesBD.CampoFormatar(Convert.ToDecimal(objRS.Field("ValorFechamento")));
-				strSQL = strSQL + " WHERE Codigo = " + FuncoesBD.CampoFormatar(Convert.ToString(objRS.Field("Codigo")));
-				strSQL = strSQL + " AND Data_Entrada_Efetiva = " + FuncoesBD.CampoFormatar(Convert.ToDateTime(objRS.Field("Data_Entrada_Efetiva")));
-				strSQL = strSQL + " AND ID_Setup = " + FuncoesBD.CampoFormatar(Convert.ToInt16(objRS.Field("ID_Setup")));
+				strSQL = strSQL + " Valor_Entrada_Original = " + FuncoesBd.CampoFormatar(Convert.ToDecimal(objRS.Field("ValorFechamento")));
+				strSQL = strSQL + " WHERE Codigo = " + FuncoesBd.CampoFormatar(Convert.ToString(objRS.Field("Codigo")));
+				strSQL = strSQL + " AND Data_Entrada_Efetiva = " + FuncoesBd.CampoFormatar(Convert.ToDateTime(objRS.Field("Data_Entrada_Efetiva")));
+				strSQL = strSQL + " AND ID_Setup = " + FuncoesBd.CampoFormatar(Convert.ToInt16(objRS.Field("ID_Setup")));
 
-				//objCommand.Execute(strSQL)
+			    objCommand.Execute(strSQL);
 
 				objRS.MoveNext();
 

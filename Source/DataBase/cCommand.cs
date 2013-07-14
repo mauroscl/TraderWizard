@@ -185,20 +185,12 @@ namespace DataBase
 					try {
 						intNumeroDeExecucoes = intNumeroDeExecucoes + 1;
 
+					    if (intNumeroDeExecucoes > 10) {
+					        blnContinuarExecutando = false;
+					    }
 
-						if (blnContinuarExecutando) {
-
-							if (intNumeroDeExecucoes > 10) {
-								blnContinuarExecutando = false;
-
-							}
-
-						}
-
-
-						if (intNumeroDeExecucoes > 1) {
-							Trace.WriteLine("Comando: " + pstrComando + " - Tentativas: " + intNumeroDeExecucoes.ToString());
-
+					    if (intNumeroDeExecucoes > 1) {
+							Trace.WriteLine("Comando: " + pstrComando + " - Tentativas: " + intNumeroDeExecucoes);
 						}
 
 						cmd = CriarComando(pstrComando);
@@ -222,7 +214,7 @@ namespace DataBase
 						} else {
 							RollBackTrans();
 
-							frmInformacao objfrmInformacao = new frmInformacao("Erro - Código: " + ex.ErrorCode.ToString() + " - Descrição: " + ex.Message + Environment.NewLine + " - Query: " + pstrComando);
+							frmInformacao objfrmInformacao = new frmInformacao("Erro - Código: " + ex.ErrorCode + " - Descrição: " + ex.Message + Environment.NewLine + " - Query: " + pstrComando);
 
 							objfrmInformacao.ShowDialog();
 
@@ -244,7 +236,6 @@ namespace DataBase
 				}
 
 			}
-
 
 		}
 

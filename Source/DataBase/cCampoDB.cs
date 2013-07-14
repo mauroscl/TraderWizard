@@ -8,35 +8,20 @@ namespace DataBase
 {
 	public class cCampoDB
 	{
+	    public string Campo { get; private set; }
+
+	    public bool Chave { get; private set; }
+
+	    public string Valor { get; set; }
 
 
-		private string strCampo;
-
-		private string strValor;
-
-		private bool blnChave;
-		public string Campo {
-			get { return strCampo; }
-		}
-
-		public bool Chave {
-			get { return blnChave; }
-		}
-
-		public string Valor {
-			get { return strValor; }
-			set { strValor = value; }
-		}
-
-
-
-		public cCampoDB(string pstrCampo, bool pblnChave, string pstrValor)
+	    public cCampoDB(string pstrCampo, bool pblnChave, string pstrValor)
 		{
-			strCampo = pstrCampo;
+			Campo = pstrCampo;
 
-			blnChave = pblnChave;
+			Chave = pblnChave;
 
-			strValor = pstrValor;
+			Valor = pstrValor;
 
 		}
 

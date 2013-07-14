@@ -1,3 +1,4 @@
+using Forms;
 using Microsoft.VisualBasic;
 using System;
 using System.Collections;
@@ -30,13 +31,9 @@ namespace TraderWizard
 			// Add any initialization after the InitializeComponent() call.
 			objConexao = pobjConexao;
 
-			mCotacao.cmbAtivoPreencher(cmbAtivo, objConexao, true);
+			mCotacao.ComboAtivoPreencher(cmbAtivo, objConexao,"", true);
 
 		}
-
-
-
-
 
 		private void btnExcluir_Click(System.Object sender, System.EventArgs e)
 		{

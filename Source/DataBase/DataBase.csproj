@@ -54,7 +54,7 @@
     <Compile Include="frmInformacao.designer.cs">
       <DependentUpon>frmInformacao.cs</DependentUpon>
     </Compile>
-    <Compile Include="FuncoesBD.cs" />
+    <Compile Include="FuncoesBd.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -64,6 +64,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\frwInterface\frwInterface.csproj">
+      <Project>{AA04D3D2-F5CE-4D2E-A9AF-A304638AC603}</Project>
+      <Name>frwInterface</Name>
+    </ProjectReference>
     <ProjectReference Include="..\prjConfiguracao\prjConfiguracao.csproj">
       <Project>{B9DCD706-44A1-4B5F-BF93-5C0A3F9BD6D5}</Project>
       <Name>prjConfiguracao</Name>

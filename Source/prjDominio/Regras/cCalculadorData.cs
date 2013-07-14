@@ -1,10 +1,4 @@
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Xml.Linq;
 using DataBase;
 using frwInterface;
 using prjDTO;
@@ -31,15 +25,11 @@ namespace prjModelo.Regras
 		/// <param name="pdtmData">Data base para o cálculo</param>
 		/// <returns></returns>
 		/// <remarks></remarks>
-		public System.DateTime DiaUtilAnteriorCalcular(System.DateTime pdtmData)
+		public DateTime DiaUtilAnteriorCalcular(DateTime pdtmData)
 		{
+		    bool blnOK;
 
-			System.DateTime dtmData = default(System.DateTime);
-
-			bool blnOK = false;
-
-			dtmData = pdtmData;
-
+			DateTime dtmData = pdtmData;
 
 			do {
 				//busca o dia anterior
@@ -49,7 +39,7 @@ namespace prjModelo.Regras
 				//considera o dia da semana e se a data é um feriado
 				blnOK = DiaUtilVerificar(dtmData);
 
-			} while (!(blnOK));
+			} while (!blnOK);
 
 			return dtmData;
 
@@ -61,14 +51,11 @@ namespace prjModelo.Regras
 		/// <param name="pdtmData">Data base para o cálculo</param>
 		/// <returns></returns>
 		/// <remarks></remarks>
-		public System.DateTime DiaUtilSeguinteCalcular(System.DateTime pdtmData)
+		public DateTime DiaUtilSeguinteCalcular(DateTime pdtmData)
 		{
+		    bool blnOK;
 
-			System.DateTime dtmData = default(System.DateTime);
-
-			bool blnOK = false;
-
-			dtmData = pdtmData;
+			DateTime dtmData = pdtmData;
 
 
 			do {
@@ -99,15 +86,16 @@ namespace prjModelo.Regras
 		///    
 		public bool DiaUtilVerificar(DateTime pdtmData)
 		{
-			bool functionReturnValue = false;
+			bool functionReturnValue;
 
+            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
 			//verifica se o dia da semana está entre segunda-feira e sexta-feira
 
 			if ((pdtmData.DayOfWeek != DayOfWeek.Sunday) && (pdtmData.DayOfWeek != DayOfWeek.Saturday)) {
 				cRS objRS = new cRS(objConexao);
 
 				//se está entre segunda e sexta verifica se a data não está cadastrada na tabela de feriados
-				objRS.ExecuteQuery(" select 1" + " from Feriado " + " where Data = " + FuncoesBD.CampoDateFormatar(pdtmData));
+				objRS.ExecuteQuery(" select 1" + " from Feriado " + " where Data = " + FuncoesBd.CampoDateFormatar(pdtmData));
 
 				//se a data é um feriado retorna false, pois não é um dia útil.
 				//caso contrário retorna true.
@@ -132,44 +120,40 @@ namespace prjModelo.Regras
 		/// <param name="pstrTabelaCotacao">Nome da tabela de cotação: COTACAO ou COTACAO_SEMANAL</param>
 		/// <returns></returns>
 		/// <remarks></remarks>
-		public System.DateTime CalcularDataProximoPeriodo(string pstrCodigo, System.DateTime pdtmDataAtual, string pstrTabelaCotacao)
+		public DateTime CalcularDataProximoPeriodo(string pstrCodigo, DateTime pdtmDataAtual, string pstrTabelaCotacao)
 		{
-			System.DateTime functionReturnValue = default(System.DateTime);
+		    cRS objRS = new cRS(objConexao);
 
-			cRS objRS = new cRS(objConexao);
+            FuncoesBd FuncoesBd  = objConexao.ObterFormatadorDeCampo();
 
-			string strSQL = null;
-
-			strSQL = "SELECT TOP 1 Data " + Environment.NewLine;
+		    string strSQL = "SELECT TOP 1 Data " + Environment.NewLine;
 			strSQL = strSQL + "FROM " + pstrTabelaCotacao + Environment.NewLine;
-			strSQL = strSQL + " WHERE Codigo = " + FuncoesBD.CampoFormatar(pstrCodigo) + Environment.NewLine;
-			strSQL = strSQL + " AND Data > " + FuncoesBD.CampoFormatar(pdtmDataAtual);
+			strSQL = strSQL + " WHERE Codigo = " + FuncoesBd.CampoFormatar(pstrCodigo) + Environment.NewLine;
+			strSQL = strSQL + " AND Data > " + FuncoesBd.CampoFormatar(pdtmDataAtual);
 			strSQL = strSQL + " ORDER BY Data ";
 
 			objRS.ExecuteQuery(strSQL);
 
-			functionReturnValue = Convert.ToDateTime(objRS.Field("Data", cConst.DataInvalida));
+			DateTime functionReturnValue = Convert.ToDateTime(objRS.Field("Data", cConst.DataInvalida));
 
 			objRS.Fechar();
 			return functionReturnValue;
 
 		}
 
-		public System.DateTime ObtemDataDaUltimaCotacao()
+		public DateTime ObtemDataDaUltimaCotacao()
 		{
-			System.DateTime functionReturnValue = default(System.DateTime);
-
-			cRS objRS = new cRS(objConexao);
+		    cRS objRS = new cRS(objConexao);
 
 			//busca a data da última cotação armazenada
 
 			objRS.ExecuteQuery("SELECT Data_Ultima_Cotacao" + " FROM Resumo");
 
 			//busca a próxima data que é um dia útil, após a última cotação.
-			functionReturnValue = Convert.ToDateTime(objRS.Field("Data_Ultima_Cotacao"));
+			DateTime dataDaUltimaCotaco = Convert.ToDateTime(objRS.Field("Data_Ultima_Cotacao"));
 
 			objRS.Fechar();
-			return functionReturnValue;
+			return dataDaUltimaCotaco;
 
 		}
 
@@ -177,16 +161,15 @@ namespace prjModelo.Regras
 		{
 
 			//data que tem que buscar a próxima cotação.
-			System.DateTime dtmDataInicial = default(System.DateTime);
-			System.DateTime dtmDataFinal = default(System.DateTime);
+		    DateTime dtmDataFinal;
 
-			dtmDataInicial = DiaUtilSeguinteCalcular(ObtemDataDaUltimaCotacao());
+			DateTime dtmDataInicial = DiaUtilSeguinteCalcular(ObtemDataDaUltimaCotacao());
 
 
 			//Verifica se a data atual já tem cotação
 			cWeb objWeb = new cWeb(objConexao);
 
-			if (objWeb.VerificarLink("http://www.bmfbovespa.com.br/fechamento-pregao/bdi/" + cGeradorNomeArquivo.GerarNomeArquivoRemoto(DateTime.Now))) {
+			if (DiaUtilVerificar(DateTime.Now) && objWeb.VerificarLink("http://www.bmfbovespa.com.br/fechamento-pregao/bdi/" + cGeradorNomeArquivo.GerarNomeArquivoRemoto(DateTime.Now))) {
 				dtmDataFinal = DateTime.Now;
 			} else {
 				//Calcula o dia útil anterior à data atual
@@ -213,7 +196,7 @@ namespace prjModelo.Regras
 		{
 		    cRS objRS = new cRS(this.objConexao);
 
-			objRS.ExecuteQuery(" select max(Data) as Data " + " from " + pstrTabela + " where Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo));
+			objRS.ExecuteQuery(" select max(Data) as Data " + " from " + pstrTabela + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo));
 
 			DateTime functionReturnValue = Convert.ToDateTime(objRS.Field("Data"));
 

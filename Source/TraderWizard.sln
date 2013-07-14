@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.20617.1 PREVIEW
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dominio", "Dominio", "{58730C71-9E62-4304-B244-DC2776BCDF02}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ServicosDaAplicacao", "ServicosDaAplicacao", "{8DCDEA66-8731-4EFC-BF5F-28A272BD1613}"
@@ -53,6 +55,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Forms", "Forms\Forms.csproj", "{437E9094-1DAE-49E1-BA89-B08869AE7A19}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "Services\Services.csproj", "{8BAE22CC-832B-4151-8B2F-222403B12F8B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TraderWizard.Infra.Repositorio", "TraderWizard.Infra.Repositorio\TraderWizard.Infra.Repositorio.csproj", "{ABD88985-5583-4D96-9E41-7AB3842DC1F9}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
@@ -247,6 +251,16 @@ Global
 		{8BAE22CC-832B-4151-8B2F-222403B12F8B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{8BAE22CC-832B-4151-8B2F-222403B12F8B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{8BAE22CC-832B-4151-8B2F-222403B12F8B}.Release|x86.ActiveCfg = Release|Any CPU
+		{ABD88985-5583-4D96-9E41-7AB3842DC1F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABD88985-5583-4D96-9E41-7AB3842DC1F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABD88985-5583-4D96-9E41-7AB3842DC1F9}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{ABD88985-5583-4D96-9E41-7AB3842DC1F9}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{ABD88985-5583-4D96-9E41-7AB3842DC1F9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{ABD88985-5583-4D96-9E41-7AB3842DC1F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABD88985-5583-4D96-9E41-7AB3842DC1F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABD88985-5583-4D96-9E41-7AB3842DC1F9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{ABD88985-5583-4D96-9E41-7AB3842DC1F9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{ABD88985-5583-4D96-9E41-7AB3842DC1F9}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -269,5 +283,6 @@ Global
 		{B9DCD706-44A1-4B5F-BF93-5C0A3F9BD6D5} = {6BC89F85-F0C8-4751-94BE-8E8E6F52B90B}
 		{A902DC79-0E9C-4C2D-894E-8301DB0D9849} = {6BC89F85-F0C8-4751-94BE-8E8E6F52B90B}
 		{8BAE22CC-832B-4151-8B2F-222403B12F8B} = {6BC89F85-F0C8-4751-94BE-8E8E6F52B90B}
+		{ABD88985-5583-4D96-9E41-7AB3842DC1F9} = {6BC89F85-F0C8-4751-94BE-8E8E6F52B90B}
 	EndGlobalSection
 EndGlobal

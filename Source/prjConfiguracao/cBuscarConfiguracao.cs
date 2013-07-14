@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Configuration;
+using frwInterface;
 
 namespace prjConfiguracao
 {
@@ -23,9 +24,19 @@ namespace prjConfiguracao
 
         }
 
-        public static string ObterConnectionStringPadrao()
+        public static string ObterConnectionStringPadrao(cEnum.BancoDeDados bancoDeDados)
         {
-            return ConfigurationManager.ConnectionStrings["Padrao"].ConnectionString;
+            string nomeDaConexao = "";
+            switch (bancoDeDados)
+            {
+                case cEnum.BancoDeDados.SqlServer:
+                    nomeDaConexao = "PadraoSqlServer";
+                    break;
+                case cEnum.BancoDeDados.Access:
+                    nomeDaConexao = "PadraoAccess";
+                    break;
+            }
+            return ConfigurationManager.ConnectionStrings[nomeDaConexao].ConnectionString;
 
         }
 

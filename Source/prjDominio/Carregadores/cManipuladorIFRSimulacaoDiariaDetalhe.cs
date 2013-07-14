@@ -20,22 +20,21 @@ namespace prjModelo.Carregadores
 
 		public override string GeraInsert(cModelo pobjModelo)
 		{
+		    cIFRSimulacaoDiariaDetalhe objItem = (cIFRSimulacaoDiariaDetalhe)pobjModelo;
 
-			string strSQL = null;
+		    FuncoesBd FuncoesBd = Conexao.ObterFormatadorDeCampo();
 
-			cIFRSimulacaoDiariaDetalhe objItem = (cIFRSimulacaoDiariaDetalhe)pobjModelo;
-
-			strSQL = " INSERT INTO IFR_Simulacao_Diaria_Detalhe " + Environment.NewLine;
+			string strSQL = " INSERT INTO IFR_Simulacao_Diaria_Detalhe " + Environment.NewLine;
 			strSQL = strSQL + "(Codigo, ID_Setup, ID_IFR_SobreVendido, Data_Entrada_Efetiva, NumTentativas, MelhorEntrada, SomatorioCriterios, AgrupadorTentativas) " + Environment.NewLine;
 			strSQL = strSQL + " VALUES " + Environment.NewLine;
-			strSQL = strSQL + "(" + FuncoesBD.CampoFormatar(objItem.IFRSimulacaoDiaria.Ativo.Codigo);
-			strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(objItem.IFRSimulacaoDiaria.Setup.ID);
-			strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(objItem.IFRSobreVendido.ID);
-			strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(objItem.IFRSimulacaoDiaria.DataEntradaEfetiva);
-			strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(objItem.NumTentativas);
-			strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(objItem.MelhorEntrada);
-			strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(objItem.SomatorioCriterios);
-			strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(objItem.AgrupadorDeTentativas);
+			strSQL = strSQL + "(" + FuncoesBd.CampoFormatar(objItem.IFRSimulacaoDiaria.Ativo.Codigo);
+			strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objItem.IFRSimulacaoDiaria.Setup.ID);
+			strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objItem.IFRSobreVendido.ID);
+			strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objItem.IFRSimulacaoDiaria.DataEntradaEfetiva);
+			strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objItem.NumTentativas);
+			strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objItem.MelhorEntrada);
+			strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objItem.SomatorioCriterios);
+			strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objItem.AgrupadorDeTentativas);
 			strSQL = strSQL + ") " + Environment.NewLine;
 
 			return strSQL;
@@ -44,18 +43,17 @@ namespace prjModelo.Carregadores
 
 		public override string GeraUpdate(cModelo pobjModelo)
 		{
+		    cIFRSimulacaoDiariaDetalhe objItem = (cIFRSimulacaoDiariaDetalhe)pobjModelo;
 
-			string strSQL = null;
+            FuncoesBd FuncoesBd = Conexao.ObterFormatadorDeCampo();
 
-			cIFRSimulacaoDiariaDetalhe objItem = (cIFRSimulacaoDiariaDetalhe)pobjModelo;
-
-			strSQL = " UPDATE IFR_Simulacao_Diaria_Detalhe SET " + Environment.NewLine;
-			strSQL = strSQL + "NumTentativas = " + FuncoesBD.CampoFormatar(objItem.NumTentativas) + Environment.NewLine;
-			strSQL = strSQL + ", MelhorEntrada = " + FuncoesBD.CampoFormatar(objItem.MelhorEntrada) + Environment.NewLine;
-			strSQL = strSQL + " WHERE Codigo = " + FuncoesBD.CampoFormatar(objItem.IFRSimulacaoDiaria.Ativo.Codigo) + Environment.NewLine;
-			strSQL = strSQL + " AND ID_Setup = " + FuncoesBD.CampoFormatar(objItem.IFRSimulacaoDiaria.Setup.ID) + Environment.NewLine;
-			strSQL = strSQL + " AND ID_IFR_SobreVendido = " + FuncoesBD.CampoFormatar(objItem.IFRSobreVendido.ID) + Environment.NewLine;
-			strSQL = strSQL + " AND Data_Entrada_Efetiva = " + FuncoesBD.CampoFormatar(objItem.IFRSimulacaoDiaria.DataEntradaEfetiva);
+			string strSQL = " UPDATE IFR_Simulacao_Diaria_Detalhe SET " + Environment.NewLine;
+			strSQL = strSQL + "NumTentativas = " + FuncoesBd.CampoFormatar(objItem.NumTentativas) + Environment.NewLine;
+			strSQL = strSQL + ", MelhorEntrada = " + FuncoesBd.CampoFormatar(objItem.MelhorEntrada) + Environment.NewLine;
+			strSQL = strSQL + " WHERE Codigo = " + FuncoesBd.CampoFormatar(objItem.IFRSimulacaoDiaria.Ativo.Codigo) + Environment.NewLine;
+			strSQL = strSQL + " AND ID_Setup = " + FuncoesBd.CampoFormatar(objItem.IFRSimulacaoDiaria.Setup.ID) + Environment.NewLine;
+			strSQL = strSQL + " AND ID_IFR_SobreVendido = " + FuncoesBd.CampoFormatar(objItem.IFRSobreVendido.ID) + Environment.NewLine;
+			strSQL = strSQL + " AND Data_Entrada_Efetiva = " + FuncoesBd.CampoFormatar(objItem.IFRSimulacaoDiaria.DataEntradaEfetiva);
 
 			return strSQL;
 

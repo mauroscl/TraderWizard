@@ -78,10 +78,8 @@ namespace prjServicoNegocio
 			cRS objRSAux = new cRS(objConexao);
 			//RS auxiliar, pode ser utilizado quando for necessário executar uma query.
 
-			System.DateTime dtmDataInicial = default(System.DateTime);
 
-
-			if (objSetupIFR2SimularCodigoDTO.ExcluirSimulacoesAnteriores) {
+		    if (objSetupIFR2SimularCodigoDTO.ExcluirSimulacoesAnteriores) {
 				cRemovedorSimulacaoIFRDiario objRemoverSimulacaoIFRDiario = new cRemovedorSimulacaoIFRDiario(objConexao);
 				objRemoverSimulacaoIFRDiario.ExcluirSimulacoesAnteriores(objSetupIFR2SimularCodigoDTO.Codigo, objSetup);
 
@@ -92,14 +90,18 @@ namespace prjServicoNegocio
 
 
 			if (objSetupIFR2SimularCodigoDTO.IFRTipo == cEnum.enumIFRTipo.ComFiltro) {
-				string strQuery = null;
 
-				//consulta a data inicial da última operação executada para o papel no setup recebido por parâmetro.
-				strQuery = "SELECT MAX(Data) AS Data " + Environment.NewLine + " FROM IFR_Simulacao_Diaria " + Environment.NewLine + " WHERE Codigo = " + FuncoesBD.CampoFormatar(objSetupIFR2SimularCodigoDTO.Codigo) + Environment.NewLine + " AND ID_Setup = " + FuncoesBD.CampoFormatar(objSetup.ID);
+                FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
+
+			    //consulta a data inicial da última operação executada para o papel no setup recebido por parâmetro.
+			    string strQuery = "SELECT MAX(Data) AS Data " + Environment.NewLine + " FROM IFR_Simulacao_Diaria " +
+			                      Environment.NewLine + " WHERE Codigo = " +
+			                      FuncoesBd.CampoFormatar(objSetupIFR2SimularCodigoDTO.Codigo) + Environment.NewLine +
+			                      " AND ID_Setup = " + FuncoesBd.CampoFormatar(objSetup.ID);
 
 				objRSAux.ExecuteQuery(strQuery);
 
-				dtmDataInicial = Convert.ToDateTime(objRSAux.Field("Data", frwInterface.cConst.DataInvalida));
+				DateTime dtmDataInicial = Convert.ToDateTime(objRSAux.Field("Data", cConst.DataInvalida));
 
 				objRSAux.Fechar();
 
@@ -114,16 +116,14 @@ namespace prjServicoNegocio
 
 			List<cCalculoFaixaResumoVO> lstDatasParaCalculosAdicionais = new List<cCalculoFaixaResumoVO>();
 
-			cIFRSimulacaoDiaria objRetorno = null;
-
-			cCalculadorFaixasEResumoIFRDiario objCalculadorDeFaixasEResumo = new cCalculadorFaixasEResumoIFRDiario(objConexao, objAtivo, objSetup);
+		    cCalculadorFaixasEResumoIFRDiario objCalculadorDeFaixasEResumo = new cCalculadorFaixasEResumoIFRDiario(objConexao, objAtivo, objSetup);
 
 			IList<cIFRSobrevendido> lstIFRSobrevendido = null;
 
 			//separa as cotações com ifr sobrevendido, pois novas cotações podem ser adicionadas no ativo durante a execução da simulação.
 			var lstCotacoesComIfrSobrevendido = (from c in objAtivo.CotacoesDiarias select c).ToList();
 
-			if (lstCotacoesComIfrSobrevendido.Count() == 0) {
+			if (!lstCotacoesComIfrSobrevendido.Any()) {
 
                 ((System.Threading.AutoResetEvent)stateInfo).Set();
 			}
@@ -141,27 +141,23 @@ namespace prjServicoNegocio
 
 			SimuladorDeTrade objSimuladorDeTrade = new SimuladorDeTrade(objConexao, objSetup, objAtivo, lstIFRSobrevendido);
 
-
-
 			foreach (cCotacaoDiaria objCotacaoDeInicioDaSimulacao in lstCotacoesComIfrSobrevendido) {
 
-				if (objSetup.RealizarCalculosAdicionais) {
-					IList<cCalculoFaixaResumoVO> lstDatasParaCalcular = null;
+				if (objSetup.RealizarCalculosAdicionais)
+				{
+				    //deve calcular faixas e resumos para as datas das simulações anteriores até a data desta simulação.
+				    IList<cCalculoFaixaResumoVO> lstDatasParaCalcular = lstDatasParaCalculosAdicionais.Where(x => x.DataSaida <= objCotacaoDeInicioDaSimulacao.Data).ToList();
 
-					//deve calcular faixas e resumos para as datas das simulações anteriores até a data desta simulação.
-					lstDatasParaCalcular = lstDatasParaCalculosAdicionais.Where(x => x.DataSaida <= objCotacaoDeInicioDaSimulacao.Data).ToList();
 
-
-					foreach (cCalculoFaixaResumoVO objCalculoFaixaResumoVO in lstDatasParaCalcular) {
+				    foreach (cCalculoFaixaResumoVO objCalculoFaixaResumoVO in lstDatasParaCalcular) {
 						objCalculadorDeFaixasEResumo.Calcular(objCalculoFaixaResumoVO, lstIFRSobrevendido);
 
 						lstDatasParaCalculosAdicionais.Remove(objCalculoFaixaResumoVO);
 					}
-
 				}
 
 
-				objRetorno = objSimuladorDeTrade.Simular(objCotacaoDeInicioDaSimulacao);
+			    cIFRSimulacaoDiaria objRetorno = objSimuladorDeTrade.Simular(objCotacaoDeInicioDaSimulacao);
 
 
 				if ((objRetorno != null)) {

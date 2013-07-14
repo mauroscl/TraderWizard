@@ -1,9 +1,6 @@
-using Microsoft.VisualBasic;
+using frwInterface;
 using System;
-using System.Collections;
 using System.Data;
-using System.Diagnostics;
-using System.Linq;
 using System.Data.OleDb;
 using System.Windows.Forms;
 using prjConfiguracao;
@@ -13,57 +10,21 @@ namespace DataBase
 	public class cConexao
 	{
 
-		//objeto da conexao
+	    private readonly cEnum.BancoDeDados _bancoDeDados;
 
-		private OleDbConnection objConn;
-		//objeto da transação
-
-		private OleDbTransaction objTransacao;
-		/// <summary>
-		/// Quando uma transação está aberta, indica se o status da transação está OK ou não
-		/// </summary>
-		/// <remarks></remarks>
-
-		private bool blnTransStatus;
-		/// <summary>
-		/// Indica se a transação está aberta ou fechada.
-		/// </summary>
-		/// <remarks></remarks>
-
-		private bool blnTransAberta;
-		//String de conexão com o BD
-
-	    public string ConnectionString { get; set; }
-
-	    public bool TransStatus {
-			get { return blnTransStatus; }
-		}
-
-		public bool TransAberta {
-			get { return blnTransAberta; }
-		}
-
-		public OleDbConnection Conn {
-			get { return this.objConn; }
-		}
-
-		public OleDbTransaction Transacao {
-			get { return objTransacao; }
-		}
-
-
-		public cConexao()
-		{
+	    public cConexao()
+	    {
+	        _bancoDeDados = cEnum.BancoDeDados.SqlServer;
 
 			try {
 
-				ConnectionString = cBuscarConfiguracao.ObterConnectionStringPadrao();
+				ConnectionString = cBuscarConfiguracao.ObterConnectionStringPadrao(_bancoDeDados);
 
-				objConn = new OleDbConnection(ConnectionString);
+				Conn = new OleDbConnection(ConnectionString);
 
 				//inicialização das propriedades
-				blnTransAberta = false;
-				blnTransStatus = true;
+				TransAberta = false;
+				TransStatus = true;
 
 
 			} catch (Exception ex) {
@@ -73,16 +34,26 @@ namespace DataBase
 
 		}
 
+        public string ConnectionString { get; set; }
+
+        public bool TransStatus { get; private set; }
+
+        public bool TransAberta { get; private set; }
+
+        public OleDbConnection Conn { get; private set; }
+
+        public OleDbTransaction Transacao { get; private set; }
+
 		public void VerificarConexao()
 		{
-			if (objConn == null) {
-				objConn = new OleDbConnection(this.ConnectionString);
-				objConn.Open();
+			if (Conn == null) {
+				Conn = new OleDbConnection(this.ConnectionString);
+				Conn.Open();
 			} else {
 				//se a conexão não está aberta, só pode abrir se o TransStatus está OK.
-				if (blnTransStatus) {
-					if (objConn.State != ConnectionState.Open) {
-						objConn.Open();
+				if (TransStatus) {
+					if (Conn.State != ConnectionState.Open) {
+						Conn.Open();
 					}
 				}
 			}
@@ -92,9 +63,9 @@ namespace DataBase
 		//Fecha a conexão
 		public void FecharConexao()
 		{
-			if ((objConn != null)) {
-				if (objConn.State == ConnectionState.Open) {
-					objConn.Close();
+			if ((Conn != null)) {
+				if (Conn.State == ConnectionState.Open) {
+					Conn.Close();
 				}
 			}
 		}
@@ -105,11 +76,11 @@ namespace DataBase
 			//ABRE A CONEXÃO COM O BANCO. VAI FICAR ABERTA ATÉ O ROLLBACK OU COMMIT
 			VerificarConexao();
 
-			objTransacao = this.objConn.BeginTransaction(IsolationLevel.ReadCommitted);
+			Transacao = this.Conn.BeginTransaction(IsolationLevel.ReadCommitted);
 			//MARCA QUE A TRANSAÇÃO FOI ABERTA
-			blnTransAberta = true;
+			TransAberta = true;
 			//O STATUS INICIA, JÁ QUE NÃO FOI EXECUTADO NENHUM COMANDO É TRUE
-			blnTransStatus = true;
+			TransStatus = true;
 
 		}
 
@@ -121,10 +92,10 @@ namespace DataBase
 		{
 			//se a transação ainda está aberta (não ocorreu erro) então faz commit
 
-			if (blnTransAberta) {
-				objTransacao.Commit();
+			if (TransAberta) {
+				Transacao.Commit();
 
-				blnTransAberta = false;
+				TransAberta = false;
 
 			}
 
@@ -137,18 +108,31 @@ namespace DataBase
 		public void RollBackTrans()
 		{
 			if (TransAberta) {
-				objTransacao.Rollback();
+				Transacao.Rollback();
 			}
 
 			//quando dá rollback a transação fica fechada e seu status não está OK.
-			blnTransAberta = false;
-			blnTransStatus = false;
+			TransAberta = false;
+			TransStatus = false;
 
 			//AO FAZER ROLLBACK NÃO PRECISA FECHAR A CONEXÃO, POIS O ROLLBACK
 			//APENAS INDICA QUE OS COMANDOS EXECUTADOS SERÃO DESFEITOS
 			//FecharConexao()
 
 		}
+
+	    public FuncoesBd ObterFormatadorDeCampo()
+	    {
+	        switch (_bancoDeDados)
+	        {
+	            case cEnum.BancoDeDados.Access:
+                    return new FuncoesBdAccess();
+                case cEnum.BancoDeDados.SqlServer:
+                    return new FuncoesBdSqlServer();
+                default:
+                    return new FuncoesBd();
+	        }
+	    }
 
 
 		/*protected override void Finalize()

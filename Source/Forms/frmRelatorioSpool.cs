@@ -1,3 +1,4 @@
+using Forms;
 using Microsoft.VisualBasic;
 using System;
 using System.Collections;
@@ -27,7 +28,7 @@ namespace TraderWizard
 			// Add any initialization after the InitializeComponent() call.
 			objConexao = pobjConexao;
 
-			mCotacao.cmbAtivoPreencher(cmbAtivo, objConexao, true);
+			mCotacao.ComboAtivoPreencher(cmbAtivo, objConexao,"", true);
 
 			objGrid = new cGrid(objConexao);
 
@@ -38,7 +39,7 @@ namespace TraderWizard
 
 		private void GridAtualizar()
 		{
-			objGrid.Query = " SELECT R.COD_RELATORIO, R.CODIGO, A.DESCRICAO AS DESCRICAOATIVO, R.PERIODO, R.DATA " + ", R.DESCRICAO AS DESCRICAORELATORIO " + " FROM RELATORIOS_SPOOL R INNER JOIN ATIVO A " + " ON R.CODIGO = A.CODIGO " + " WHERE R.CODIGO = " + FuncoesBD.CampoStringFormatar(mCotacao.cmbAtivoCodigoRetornar(cmbAtivo)) + " ORDER BY R.COD_RELATORIO";
+			objGrid.Query = " SELECT R.COD_RELATORIO, R.CODIGO, A.DESCRICAO AS DESCRICAOATIVO, R.PERIODO, R.DATA " + ", R.DESCRICAO AS DESCRICAORELATORIO " + " FROM RELATORIOS_SPOOL R INNER JOIN ATIVO A " + " ON R.CODIGO = A.CODIGO " + " WHERE R.CODIGO = " + FuncoesBd.CampoStringFormatar(mCotacao.cmbAtivoCodigoRetornar(cmbAtivo)) + " ORDER BY R.COD_RELATORIO";
 
 			DataSet objDataSet = new DataSet();
 

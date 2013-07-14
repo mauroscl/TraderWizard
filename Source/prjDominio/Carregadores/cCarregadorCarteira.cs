@@ -18,8 +18,8 @@ namespace prjModelo.Carregadores
 
 			var strSQL = "SELECT IdCarteira, Descricao, Ativo, Data_Inicio, Data_Fim " + Environment.NewLine;
 			strSQL += " FROM Carteira " + Environment.NewLine;
-			strSQL += " WHERE ID_IFR_Sobrevendido = " + FuncoesBD.CampoFormatar(pobjIFRSobrevendido.ID) + Environment.NewLine;
-			strSQL += " AND Ativo = " + FuncoesBD.CampoFormatar(true);
+			strSQL += " WHERE ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ID) + Environment.NewLine;
+			strSQL += " AND Ativo = " + FuncoesBd.CampoFormatar(true);
 
 			var objRS = new cRS(Conexao);
 
@@ -34,7 +34,7 @@ namespace prjModelo.Carregadores
 
 				strSQL = "SELECT Codigo " + Environment.NewLine;
 				strSQL += " FROM Carteira_Ativo " + Environment.NewLine;
-				strSQL += " WHERE IdCarteira = " + FuncoesBD.CampoFormatar(objRetorno.IdCarteira);
+				strSQL += " WHERE IdCarteira = " + FuncoesBd.CampoFormatar(objRetorno.IdCarteira);
 
 				objRS.ExecuteQuery(strSQL);
 

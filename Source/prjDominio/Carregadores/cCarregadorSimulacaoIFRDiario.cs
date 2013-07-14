@@ -19,26 +19,25 @@ namespace prjModelo.Carregadores
 		{
 		}
 
-		public cCarregadorSimulacaoIFRDiario() : base()
+		public cCarregadorSimulacaoIFRDiario()
 		{
 		}
 
 		private string GerarQuery(cAtivo pobjAtivo, Setup pobjSetup, string pstrWhereAdicional, int? pintTop, string pstrOrderBy)
 		{
+            FuncoesBd FuncoesBd = Conexao.ObterFormatadorDeCampo();
 
-			string strSQL = null;
-
-			strSQL = "SELECT " + (pintTop.HasValue ? "TOP  " + pintTop.ToString() : string.Empty);
+		    string strSQL = "SELECT " + (pintTop.HasValue ? "TOP  " + pintTop : string.Empty);
 			strSQL += " S.ID_CM, S.Sequencial, S.Data_Entrada_Efetiva, S.Valor_Entrada_Original, S.Valor_Entrada_Ajustado, " + Environment.NewLine;
 			strSQL += "S.Valor_IFR_Minimo, S.Valor_Maximo, S.Percentual_Maximo, S.Data_Saida, S.Percentual_Saida, S.Percentual_MME21, " + Environment.NewLine;
 			strSQL += "S.Percentual_MME49, S.Percentual_MME200, S.Valor_Stop_Loss_Inicial, S.Verdadeiro " + Environment.NewLine;
 			strSQL += " FROM IFR_Simulacao_Diaria S " + Environment.NewLine;
-			strSQL += " WHERE S.Codigo = " + FuncoesBD.CampoFormatar(pobjAtivo.Codigo);
-			strSQL += " AND S.ID_Setup = " + FuncoesBD.CampoFormatar(pobjSetup.ID);
+			strSQL += " WHERE S.Codigo = " + FuncoesBd.CampoFormatar(pobjAtivo.Codigo);
+			strSQL += " AND S.ID_Setup = " + FuncoesBd.CampoFormatar(pobjSetup.ID);
 			strSQL += pstrWhereAdicional;
 
 			if (pstrOrderBy != string.Empty) {
-				strSQL += " ORDER BY " + pstrOrderBy.ToString();
+				strSQL += " ORDER BY " + pstrOrderBy;
 			}
 
 			return strSQL;
@@ -76,7 +75,7 @@ namespace prjModelo.Carregadores
 
 		private cIFRSimulacaoDiaria Carregar(cAtivo pobjAtivo, Setup pobjSetup, string pstrSQL)
 		{
-			cIFRSimulacaoDiaria functionReturnValue = null;
+			cIFRSimulacaoDiaria functionReturnValue;
 
 			cRSList objRS = new cRSList(Conexao);
 
@@ -135,18 +134,15 @@ namespace prjModelo.Carregadores
 
 		public cIFRSimulacaoDiaria CarregarMelhorEntradaPorAgrupadorDeTentativas(cAtivo pobjAtivo, Setup pobjSetup, cIFRSobrevendido pobjIFRSobrevendido, UInt32 pintAgrupadorDeTentativas)
 		{
-
-			string strWhereAdicional = null;
-
-			strWhereAdicional = " AND EXISTS ( " + Environment.NewLine;
+		    string strWhereAdicional = " AND EXISTS ( " + Environment.NewLine;
 			strWhereAdicional += '\t' + " SELECT 1 " + Environment.NewLine;
 			strWhereAdicional += '\t' + " FROM IFR_Simulacao_Diaria_Detalhe D " + Environment.NewLine;
 			strWhereAdicional += '\t' + " WHERE D.Codigo = S.Codigo " + Environment.NewLine;
 			strWhereAdicional += '\t' + " AND D.ID_Setup = S.ID_Setup " + Environment.NewLine;
 			strWhereAdicional += '\t' + " AND D.Data_Entrada_Efetiva = S.Data_Entrada_Efetiva " + Environment.NewLine;
-			strWhereAdicional += '\t' + " AND D.ID_IFR_Sobrevendido = " + FuncoesBD.CampoFormatar(pobjIFRSobrevendido.ID) + Environment.NewLine;
-			strWhereAdicional += '\t' + " AND D.MelhorEntrada = " + FuncoesBD.CampoFormatar(true) + Environment.NewLine;
-			strWhereAdicional += '\t' + " AND D.AgrupadorTentativas = " + FuncoesBD.CampoFormatar(pintAgrupadorDeTentativas);
+			strWhereAdicional += '\t' + " AND D.ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ID) + Environment.NewLine;
+			strWhereAdicional += '\t' + " AND D.MelhorEntrada = " + FuncoesBd.CampoFormatar(true) + Environment.NewLine;
+			strWhereAdicional += '\t' + " AND D.AgrupadorTentativas = " + FuncoesBd.CampoFormatar(pintAgrupadorDeTentativas);
 			strWhereAdicional += ")" + Environment.NewLine;
 
 			var strSQL = GerarQuery(pobjAtivo, pobjSetup, strWhereAdicional, null, string.Empty);
@@ -156,18 +152,17 @@ namespace prjModelo.Carregadores
 
 		public cIFRSimulacaoDiaria CarregarMelhorEntradaPorDataDeSaida(cAtivo pobjAtivo, Setup pobjSetup, cIFRSobrevendido pobjIFRSobrevendido, DateTime pdtmDataSaida)
 		{
+            FuncoesBd FuncoesBd = Conexao.ObterFormatadorDeCampo();
 
-			string strWhereAdicional = null;
-
-			strWhereAdicional = " AND EXISTS ( " + Environment.NewLine;
+		    string strWhereAdicional = " AND EXISTS ( " + Environment.NewLine;
 			strWhereAdicional += '\t' + " SELECT 1 " + Environment.NewLine;
 			strWhereAdicional += '\t' + " FROM IFR_Simulacao_Diaria_Detalhe D " + Environment.NewLine;
 			strWhereAdicional += '\t' + " WHERE D.Codigo = S.Codigo " + Environment.NewLine;
 			strWhereAdicional += '\t' + " AND D.ID_Setup = S.ID_Setup " + Environment.NewLine;
 			strWhereAdicional += '\t' + " AND D.Data_Entrada_Efetiva = S.Data_Entrada_Efetiva " + Environment.NewLine;
-			strWhereAdicional += '\t' + " AND D.ID_IFR_Sobrevendido = " + FuncoesBD.CampoFormatar(pobjIFRSobrevendido.ID) + Environment.NewLine;
-			strWhereAdicional += '\t' + " AND D.MelhorEntrada = " + FuncoesBD.CampoFormatar(true) + Environment.NewLine;
-			strWhereAdicional += '\t' + " AND S.Data_Saida = " + FuncoesBD.CampoFormatar(pdtmDataSaida);
+			strWhereAdicional += '\t' + " AND D.ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ID) + Environment.NewLine;
+			strWhereAdicional += '\t' + " AND D.MelhorEntrada = " + FuncoesBd.CampoFormatar(true) + Environment.NewLine;
+			strWhereAdicional += '\t' + " AND S.Data_Saida = " + FuncoesBd.CampoFormatar(pdtmDataSaida);
             strWhereAdicional += ")" + Environment.NewLine;
 
 			var strSQL = GerarQuery(pobjAtivo, pobjSetup, strWhereAdicional, null, string.Empty);
@@ -186,24 +181,23 @@ namespace prjModelo.Carregadores
 		/// <remarks></remarks>
 		public IList<cIFRSimulacaoDiaria> CarregarUltimasSimulacoesPorIFRSobrevendido(cAtivo pobjAtivo, Setup pobjSetup, cIFRSobrevendido pobjIFRSobrevendido, DateTime pdtmDataReferencia)
 		{
+            FuncoesBd FuncoesBd = Conexao.ObterFormatadorDeCampo();
 
-			string strWhereAdicional = null;
-
-			strWhereAdicional = " AND Data_Entrada_Efetiva < " + FuncoesBD.CampoFormatar(pdtmDataReferencia);
+		    string strWhereAdicional = " AND Data_Entrada_Efetiva < " + FuncoesBd.CampoFormatar(pdtmDataReferencia);
 			strWhereAdicional += " AND EXISTS ( " + Environment.NewLine;
 			strWhereAdicional += '\t' + " SELECT 1 " + Environment.NewLine;
 			strWhereAdicional += '\t' + " FROM IFR_Simulacao_Diaria_Detalhe D " + Environment.NewLine;
 			strWhereAdicional += '\t' + " WHERE D.Codigo = S.Codigo " + Environment.NewLine;
 			strWhereAdicional += '\t' + " AND D.ID_Setup = S.ID_Setup " + Environment.NewLine;
 			strWhereAdicional += '\t' + " AND D.Data_Entrada_Efetiva = S.Data_Entrada_Efetiva " + Environment.NewLine;
-			strWhereAdicional += '\t' + " AND D.ID_IFR_Sobrevendido = " + FuncoesBD.CampoFormatar(pobjIFRSobrevendido.ID);
+			strWhereAdicional += '\t' + " AND D.ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ID);
 			strWhereAdicional += ")" + Environment.NewLine;
 
 			//gera query que retorna a última simulação anterior à data de referência
 			var strSQL1 = GerarQuery(pobjAtivo, pobjSetup, strWhereAdicional, 1, "S.Data_Entrada_Efetiva DESC ");
 
 			//Gera a query  que retorna todas as simulações posteriores à data de referência
-			strWhereAdicional = " AND Data_Entrada_Efetiva > " + FuncoesBD.CampoFormatar(pdtmDataReferencia);
+			strWhereAdicional = " AND Data_Entrada_Efetiva > " + FuncoesBd.CampoFormatar(pdtmDataReferencia);
 			var strSQL2 = GerarQuery(pobjAtivo, pobjSetup, strWhereAdicional, null, string.Empty);
 
 			var strSQL = "(" + strSQL1 + ") UNION (" + strSQL2 + ")" + Environment.NewLine;
@@ -213,9 +207,11 @@ namespace prjModelo.Carregadores
 
 		}
 
-		public cIFRSimulacaoDiaria CarregaPorDataEntradaEfetiva(cAtivo pobjAtivo, Setup pobjSetup, System.DateTime pdtmDataEntradaEfetiva)
+		public cIFRSimulacaoDiaria CarregaPorDataEntradaEfetiva(cAtivo pobjAtivo, Setup pobjSetup, DateTime pdtmDataEntradaEfetiva)
 		{
-			var strWhereAdicional = " AND Data_Entrada_Efetiva = " + FuncoesBD.CampoFormatar(pdtmDataEntradaEfetiva);
+            FuncoesBd FuncoesBd = Conexao.ObterFormatadorDeCampo();
+
+			var strWhereAdicional = " AND Data_Entrada_Efetiva = " + FuncoesBd.CampoFormatar(pdtmDataEntradaEfetiva);
 			var strSQL = GerarQuery(pobjAtivo, pobjSetup, strWhereAdicional, null, string.Empty);
 			return Carregar(pobjAtivo, pobjSetup, strSQL);
 		}

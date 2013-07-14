@@ -31,38 +31,31 @@ namespace prjModelo.Carregadores
 
 			cRS objRS = new cRS(Conexao);
 
-			string strSQL = null;
+
+		    string strSelect = "SELECT C.Data, Sequencial, ValorAbertura, ValorMinimo, ValorMaximo, ValorFechamento";
+
+            FuncoesBd FuncoesBd = Conexao.ObterFormatadorDeCampo();
+
+		    string strFrom = "Cotacao C " + Environment.NewLine;
+
+		    string strWhere = " WHERE C.Codigo = " + FuncoesBd.CampoFormatar(pobjAtivo.Codigo) + Environment.NewLine;
+			strWhere += " AND C.Data BETWEEN " + FuncoesBd.CampoFormatar(pdtmDataInicial) + " AND " + FuncoesBd.CampoFormatar(pdtmDataFinal) + Environment.NewLine;
 
 
-			string strSelect = null;
-			strSelect = "SELECT C.Data, Sequencial, ValorAbertura, ValorMinimo, ValorMaximo, ValorFechamento";
-
-
-			string strFrom = null;
-			strFrom = "Cotacao C " + Environment.NewLine;
-
-			string strWhere = null;
-			strWhere = " WHERE C.Codigo = " + FuncoesBD.CampoFormatar(pobjAtivo.Codigo) + Environment.NewLine;
-			strWhere += " AND C.Data BETWEEN " + FuncoesBD.CampoFormatar(pdtmDataInicial) + " AND " + FuncoesBD.CampoFormatar(pdtmDataFinal) + Environment.NewLine;
-
-			string strAliasTabelaMedia = null;
-			string strTabelaMedia = null;
-
-
-			foreach (cMediaDTO objMediaDTO in plstMedias) {
-				strAliasTabelaMedia = objMediaDTO.GetAlias;
+		    foreach (cMediaDTO objMediaDTO in plstMedias) {
+				string strAliasTabelaMedia = objMediaDTO.GetAlias;
 
 				strSelect += ", " + strAliasTabelaMedia + ".Valor AS " + strAliasTabelaMedia;
 
 				//tem que gerar na forma de um subselect para trazer os valores corretos com o LEFT JOIN devido ao WHERE 
 				//necessário nos campos "Tipo" e "NumPeriodos"
-				strTabelaMedia = "(" + Environment.NewLine;
+				string strTabelaMedia = "(" + Environment.NewLine;
 				strTabelaMedia += '\t' + "SELECT Codigo, Data, Valor" + Environment.NewLine;
 				strTabelaMedia += '\t' + " FROM Media_Diaria " + strAliasTabelaMedia + Environment.NewLine;
-				strTabelaMedia += '\t' + " WHERE Tipo = " + FuncoesBD.CampoStringFormatar(objMediaDTO.CampoTipoBD) + Environment.NewLine;
-				strTabelaMedia += '\t' + " AND NumPeriodos = " + FuncoesBD.CampoFormatar(objMediaDTO.NumPeriodos) + Environment.NewLine;
-				strTabelaMedia += '\t' + " AND Codigo = " + FuncoesBD.CampoStringFormatar(pobjAtivo.Codigo) + Environment.NewLine;
-				strTabelaMedia += '\t' + " AND Data BETWEEN " + FuncoesBD.CampoFormatar(pdtmDataInicial) + " AND " + FuncoesBD.CampoFormatar(pdtmDataFinal) + Environment.NewLine;
+				strTabelaMedia += '\t' + " WHERE Tipo = " + FuncoesBd.CampoStringFormatar(objMediaDTO.CampoTipoBD) + Environment.NewLine;
+				strTabelaMedia += '\t' + " AND NumPeriodos = " + FuncoesBd.CampoFormatar(objMediaDTO.NumPeriodos) + Environment.NewLine;
+				strTabelaMedia += '\t' + " AND Codigo = " + FuncoesBd.CampoStringFormatar(pobjAtivo.Codigo) + Environment.NewLine;
+				strTabelaMedia += '\t' + " AND Data BETWEEN " + FuncoesBd.CampoFormatar(pdtmDataInicial) + " AND " + FuncoesBd.CampoFormatar(pdtmDataFinal) + Environment.NewLine;
 				strTabelaMedia += ") AS " + strAliasTabelaMedia + Environment.NewLine;
 
 				strFrom = "(" + strFrom + "LEFT JOIN " + strTabelaMedia;
@@ -84,7 +77,7 @@ namespace prjModelo.Carregadores
 			}
 
 
-			strSQL = strSelect + " FROM " + strFrom + strWhere;
+			string strSQL = strSelect + " FROM " + strFrom + strWhere;
 
 
 			if (pstrOrdem != string.Empty) {
@@ -95,11 +88,9 @@ namespace prjModelo.Carregadores
 
 			List<cCotacaoDiaria> lstRetorno = new List<cCotacaoDiaria>();
 
-			cCotacaoDiaria objCotacaoDiaria = null;
 
-
-			while (!objRS.EOF) {
-				objCotacaoDiaria = new cCotacaoDiaria(pobjAtivo, Convert.ToDateTime(objRS.Field("Data")));
+		    while (!objRS.EOF) {
+				cCotacaoDiaria objCotacaoDiaria = new cCotacaoDiaria(pobjAtivo, Convert.ToDateTime(objRS.Field("Data")));
 
 				objCotacaoDiaria.Sequencial = Convert.ToInt32(objRS.Field("Sequencial"));
 				objCotacaoDiaria.ValorAbertura = Convert.ToDecimal(objRS.Field("ValorAbertura"));
@@ -107,17 +98,16 @@ namespace prjModelo.Carregadores
 				objCotacaoDiaria.ValorMinimo = Convert.ToDecimal(objRS.Field("ValorMinimo"));
 				objCotacaoDiaria.ValorMaximo = Convert.ToDecimal(objRS.Field("ValorMaximo"));
 
-                double valordaMedia;
-
-				foreach (cMediaDTO objMediaDTO in plstMedias) {
-					if (double.TryParse(Convert.ToString( objRS.Field(objMediaDTO.GetAlias)),out valordaMedia)) {
+		        foreach (cMediaDTO objMediaDTO in plstMedias)
+				{
+				    double valordaMedia;
+				    if (double.TryParse(Convert.ToString( objRS.Field(objMediaDTO.GetAlias)),out valordaMedia)) {
                         objCotacaoDiaria.Medias.Add(new cMediaDiaria(objCotacaoDiaria, objMediaDTO.CampoTipoBD, objMediaDTO.NumPeriodos, valordaMedia));
 					}
-
 				}
 
 
-				if (pblnCarregarIFR) {
+		        if (pblnCarregarIFR) {
 					objCotacaoDiaria.IFR = new cIFRDiario(objCotacaoDiaria, 2, Convert.ToDouble(objRS.Field("IFR")));
 
 
@@ -138,18 +128,18 @@ namespace prjModelo.Carregadores
 
 		private string MediaTipoCalcular(frwInterface.cEnum.enumMediaTipo pintMediaTipo)
 		{
-
-			if (pintMediaTipo == cEnum.enumMediaTipo.Aritmetica) {
-				return "MMA";
-			} else if (pintMediaTipo == cEnum.enumMediaTipo.Exponencial) {
-				return "MME";
-			} else {
-				return string.Empty;
-			}
-
+		    switch (pintMediaTipo)
+		    {
+		        case cEnum.enumMediaTipo.Aritmetica:
+		            return "MMA";
+		        case cEnum.enumMediaTipo.Exponencial:
+		            return "MME";
+		        default:
+		            return string.Empty;
+		    }
 		}
 
-		public IList<cCotacaoDiaria> CarregaComIFRSobrevendidoSemSimulacao(cAtivo pobjAtivo, Setup pobjSetup, double pdblValorMaximoIFRSobrevendido, frwInterface.cEnum.enumMediaTipo pintMediaTipo)
+	    public IList<cCotacaoDiaria> CarregaComIFRSobrevendidoSemSimulacao(cAtivo pobjAtivo, Setup pobjSetup, double pdblValorMaximoIFRSobrevendido, frwInterface.cEnum.enumMediaTipo pintMediaTipo)
 		{
 
 			string strSQL = cGeradorQuery.BackTestingIFRSemFiltroEntradaQueryGerar(pobjAtivo.Codigo, "DIARIO", "TODOS", pdblValorMaximoIFRSobrevendido, 1, pintMediaTipo, true);
@@ -161,7 +151,7 @@ namespace prjModelo.Carregadores
 			strSQL += '\t' + " FROM IFR_Simulacao_Diaria S " + Environment.NewLine;
 			strSQL += '\t' + " WHERE C.Codigo = S.Codigo " + Environment.NewLine;
 			strSQL += '\t' + " AND C.Data = S.Data_Entrada_Efetiva " + Environment.NewLine;
-			strSQL += '\t' + " AND S.ID_Setup = " + FuncoesBD.CampoFormatar(pobjSetup.ID) + Environment.NewLine;
+			strSQL += '\t' + " AND S.ID_Setup = " + FuncoesBd.CampoFormatar(pobjSetup.ID) + Environment.NewLine;
 			strSQL += ")";
 
 			//inclui ordenamento por data.
@@ -171,19 +161,13 @@ namespace prjModelo.Carregadores
 
 			List<cCotacaoDiaria> lstRetorno = new List<cCotacaoDiaria>();
 
-			cCotacaoDiaria objCotacaoDiaria = null;
-
-			cMediaDiaria objMedia = null;
-
-			cIFRDiario objIFRDiario = null;
-
-			string strTipoMedia = MediaTipoCalcular(pintMediaTipo);
+	        string strTipoMedia = MediaTipoCalcular(pintMediaTipo);
 
 			objRS.ExecuteQuery(strSQL);
 
 
 			while (!objRS.EOF) {
-				objCotacaoDiaria = new cCotacaoDiaria(pobjAtivo, Convert.ToDateTime(objRS.Field("Data_Entrada")));
+				cCotacaoDiaria objCotacaoDiaria = new cCotacaoDiaria(pobjAtivo, Convert.ToDateTime(objRS.Field("Data_Entrada")));
 
 				objCotacaoDiaria.Sequencial = Convert.ToInt32(objRS.Field("Sequencial"));
 				objCotacaoDiaria.ValorAbertura = Convert.ToDecimal(objRS.Field("ValorAbertura"));
@@ -191,7 +175,7 @@ namespace prjModelo.Carregadores
 				objCotacaoDiaria.ValorMinimo = Convert.ToDecimal(objRS.Field("ValorMinimo"));
 				objCotacaoDiaria.ValorMaximo = Convert.ToDecimal(objRS.Field("ValorMaximo"));
 
-                objMedia = new cMediaDiaria(objCotacaoDiaria, strTipoMedia, 21, Convert.ToDouble(objRS.Field("MME21")));
+                cMediaDiaria objMedia = new cMediaDiaria(objCotacaoDiaria, strTipoMedia, 21, Convert.ToDouble(objRS.Field("MME21")));
 				objCotacaoDiaria.Medias.Add(objMedia);
 
                 objMedia = new cMediaDiaria(objCotacaoDiaria, strTipoMedia, 49, Convert.ToDouble(objRS.Field("MME49")));
@@ -204,7 +188,7 @@ namespace prjModelo.Carregadores
 				objCotacaoDiaria.Medias.Add(objMedia);
 
 
-				objIFRDiario = new cIFRDiario(objCotacaoDiaria, 2, Convert.ToDouble(objRS.Field("VALOR_IFR")));
+				cIFRDiario objIFRDiario = new cIFRDiario(objCotacaoDiaria, 2, Convert.ToDouble(objRS.Field("VALOR_IFR")));
 				objCotacaoDiaria.IFR = objIFRDiario;
 
 				lstRetorno.Add(objCotacaoDiaria);
@@ -230,7 +214,7 @@ namespace prjModelo.Carregadores
 			//FALSE nesta chamada porque será feito uma verificação aqui nesta função se o setup será acionado.
 			//Se o parâmetro for passado com valor TRUE retornará apenas as datas em que houver rompimento 
 			//no período seguinte ao período em que o IFR cruzou a média. 
-			string strSQL = cGeradorQuery.BackTestingIFRComFiltroEntradaQueryGerar(pobjAtivo.Codigo, "DIARIO", "TODOS", 1, pintMediaTipo, pdtmDataInicial, false, true);
+			string strSQL = cGeradorQuery.BackTestingIFRComFiltroEntradaQueryGerar(Conexao.ObterFormatadorDeCampo() , pobjAtivo.Codigo, "DIARIO", "TODOS", 1, pintMediaTipo, pdtmDataInicial, false, true);
 
 			//inclui ordenamento por data.
 			strSQL += " ORDER BY Dia2.Data ";
@@ -241,17 +225,13 @@ namespace prjModelo.Carregadores
 
 			List<cCotacaoDiaria> lstRetorno = new List<cCotacaoDiaria>();
 
-			cCotacaoDiaria objCotacaoDiaria = null;
-
-			cMediaDiaria objMedia = null;
-
-			string strTipoMedia = MediaTipoCalcular(pintMediaTipo);
+		    string strTipoMedia = MediaTipoCalcular(pintMediaTipo);
 
 			objRS.ExecuteQuery(strSQL);
 
 
 			while (!objRS.EOF) {
-				objCotacaoDiaria = new cCotacaoDiaria(pobjAtivo, Convert.ToDateTime(objRS.Field("Data_Entrada")));
+				cCotacaoDiaria objCotacaoDiaria = new cCotacaoDiaria(pobjAtivo, Convert.ToDateTime(objRS.Field("Data_Entrada")));
 
 				objCotacaoDiaria.Sequencial = Convert.ToInt32(objRS.Field("Sequencial"));
 				objCotacaoDiaria.ValorAbertura = Convert.ToDecimal(objRS.Field("ValorAbertura"));
@@ -259,7 +239,7 @@ namespace prjModelo.Carregadores
 				objCotacaoDiaria.ValorMinimo = Convert.ToDecimal(objRS.Field("ValorMinimo"));
 				objCotacaoDiaria.ValorMaximo = Convert.ToDecimal(objRS.Field("ValorMaximo"));
 
-                objMedia = new cMediaDiaria(objCotacaoDiaria, strTipoMedia, 200, Convert.ToDouble(objRS.Field("MME200")));
+                cMediaDiaria objMedia = new cMediaDiaria(objCotacaoDiaria, strTipoMedia, 200, Convert.ToDouble(objRS.Field("MME200")));
 
 				objCotacaoDiaria.Medias.Add(objMedia);
 

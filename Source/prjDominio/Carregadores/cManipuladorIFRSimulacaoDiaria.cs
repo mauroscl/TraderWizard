@@ -39,19 +39,50 @@ namespace prjModelo.Carregadores
 
 		public override string GeraInsert(cModelo pobjModelo)
 		{
+		    cIFRSimulacaoDiaria objItem = (cIFRSimulacaoDiaria)pobjModelo;
 
-			string strSQL = null;
-
-			cIFRSimulacaoDiaria objItem = (cIFRSimulacaoDiaria)pobjModelo;
+            FuncoesBd FuncoesBd = Conexao.ObterFormatadorDeCampo();
 
 			//INSERE REGISTRO NA TABELA
-			strSQL = "INSERT INTO IFR_Simulacao_Diaria" + Environment.NewLine + "(Codigo, ID_Setup, ID_CM, Data_Entrada_Efetiva, Sequencial, Valor_Entrada_Ajustado " + Environment.NewLine + ", Valor_IFR_Minimo, Data_Cruzamento_Media, Valor_Realizacao_Parcial, Valor_Amplitude " + Environment.NewLine + ", Valor_Maximo, Percentual_Maximo, Data_Saida, Valor_Saida, Percentual_Saida " + Environment.NewLine + ", Percentual_MME200, Percentual_MME49, Percentual_MME21, Media_IFR , ValorFechamento_Minimo " + Environment.NewLine + ", MME21_Minima, MME49_Minima, Verdadeiro, Valor_Stop_Loss_Inicial, Valor_Entrada_Original)" + Environment.NewLine + " VALUES " + Environment.NewLine + "(" + FuncoesBD.CampoFormatar(objItem.Ativo.Codigo) + ", " + FuncoesBD.CampoFormatar(objItem.Setup.ID) + ", " + FuncoesBD.CampoFormatar(objItem.ClassificacaoMedia.ID) + ", " + FuncoesBD.CampoFormatar(objItem.DataEntradaEfetiva) + ", " + FuncoesBD.CampoFormatar(objItem.Sequencial) + ", " + FuncoesBD.CampoFormatar(objItem.ValorEntradaAjustado) + ", " + FuncoesBD.CampoFormatar(objItem.ValorIFR) + ", " + FuncoesBD.CampoFormatar(objItem.DataCruzamentoMedia) + ", " + FuncoesBD.CampoFormatar(objItem.ValorRealizacaoParcial) + ", " + FuncoesBD.CampoFormatar(objItem.ValorAmplitude) + ", " + FuncoesBD.CampoFormatar(objItem.ValorMaximo) + ", " + FuncoesBD.CampoFormatar(objItem.PercentualMaximo) + ", " + FuncoesBD.CampoFormatar(objItem.DataSaida) + ", " + FuncoesBD.CampoFormatar(objItem.ValorSaida) + ", " + FuncoesBD.CampoFormatar(objItem.PercentualSaida) + ", " + FuncoesBD.CampoFormatar(objItem.PercentualMME200) + ", " + FuncoesBD.CampoFormatar(objItem.PercentualMME49) + ", " + FuncoesBD.CampoFormatar(objItem.PercentualMME21) + ", " + FuncoesBD.CampoFormatar(objItem.MediaIFR);
+		    string strSQL = "INSERT INTO IFR_Simulacao_Diaria" + Environment.NewLine +
+		                    "(Codigo, ID_Setup, ID_CM, Data_Entrada_Efetiva, Sequencial, Valor_Entrada_Ajustado " +
+		                    Environment.NewLine +
+		                    ", Valor_IFR_Minimo, Data_Cruzamento_Media, Valor_Realizacao_Parcial, Valor_Amplitude " +
+		                    Environment.NewLine +
+		                    ", Valor_Maximo, Percentual_Maximo, Data_Saida, Valor_Saida, Percentual_Saida " +
+		                    Environment.NewLine +
+		                    ", Percentual_MME200, Percentual_MME49, Percentual_MME21, Media_IFR , ValorFechamento_Minimo " +
+		                    Environment.NewLine +
+		                    ", MME21_Minima, MME49_Minima, Verdadeiro, Valor_Stop_Loss_Inicial, Valor_Entrada_Original)" +
+		                    Environment.NewLine + " VALUES " + Environment.NewLine + "(" +
+		                    FuncoesBd.CampoFormatar(objItem.Ativo.Codigo) + ", " + FuncoesBd.CampoFormatar(objItem.Setup.ID) +
+		                    ", " + FuncoesBd.CampoFormatar(objItem.ClassificacaoMedia.ID) + ", " +
+		                    FuncoesBd.CampoFormatar(objItem.DataEntradaEfetiva) + ", " +
+		                    FuncoesBd.CampoFormatar(objItem.Sequencial) + ", " +
+		                    FuncoesBd.CampoFormatar(objItem.ValorEntradaAjustado) + ", " +
+		                    FuncoesBd.CampoFormatar(objItem.ValorIFR) + ", " +
+		                    FuncoesBd.CampoFormatar(objItem.DataCruzamentoMedia) + ", " +
+		                    FuncoesBd.CampoFormatar(objItem.ValorRealizacaoParcial) + ", " +
+		                    FuncoesBd.CampoFormatar(objItem.ValorAmplitude) + ", " +
+		                    FuncoesBd.CampoFormatar(objItem.ValorMaximo) + ", " +
+		                    FuncoesBd.CampoFormatar(objItem.PercentualMaximo) + ", " +
+		                    FuncoesBd.CampoFormatar(objItem.DataSaida) + ", " + FuncoesBd.CampoFormatar(objItem.ValorSaida) +
+		                    ", " + FuncoesBd.CampoFormatar(objItem.PercentualSaida) + ", " +
+		                    FuncoesBd.CampoFormatar(objItem.PercentualMME200) + ", " +
+		                    FuncoesBd.CampoFormatar(objItem.PercentualMME49) + ", " +
+		                    FuncoesBd.CampoFormatar(objItem.PercentualMME21) + ", " +
+		                    FuncoesBd.CampoFormatar(objItem.MediaIFR);
 
 			//VALOR MÍNIMO DOS PREÇOS E DAS MÉDIAS DE 21 E 49 antes do IFR cruzar a média.
-			strSQL = strSQL + "," + FuncoesBD.CampoFormatar(objItem.ValorFechamentoMinimo) + ", " + FuncoesBD.CampoFloatFormatar(objItem.ValorMME21Minima) + ", " + FuncoesBD.CampoFloatFormatar(objItem.ValorMME49Minima) + ", " + FuncoesBD.CampoFormatar(objItem.Verdadeiro) + ", " + FuncoesBD.CampoFormatar(objItem.ValorStopLossInicial);
+		    strSQL = strSQL + "," + FuncoesBd.CampoFormatar(objItem.ValorFechamentoMinimo) + ", " +
+		             FuncoesBd.CampoFloatFormatar(objItem.ValorMME21Minima) + ", " +
+		             FuncoesBd.CampoFloatFormatar(objItem.ValorMME49Minima) + ", " +
+		             FuncoesBd.CampoFormatar(objItem.Verdadeiro) + ", " +
+		             FuncoesBd.CampoFormatar(objItem.ValorStopLossInicial);
+
 
 			//Valor original de entrada
-			strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(objItem.ValorEntradaOriginal);
+			strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objItem.ValorEntradaOriginal);
 
 			strSQL = strSQL + ")" + Environment.NewLine;
 

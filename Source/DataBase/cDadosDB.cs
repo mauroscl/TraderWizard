@@ -152,7 +152,7 @@ namespace DataBase
 					strCampos = strCampos + objCampoDB.Campo;
 
 
-					strValoresINSERT = strValoresINSERT + FuncoesBD.CampoStringFormatar(objCampoDB.Valor);
+					strValoresINSERT = strValoresINSERT + FuncoesBd.CampoStringFormatar(objCampoDB.Valor);
 
 					//TRATAMENTO PARA O UPDATE. TEM QUE SEPARAR OS CAMPOS EM CHAVE
 					//E OS CAMPOS QUE SERÃO ATUALIZADOS.
@@ -164,7 +164,7 @@ namespace DataBase
 
 						}
 
-						strWhere = strWhere + objCampoDB.Campo + " = " + FuncoesBD.CampoStringFormatar(objCampoDB.Valor);
+						strWhere = strWhere + objCampoDB.Campo + " = " + FuncoesBd.CampoStringFormatar(objCampoDB.Valor);
 
 
 					} else {
@@ -174,7 +174,7 @@ namespace DataBase
 
 						}
 
-						strValoresUPDATE = strValoresUPDATE + objCampoDB.Campo + " = " + FuncoesBD.CampoStringFormatar(objCampoDB.Valor);
+						strValoresUPDATE = strValoresUPDATE + objCampoDB.Campo + " = " + FuncoesBd.CampoStringFormatar(objCampoDB.Valor);
 
 					}
 					//FIM DO TRATAMENTO PARA O UPDATE
@@ -246,7 +246,7 @@ namespace DataBase
 							strWhere = strWhere + " and ";
 						}
 
-						strWhere = strWhere + objCampoDB.Campo + " = " + FuncoesBD.CampoStringFormatar(objCampoDB.Valor);
+						strWhere = strWhere + objCampoDB.Campo + " = " + FuncoesBd.CampoStringFormatar(objCampoDB.Valor);
 
 
 					} else {

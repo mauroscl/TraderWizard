@@ -493,7 +493,7 @@ namespace TraderWizard
             this.cmbAtivo.FormattingEnabled = true;
             this.cmbAtivo.Location = new System.Drawing.Point(91, 6);
             this.cmbAtivo.Name = "cmbAtivo";
-            this.cmbAtivo.Size = new System.Drawing.Size(179, 21);
+            this.cmbAtivo.Size = new System.Drawing.Size(236, 21);
             this.cmbAtivo.TabIndex = 1;
             // 
             // Label7

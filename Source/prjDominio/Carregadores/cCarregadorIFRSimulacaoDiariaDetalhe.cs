@@ -26,14 +26,13 @@ namespace prjModelo.Carregadores
 		}
 		public IList<cIFRSimulacaoDiariaDetalhe> CarregarTodosDeUmaSimulacao(cIFRSimulacaoDiaria pobjIFRSimulacaoDiaria)
 		{
+            FuncoesBd FuncoesBd = Conexao.ObterFormatadorDeCampo();
 
-			string strSQL = null;
-
-			strSQL = "SELECT ID_IFR_Sobrevendido, NumTentativas, MelhorEntrada, Data_Entrada_Efetiva, SomatorioCriterios, AgrupadorTentativas " + Environment.NewLine;
+		    string strSQL = "SELECT ID_IFR_Sobrevendido, NumTentativas, MelhorEntrada, Data_Entrada_Efetiva, SomatorioCriterios, AgrupadorTentativas " + Environment.NewLine;
 			strSQL = strSQL + " FROM IFR_Simulacao_Diaria_Detalhe " + Environment.NewLine;
-			strSQL = strSQL + " WHERE Codigo = " + FuncoesBD.CampoFormatar(pobjIFRSimulacaoDiaria.Ativo.Codigo) + Environment.NewLine;
-			strSQL = strSQL + " AND ID_Setup = " + FuncoesBD.CampoFormatar(pobjIFRSimulacaoDiaria.Setup.ID) + Environment.NewLine;
-			strSQL = strSQL + " AND Data_Entrada_Efetiva = " + FuncoesBD.CampoFormatar(pobjIFRSimulacaoDiaria.DataEntradaEfetiva);
+			strSQL = strSQL + " WHERE Codigo = " + FuncoesBd.CampoFormatar(pobjIFRSimulacaoDiaria.Ativo.Codigo) + Environment.NewLine;
+			strSQL = strSQL + " AND ID_Setup = " + FuncoesBd.CampoFormatar(pobjIFRSimulacaoDiaria.Setup.ID) + Environment.NewLine;
+			strSQL = strSQL + " AND Data_Entrada_Efetiva = " + FuncoesBd.CampoFormatar(pobjIFRSimulacaoDiaria.DataEntradaEfetiva);
 
 			cRS objRS = new cRS(Conexao);
 

@@ -207,17 +207,19 @@ namespace TraderWizard
 
 			cRelatorio objRelatorio = new cRelatorio(objConexao);
 
+            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
+
+
 
 			//busca os ativos da tabela ativo
-			string strSQL = null;
-			strSQL = " select Codigo, Codigo & ' - ' & Descricao as Descr " + Environment.NewLine;
+		    string strSQL = " select Codigo, Codigo & ' - ' & Descricao as Descr " + Environment.NewLine;
 			strSQL += " from Ativo A " + Environment.NewLine;
 			strSQL += " WHERE EXISTS " + Environment.NewLine;
 			strSQL += "(";
 			strSQL += '\t' + " SELECT 1 " + Environment.NewLine;
 			strSQL += '\t' + " FROM Cotacao C " + Environment.NewLine;
 			strSQL += '\t' + " WHERE A.Codigo = C.Codigo " + Environment.NewLine;
-			strSQL += '\t' + " AND C.Data = " + FuncoesBD.CampoFormatar(dtmDataUltimaCotacao) + Environment.NewLine;
+			strSQL += '\t' + " AND C.Data = " + FuncoesBd.CampoFormatar(dtmDataUltimaCotacao) + Environment.NewLine;
 			strSQL += '\t' + " AND C.Sequencial >= 200 " + Environment.NewLine;
 			strSQL += '\t' + " AND " + objRelatorio.FiltroVolumeFinanceiroGerar("C", "Cotacao", 1000000);
 			strSQL += '\t' + " AND " + objRelatorio.FiltroVolumeNegociosGerar("C", "Cotacao", 100);
@@ -235,9 +237,9 @@ namespace TraderWizard
 			strSQL += '\t' + " SELECT 1 " + Environment.NewLine;
 			strSQL += '\t' + " FROM Media_Diaria MVT " + Environment.NewLine;
 			strSQL += '\t' + " WHERE A.Codigo = MVT.Codigo " + Environment.NewLine;
-			strSQL += '\t' + " AND MVT.Data = " + FuncoesBD.CampoFormatar(dtmDataUltimaCotacao) + Environment.NewLine;
+			strSQL += '\t' + " AND MVT.Data = " + FuncoesBd.CampoFormatar(dtmDataUltimaCotacao) + Environment.NewLine;
 			strSQL += '\t' + " AND MVT.NumPeriodos = 21 " + Environment.NewLine;
-			strSQL += '\t' + " AND MVT.Tipo = " + FuncoesBD.CampoFormatar("VMA");
+			strSQL += '\t' + " AND MVT.Tipo = " + FuncoesBd.CampoFormatar("VMA");
 			strSQL += '\t' + " AND MVT.Valor >= 100000";
 			//volume maior ou igual a 100.000 (cem mil) titulos negociados
 			strSQL += ")" + Environment.NewLine;

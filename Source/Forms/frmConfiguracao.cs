@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using DataBase;
+using Forms;
 using pWeb;
 
 namespace TraderWizard
@@ -328,40 +329,7 @@ namespace TraderWizard
 
         private void cmbAtivoPreencher(string pstrCodigoAtivoPadrao)
         {
-            var objRS = new cRS(objConexao);
-
-            int intIndicePadrao = -1;
-
-            //busca os ativos da tabela ativo
-            objRS.ExecuteQuery(" select Codigo, Codigo & ' - ' & Descricao as Descr " + " from Ativo " +
-                               " WHERE NOT EXISTS " + "(" + " SELECT 1 " + " FROM ATIVOS_DESCONSIDERADOS " +
-                               " WHERE ATIVO.CODIGO = ATIVOS_DESCONSIDERADOS.CODIGO " + ")" + " order by Codigo");
-
-            cmbAtivo.Items.Clear();
-
-
-            while (!objRS.EOF)
-            {
-                cmbAtivo.Items.Add(objRS.Field("Descr"));
-
-                if (Convert.ToString(objRS.Field("Codigo")) == pstrCodigoAtivoPadrao)
-                {
-                    intIndicePadrao = cmbAtivo.Items.Count - 1;
-                }
-
-                objRS.MoveNext();
-            }
-
-
-            if (intIndicePadrao == -1)
-            {
-                //se não encontrou um índice padrão, então coloca no primeiro ativo do combo
-                intIndicePadrao = 0;
-            }
-
-            cmbAtivo.SelectedIndex = intIndicePadrao;
-
-            objRS.Fechar();
+            mCotacao.ComboAtivoPreencher(cmbAtivo,objConexao,pstrCodigoAtivoPadrao, true);
         }
 
         private void ParametroSalvar(string pstrParametro, string pstrValor)
@@ -384,7 +352,7 @@ namespace TraderWizard
             ListViewItem objListViewItem;
 
             objRS.ExecuteQuery(" select NumPeriodos, Cor " + " from Configuracao_Indicador " + " where Tipo = " +
-                               FuncoesBD.CampoStringFormatar("MME"));
+                               FuncoesBd.CampoStringFormatar("MME"));
 
 
             while (!objRS.EOF)
@@ -410,7 +378,7 @@ namespace TraderWizard
 
 
             objCommand.Execute(" DELETE " + " FROM Configuracao_Indicador " + " WHERE Tipo = " +
-                               FuncoesBD.CampoStringFormatar("MME"));
+                               FuncoesBd.CampoStringFormatar("MME"));
 
             int intI = 0;
 
@@ -420,7 +388,7 @@ namespace TraderWizard
                 for (intI = 0; intI <= lstPeriodoSelecionado.Items.Count - 1; intI++)
                 {
                     objCommand.Execute(" INSERT INTO Configuracao_Indicador " + "(Tipo, NumPeriodos, Cor)" + " VALUES " +
-                                       "(" + FuncoesBD.CampoStringFormatar("MME") + ", " +
+                                       "(" + FuncoesBd.CampoStringFormatar("MME") + ", " +
                                        lstPeriodoSelecionado.Items[intI].Text + ", " +
                                        lstPeriodoSelecionado.Items[intI].SubItems[1].BackColor.ToArgb().ToString() + ")");
                 }

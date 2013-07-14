@@ -51,6 +51,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\SAP BusinessObjects\Crystal Reports for .NET Framework 4.0\Common\SAP BusinessObjects Enterprise XI 4.0\win32_x86\dotnet\CrystalDecisions.Windows.Forms.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -305,6 +306,10 @@
     <ProjectReference Include="..\ServicosDeInterface\ServicosDeInterface.csproj">
       <Project>{D0B52B8A-8A9C-4E34-B324-745E7A126573}</Project>
       <Name>ServicosDeInterface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TraderWizard.Infra.Repositorio\TraderWizard.Infra.Repositorio.csproj">
+      <Project>{ABD88985-5583-4D96-9E41-7AB3842DC1F9}</Project>
+      <Name>TraderWizard.Infra.Repositorio</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

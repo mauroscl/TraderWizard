@@ -25,23 +25,19 @@ namespace prjModelo.Carregadores
 
 		public bool VerificaPorClassificacaoMedia(string pstrCodigo, cClassifMedia pobjCM, cIFRSobrevendido pobjIFRSobrevendido)
 		{
-			bool functionReturnValue = false;
+		    cRS objRS = new cRS(Conexao);
 
-			cRS objRS = new cRS(Conexao);
+            FuncoesBd FuncoesBd = Conexao.ObterFormatadorDeCampo();
 
-			//TODO: Falta fazer teste de unidade
-
-			string strSQL = null;
-
-			strSQL = " SELECT COUNT(1) AS Contador " + Environment.NewLine;
+		    string strSQL = " SELECT COUNT(1) AS Contador " + Environment.NewLine;
 			strSQL = strSQL + " FROM IFR_SIMULACAO_DIARIA_FAIXA " + Environment.NewLine;
-			strSQL = strSQL + " WHERE CODIGO = " + FuncoesBD.CampoFormatar(pstrCodigo) + Environment.NewLine;
-			strSQL = strSQL + " AND ID_CM = " + FuncoesBD.CampoFormatar(pobjCM.ID);
-			strSQL = strSQL + " AND ID_IFR_Sobrevendido = " + FuncoesBD.CampoFormatar(pobjIFRSobrevendido.ID);
+			strSQL = strSQL + " WHERE CODIGO = " + FuncoesBd.CampoFormatar(pstrCodigo) + Environment.NewLine;
+			strSQL = strSQL + " AND ID_CM = " + FuncoesBd.CampoFormatar(pobjCM.ID);
+			strSQL = strSQL + " AND ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ID);
 
 			objRS.ExecuteQuery(strSQL);
 
-			functionReturnValue = (Convert.ToInt32(objRS.Field("Contador")) > 0);
+			bool functionReturnValue = (Convert.ToInt32(objRS.Field("Contador")) > 0);
 
 			objRS.Fechar();
 			return functionReturnValue;

@@ -43,7 +43,9 @@
   <ItemGroup>
     <Compile Include="cFaixaDTO.cs" />
     <Compile Include="cMediaDTO.cs" />
-    <Compile Include="CotacaoDto.cs" />
+    <Compile Include="CotacaoDataDto.cs" />
+    <Compile Include="CotacaoDiferencaDto.cs" />
+    <Compile Include="CotacaoFechamentoDto.cs" />
     <Compile Include="cSetupIFR2SimularDTO.cs" />
     <Compile Include="cSugerirAtualizacaoCotacaoDTO.cs" />
     <Compile Include="cTradeDTO.cs" />

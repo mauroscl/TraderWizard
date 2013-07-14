@@ -26,21 +26,19 @@ namespace prjModelo.Carregadores
 
 		public cIFR CarregarPorData(cCotacaoDiaria pobjCotacaoDiaria, int pintNumPeriodos)
 		{
-			cIFR functionReturnValue = null;
+		    cRS objRS = new cRS(Conexao);
 
-			cRS objRS = new cRS(Conexao);
+		    FuncoesBd FuncoesBd = Conexao.ObterFormatadorDeCampo();
 
-			string strSQL = null;
-
-			strSQL = "SELECT Valor " + Environment.NewLine;
+			string strSQL = "SELECT Valor " + Environment.NewLine;
 			strSQL += " FROM IFR_Diario " + Environment.NewLine;
-			strSQL += " WHERE Codigo = " + FuncoesBD.CampoFormatar(pobjCotacaoDiaria.Ativo.Codigo);
-			strSQL += " AND Data = " + FuncoesBD.CampoFormatar(pobjCotacaoDiaria.Data);
-			strSQL += " AND NumPeriodos = " + FuncoesBD.CampoFormatar(pintNumPeriodos);
+			strSQL += " WHERE Codigo = " + FuncoesBd.CampoFormatar(pobjCotacaoDiaria.Ativo.Codigo);
+			strSQL += " AND Data = " + FuncoesBd.CampoFormatar(pobjCotacaoDiaria.Data);
+			strSQL += " AND NumPeriodos = " + FuncoesBd.CampoFormatar(pintNumPeriodos);
 
 			objRS.ExecuteQuery(strSQL);
 
-			functionReturnValue = new cIFRDiario(pobjCotacaoDiaria, pintNumPeriodos, Convert.ToDouble(objRS.Field("Valor")));
+			cIFR functionReturnValue = new cIFRDiario(pobjCotacaoDiaria, pintNumPeriodos, Convert.ToDouble(objRS.Field("Valor")));
 
 			objRS.Fechar();
 

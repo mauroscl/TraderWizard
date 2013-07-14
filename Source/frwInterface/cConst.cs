@@ -4,7 +4,6 @@ namespace frwInterface
 {
 	public class cConst
 	{
-
-    	public static DateTime DataInvalida = Convert.ToDateTime("01/01/0001");
+    	public static DateTime DataInvalida = new DateTime(1970,1,1);
 	}
 }

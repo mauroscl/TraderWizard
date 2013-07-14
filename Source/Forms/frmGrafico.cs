@@ -7,9 +7,12 @@ using System.Windows.Forms;
 using prjModelo.Carregadores;
 using DataBase;
 using prjCandle;
+using prjModelo.Entidades;
 using prmCotacao;
 using prjDTO;
 using frwInterface;
+using TraderWizard.Infra.Repositorio;
+
 namespace TraderWizard
 {
 	public partial class frmGrafico
@@ -317,7 +320,6 @@ namespace TraderWizard
 
 		private void ToolStripcmbAtivoPreencher()
 		{
-			cRS objRS = new cRS(objConexao);
 
 			string strCodigoAtivoPadrao;
 
@@ -326,36 +328,26 @@ namespace TraderWizard
 
 			int intIndicePadrao = 0;
 
-			//busca os ativos da tabela ativo
-			objRS.ExecuteQuery(" select Codigo, Codigo & ' - ' & Descricao as Descr " 
-                + " from Ativo " + " WHERE NOT EXISTS " 
-                + "(" + " SELECT 1 " + " FROM ATIVOS_DESCONSIDERADOS " + " WHERE ATIVO.CODIGO = ATIVOS_DESCONSIDERADOS.CODIGO " + ")" 
-                + " order by Codigo");
-
 			ToolStripcmbAtivo.Items.Clear();
 
+		    var ativos = new Ativos(objConexao);
 
-			while (!objRS.EOF) {
-				ToolStripcmbAtivo.Items.Add(objRS.Field("Descr"));
+		    IList<cAtivo> ativosValidos = ativos.Validos();
 
-				//cmbAtivo.SelectValue = objRS.Field("Codigo")
-
-
-                if (Convert.ToString(objRS.Field("Codigo")) == strCodigoAtivoPadrao)
+		    foreach (var ativoValido in ativosValidos)
+		    {
+                ToolStripcmbAtivo.Items.Add(ativoValido.Codigo + " - " + ativoValido.Descricao);
+                if (ativoValido.Codigo == strCodigoAtivoPadrao)
                 {
-					intIndicePadrao = ToolStripcmbAtivo.Items.Count - 1;
+                    intIndicePadrao = ToolStripcmbAtivo.Items.Count - 1;
 
-				}
-
-				objRS.MoveNext();
-
+                }
+		        
 			}
 
 			if (intIndicePadrao > 0) {
 				ToolStripcmbAtivo.SelectedIndex = intIndicePadrao;
 			}
-
-			objRS.Fechar();
 
 		}
 
@@ -436,6 +428,8 @@ namespace TraderWizard
 
 			}
 
+            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
+
 			cRS objRS = new cRS(objConexao);
 
 			cCotacao objCotacao = new cCotacao(objConexao);
@@ -454,7 +448,7 @@ namespace TraderWizard
 				//1º) busca o sequencial e a data da última cotação do papel
 				objRS.ExecuteQuery("SELECT TOP 1 Sequencial " + Environment.NewLine 
                     + " FROM " + strTabelaCotacao + Environment.NewLine 
-                    + " WHERE Codigo = " + FuncoesBD.CampoStringFormatar(strCodigoAtivoAux) + Environment.NewLine 
+                    + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(strCodigoAtivoAux) + Environment.NewLine 
                     + " ORDER BY Sequencial DESC");
 
 				lngSequencialMaximo = Convert.ToInt64(objRS.Field("Sequencial"));
@@ -683,8 +677,9 @@ namespace TraderWizard
 			System.DateTime dtmDataMaximaBusca = default(System.DateTime);
 
 
-			if (blnCotacaoBuscar) {
-				//data minima
+			if (blnCotacaoBuscar)
+			{
+			    //data minima
 
 				if (lngSequencialBuscaInicial == lngAreaDadosSequencialInicial) {
 					//se o sequencial inicial de busca é o sequencial inicial da área de dados
@@ -698,21 +693,15 @@ namespace TraderWizard
 
 				//data máxima de busca
 
-				if (lngSequencialBuscaFinal == lngAreaDadosSequencialFinal) {
-					//se o sequencial final de busca é o sequencial final da área de dados
-					dtmDataMaximaBusca = dtmDataMaximaAreaDados;
-
-
-				} else {
-					dtmDataMaximaBusca = objCotacao.AtivoSequencialDataBuscar(strCodigoAtivo, lngSequencialBuscaFinal, strTabelaCotacao);
-
-				}
-
+			    dtmDataMaximaBusca = lngSequencialBuscaFinal == lngAreaDadosSequencialFinal ? dtmDataMaximaAreaDados : objCotacao.AtivoSequencialDataBuscar(strCodigoAtivo, lngSequencialBuscaFinal, strTabelaCotacao);
 			}
 
-			//verifica se existem cotações com valor mínimo zerado. Se existir não permite gerar o gráfico para evitar erros.
-			objRS.ExecuteQuery("SELECT COUNT(1) AS Contador " + Environment.NewLine + " FROM " + strTabelaCotacao + Environment.NewLine + " WHERE Codigo = " + FuncoesBD.CampoStringFormatar(strCodigoAtivo) + Environment.NewLine + " AND Data BETWEEN " + FuncoesBD.CampoDateFormatar(dtmDataMinimaAreaDados) + " AND " + FuncoesBD.CampoDateFormatar(dtmDataMaximaAreaDados) + " AND ValorMinimo = 0 ");
-
+		    //verifica se existem cotações com valor mínimo zerado. Se existir não permite gerar o gráfico para evitar erros.
+		    objRS.ExecuteQuery("SELECT COUNT(1) AS Contador " + Environment.NewLine + " FROM " + strTabelaCotacao +
+		                       Environment.NewLine + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(strCodigoAtivo) +
+		                       Environment.NewLine + " AND Data BETWEEN " +
+		                       FuncoesBd.CampoDateFormatar(dtmDataMinimaAreaDados) + " AND " +
+		                       FuncoesBd.CampoDateFormatar(dtmDataMaximaAreaDados) + " AND ValorMinimo = 0 ");
 
 			if (Convert.ToInt32(objRS.Field("Contador")) > 0) {
 
@@ -810,7 +799,7 @@ namespace TraderWizard
 			if (blnIfrBuscar) {
 				//****************VER SE ESTÁ FUNCIONANDO QUANDO O PERÍODO DO IFR FOR TROCADO.
 
-				string strQuery = " SELECT Valor " + Environment.NewLine + " FROM " + strTabelaIFR + Environment.NewLine + " WHERE Codigo = " + FuncoesBD.CampoStringFormatar(strCodigoAtivo) + Environment.NewLine + " AND NumPeriodos = " + intIFRNumPeriodos + Environment.NewLine + " AND Data >= " + FuncoesBD.CampoDateFormatar(dtmDataMinimaBusca) + Environment.NewLine + " AND Data <= " + FuncoesBD.CampoDateFormatar(dtmDataMaximaBusca) + Environment.NewLine + " ORDER BY Data DESC ";
+				string strQuery = " SELECT Valor " + Environment.NewLine + " FROM " + strTabelaIFR + Environment.NewLine + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(strCodigoAtivo) + Environment.NewLine + " AND NumPeriodos = " + intIFRNumPeriodos + Environment.NewLine + " AND Data >= " + FuncoesBd.CampoDateFormatar(dtmDataMinimaBusca) + Environment.NewLine + " AND Data <= " + FuncoesBd.CampoDateFormatar(dtmDataMaximaBusca) + Environment.NewLine + " ORDER BY Data DESC ";
 
 				//mauro, 21/02/2010
 				//tratamento para tentar remover a exceção ao executar esta query.
@@ -865,7 +854,8 @@ namespace TraderWizard
 				//BUSCA A MÉDIA DO IFR SE O NÚMERO DE PERIODOS FOR = 2
 
 				if (intIFRNumPeriodos == 2) {
-					strQuery = " SELECT Valor " + Environment.NewLine + " FROM " + strTabelaMedia + Environment.NewLine + " WHERE Codigo = " + FuncoesBD.CampoStringFormatar(strCodigoAtivo) + Environment.NewLine + " AND Tipo = " + FuncoesBD.CampoStringFormatar("IFR2") + Environment.NewLine + " AND NumPeriodos = 13" + Environment.NewLine + " AND Data >= " + FuncoesBD.CampoDateFormatar(dtmDataMinimaBusca) + Environment.NewLine + " AND Data <= " + FuncoesBD.CampoDateFormatar(dtmDataMaximaBusca) + Environment.NewLine + " ORDER BY Data DESC ";
+
+					strQuery = " SELECT Valor " + Environment.NewLine + " FROM " + strTabelaMedia + Environment.NewLine + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(strCodigoAtivo) + Environment.NewLine + " AND Tipo = " + FuncoesBd.CampoStringFormatar("IFR2") + Environment.NewLine + " AND NumPeriodos = 13" + Environment.NewLine + " AND Data >= " + FuncoesBd.CampoDateFormatar(dtmDataMinimaBusca) + Environment.NewLine + " AND Data <= " + FuncoesBd.CampoDateFormatar(dtmDataMaximaBusca) + Environment.NewLine + " ORDER BY Data DESC ";
 
 					objRS.ExecuteQuery(strQuery);
 
@@ -2138,7 +2128,7 @@ namespace TraderWizard
 
 			//Dim objIndicadorEscolha As structIndicadorEscolha
 
-			objRS.ExecuteQuery(" select Tipo, NumPeriodos, Cor " + Environment.NewLine + " from Configuracao_Indicador " + Environment.NewLine + " where Tipo = " + FuncoesBD.CampoStringFormatar("MME") + Environment.NewLine + " or Tipo = " + FuncoesBD.CampoStringFormatar("MMA") + Environment.NewLine + " ORDER BY NumPeriodos, Tipo");
+			objRS.ExecuteQuery(" select Tipo, NumPeriodos, Cor " + Environment.NewLine + " from Configuracao_Indicador " + Environment.NewLine + " where Tipo = " + FuncoesBd.CampoStringFormatar("MME") + Environment.NewLine + " or Tipo = " + FuncoesBd.CampoStringFormatar("MMA") + Environment.NewLine + " ORDER BY NumPeriodos, Tipo");
 
 
 			if (objRS.DadosExistir) {
@@ -2382,7 +2372,6 @@ namespace TraderWizard
 			int intIFRNumRegistros = 0;
 			int intIFRMedioNumRegistros = 0;
 			int intVolumeMedioNumRegistros = 0;
-			//Dim colNumRegistros As Collection = Nothing
 			List<cMediaDTO> lstMediasNumRegistros = null;
 
 			//CALCULA O VALOR MÍNIMO E MÁXIMO DA ÁREA DE COTAÇÕES. LEVA EM CONSIDERAÇÃO

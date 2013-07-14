@@ -9,54 +9,26 @@ namespace DataBase
 	public class cRS
 	{
 
-		//objeto da conexao
-
-		private cConexao objConexao;
-
-		private OleDbDataReader objOleDbDR;
-		//indica se já chegou no fim do RS
-
-	    //indica se a query retornou algum dado
-
-	    //status da execução da consulta
-
-		private bool blnQueryStatus;
-		//armazena a última query executada
-
-		private string strUltimaQuery;
-		//Private objOleDbCommand As OleDbCommand
-
-		//GUID gerado a cada execução de query.
-
-	    public string UltimaQuery {
-
-			get { return strUltimaQuery; }
-		}
+	    public string UltimaQuery { get; private set; }
 
 	    public bool EOF { get; private set; }
 
 	    public bool DadosExistir { get; private set; }
 
-	    public bool QueryStatus {
-			get { return this.blnQueryStatus; }
-		}
+	    public bool QueryStatus { get; private set; }
 
-		public cConexao Conexao {
-			get { return objConexao; }
-		}
+	    public cConexao Conexao { get; private set; }
 
-		public OleDbDataReader GetDataReader {
-			get { return objOleDbDR; }
-		}
+	    public OleDbDataReader GetDataReader { get; private set; }
 
-		public string GetName(int pintIndice) {
-			return objOleDbDR.GetName(pintIndice);
+	    public string GetName(int pintIndice) {
+			return GetDataReader.GetName(pintIndice);
 		}
 
 
 		public cRS()
 		{
-			this.objConexao = new cConexao();
+			this.Conexao = new cConexao();
 
 			ValorPadraoInicializar();
 
@@ -65,20 +37,19 @@ namespace DataBase
 
 		public cRS(cConexao pobjConexao)
 		{
-			this.objConexao = pobjConexao;
+			this.Conexao = pobjConexao;
 
 			ValorPadraoInicializar();
 
 		}
 
-
 		private void ValorPadraoInicializar()
 		{
 			//inicialização das propriedades
-			this.strUltimaQuery = "";
+			this.UltimaQuery = "";
 			EOF = false;
 			DadosExistir = false;
-			blnQueryStatus = false;
+			QueryStatus = false;
 
 		}
 
@@ -88,9 +59,9 @@ namespace DataBase
 
 			VerificarConexao();
 
-			OleDbCommand cmd = new OleDbCommand(pstrComando, this.objConexao.Conn);
+			var cmd = new OleDbCommand(pstrComando, this.Conexao.Conn);
 
-			cmd.Transaction = objConexao.Transacao;
+			cmd.Transaction = Conexao.Transacao;
 
 			return cmd;
 
@@ -99,67 +70,32 @@ namespace DataBase
 
 		public void ExecuteQuery(string pstrQuery)
 		{
-			OleDbCommand objOleDbCommand = null;
-
-			bool blnExecutar = false;
-
-			bool blnContinuarExecutando = true;
+		    bool blnContinuarExecutando = true;
 
 			int intNumeroDeExecucoes = 0;
 
-
 			while (blnContinuarExecutando) {
 
-				try {
-					//executa a query somente se a transação está OK
+				try
+				{
+				    //executa a query somente se a transação está OK
 					//ou ainda se não tem transação aberta.
-					if (objConexao.TransAberta) {
-						blnExecutar = objConexao.TransStatus;
-					} else {
-						blnExecutar = true;
-					}
+				    bool blnExecutar = !Conexao.TransAberta || Conexao.TransStatus;
 
 
-					if (blnExecutar) {
-
-						//removido por mauro, 17/04/2010
-
-						//GERA O GUID
-						//strGuid = Guid.NewGuid().ToString()
-
-						//INSERE O REGISTRO NA TABELA DE CONTROLE
-						//GUIDInserir()
-
-						//fim do código removido por mauro, 17/04/2010.
-
+				    if (blnExecutar) {
 						intNumeroDeExecucoes = intNumeroDeExecucoes + 1;
 
-
-						if (blnContinuarExecutando) {
-
-							if (intNumeroDeExecucoes > 10) {
-								blnContinuarExecutando = false;
-
-							}
-
-						}
-
-
-						if (intNumeroDeExecucoes > 1) {
-							Trace.WriteLine("Comando: " + pstrQuery + " - Tentativas: " + intNumeroDeExecucoes.ToString());
-
-						}
-
-						objOleDbCommand = CriarComando(pstrQuery);
-						objOleDbDR = objOleDbCommand.ExecuteReader();
-						blnQueryStatus = true;
+						OleDbCommand objOleDbCommand = CriarComando(pstrQuery);
+						GetDataReader = objOleDbCommand.ExecuteReader();
+						QueryStatus = true;
 
 						//Chama o método read para o primeiro registro ficar disponível
 						//Se consegue ler, é porque tem dados
 						//blnDadosExistir = objOleDbDR.Read()
-						objOleDbDR.Read();
+						GetDataReader.Read();
 
-						DadosExistir = objOleDbDR.HasRows;
+						DadosExistir = GetDataReader.HasRows;
 
 						//----fim do código alterado por mauro, 26/07/2009
 						//quando não conseguir mais ler nenhum registro chegou ao fim (EOF).
@@ -168,13 +104,12 @@ namespace DataBase
 						blnContinuarExecutando = false;
 
 					}
-
-				} 
-                catch
+				}
+				catch
                 {
                     RollBackTrans();
 
-                    blnQueryStatus = false;
+                    QueryStatus = false;
                     DadosExistir = false;
                     EOF = true;
                     throw;
@@ -182,7 +117,7 @@ namespace DataBase
                 }
                 
                 finally {
-					strUltimaQuery = pstrQuery;
+					UltimaQuery = pstrQuery;
 
 				}
 
@@ -195,20 +130,16 @@ namespace DataBase
 			object functionReturnValue;
 
 
-		    try {
-				//executa a query somente se a transação está OK
+		    try
+		    {
+		        //executa a query somente se a transação está OK
 				//ou ainda se não tem transação aberta.
-			    bool blnExecutar;
-			    if (objConexao.TransAberta) {
-					blnExecutar = objConexao.TransStatus;
-				} else {
-					blnExecutar = true;
-				}
+		        bool blnExecutar = !Conexao.TransAberta || Conexao.TransStatus;
 
 
-				if (blnExecutar)
+		        if (blnExecutar)
 				{
-				    int intOrdinal = objOleDbDR.GetOrdinal(pstrCampo);
+				    int intOrdinal = GetDataReader.GetOrdinal(pstrCampo);
 
 				    functionReturnValue = GetField(intOrdinal, pobjRetornoErro);
 				}
@@ -216,8 +147,8 @@ namespace DataBase
 					functionReturnValue = pobjRetornoErro;
 
 				}
-
-			} catch (IndexOutOfRangeException e) {
+		    }
+		    catch (IndexOutOfRangeException e) {
 				RollBackTrans();
                 MessageBox.Show("Erro ao consultar o campo " + pstrCampo + " - " + e.Message, "Executar Query", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
@@ -252,41 +183,41 @@ namespace DataBase
 		{
 		    //executa a query somente se a transação está OK
 			//ou ainda se não tem transação aberta.
-			bool blnExecutar = !objConexao.TransAberta || objConexao.TransStatus;
+			bool blnExecutar = !Conexao.TransAberta || Conexao.TransStatus;
 
 		    if (!blnExecutar)
 		    {
 		        return pobjRetornoErro;
 		    }
 
-		    Type tipo = objOleDbDR.GetFieldType(pintOrdinal);
+		    Type tipo = GetDataReader.GetFieldType(pintOrdinal);
 
 		    try
 		    {
-		        if ( ! EOF && !objOleDbDR.IsDBNull(pintOrdinal)) {
+		        if ( ! EOF && !GetDataReader.IsDBNull(pintOrdinal)) {
 		            if (tipo == Type.GetType("System.Boolean", true, true)) {
-		                return objOleDbDR.GetBoolean(pintOrdinal);
+		                return GetDataReader.GetBoolean(pintOrdinal);
 		            }
 		            if (tipo == Type.GetType("System.Int16", true, true)) {
-		                return objOleDbDR.GetInt16(pintOrdinal);
+		                return GetDataReader.GetInt16(pintOrdinal);
 		            }
 		            if (tipo == Type.GetType("System.Int32", true, true)) {
-		                return objOleDbDR.GetInt32(pintOrdinal);
+		                return GetDataReader.GetInt32(pintOrdinal);
 		            }
 		            if (tipo == Type.GetType("System.String", true, true)) {
-		                return objOleDbDR.GetString(pintOrdinal);
+		                return GetDataReader.GetString(pintOrdinal);
 		            }
 		            if (tipo == Type.GetType("System.Decimal", true, true)) {
-		                return objOleDbDR.GetDecimal(pintOrdinal);
+		                return GetDataReader.GetDecimal(pintOrdinal);
 		            }
 		            if (tipo == Type.GetType("System.Double", true, true)) {
-		                return objOleDbDR.GetDouble(pintOrdinal);
+		                return GetDataReader.GetDouble(pintOrdinal);
 		            }
 		            if (tipo == Type.GetType("System.DateTime", true, true)) {
-		                return objOleDbDR.GetDateTime(pintOrdinal);
+		                return GetDataReader.GetDateTime(pintOrdinal);
 		            }
 
-		            return objOleDbDR.GetString(pintOrdinal);
+		            return GetDataReader.GetString(pintOrdinal);
 
 		        }
 		        return pobjRetornoErro;
@@ -301,7 +232,7 @@ namespace DataBase
 
 		public int GetValues(object[] parrValues)
 		{
-			return objOleDbDR.GetValues(parrValues);
+			return GetDataReader.GetValues(parrValues);
 		}
 
 
@@ -310,9 +241,9 @@ namespace DataBase
 
 			try {
 
-				if (objConexao.TransStatus) {
-					if ((objOleDbDR != null)) {
-						EOF = !objOleDbDR.Read();
+				if (Conexao.TransStatus) {
+					if ((GetDataReader != null)) {
+						EOF = !GetDataReader.Read();
 					} else {
 						//se o RS não está preenchido, então considera como se tivesse chegado no fim deste
 						//para que a aplicação não fique em loop
@@ -336,20 +267,13 @@ namespace DataBase
 
 		private void VerificarConexao()
 		{
-			this.objConexao.VerificarConexao();
+			this.Conexao.VerificarConexao();
 		}
-
-		//Fecha a conexão
-		private void FecharConexao()
-		{
-			this.objConexao.FecharConexao();
-		}
-
 
 		private void RollBackTrans()
 		{
-			if (this.objConexao.TransAberta) {
-				objConexao.RollBackTrans();
+			if (this.Conexao.TransAberta) {
+				Conexao.RollBackTrans();
 			}
 
 			//comentado por mauro, 29/04/2010
@@ -372,11 +296,7 @@ namespace DataBase
 		/// <remarks></remarks>
 		public long CodigoSequencialCalcular(string pstrTabela, string pstrCampo, string pstrWhereAdicional)
 		{
-			long functionReturnValue = 0;
-
-			string strQuery = null;
-
-			strQuery = " SELECT MAX(" + pstrCampo + ") AS ValorMaximo " + " FROM " + pstrTabela;
+		    string strQuery = " SELECT MAX(" + pstrCampo + ") AS ValorMaximo " + " FROM " + pstrTabela;
 
 
 			if (pstrWhereAdicional != String.Empty) {
@@ -387,10 +307,10 @@ namespace DataBase
 			ExecuteQuery(strQuery);
 
 			//soma 1 no valor encontrado.
-			functionReturnValue = Convert.ToInt64(Field("ValorMaximo", 0)) + 1;
+			long sequencial = Convert.ToInt64(Field("ValorMaximo", 0)) + 1;
 
 			Fechar();
-			return functionReturnValue;
+			return sequencial;
 
 		}
 
@@ -402,9 +322,9 @@ namespace DataBase
 		public void Fechar()
 		{
 
-			if ((objOleDbDR != null)) {
-				if (!objOleDbDR.IsClosed) {
-					objOleDbDR.Close();
+			if ((GetDataReader != null)) {
+				if (!GetDataReader.IsClosed) {
+					GetDataReader.Close();
 					//removido por mauro, 17/04/2010
 					//GUIDAtualizar()
 					//fim do código removido por mauro, 17/04/2010
@@ -418,7 +338,7 @@ namespace DataBase
 		public int GetFieldCount()
 		{
 
-			return objOleDbDR.FieldCount;
+			return GetDataReader.FieldCount;
 
 		}
 

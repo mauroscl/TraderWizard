@@ -1,3 +1,4 @@
+using Forms;
 using Microsoft.VisualBasic;
 using System;
 using System.Windows.Forms;
@@ -241,7 +242,7 @@ namespace TraderWizard
 
 		private void frmCotacaoAtualizarPeriodo_Load(object sender, EventArgs e)
 		{
-			mCotacao.cmbAtivoPreencher(cmbAtivo, objConexao, false);
+			mCotacao.ComboAtivoPreencher(cmbAtivo, objConexao,"", false);
 
 			cCalculadorData objCalculadorData = new cCalculadorData(objConexao);
 

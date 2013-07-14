@@ -47,32 +47,33 @@ namespace prmCotacao
 				//busca os splits em ordem descrescente
 				objCarregadorSplit.SplitConsultar(strCodigoAtivo, new DateTime(2007, 1, 1), "D", ref objRSSplit,cConst.DataInvalida);
 
+                FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
+
 				//busca todas as cotações da tabela "COTACAO" em ordem decrescente
 				string strSql = "SELECT Data, ValorAbertura, ValorFechamento, ValorMaximo, ValorMinimo, Diferenca, Oscilacao, Negocios_Total, Titulos_Total, Valor_Total, Sequencial " + Environment.NewLine;
 				strSql = strSql + "FROM Cotacao " + Environment.NewLine;
-				strSql = strSql + "WHERE Codigo = " + FuncoesBD.CampoStringFormatar(strCodigoAtivo);
+				strSql = strSql + "WHERE Codigo = " + FuncoesBd.CampoStringFormatar(strCodigoAtivo);
 				strSql = strSql + " ORDER BY Data DESC";
 
 				objRSCotacao.ExecuteQuery(strSql);
-
 
 				while ((!objRSCotacao.EOF) && objCommand.TransStatus) {
 					strSql = "INSERT INTO Cotacao_Ajustada " + Environment.NewLine;
 					strSql = strSql + "(Codigo, Data, Sequencial, ValorAbertura, ValorFechamento, ValorMaximo, ValorMinimo, Diferenca " + Environment.NewLine;
 					strSql = strSql + ", Oscilacao, Negocios_Total, Titulos_Total, Valor_Total) " + Environment.NewLine;
 					strSql = strSql + "VALUES " + Environment.NewLine;
-					strSql = strSql + "(" + FuncoesBD.CampoStringFormatar(strCodigoAtivo);
-					strSql = strSql + "," + FuncoesBD.CampoDateFormatar(Convert.ToDateTime(objRSCotacao.Field("Data")));
+					strSql = strSql + "(" + FuncoesBd.CampoStringFormatar(strCodigoAtivo);
+					strSql = strSql + "," + FuncoesBd.CampoDateFormatar(Convert.ToDateTime(objRSCotacao.Field("Data")));
 					strSql = strSql + "," + objRSCotacao.Field("Sequencial");
-					strSql = strSql + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("ValorAbertura")) * (decimal) dblMultiplicador);
-					strSql = strSql + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("ValorFechamento")) * (decimal) dblMultiplicador);
-					strSql = strSql + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("ValorMaximo")) * (decimal) dblMultiplicador);
-					strSql = strSql + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("ValorMinimo")) * (decimal) dblMultiplicador);
-					strSql = strSql + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("Diferenca")));
-					strSql = strSql + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("Oscilacao")));
-					strSql = strSql + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("Negocios_Total")));
-					strSql = strSql + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("Titulos_Total")) / (decimal) dblMultiplicador);
-					strSql = strSql + "," + FuncoesBD.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("Valor_Total")));
+					strSql = strSql + "," + FuncoesBd.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("ValorAbertura")) * (decimal) dblMultiplicador);
+					strSql = strSql + "," + FuncoesBd.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("ValorFechamento")) * (decimal) dblMultiplicador);
+					strSql = strSql + "," + FuncoesBd.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("ValorMaximo")) * (decimal) dblMultiplicador);
+					strSql = strSql + "," + FuncoesBd.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("ValorMinimo")) * (decimal) dblMultiplicador);
+					strSql = strSql + "," + FuncoesBd.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("Diferenca")));
+					strSql = strSql + "," + FuncoesBd.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("Oscilacao")));
+					strSql = strSql + "," + FuncoesBd.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("Negocios_Total")));
+					strSql = strSql + "," + FuncoesBd.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("Titulos_Total")) / (decimal) dblMultiplicador);
+					strSql = strSql + "," + FuncoesBd.CampoDecimalFormatar(Convert.ToDecimal(objRSCotacao.Field("Valor_Total")));
 					strSql = strSql + ")";
 
 					objCommand.Execute(strSql);

@@ -41,7 +41,8 @@ namespace prjModelo.Regras
 		/// <alteracoes>
 		/// 17/12/2010 - Inclusão da média móvel de 200 e do tipo de média para indicar se devem ser usadas médias exponencias ou aritméticas
 		///</alteracoes>
-		public static string BackTestingIFRComFiltroEntradaQueryGerar(string pstrCodigo, string pstrPeriodicidade, string pstrFiltroMME49, int pintOrdem, frwInterface.cEnum.enumMediaTipo pintMediaTipo, System.DateTime pdtmDataInicial, bool pblnAcionamentoGerar = true, bool pblnMME21Incluir = false)
+		public static string BackTestingIFRComFiltroEntradaQueryGerar(FuncoesBd FuncoesBd, string pstrCodigo, string pstrPeriodicidade, string pstrFiltroMME49, int pintOrdem, cEnum.enumMediaTipo pintMediaTipo, 
+            DateTime pdtmDataInicial, bool pblnAcionamentoGerar = true, bool pblnMME21Incluir = false)
 		{
 
 			string strTabelaCotacao = String.Empty;
@@ -51,21 +52,22 @@ namespace prjModelo.Regras
 			//Busca o nome das tabelas
 			cCalculadorTabelas.TabelasCalcular(pstrPeriodicidade, ref strTabelaCotacao, ref strTabelaMedia, ref strTabelaIFR);
 
-			string strTabelaSegundoDia = null;
+		    string strMediaTipo;
 
-			string strQuery = null;
-			string strMediaTipo = null;
-
-			if (pintMediaTipo == cEnum.enumMediaTipo.Aritmetica) {
-				strMediaTipo = "MMA";
-			} else if (pintMediaTipo == cEnum.enumMediaTipo.Exponencial) {
-				strMediaTipo = "MME";
-			} else {
-				strMediaTipo = String.Empty;
+			switch (pintMediaTipo)
+			{
+			    case cEnum.enumMediaTipo.Aritmetica:
+			        strMediaTipo = "MMA";
+			        break;
+			    case cEnum.enumMediaTipo.Exponencial:
+			        strMediaTipo = "MME";
+			        break;
+			    default:
+			        strMediaTipo = String.Empty;
+			        break;
 			}
 
-			strQuery = "SELECT " + FuncoesBD.CampoStringFormatar("IFR2>MMA13") + " AS SETUP";
-
+			string strQuery = "SELECT " + FuncoesBd.CampoStringFormatar("IFR2>MMA13") + " AS SETUP";
 
 			if (pblnAcionamentoGerar) {
 				//se é para gerar a data de acionamento retorna a data do 3º período, que é a data que supera
@@ -105,11 +107,11 @@ namespace prjModelo.Regras
 			}
 
 			//#####Início do Dia 1
-			strQuery = strQuery + "(" + Environment.NewLine + '\t' + "SELECT C.data, valorfechamento, SEQUENCIAL " + Environment.NewLine + '\t' + "FROM ((" + strTabelaCotacao + " C INNER JOIN " + strTabelaMedia + " M " + Environment.NewLine + '\t' + "On C.CODIGO = M.CODIGO " + Environment.NewLine + '\t' + "And C.DATA = M.DATA) " + Environment.NewLine + '\t' + "INNER JOIN " + strTabelaIFR + " I " + Environment.NewLine + '\t' + "On C.CODIGO = I.CODIGO " + Environment.NewLine + '\t' + "And C.DATA = I.DATA) " + Environment.NewLine + '\t' + "WHERE C.Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + Environment.NewLine + '\t' + " And M.TIPO = " + FuncoesBD.CampoStringFormatar("IFR2") + Environment.NewLine + '\t' + " And M.NUMPERIODOS = 13 " + Environment.NewLine + '\t' + " And I.NUMPERIODOS = 2 " + Environment.NewLine + '\t' + " And I.VALOR < M.VALOR " + Environment.NewLine;
+			strQuery = strQuery + "(" + Environment.NewLine + '\t' + "SELECT C.data, valorfechamento, SEQUENCIAL " + Environment.NewLine + '\t' + "FROM ((" + strTabelaCotacao + " C INNER JOIN " + strTabelaMedia + " M " + Environment.NewLine + '\t' + "On C.CODIGO = M.CODIGO " + Environment.NewLine + '\t' + "And C.DATA = M.DATA) " + Environment.NewLine + '\t' + "INNER JOIN " + strTabelaIFR + " I " + Environment.NewLine + '\t' + "On C.CODIGO = I.CODIGO " + Environment.NewLine + '\t' + "And C.DATA = I.DATA) " + Environment.NewLine + '\t' + "WHERE C.Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + Environment.NewLine + '\t' + " And M.TIPO = " + FuncoesBd.CampoStringFormatar("IFR2") + Environment.NewLine + '\t' + " And M.NUMPERIODOS = 13 " + Environment.NewLine + '\t' + " And I.NUMPERIODOS = 2 " + Environment.NewLine + '\t' + " And I.VALOR < M.VALOR " + Environment.NewLine;
 
 
 			if (pdtmDataInicial != cConst.DataInvalida) {
-				strQuery = strQuery + '\t' + " AND C.Data >= " + FuncoesBD.CampoDateFormatar(pdtmDataInicial) + Environment.NewLine;
+				strQuery = strQuery + '\t' + " AND C.Data >= " + FuncoesBd.CampoDateFormatar(pdtmDataInicial) + Environment.NewLine;
 
 			}
 
@@ -124,12 +126,12 @@ namespace prjModelo.Regras
 			//Para calcular o valor de entrada aplica 0,25% sobre o valor máximo do dia em que o IFR cruza a média. 
 			//Se este valor for maior ou igual a 0, 01 soma este valor ao valor máximo. Caso contrário soma 0,01 (1 centavo)
 			//ao valor máximo.
-			strQuery = strQuery + '\t' + ", ValorMinimo - IIF(ROUND(ValorMinimo * " + FuncoesBD.CampoDecimalFormatar(0.0025M) + ", 2) >= " + FuncoesBD.CampoDecimalFormatar(0.01M) + ", ROUND(ValorMinimo * " + FuncoesBD.CampoDecimalFormatar(0.0025M) + ", 2), " + FuncoesBD.CampoDecimalFormatar(0.01M) + ")" + " AS Valor_Stop_Loss " + Environment.NewLine;
+			strQuery = strQuery + '\t' + ", ValorMinimo - IIF(ROUND(ValorMinimo * " + FuncoesBd.CampoDecimalFormatar(0.0025M) + ", 2) >= " + FuncoesBd.CampoDecimalFormatar(0.01M) + ", ROUND(ValorMinimo * " + FuncoesBd.CampoDecimalFormatar(0.0025M) + ", 2), " + FuncoesBd.CampoDecimalFormatar(0.01M) + ")" + " AS Valor_Stop_Loss " + Environment.NewLine;
 
 			//Para calcular o valor de entrada aplica 0,25% sobre o valor máximo do dia em que o IFR cruza a média. 
 			//Se este valor for maior ou igual a 0, 01 soma este valor ao valor máximo. Caso contrário soma 0,01 (1 centavo)
 			//ao valor máximo.
-			strQuery = strQuery + '\t' + ", ValorMaximo + IIF(ROUND(ValorMaximo * " + FuncoesBD.CampoDecimalFormatar(0.0025M) + ", 2) >= " + FuncoesBD.CampoDecimalFormatar(0.01M) + ", ROUND(ValorMaximo * " + FuncoesBD.CampoDecimalFormatar(0.0025M) + ", 2), " + FuncoesBD.CampoDecimalFormatar(0.01M) + ")" + " AS Valor_Entrada " + Environment.NewLine;
+			strQuery = strQuery + '\t' + ", ValorMaximo + IIF(ROUND(ValorMaximo * " + FuncoesBd.CampoDecimalFormatar(0.0025M) + ", 2) >= " + FuncoesBd.CampoDecimalFormatar(0.01M) + ", ROUND(ValorMaximo * " + FuncoesBd.CampoDecimalFormatar(0.0025M) + ", 2), " + FuncoesBd.CampoDecimalFormatar(0.01M) + ")" + " AS Valor_Entrada " + Environment.NewLine;
 
 
 			if (pstrFiltroMME49 != "TODOS") {
@@ -146,7 +148,11 @@ namespace prjModelo.Regras
 			//Retorna também o valor da média móvel aritmética de 13 períodos do IFR
 			strQuery = strQuery + ", MM_IFR.Valor AS Media_IFR, ValorMinimo, ValorMaximo, MM200_FECH.Valor AS MM200 " + Environment.NewLine;
 
-			strTabelaSegundoDia = "((" + strTabelaCotacao + " C INNER JOIN " + strTabelaMedia + " MM_IFR " + Environment.NewLine + '\t' + " On C.CODIGO = MM_IFR.CODIGO " + Environment.NewLine + '\t' + " And C.DATA = MM_IFR.DATA) " + Environment.NewLine + '\t' + " INNER JOIN " + strTabelaIFR + " I " + Environment.NewLine + '\t' + " On C.CODIGO = I.CODIGO " + Environment.NewLine + '\t' + " And C.DATA = I.DATA) " + Environment.NewLine;
+		    string strTabelaSegundoDia = "((" + strTabelaCotacao + " C INNER JOIN " + strTabelaMedia + " MM_IFR " +
+		                                 Environment.NewLine + '\t' + " On C.CODIGO = MM_IFR.CODIGO " + Environment.NewLine +
+		                                 '\t' + " And C.DATA = MM_IFR.DATA) " + Environment.NewLine + '\t' + " INNER JOIN " +
+		                                 strTabelaIFR + " I " + Environment.NewLine + '\t' + " On C.CODIGO = I.CODIGO " +
+		                                 Environment.NewLine + '\t' + " And C.DATA = I.DATA) " + Environment.NewLine;
 
 
 			if (pstrFiltroMME49 != "TODOS") {
@@ -163,18 +169,20 @@ namespace prjModelo.Regras
 
 			//Faz um SELECT para gerar uma tabela interna com a média de 200 períodos. 
 			//Não pode fazer uma junção direta com a tabela de médias.
-			string strTabelaMME200 = null;
 
-			strTabelaMME200 = "(SELECT Codigo, Data, Valor" + Environment.NewLine + " FROM " + strTabelaMedia + Environment.NewLine + " WHERE Tipo = " + FuncoesBD.CampoStringFormatar(strMediaTipo) + Environment.NewLine + " AND NumPeriodos = 200 " + Environment.NewLine + " AND Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + ") AS MM200_FECH";
+		    string strTabelaMME200 = "(SELECT Codigo, Data, Valor" + Environment.NewLine + " FROM " + strTabelaMedia +
+		                             Environment.NewLine + " WHERE Tipo = " + FuncoesBd.CampoStringFormatar(strMediaTipo) +
+		                             Environment.NewLine + " AND NumPeriodos = 200 " + Environment.NewLine + " AND Codigo = " +
+		                             FuncoesBd.CampoStringFormatar(pstrCodigo) + ") AS MM200_FECH";
 
 			//concatena a tabela da MME200 na tabela do segundo dia.
 			strTabelaSegundoDia = "(" + strTabelaSegundoDia + " INNER JOIN " + Environment.NewLine + strTabelaMME200 + " On C.CODIGO = MM200_FECH.CODIGO " + Environment.NewLine + " And C.DATA = MM200_FECH.DATA) " + Environment.NewLine;
 
-			strQuery = strQuery + '\t' + " FROM " + strTabelaSegundoDia + '\t' + " WHERE C.Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + Environment.NewLine + '\t' + " And MM_IFR.TIPO = " + FuncoesBD.CampoStringFormatar("IFR2") + Environment.NewLine + '\t' + " And MM_IFR.NUMPERIODOS = 13 " + Environment.NewLine + '\t' + " And I.NUMPERIODOS = 2 " + Environment.NewLine + '\t' + " And I.VALOR > MM_IFR.VALOR " + Environment.NewLine;
+			strQuery = strQuery + '\t' + " FROM " + strTabelaSegundoDia + '\t' + " WHERE C.Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + Environment.NewLine + '\t' + " And MM_IFR.TIPO = " + FuncoesBd.CampoStringFormatar("IFR2") + Environment.NewLine + '\t' + " And MM_IFR.NUMPERIODOS = 13 " + Environment.NewLine + '\t' + " And I.NUMPERIODOS = 2 " + Environment.NewLine + '\t' + " And I.VALOR > MM_IFR.VALOR " + Environment.NewLine;
 
 
 			if (pstrFiltroMME49 != "TODOS") {
-				strQuery = strQuery + '\t' + " And MM49_FECH.TIPO = " + FuncoesBD.CampoStringFormatar(strMediaTipo) + Environment.NewLine + '\t' + " And MM49_FECH.NUMPERIODOS = 49 " + Environment.NewLine;
+				strQuery = strQuery + '\t' + " And MM49_FECH.TIPO = " + FuncoesBd.CampoStringFormatar(strMediaTipo) + Environment.NewLine + '\t' + " And MM49_FECH.NUMPERIODOS = 49 " + Environment.NewLine;
 
 
 				if (pstrFiltroMME49 == "ACIMA") {
@@ -190,13 +198,13 @@ namespace prjModelo.Regras
 
 
 			if (pblnMME21Incluir) {
-				strQuery = strQuery + '\t' + " And MM21_FECH.TIPO = " + FuncoesBD.CampoStringFormatar(strMediaTipo) + Environment.NewLine + '\t' + " And MM21_FECH.NUMPERIODOS = 21 " + Environment.NewLine;
+				strQuery = strQuery + '\t' + " And MM21_FECH.TIPO = " + FuncoesBd.CampoStringFormatar(strMediaTipo) + Environment.NewLine + '\t' + " And MM21_FECH.NUMPERIODOS = 21 " + Environment.NewLine;
 
 			}
 
 
 			if (pdtmDataInicial != cConst.DataInvalida) {
-				strQuery = strQuery + '\t' + " AND C.Data >= " + FuncoesBD.CampoDateFormatar(pdtmDataInicial) + Environment.NewLine;
+				strQuery = strQuery + '\t' + " AND C.Data >= " + FuncoesBd.CampoDateFormatar(pdtmDataInicial) + Environment.NewLine;
 
 			}
 
@@ -233,11 +241,11 @@ namespace prjModelo.Regras
 
 				}
 
-				strQuery = strQuery + '\t' + " WHERE " + strTabelaCotacao + ".CODIGO = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + Environment.NewLine;
+				strQuery = strQuery + '\t' + " WHERE " + strTabelaCotacao + ".CODIGO = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + Environment.NewLine;
 
 
 				if (pdtmDataInicial != cConst.DataInvalida) {
-					strQuery = strQuery + '\t' + " AND " + strTabelaCotacao + ".Data >= " + FuncoesBD.CampoDateFormatar(pdtmDataInicial) + Environment.NewLine;
+					strQuery = strQuery + '\t' + " AND " + strTabelaCotacao + ".Data >= " + FuncoesBd.CampoDateFormatar(pdtmDataInicial) + Environment.NewLine;
 
 				}
 
@@ -327,19 +335,19 @@ namespace prjModelo.Regras
 			//Não pode fazer uma junção direta com a tabela de médias.
 			string strTabelaMME200 = null;
 
-			strTabelaMME200 = "(" + Environment.NewLine + '\t' + "SELECT Codigo, Data, Valor" + Environment.NewLine + '\t' + " FROM " + strTabelaMedia + Environment.NewLine + '\t' + " WHERE Tipo = " + FuncoesBD.CampoStringFormatar(strMediaTipo) + Environment.NewLine + '\t' + " AND NumPeriodos = 200 " + Environment.NewLine + '\t' + " AND Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + Environment.NewLine + ") AS MM200" + Environment.NewLine;
+			strTabelaMME200 = "(" + Environment.NewLine + '\t' + "SELECT Codigo, Data, Valor" + Environment.NewLine + '\t' + " FROM " + strTabelaMedia + Environment.NewLine + '\t' + " WHERE Tipo = " + FuncoesBd.CampoStringFormatar(strMediaTipo) + Environment.NewLine + '\t' + " AND NumPeriodos = 200 " + Environment.NewLine + '\t' + " AND Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + Environment.NewLine + ") AS MM200" + Environment.NewLine;
 
 			//concatena a tabela da MME200  na tabela do segundo dia.
 			strTabela = "(" + strTabela + " INNER JOIN " + Environment.NewLine + strTabelaMME200 + " On C.CODIGO = MM200.CODIGO " + Environment.NewLine + " And C.DATA = MM200.DATA) " + Environment.NewLine;
 
 
-			string strTabelaMediaIFR = "(" + Environment.NewLine + '\t' + "SELECT Codigo, Data, Valor" + Environment.NewLine + '\t' + " FROM " + strTabelaMedia + Environment.NewLine + '\t' + " WHERE Tipo = " + FuncoesBD.CampoStringFormatar("IFR2") + Environment.NewLine + '\t' + " AND NumPeriodos = 13 " + Environment.NewLine + '\t' + " AND Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + Environment.NewLine + ") AS MMIFR" + Environment.NewLine;
+			string strTabelaMediaIFR = "(" + Environment.NewLine + '\t' + "SELECT Codigo, Data, Valor" + Environment.NewLine + '\t' + " FROM " + strTabelaMedia + Environment.NewLine + '\t' + " WHERE Tipo = " + FuncoesBd.CampoStringFormatar("IFR2") + Environment.NewLine + '\t' + " AND NumPeriodos = 13 " + Environment.NewLine + '\t' + " AND Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + Environment.NewLine + ") AS MMIFR" + Environment.NewLine;
 
 			//concatena a tabela da MME200  na tabela do segundo dia.
 			strTabela = "(" + strTabela + " INNER JOIN " + Environment.NewLine + strTabelaMediaIFR + " On C.CODIGO = MMIFR.CODIGO " + Environment.NewLine + " And C.DATA = MMIFR.DATA) " + Environment.NewLine;
 
 
-			strQuery = "SELECT " + FuncoesBD.CampoStringFormatar("IFR2SOBREVEND") + " AS SETUP" + ", " + " C.DATA As DATA_ENTRADA, VALORFECHAMENTO As VALOR_ENTRADA " + ", Round(VALORMINIMO - (VALORMAXIMO - VALORMINIMO) * 1.3, 2) As VALOR_STOP_LOSS " + ", " + pintOrdem.ToString() + " As ORDEM " + ", Sequencial, I.Valor AS VALOR_IFR, ValorAbertura, ValorMaximo, ValorMinimo, MME49.VALOR AS MME49, MM200.Valor AS MME200, MMIFR.Valor AS MMIFR ";
+			strQuery = "SELECT " + FuncoesBd.CampoStringFormatar("IFR2SOBREVEND") + " AS SETUP" + ", " + " C.DATA As DATA_ENTRADA, VALORFECHAMENTO As VALOR_ENTRADA " + ", Round(VALORMINIMO - (VALORMAXIMO - VALORMINIMO) * 1.3, 2) As VALOR_STOP_LOSS " + ", " + pintOrdem.ToString() + " As ORDEM " + ", Sequencial, I.Valor AS VALOR_IFR, ValorAbertura, ValorMaximo, ValorMinimo, MME49.VALOR AS MME49, MM200.Valor AS MME200, MMIFR.Valor AS MMIFR ";
 
 
 			if (pblnMME21Incluir) {
@@ -349,10 +357,10 @@ namespace prjModelo.Regras
 
 			strQuery = strQuery + Environment.NewLine;
 
-			strQuery = strQuery + " FROM " + strTabela + " WHERE C.Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + Environment.NewLine + " And I.NumPeriodos = 2 " + Environment.NewLine + " And I.Valor <= " + FuncoesBD.CampoFloatFormatar(pdblIFRValorMaximoSobrevendido) + Environment.NewLine;
+			strQuery = strQuery + " FROM " + strTabela + " WHERE C.Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + Environment.NewLine + " And I.NumPeriodos = 2 " + Environment.NewLine + " And I.Valor <= " + FuncoesBd.CampoFloatFormatar(pdblIFRValorMaximoSobrevendido) + Environment.NewLine;
 
 			//inicio do where relacionado à média de 49
-			strQuery = strQuery + " And MME49.Tipo = " + FuncoesBD.CampoStringFormatar(strMediaTipo) + Environment.NewLine + " And MME49.NumPeriodos = 49 " + Environment.NewLine;
+			strQuery = strQuery + " And MME49.Tipo = " + FuncoesBd.CampoStringFormatar(strMediaTipo) + Environment.NewLine + " And MME49.NumPeriodos = 49 " + Environment.NewLine;
 
 
 			if (pstrFiltroMME49 == "ACIMA") {
@@ -368,7 +376,7 @@ namespace prjModelo.Regras
 
 
 			if (pblnMME21Incluir) {
-				strQuery = strQuery + " And MME21.Tipo = " + FuncoesBD.CampoStringFormatar(strMediaTipo) + Environment.NewLine + " And MME21.NumPeriodos = 21 " + Environment.NewLine;
+				strQuery = strQuery + " And MME21.Tipo = " + FuncoesBd.CampoStringFormatar(strMediaTipo) + Environment.NewLine + " And MME21.NumPeriodos = 21 " + Environment.NewLine;
 
 			}
 

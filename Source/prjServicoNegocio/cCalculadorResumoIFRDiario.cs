@@ -36,26 +36,24 @@ namespace prjServicoNegocio
 			try {
 				cRS objRS = new cRS(objConexao);
 
-				string strSQL = null;
-
-				cIFRSimulacaoDiariaFaixaResumo objRetorno = new cIFRSimulacaoDiariaFaixaResumo(objAtivo, objSetup, pobjCalculoResumoFaixaVO.ClassifMedia, pobjIFRSobrevendido, pobjCalculoResumoFaixaVO.DataSaida);
+			    cIFRSimulacaoDiariaFaixaResumo objRetorno = new cIFRSimulacaoDiariaFaixaResumo(objAtivo, objSetup, pobjCalculoResumoFaixaVO.ClassifMedia, pobjIFRSobrevendido, pobjCalculoResumoFaixaVO.DataSaida);
 
 				cCarregadorCriterioClassificacaoMedia objCarregadorCriterioClassifMedia = new cCarregadorCriterioClassificacaoMedia();
 
 				IList<cCriterioClassifMedia> lstCriteriosCM = objCarregadorCriterioClassifMedia.CarregaTodos();
 
-				string strWherePadrao = null;
+			    FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
 
-				strWherePadrao = " WHERE Codigo = " + FuncoesBD.CampoFormatar(objAtivo.Codigo) + Environment.NewLine;
-				strWherePadrao += " AND ID_Setup = " + FuncoesBD.CampoFormatar(objSetup.ID) + Environment.NewLine;
-				strWherePadrao += " AND ID_CM = " + FuncoesBD.CampoFormatar(pobjCalculoResumoFaixaVO.ClassifMedia.ID) + Environment.NewLine;
+			    string strWherePadrao = " WHERE Codigo = " + FuncoesBd.CampoFormatar(objAtivo.Codigo) + Environment.NewLine;
+				strWherePadrao += " AND ID_Setup = " + FuncoesBd.CampoFormatar(objSetup.ID) + Environment.NewLine;
+				strWherePadrao += " AND ID_CM = " + FuncoesBd.CampoFormatar(pobjCalculoResumoFaixaVO.ClassifMedia.ID) + Environment.NewLine;
 				strWherePadrao += " AND Valor_IFR_Minimo <= " + pobjIFRSobrevendido.ValorMaximo + Environment.NewLine;
-				strWherePadrao += " AND Data_Saida <= " + FuncoesBD.CampoFormatar(pobjCalculoResumoFaixaVO.DataSaida) + Environment.NewLine;
+				strWherePadrao += " AND Data_Saida <= " + FuncoesBd.CampoFormatar(pobjCalculoResumoFaixaVO.DataSaida) + Environment.NewLine;
 
 
 				//Calcula o Número de Trades total e certos, sem utilizar filtro
-				strSQL = "SELECT COUNT(1) AS NumTrades ";
-				strSQL = strSQL + " , SUM(IIF(Verdadeiro = " + FuncoesBD.CampoFormatar(true) + " , 1, 0 )) AS NumAcertos " + Environment.NewLine;
+				string strSQL = "SELECT COUNT(1) AS NumTrades ";
+				strSQL = strSQL + " , SUM(IIF(Verdadeiro = " + FuncoesBd.CampoFormatar(true) + " , 1, 0 )) AS NumAcertos " + Environment.NewLine;
 				strSQL = strSQL + " FROM IFR_Simulacao_Diaria D " + Environment.NewLine;
 				strSQL = strSQL + strWherePadrao;
 
@@ -71,9 +69,7 @@ namespace prjServicoNegocio
 					return true;
 				}
 
-				IList<cIFRSimulacaoDiariaFaixa> lstFaixas = null;
-
-				cCarregadorIFRDiarioFaixa objCarradorFaixa = new cCarregadorIFRDiarioFaixa(objConexao);
+			    cCarregadorIFRDiarioFaixa objCarradorFaixa = new cCarregadorIFRDiarioFaixa(objConexao);
 
 				//Verifica se já existe faixa para o critério. Vai existir quando já houver alguma entrada que é MELHOR ENTRADA
 
@@ -81,7 +77,7 @@ namespace prjServicoNegocio
 
 					foreach (cCriterioClassifMedia objCriterioCM in lstCriteriosCM) {
 						//busca lista de faixas (pode ser 1 ou 2) para o critério do classificação de média
-						lstFaixas = objCarradorFaixa.CarregaUltimaFaixaAteDataPorCriterioClassificacaoMedia(objAtivo.Codigo, objSetup, pobjCalculoResumoFaixaVO.ClassifMedia, objCriterioCM, pobjIFRSobrevendido, pobjCalculoResumoFaixaVO.DataSaida);
+						IList<cIFRSimulacaoDiariaFaixa> lstFaixas = objCarradorFaixa.CarregaUltimaFaixaAteDataPorCriterioClassificacaoMedia(objAtivo.Codigo, objSetup, pobjCalculoResumoFaixaVO.ClassifMedia, objCriterioCM, pobjIFRSobrevendido, pobjCalculoResumoFaixaVO.DataSaida);
 
 						string strSQLFaixa = string.Empty;
 
@@ -93,7 +89,7 @@ namespace prjServicoNegocio
 								strSQLFaixa += " OR ";
 							}
 
-							strSQLFaixa += '\t' + " ((" + objCriterioCM.CampoBD + ") BETWEEN " + FuncoesBD.CampoFormatar(objIFRSimulacaoDiariaFaixa.ValorMinimo) + " AND " + FuncoesBD.CampoFormatar(objIFRSimulacaoDiariaFaixa.ValorMaximo) + ")" + Environment.NewLine;
+							strSQLFaixa += '\t' + " ((" + objCriterioCM.CampoBD + ") BETWEEN " + FuncoesBd.CampoFormatar(objIFRSimulacaoDiariaFaixa.ValorMinimo) + " AND " + FuncoesBd.CampoFormatar(objIFRSimulacaoDiariaFaixa.ValorMaximo) + ")" + Environment.NewLine;
 
 						}
 

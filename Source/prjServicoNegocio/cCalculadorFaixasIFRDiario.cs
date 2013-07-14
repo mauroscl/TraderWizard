@@ -322,47 +322,41 @@ namespace prjServicoNegocio
 		public bool CalcularFaixasParaUmaData(cIFRSobrevendido pobjIFRSobrevendido, cCalculoFaixaResumoVO pobjCalcularFaixaResumoVO)
 		{
 
-
 			try {
-				string strSQL = null;
-
-				IList<cIFRSimulacaoDiariaFaixa> lstFaixasTotal = null;
-
-				IList<cFaixaDTO> lstFaixasDTO = null;
-
-				lstFaixasTotal = new List<cIFRSimulacaoDiariaFaixa>();
+			    IList<cIFRSimulacaoDiariaFaixa> lstFaixasTotal = new List<cIFRSimulacaoDiariaFaixa>();
 
 				cCarregadorCriterioClassificacaoMedia objCarregadorCriterioCM = new cCarregadorCriterioClassificacaoMedia();
 
-				IList<cCriterioClassifMedia> lstCriterioCM = null;
-				lstCriterioCM = objCarregadorCriterioCM.CarregaTodos();
+			    IList<cCriterioClassifMedia> lstCriterioCM = objCarregadorCriterioCM.CarregaTodos();
 
 				cRSList objRSTrades = new cRSList(objConexao);
 
 				//Busca todos os trades do papel para fazer um único acesso ao banco.
-				strSQL = lstCriterioCM.Aggregate("SELECT ID_CM, NumTentativas, Verdadeiro, MelhorEntrada " + Environment.NewLine, (current, objCriterioCM) => current + ", " + objCriterioCM.CampoBD + " AS " + objCriterioCM.AliasBD);
+			    string strSQL = lstCriterioCM.Aggregate(
+			        "SELECT ID_CM, NumTentativas, Verdadeiro, MelhorEntrada " + Environment.NewLine,
+			        (current, objCriterioCM) => current + ", " + objCriterioCM.CampoBD + " AS " + objCriterioCM.AliasBD);
+
 
 				//Gera os campos referentes a cada um dos critérios de classificação de média
+                FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
 
 				strSQL = strSQL + " FROM IFR_Simulacao_Diaria SD INNER JOIN IFR_Simulacao_Diaria_Detalhe D " + Environment.NewLine;
 				strSQL = strSQL + " ON SD.Codigo = D.Codigo " + Environment.NewLine;
 				strSQL = strSQL + " AND SD.ID_Setup = D.ID_Setup " + Environment.NewLine;
 				strSQL = strSQL + " AND SD.Data_Entrada_Efetiva = D.Data_Entrada_Efetiva " + Environment.NewLine;
-				strSQL = strSQL + " WHERE SD.Codigo = " + FuncoesBD.CampoFormatar(objAtivo.Codigo) + Environment.NewLine;
-				strSQL = strSQL + " AND SD.ID_Setup = " + FuncoesBD.CampoFormatar(objSetup.ID) + Environment.NewLine;
-				strSQL = strSQL + " AND SD.ID_CM = " + FuncoesBD.CampoFormatar(pobjCalcularFaixaResumoVO.ClassifMedia.ID) + Environment.NewLine;
-				strSQL = strSQL + " AND Data_Saida <= " + FuncoesBD.CampoFormatar(pobjCalcularFaixaResumoVO.DataSaida) + Environment.NewLine;
-				strSQL = strSQL + " AND Valor_IFR_Minimo <= " + FuncoesBD.CampoFormatar(pobjIFRSobrevendido.ValorMaximo) + Environment.NewLine;
-				strSQL = strSQL + " AND D.ID_IFR_Sobrevendido = " + FuncoesBD.CampoFormatar(pobjIFRSobrevendido.ID) + Environment.NewLine;
+				strSQL = strSQL + " WHERE SD.Codigo = " + FuncoesBd.CampoFormatar(objAtivo.Codigo) + Environment.NewLine;
+				strSQL = strSQL + " AND SD.ID_Setup = " + FuncoesBd.CampoFormatar(objSetup.ID) + Environment.NewLine;
+				strSQL = strSQL + " AND SD.ID_CM = " + FuncoesBd.CampoFormatar(pobjCalcularFaixaResumoVO.ClassifMedia.ID) + Environment.NewLine;
+				strSQL = strSQL + " AND Data_Saida <= " + FuncoesBd.CampoFormatar(pobjCalcularFaixaResumoVO.DataSaida) + Environment.NewLine;
+				strSQL = strSQL + " AND Valor_IFR_Minimo <= " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ValorMaximo) + Environment.NewLine;
+				strSQL = strSQL + " AND D.ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ID) + Environment.NewLine;
 
 				objRSTrades.AdicionarQuery(strSQL);
 
 				objRSTrades.ExecuteQuery();
 
-				IList<cTradeDTO> lstTrades = null;
 
-
-				if (objRSTrades.Dados.Count > 0) {
+			    if (objRSTrades.Dados.Count > 0) {
 					//Só é necessário calcular as faixas se existem simulações para a classificação de média desta iteração.
 
 					//Calcula o número de trades que são melhor entrada.
@@ -376,9 +370,9 @@ namespace prjServicoNegocio
 							string strCampo = objCriterioCM.AliasBD;
 
 							//transforma a consulta SQL em um objeto da classe cTradeDTO
-							lstTrades = (from linha in objRSTrades.Dados select new cTradeDTO( (double) linha[strCampo], Convert.ToBoolean(linha["Verdadeiro"]), Convert.ToBoolean(linha["MelhorEntrada"]), Convert.ToInt32(linha["NumTentativas"]))).ToList();
+							IList<cTradeDTO> lstTrades = (from linha in objRSTrades.Dados select new cTradeDTO( (double) linha[strCampo], Convert.ToBoolean(linha["Verdadeiro"]), Convert.ToBoolean(linha["MelhorEntrada"]), Convert.ToInt32(linha["NumTentativas"]))).ToList();
 
-							lstFaixasDTO = CalcularFaixaParaUmCriterio(lstTrades);
+							IList<cFaixaDTO> lstFaixasDTO = CalcularFaixaParaUmCriterio(lstTrades);
 
 
 							foreach (cFaixaDTO item in lstFaixasDTO) {

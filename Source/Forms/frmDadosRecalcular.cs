@@ -7,8 +7,11 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Windows.Forms;
 using DataBase;
+using prjModelo.Entidades;
 using prmCotacao;
-using frwInterface;
+using TraderWizard.Infra.Repositorio;
+using System.Linq;
+
 namespace TraderWizard
 {
 
@@ -16,7 +19,7 @@ namespace TraderWizard
 	{
 
 
-		private cConexao objConexao;
+		private readonly cConexao _conexao;
 
 		public frmDadosRecalcular(cConexao pobjConexao)
 		{
@@ -25,18 +28,26 @@ namespace TraderWizard
 			InitializeComponent();
 
 			// Add any initialization after the InitializeComponent() call.
-			objConexao = pobjConexao;
+			_conexao = pobjConexao;
 
 		}
 
 		private void chkCotacaoDiaria_CheckedChanged(System.Object sender, System.EventArgs e)
 		{
 			pnlCotacaoDiariaOpcoes.Enabled = chkCotacaoDiaria.Checked;
+		    foreach (var control in pnlCotacaoDiariaOpcoes.Controls)
+		    {
+		        ((CheckBox) control).Checked = chkCotacaoDiaria.Checked;
+		    }
 		}
 
 		private void CotacaoSemanal_CheckedChanged(System.Object sender, System.EventArgs e)
 		{
 			pnlCotacaoSemanalOpcoes.Enabled = chkCotacaoSemanal.Checked;
+		    foreach (var control in pnlCotacaoSemanalOpcoes.Controls)
+		    {
+		        ((CheckBox) control).Checked = chkCotacaoSemanal.Checked;
+		    }
 		}
 
 		private void chkDataInicialUtilizar_CheckedChanged(System.Object sender, System.EventArgs e)
@@ -52,24 +63,17 @@ namespace TraderWizard
 
 		private void ListAtivosPreencher()
 		{
-			cRS objRS = new cRS();
 
-			//busca os ativos da tabela ativo
-			objRS.ExecuteQuery(" select Codigo, Codigo & ' - ' & Descricao as Descr " + " from Ativo " + " WHERE NOT EXISTS " + "(" + " SELECT 1 " + " FROM ATIVOS_DESCONSIDERADOS " + " WHERE ATIVO.CODIGO = ATIVOS_DESCONSIDERADOS.CODIGO " + ")" + " order by Codigo");
+		    var ativos = new Ativos(_conexao);
+
+		    IList<cAtivo> ativosValidos = ativos.Validos();
 
 			lstAtivosNaoEscolhidos.Items.Clear();
 
-
-			while (!objRS.EOF) {
-				lstAtivosNaoEscolhidos.Items.Add(objRS.Field("Descr"));
-
-				objRS.MoveNext();
-
-			}
-
-			objRS.Fechar();
-
-			objRS.Conexao.FecharConexao();
+		    foreach (var ativosValido in ativosValidos)
+		    {
+                lstAtivosNaoEscolhidos.Items.Add(ativosValido.Codigo + " - " + ativosValido.Descricao);
+		    }
 
 		}
 
@@ -86,11 +90,8 @@ namespace TraderWizard
 
 		private void btnAdicionarTodos_Click(System.Object sender, System.EventArgs e)
 		{
-			int intI = 0;
 
-			//percorre a lista de ativos não escolhidos
-
-			for (intI = 0; intI <= lstAtivosNaoEscolhidos.Items.Count - 1; intI++) {
+			for (var intI = 0; intI <= lstAtivosNaoEscolhidos.Items.Count - 1; intI++) {
 				//adiciona o item na lista de ativos escolhidos
 				lstAtivosEscolhidos.Items.Add(lstAtivosNaoEscolhidos.Items[intI]);
 
@@ -104,11 +105,8 @@ namespace TraderWizard
 
 		private void btnRemoverTodos_Click(System.Object sender, System.EventArgs e)
 		{
-			int intI = 0;
 
-			//percorre a lista de ativos 
-
-			for (intI = 0; intI <= lstAtivosEscolhidos.Items.Count - 1; intI++) {
+			for (var intI = 0; intI <= lstAtivosEscolhidos.Items.Count - 1; intI++) {
 				//adiciona o item na lista de ativos não escolhidos
 				lstAtivosNaoEscolhidos.Items.Add(lstAtivosEscolhidos.Items[intI]);
 
@@ -126,10 +124,8 @@ namespace TraderWizard
 
 			Collection colItem = new Collection();
 
-			object objItem = null;
 
-
-			for (intI = 0; intI <= lstAtivosNaoEscolhidos.SelectedItems.Count - 1; intI++) {
+		    for (intI = 0; intI <= lstAtivosNaoEscolhidos.SelectedItems.Count - 1; intI++) {
 				lstAtivosEscolhidos.Items.Add(lstAtivosNaoEscolhidos.SelectedItems[intI]);
 
 				colItem.Add(lstAtivosNaoEscolhidos.SelectedItems[intI]);
@@ -137,35 +133,28 @@ namespace TraderWizard
 			}
 
 
-			foreach (object objItem_loopVariable in colItem) {
-				objItem = objItem_loopVariable;
-				lstAtivosNaoEscolhidos.Items.Remove(objItem);
-
+			foreach (object item in colItem)
+			{
+			    object objItem = item;
+			    lstAtivosNaoEscolhidos.Items.Remove(objItem);
 			}
-
 		}
 
 
 		private void btnRemover_Click(System.Object sender, System.EventArgs e)
 		{
-			int intI = 0;
-
 			Collection colItem = new Collection();
 
-			object objItem = null;
 
-
-			for (intI = 0; intI <= lstAtivosEscolhidos.SelectedItems.Count - 1; intI++) {
+			for (var intI = 0; intI <= lstAtivosEscolhidos.SelectedItems.Count - 1; intI++) {
 				lstAtivosNaoEscolhidos.Items.Add(lstAtivosEscolhidos.SelectedItems[intI]);
 
 				colItem.Add(lstAtivosEscolhidos.SelectedItems[intI]);
 
 			}
 
-
-			foreach (object objItem_loopVariable in colItem) {
-				objItem = objItem_loopVariable;
-				lstAtivosEscolhidos.Items.Remove(objItem);
+			foreach (object item in colItem) {
+				lstAtivosEscolhidos.Items.Remove(item);
 
 			}
 
@@ -252,22 +241,19 @@ namespace TraderWizard
 				}
 
 				string strAtivos = String.Empty;
-				string strCodigoAtivo = null;
 
 
-				if (rdbAtivosEscolher.Checked) {
-					int intI = 0;
+			    if (rdbAtivosEscolher.Checked) {
 
+					for (var intI = 0; intI <= lstAtivosEscolhidos.Items.Count - 1; intI++)
+					{
+					    string strCodigoAtivo = mdlGeral.ObtemCodigoDoAtivoSelecionadoNoCombo( (string)lstAtivosEscolhidos.Items[intI]);
 
-					for (intI = 0; intI <= lstAtivosEscolhidos.Items.Count - 1; intI++) {
-                        strCodigoAtivo = mdlGeral.ObtemCodigoDoAtivoSelecionadoNoCombo( (string)lstAtivosEscolhidos.Items[intI]);
-
-						strAtivos = strAtivos + "#" + strCodigoAtivo;
-
+					    strAtivos = strAtivos + "#" + strCodigoAtivo;
 					}
 
 
-					if (strAtivos != String.Empty) {
+				    if (strAtivos != String.Empty) {
 						strAtivos = strAtivos + "#";
 
 					}
@@ -282,7 +268,7 @@ namespace TraderWizard
 
 				}
 
-				cCotacao objCotacao = new cCotacao(objConexao);
+				cCotacao objCotacao = new cCotacao(_conexao);
 
 				bool blnCotacaoDiariaOscilacaoRecalcular = false;
 				bool blnCotacaoDiariaIFRRecalcular = false;

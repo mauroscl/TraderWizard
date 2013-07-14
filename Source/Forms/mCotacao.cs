@@ -1,10 +1,12 @@
-using Microsoft.VisualBasic;
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
-using prjModelo.Entidades;
 using DataBase;
+using Microsoft.VisualBasic;
+using prjModelo.Entidades;
+using TraderWizard.Infra.Repositorio;
 
-namespace TraderWizard
+namespace Forms
 {
 
 	static class mCotacao
@@ -86,30 +88,34 @@ namespace TraderWizard
 		}
 
 
-		public static void cmbAtivoPreencher(ComboBox pcmbAtivo, cConexao pobjConexao, bool pblnSelecionarItem)
+		public static void ComboAtivoPreencher(ComboBox pcmbAtivo, cConexao pobjConexao, string codigoDoAtivoParaSelecionar, bool pblnSelecionarItem)
 		{
-			cRS objRS = new cRS(pobjConexao);
-
-			//busca os ativos da tabela ativo
-			objRS.ExecuteQuery(" select Codigo, Descricao " + " from Ativo " + " WHERE NOT EXISTS " + "(" + " SELECT 1 " + " FROM ATIVOS_DESCONSIDERADOS " + " WHERE ATIVO.CODIGO = ATIVOS_DESCONSIDERADOS.CODIGO " + ")" + " order by Codigo");
+		    var ativos = new Ativos(pobjConexao);
+		    IList<cAtivo> ativosValidos = ativos.Validos();
 
 			pcmbAtivo.Items.Clear();
 
+		    int intIndicePadrao = -1;
 
-			while (!objRS.EOF) {
-				pcmbAtivo.Items.Add(new cAtivo(Convert.ToString(objRS.Field("Codigo")), Convert.ToString(objRS.Field("Descricao"))));
+		    foreach (var ativo in ativosValidos )
+		    {
+		        pcmbAtivo.Items.Add(new cAtivo(ativo.Codigo, ativo.Codigo + " - " + ativo.Descricao));
 
-				objRS.MoveNext();
-
-			}
-
+		        if (pblnSelecionarItem && ativo.Codigo == codigoDoAtivoParaSelecionar)
+		        {
+		            intIndicePadrao = pcmbAtivo.Items.Count - 1;
+		        }
+		    }
 
 			if (pblnSelecionarItem) {
-				pcmbAtivo.SelectedIndex = 0;
+
+			    if (intIndicePadrao == -1)
+			    {
+			        intIndicePadrao = 0;
+			    }
+				pcmbAtivo.SelectedIndex = intIndicePadrao;
 
 			}
-
-			objRS.Fechar();
 
 		}
 

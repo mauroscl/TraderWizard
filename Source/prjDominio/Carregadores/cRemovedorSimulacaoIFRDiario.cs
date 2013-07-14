@@ -26,33 +26,33 @@ namespace prjModelo.Carregadores
 
 			cCommand objCommand = new cCommand(objConexao);
 
-			string strSQL = null;
+            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
 
-			strSQL = "DELETE " + Environment.NewLine;
+		    string strSQL = "DELETE " + Environment.NewLine;
 			strSQL = strSQL + " FROM IFR_SIMULACAO_DIARIA_DETALHE " + Environment.NewLine;
-			strSQL = strSQL + " WHERE Codigo = " + FuncoesBD.CampoFormatar(pstrCodigo);
-			strSQL = strSQL + " AND ID_Setup = " + FuncoesBD.CampoFormatar(pobjSetup.ID);
+			strSQL = strSQL + " WHERE Codigo = " + FuncoesBd.CampoFormatar(pstrCodigo);
+			strSQL = strSQL + " AND ID_Setup = " + FuncoesBd.CampoFormatar(pobjSetup.ID);
 
 			objCommand.Execute(strSQL);
 
 			strSQL = "DELETE " + Environment.NewLine;
 			strSQL = strSQL + " FROM IFR_SIMULACAO_DIARIA_FAIXA " + Environment.NewLine;
-			strSQL = strSQL + " WHERE Codigo = " + FuncoesBD.CampoFormatar(pstrCodigo);
-			strSQL = strSQL + " AND ID_Setup = " + FuncoesBD.CampoFormatar(pobjSetup.ID);
+			strSQL = strSQL + " WHERE Codigo = " + FuncoesBd.CampoFormatar(pstrCodigo);
+			strSQL = strSQL + " AND ID_Setup = " + FuncoesBd.CampoFormatar(pobjSetup.ID);
 
 			objCommand.Execute(strSQL);
 
 			strSQL = "DELETE " + Environment.NewLine;
 			strSQL = strSQL + " FROM IFR_SIMULACAO_DIARIA_FAIXA_RESUMO " + Environment.NewLine;
-			strSQL = strSQL + " WHERE Codigo = " + FuncoesBD.CampoFormatar(pstrCodigo);
-			strSQL = strSQL + " AND ID_Setup = " + FuncoesBD.CampoFormatar(pobjSetup.ID);
+			strSQL = strSQL + " WHERE Codigo = " + FuncoesBd.CampoFormatar(pstrCodigo);
+			strSQL = strSQL + " AND ID_Setup = " + FuncoesBd.CampoFormatar(pobjSetup.ID);
 
 			objCommand.Execute(strSQL);
 
 			strSQL = "DELETE " + Environment.NewLine;
 			strSQL = strSQL + " FROM IFR_SIMULACAO_DIARIA " + Environment.NewLine;
-			strSQL = strSQL + " WHERE Codigo = " + FuncoesBD.CampoFormatar(pstrCodigo);
-			strSQL = strSQL + " AND ID_Setup = " + FuncoesBD.CampoFormatar(pobjSetup.ID);
+			strSQL = strSQL + " WHERE Codigo = " + FuncoesBd.CampoFormatar(pstrCodigo);
+			strSQL = strSQL + " AND ID_Setup = " + FuncoesBd.CampoFormatar(pobjSetup.ID);
 
 			objCommand.Execute(strSQL);
 

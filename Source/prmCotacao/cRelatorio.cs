@@ -81,44 +81,33 @@ namespace prmCotacao
 		private string SetupMME91QueryGerar(System.DateTime pdtmDataAnterior, System.DateTime pdtmDataAtual, string pstrTabelaCotacao, string pstrTabelaMedia, bool pblnAlijamentoCalcular, decimal pdecValorCapital, decimal pdecValorPerdaManejo, double pdblTitulosTotal = -1, Int32 pintNegociosTotal = -1, decimal pdecValorTotal = -1,
 		decimal pdecPercentualStopGain = -1)
 		{
+		    //, dia_atual.valorfechamento, dia_atual.mmexp9
 
-			string strQuery = null;
+		    string strTabelaMME21 = pstrTabelaCotacao.ToUpper() == "COTACAO" ? "MME21_Diario" : "MME21_Semanal";
 
-			//, dia_atual.valorfechamento, dia_atual.mmexp9
+            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
 
-			string strTabelaAux = null;
-
-			string strTabelaMME21 = null;
-
-			if (pstrTabelaCotacao.ToUpper() == "COTACAO") {
-				strTabelaMME21 = "MME21_Diario";
-			} else {
-				strTabelaMME21 = "MME21_Semanal";
-			}
-
-			strQuery = " SELECT dia_atual.codigo, dia_atual.ValorFechamento " + Environment.NewLine + ", ROUND(mmexp9, 2) AS MMExp9 " + Environment.NewLine + ", ROUND((dia_atual.ValorFechamento / MMExp9 - 1) * 100, 4) AS Perc_MME9 " + Environment.NewLine + ", ROUND(dia_atual.valormaximo + 0.01, 2) As ENTRADA " + Environment.NewLine + ", ROUND(((dia_atual.valormaximo + 0.01) / dia_atual.valorfechamento - 1) * 100, 4) As PERC_ENTRADA " + Environment.NewLine + ", ROUND(dia_atual.valorminimo - 0.03, 2) As STOP_LOSS " + Environment.NewLine + ", ROUND(((dia_atual.valorminimo - 0.03) / (dia_atual.valormaximo + 0.01)  - 1) * 100, 4) As PERC_STOP_LOSS " + Environment.NewLine;
+			string strQuery = " SELECT dia_atual.codigo, dia_atual.ValorFechamento " + Environment.NewLine + ", ROUND(mmexp9, 2) AS MMExp9 " + Environment.NewLine + ", ROUND((dia_atual.ValorFechamento / MMExp9 - 1) * 100, 4) AS Perc_MME9 " + Environment.NewLine + ", ROUND(dia_atual.valormaximo + 0.01, 2) As ENTRADA " + Environment.NewLine + ", ROUND(((dia_atual.valormaximo + 0.01) / dia_atual.valorfechamento - 1) * 100, 4) As PERC_ENTRADA " + Environment.NewLine + ", ROUND(dia_atual.valorminimo - 0.03, 2) As STOP_LOSS " + Environment.NewLine + ", ROUND(((dia_atual.valorminimo - 0.03) / (dia_atual.valormaximo + 0.01)  - 1) * 100, 4) As PERC_STOP_LOSS " + Environment.NewLine;
 
 
 			if (pdecPercentualStopGain != -1) {
-				strQuery = strQuery + ", ROUND((dia_atual.valormaximo + 0.01) " + "* (1 + " + FuncoesBD.CampoDecimalFormatar(pdecPercentualStopGain) + " / 100), 4) AS STOP_GAIN " + Environment.NewLine;
+				strQuery = strQuery + ", ROUND((dia_atual.valormaximo + 0.01) " + "* (1 + " + FuncoesBd.CampoDecimalFormatar(pdecPercentualStopGain) + " / 100), 4) AS STOP_GAIN " + Environment.NewLine;
 
 			}
 
-			string strAux = null;
-
-			//****início cálculo da quantidade e valor total que pode ser comprada com todo o capital disponível.
+		    //****início cálculo da quantidade e valor total que pode ser comprada com todo o capital disponível.
 
 			//cálculo da quantidade
 
 			//1)divide o total do capital pelo valor de entrada e por 100, pois os lotes são de 100 ações.
 			//com isso teremos o nº de lotes em decimais, ou seja pode haver lotes quebrados
-			strAux = "CSTR(" + FuncoesBD.CampoDecimalFormatar(pdecValorCapital) + " / (dia_atual.valormaximo + 0.01) / 100)";
+			string strAux = "CSTR(" + FuncoesBd.CampoDecimalFormatar(pdecValorCapital) + " / (dia_atual.valormaximo + 0.01) / 100)";
 
 			//2) transforma o número em uma string e retorna apenas os números à esquerda da vírgula.
 			//Com isso temos o número de lotes inteiros que podem ser comprados. Transformamos então
 			//esse número em inteiro novamente e multiplicamos por 100 obtendo assim o total de ações que podem ser compradas
 
-			strAux = "CINT(LEFT(" + strAux + ", " + " IIF(INSTR(" + strAux + "," + FuncoesBD.CampoStringFormatar(",") + ") > 0 " + ", INSTR(" + strAux + "," + FuncoesBD.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" + strAux + ")" + "))) * 100";
+			strAux = "CINT(LEFT(" + strAux + ", " + " IIF(INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") > 0 " + ", INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" + strAux + ")" + "))) * 100";
 
 			strQuery = strQuery + ", " + strAux + " AS Quantidade_Capital" + Environment.NewLine;
 
@@ -128,7 +117,7 @@ namespace prmCotacao
 
 			//obtem o percentual de risco em relação ao capital total se for aplicar utilizando todo o capital sem manejo de risco.
 			//Para isso multiplica a quantidade que pode ser comprada pela perda por ação (entrada - stop)
-			strQuery = strQuery + ", ROUND((" + strAux + " * ((dia_atual.valormaximo + 0.01) - (dia_atual.valorminimo - 0.03)) " + "/ " + FuncoesBD.CampoDecimalFormatar(pdecValorCapital) + ") * 100, 4)  AS Perc_Risco_Capital " + Environment.NewLine;
+			strQuery = strQuery + ", ROUND((" + strAux + " * ((dia_atual.valormaximo + 0.01) - (dia_atual.valorminimo - 0.03)) " + "/ " + FuncoesBd.CampoDecimalFormatar(pdecValorCapital) + ") * 100, 4)  AS Perc_Risco_Capital " + Environment.NewLine;
 
 			//****Fim dos cálculos com todo o capital.
 
@@ -138,13 +127,13 @@ namespace prmCotacao
 
 			//1)divide o total do capital que pode ser perdido pelo valor de perda por ação e por 100, 
 			//pois os lotes são de 100 ações. com isso teremos o nº de lotes em decimais, ou seja pode haver lotes quebrados
-			strAux = "CSTR(" + FuncoesBD.CampoDecimalFormatar(pdecValorPerdaManejo) + " / " + "((dia_atual.valormaximo + 0.01) - (dia_atual.valorminimo - 0.03)) / 100)";
+			strAux = "CSTR(" + FuncoesBd.CampoDecimalFormatar(pdecValorPerdaManejo) + " / " + "((dia_atual.valormaximo + 0.01) - (dia_atual.valorminimo - 0.03)) / 100)";
 
 			//2) transforma o número em uma string e retorna apenas os números à esquerda da vírgula.
 			//Com isso temos o número de lotes inteiros que podem ser comprados. Transformamos então
 			//esse número em inteiro novamente e multiplicamos por 100 obtendo assim o total de ações que podem ser compradas
 
-			strAux = "CINT(LEFT(" + strAux + ", " + " IIF(INSTR(" + strAux + "," + FuncoesBD.CampoStringFormatar(",") + ") > 0 " + ", INSTR(" + strAux + "," + FuncoesBD.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" + strAux + ")" + "))) * 100";
+			strAux = "CINT(LEFT(" + strAux + ", " + " IIF(INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") > 0 " + ", INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" + strAux + ")" + "))) * 100";
 
 			strQuery = strQuery + ", " + strAux + " AS Quantidade_Manejo" + Environment.NewLine;
 
@@ -154,7 +143,7 @@ namespace prmCotacao
 
 			//obtem o percentual de risco em relação ao capital total se for aplicar utilizando manejo de risco.
 			//Para isso multiplica a quantidade que pode ser comprada pela perda por ação (entrada - stop)
-			strQuery = strQuery + ", ROUND((" + strAux + " * ((dia_atual.valormaximo + 0.01) -  (dia_atual.valorminimo - 0.03)) " + "/ " + FuncoesBD.CampoDecimalFormatar(pdecValorCapital) + ") * 100, 4)  AS Perc_Risco_Manejo " + Environment.NewLine;
+			strQuery = strQuery + ", ROUND((" + strAux + " * ((dia_atual.valormaximo + 0.01) -  (dia_atual.valorminimo - 0.03)) " + "/ " + FuncoesBd.CampoDecimalFormatar(pdecValorCapital) + ") * 100, 4)  AS Perc_Risco_Manejo " + Environment.NewLine;
 
 			//****Fim dos cálculos com manejo de risco.
 
@@ -167,10 +156,10 @@ namespace prmCotacao
 			//percentual em relação à média de 21 períodos
 			strQuery = strQuery + ", ROUND((dia_atual.ValorFechamento / MMExp21 - 1) * 100, 4) AS Perc_MME21 " + Environment.NewLine;
 
-			strQuery = strQuery + " FROM " + "(" + " SELECT c.codigo, valorabertura, valorfechamento, titulos_total " + " FROM " + pstrTabelaCotacao + " c INNER JOIN " + pstrTabelaMedia + " m " + " On c.codigo = m.codigo " + " And c.data = m.data " + " WHERE m.tipo = 'MME' " + " And m.numPeriodos = 9 " + " And valorfechamento < Round(m.valor, 2) " + " And c.data = " + FuncoesBD.CampoDateFormatar(pdtmDataAnterior) + ") As dia_anterior " + " INNER JOIN " + "(" + " SELECT c.codigo, valorabertura, valorfechamento, m.valor As mmexp9 " + " , titulos_total, valorminimo, valormaximo, MME21.Valor as MMExp21 " + " FROM ";
+			strQuery = strQuery + " FROM " + "(" + " SELECT c.codigo, valorabertura, valorfechamento, titulos_total " + " FROM " + pstrTabelaCotacao + " c INNER JOIN " + pstrTabelaMedia + " m " + " On c.codigo = m.codigo " + " And c.data = m.data " + " WHERE m.tipo = 'MME' " + " And m.numPeriodos = 9 " + " And valorfechamento < Round(m.valor, 2) " + " And c.data = " + FuncoesBd.CampoDateFormatar(pdtmDataAnterior) + ") As dia_anterior " + " INNER JOIN " + "(" + " SELECT c.codigo, valorabertura, valorfechamento, m.valor As mmexp9 " + " , titulos_total, valorminimo, valormaximo, MME21.Valor as MMExp21 " + " FROM ";
 
 			//ligação da cotação com a tabela de médias para fazer o filtro com a média de 9 perídos.
-			strTabelaAux = "(" + pstrTabelaCotacao + " c INNER JOIN " + pstrTabelaMedia + " m " + " On c.codigo = m.codigo " + " And c.data = m.data) ";
+			string strTabelaAux = "(" + pstrTabelaCotacao + " c INNER JOIN " + pstrTabelaMedia + " m " + " On c.codigo = m.codigo " + " And c.data = m.data) ";
 
 
 			if (pdblTitulosTotal != -1) {
@@ -185,26 +174,26 @@ namespace prmCotacao
 
 			strQuery = strQuery + strTabelaAux;
 
-			strQuery = strQuery + " WHERE m.tipo = 'MME'" + " And m.numPeriodos = 9 " + " And valorfechamento > Round(m.valor, 2) " + " And c.data = " + FuncoesBD.CampoDateFormatar(pdtmDataAtual);
+			strQuery = strQuery + " WHERE m.tipo = 'MME'" + " And m.numPeriodos = 9 " + " And valorfechamento > Round(m.valor, 2) " + " And c.data = " + FuncoesBd.CampoDateFormatar(pdtmDataAtual);
 
 
 			//--NÃO PRECISA DESTE WHERE PORQUE FORAM CRIADAS VIEWS PARA AS MÉDIAS DE 21 DIAS, DIÁRIA E SEMANAL.
 			//WHERE DA MÉDIA DE 21 PERIODOS
 
 			if (pdblTitulosTotal != -1) {
-				strQuery = strQuery + " And MV.Tipo = " + FuncoesBD.CampoStringFormatar("VMA") + " And MV.NumPeriodos = 21 " + " And MV.Valor >= " + FuncoesBD.CampoFloatFormatar(pdblTitulosTotal);
+				strQuery = strQuery + " And MV.Tipo = " + FuncoesBd.CampoStringFormatar("VMA") + " And MV.NumPeriodos = 21 " + " And MV.Valor >= " + FuncoesBd.CampoFloatFormatar(pdblTitulosTotal);
 
 			}
 
 
 			if (pintNegociosTotal != -1) {
-				strQuery = strQuery + " And c.negocios_total >= " + FuncoesBD.CampoFloatFormatar(pintNegociosTotal);
+				strQuery = strQuery + " And c.negocios_total >= " + FuncoesBd.CampoFloatFormatar(pintNegociosTotal);
 
 			}
 
 
 			if (pdecValorTotal != -1) {
-				strQuery = strQuery + " And c.valor_total >= " + FuncoesBD.CampoDecimalFormatar(pdecValorTotal);
+				strQuery = strQuery + " And c.valor_total >= " + FuncoesBd.CampoDecimalFormatar(pdecValorTotal);
 
 			}
 
@@ -232,46 +221,44 @@ namespace prmCotacao
 		/// <param name="pdecPercentualStopGain"></param>
 		/// <returns></returns>
 		/// <remarks></remarks>
-		private string SetupMME92QueryGerar(System.DateTime pdtmDataAnterior, System.DateTime pdtmDataAtual, string pstrTabelaCotacao, string pstrTabelaMedia, bool pblnAlijamentoCalcular, decimal pdecValorCapital, decimal pdecValorPerdaManejo, double pdblTitulosTotal = -1, Int32 pintNegociosTotal = -1, decimal pdecValorTotal = -1,
-		decimal pdecPercentualStopGain = -1)
+		private string SetupMME92QueryGerar(DateTime pdtmDataAnterior, DateTime pdtmDataAtual, string pstrTabelaCotacao, string pstrTabelaMedia, bool pblnAlijamentoCalcular, 
+            decimal pdecValorCapital, decimal pdecValorPerdaManejo, double pdblTitulosTotal = -1, Int32 pintNegociosTotal = -1, decimal pdecValorTotal = -1,decimal pdecPercentualStopGain = -1)
 		{
 
-			string strQuery = null;
+            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
 
-			string strTabelaAux = String.Empty;
-
-			string strTabelaMME21 = null;
-
-			if (pstrTabelaCotacao.ToUpper() == "COTACAO") {
-				strTabelaMME21 = "MME21_Diario";
-			} else {
-				strTabelaMME21 = "MME21_Semanal";
-			}
+		    string strTabelaMME21 = pstrTabelaCotacao.ToUpper() == "COTACAO" ? "MME21_Diario" : "MME21_Semanal";
 
 			//, dia_atual.valorfechamento, dia_atual.mmexp9
-			strQuery = " SELECT dia_atual.codigo, dia_atual.ValorFechamento " + ", ROUND(mmexp9, 2) AS MMExp9 " + Environment.NewLine + ", ROUND((dia_atual.ValorFechamento / MMExp9 - 1) * 100, 4) AS Perc_MME9 " + Environment.NewLine + ", ROUND(dia_atual.valormaximo + 0.01, 2) As ENTRADA " + Environment.NewLine + ", ROUND(((dia_atual.valormaximo + 0.01) / dia_atual.valorfechamento - 1) * 100, 4) As PERC_ENTRADA " + Environment.NewLine + ", ROUND(dia_atual.valorminimo - 0.03, 2) As STOP_LOSS " + Environment.NewLine + ", ROUND(((dia_atual.valorminimo - 0.03) / (dia_atual.valormaximo + 0.01)  - 1) * 100, 4) As PERC_STOP_LOSS " + Environment.NewLine;
+		    string strQuery = " SELECT dia_atual.codigo, dia_atual.ValorFechamento " + ", ROUND(mmexp9, 2) AS MMExp9 " +
+		                      Environment.NewLine + ", ROUND((dia_atual.ValorFechamento / MMExp9 - 1) * 100, 4) AS Perc_MME9 " +
+		                      Environment.NewLine + ", ROUND(dia_atual.valormaximo + 0.01, 2) As ENTRADA " +
+		                      Environment.NewLine +
+		                      ", ROUND(((dia_atual.valormaximo + 0.01) / dia_atual.valorfechamento - 1) * 100, 4) As PERC_ENTRADA " +
+		                      Environment.NewLine + ", ROUND(dia_atual.valorminimo - 0.03, 2) As STOP_LOSS " +
+		                      Environment.NewLine +
+		                      ", ROUND(((dia_atual.valorminimo - 0.03) / (dia_atual.valormaximo + 0.01)  - 1) * 100, 4) As PERC_STOP_LOSS " +
+		                      Environment.NewLine;
 
 
 			if (pdecPercentualStopGain != -1) {
-				strQuery = strQuery + ", ROUND((dia_atual.valormaximo + 0.01) " + "* (1 + " + FuncoesBD.CampoDecimalFormatar(pdecPercentualStopGain) + " / 100), 2) AS STOP_GAIN " + Environment.NewLine;
+				strQuery = strQuery + ", ROUND((dia_atual.valormaximo + 0.01) " + "* (1 + " + FuncoesBd.CampoDecimalFormatar(pdecPercentualStopGain) + " / 100), 2) AS STOP_GAIN " + Environment.NewLine;
 
 			}
 
-			string strAux = null;
-
-			//****início cálculo da quantidade e valor total que pode ser comprada com todo o capital disponível.
+		    //****início cálculo da quantidade e valor total que pode ser comprada com todo o capital disponível.
 
 			//cálculo da quantidade
 
 			//1)divide o total do capital pelo valor de entrada e por 100, pois os lotes são de 100 ações.
 			//com isso teremos o nº de lotes em decimais, ou seja pode haver lotes quebrados
-			strAux = "CSTR(" + FuncoesBD.CampoDecimalFormatar(pdecValorCapital) + " / (dia_atual.valormaximo + 0.01) / 100)";
+			string strAux = "CSTR(" + FuncoesBd.CampoDecimalFormatar(pdecValorCapital) + " / (dia_atual.valormaximo + 0.01) / 100)";
 
 			//2) transforma o número em uma string e retorna apenas os números à esquerda da vírgula.
 			//Com isso temos o número de lotes inteiros que podem ser comprados. Transformamos então
 			//esse número em inteiro novamente e multiplicamos por 100 obtendo assim o total de ações que podem ser compradas
 
-			strAux = "CINT(LEFT(" + strAux + ", " + " IIF(INSTR(" + strAux + "," + FuncoesBD.CampoStringFormatar(",") + ") > 0 " + ", INSTR(" + strAux + "," + FuncoesBD.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" + strAux + ")" + "))) * 100";
+			strAux = "CINT(LEFT(" + strAux + ", " + " IIF(INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") > 0 " + ", INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" + strAux + ")" + "))) * 100";
 
 			strQuery = strQuery + ", " + strAux + " AS Quantidade_Capital" + Environment.NewLine;
 
@@ -281,7 +268,7 @@ namespace prmCotacao
 
 			//obtem o percentual de risco em relação ao capital total se for aplicar utilizando todo o capital sem manejo de risco.
 			//Para isso multiplica a quantidade que pode ser comprada pela perda por ação (entrada - stop)
-			strQuery = strQuery + ", ROUND((" + strAux + " * ((dia_atual.valormaximo + 0.01) - (dia_atual.valorminimo - 0.03)) " + "/ " + FuncoesBD.CampoDecimalFormatar(pdecValorCapital) + ") * 100, 4)  AS Perc_Risco_Capital " + Environment.NewLine;
+			strQuery = strQuery + ", ROUND((" + strAux + " * ((dia_atual.valormaximo + 0.01) - (dia_atual.valorminimo - 0.03)) " + "/ " + FuncoesBd.CampoDecimalFormatar(pdecValorCapital) + ") * 100, 4)  AS Perc_Risco_Capital " + Environment.NewLine;
 
 			//****Fim dos cálculos com todo o capital.
 
@@ -291,13 +278,13 @@ namespace prmCotacao
 
 			//1)divide o total do capital que pode ser perdido pelo valor de perda por ação e por 100, 
 			//pois os lotes são de 100 ações. com isso teremos o nº de lotes em decimais, ou seja pode haver lotes quebrados
-			strAux = "CSTR(" + FuncoesBD.CampoDecimalFormatar(pdecValorPerdaManejo) + " / " + "((dia_atual.valormaximo + 0.01) - (dia_atual.valorminimo - 0.03)) / 100)";
+			strAux = "CSTR(" + FuncoesBd.CampoDecimalFormatar(pdecValorPerdaManejo) + " / " + "((dia_atual.valormaximo + 0.01) - (dia_atual.valorminimo - 0.03)) / 100)";
 
 			//2) transforma o número em uma string e retorna apenas os números à esquerda da vírgula.
 			//Com isso temos o número de lotes inteiros que podem ser comprados. Transformamos então
 			//esse número em inteiro novamente e multiplicamos por 100 obtendo assim o total de ações que podem ser compradas
 
-			strAux = "CINT(LEFT(" + strAux + ", " + " IIF(INSTR(" + strAux + "," + FuncoesBD.CampoStringFormatar(",") + ") > 0 " + ", INSTR(" + strAux + "," + FuncoesBD.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" + strAux + ")" + "))) * 100";
+			strAux = "CINT(LEFT(" + strAux + ", " + " IIF(INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") > 0 " + ", INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" + strAux + ")" + "))) * 100";
 
 			strQuery = strQuery + ", " + strAux + " AS Quantidade_Manejo" + Environment.NewLine;
 
@@ -307,7 +294,7 @@ namespace prmCotacao
 
 			//obtem o percentual de risco em relação ao capital total se for aplicar utilizando manejo de risco.
 			//Para isso multiplica a quantidade que pode ser comprada pela perda por ação (entrada - stop)
-			strQuery = strQuery + ", ROUND((" + strAux + " * ((dia_atual.valormaximo + 0.01) -  (dia_atual.valorminimo - 0.03)) " + "/ " + FuncoesBD.CampoDecimalFormatar(pdecValorCapital) + ") * 100, 4)  AS Perc_Risco_Manejo " + Environment.NewLine;
+			strQuery = strQuery + ", ROUND((" + strAux + " * ((dia_atual.valormaximo + 0.01) -  (dia_atual.valorminimo - 0.03)) " + "/ " + FuncoesBd.CampoDecimalFormatar(pdecValorCapital) + ") * 100, 4)  AS Perc_Risco_Manejo " + Environment.NewLine;
 
 			//****Fim dos cálculos com manejo de risco.
 
@@ -320,9 +307,9 @@ namespace prmCotacao
 			//percentual em relação à média de 21 períodos
 			strQuery = strQuery + ", ROUND((dia_atual.ValorFechamento / MMExp21 - 1) * 100, 4) AS Perc_MME21 " + Environment.NewLine;
 
-			strQuery = strQuery + " FROM " + "(" + " SELECT c.codigo, valorabertura, valorfechamento, titulos_total, valorminimo " + " FROM " + pstrTabelaCotacao + " c INNER JOIN " + pstrTabelaMedia + " m " + " On c.codigo = m.codigo " + " And c.data = m.data " + " WHERE m.tipo = 'MME' " + " And m.numPeriodos = 9 " + " And valorfechamento > Round(m.valor, 2) " + " And c.data = " + FuncoesBD.CampoDateFormatar(pdtmDataAnterior) + ") As dia_anterior " + " INNER JOIN " + "(" + " SELECT c.codigo, valorabertura, valorfechamento, m.valor As mmexp9 " + " , titulos_total, valorminimo, valormaximo, MME21.Valor as MMExp21 " + " FROM ";
+			strQuery = strQuery + " FROM " + "(" + " SELECT c.codigo, valorabertura, valorfechamento, titulos_total, valorminimo " + " FROM " + pstrTabelaCotacao + " c INNER JOIN " + pstrTabelaMedia + " m " + " On c.codigo = m.codigo " + " And c.data = m.data " + " WHERE m.tipo = 'MME' " + " And m.numPeriodos = 9 " + " And valorfechamento > Round(m.valor, 2) " + " And c.data = " + FuncoesBd.CampoDateFormatar(pdtmDataAnterior) + ") As dia_anterior " + " INNER JOIN " + "(" + " SELECT c.codigo, valorabertura, valorfechamento, m.valor As mmexp9 " + " , titulos_total, valorminimo, valormaximo, MME21.Valor as MMExp21 " + " FROM ";
 
-			strTabelaAux = "(" + pstrTabelaCotacao + " c INNER JOIN " + pstrTabelaMedia + " m " + " On c.codigo = m.codigo " + " And c.data = m.data) ";
+			string strTabelaAux = "(" + pstrTabelaCotacao + " c INNER JOIN " + pstrTabelaMedia + " m " + " On c.codigo = m.codigo " + " And c.data = m.data) ";
 
 
 			if (pdblTitulosTotal != -1) {
@@ -336,23 +323,23 @@ namespace prmCotacao
 
 			strQuery = strQuery + strTabelaAux;
 
-			strQuery = strQuery + " WHERE m.tipo = 'MME'" + " And m.numPeriodos = 9 " + " And valorfechamento > Round(m.valor, 2) " + " And c.data = " + FuncoesBD.CampoDateFormatar(pdtmDataAtual) + " AND c.Oscilacao < 0 ";
+			strQuery = strQuery + " WHERE m.tipo = 'MME'" + " And m.numPeriodos = 9 " + " And valorfechamento > Round(m.valor, 2) " + " And c.data = " + FuncoesBd.CampoDateFormatar(pdtmDataAtual) + " AND c.Oscilacao < 0 ";
 
 
 			if (pdblTitulosTotal != -1) {
-				strQuery = strQuery + " And MV.Tipo = " + FuncoesBD.CampoStringFormatar("VMA") + " And MV.NumPeriodos = 21 " + " And MV.Valor >= " + FuncoesBD.CampoFloatFormatar(pdblTitulosTotal);
+				strQuery = strQuery + " And MV.Tipo = " + FuncoesBd.CampoStringFormatar("VMA") + " And MV.NumPeriodos = 21 " + " And MV.Valor >= " + FuncoesBd.CampoFloatFormatar(pdblTitulosTotal);
 
 			}
 
 
 			if (pintNegociosTotal != -1) {
-				strQuery = strQuery + " And c.negocios_total >= " + FuncoesBD.CampoFloatFormatar(pintNegociosTotal);
+				strQuery = strQuery + " And c.negocios_total >= " + FuncoesBd.CampoFloatFormatar(pintNegociosTotal);
 
 			}
 
 
 			if (pdecValorTotal != -1) {
-				strQuery = strQuery + " And c.valor_total >= " + FuncoesBD.CampoDecimalFormatar(pdecValorTotal);
+				strQuery = strQuery + " And c.valor_total >= " + FuncoesBd.CampoDecimalFormatar(pdecValorTotal);
 
 			}
 
@@ -382,30 +369,16 @@ namespace prmCotacao
 		private string SetupMME93QueryGerar(System.DateTime pdtmDataAnterior, System.DateTime pdtmDataAtual, string pstrTabelaCotacao, string pstrTabelaMedia, bool pblnAlijamentoCalcular, decimal pdecValorCapital, decimal pdecValorPerdaManejo, double pdblTitulosTotal = -1, Int32 pintNegociosTotal = -1, decimal pdecValorTotal = -1,
 		decimal pdecPercentualStopGain = -1)
 		{
+		    FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
 
-			string strQuery = null;
+			string strTabelaMME21 = pstrTabelaCotacao.ToUpper() == "COTACAO" ? "MME21_Diario" : "MME21_Semanal";
 
-			string strTabelaAux = String.Empty;
-
-			string strTabelaMME21 = null;
-
-			if (pstrTabelaCotacao.ToUpper() == "COTACAO") {
-				strTabelaMME21 = "MME21_Diario";
-			} else {
-				strTabelaMME21 = "MME21_Semanal";
-			}
-
-			//, dia_atual.valorfechamento, dia_atual.mmexp9
-
-			strQuery = " SELECT dia_atual.Codigo, dia_atual.ValorFechamento " + ", ROUND(mmexp9, 2) AS MMExp9 " + Environment.NewLine + ", ROUND((dia_atual.ValorFechamento / MMExp9 - 1) * 100, 4) AS Perc_MME9 " + Environment.NewLine + ", ROUND(dia_atual.valormaximo + 0.01, 2) As ENTRADA " + ", ROUND(((dia_atual.valormaximo + 0.01) / dia_atual.valorfechamento - 1) * 100, 4) As PERC_ENTRADA " + Environment.NewLine + ", ROUND(dia_atual.valorminimo - 0.03, 2) As STOP_LOSS " + Environment.NewLine + ", ROUND(((dia_atual.valorminimo - 0.03) / (dia_atual.valormaximo + 0.01)  - 1) * 100, 4) As PERC_STOP_LOSS " + Environment.NewLine;
-
+			string strQuery = " SELECT dia_atual.Codigo, dia_atual.ValorFechamento " + ", ROUND(mmexp9, 2) AS MMExp9 " + Environment.NewLine + ", ROUND((dia_atual.ValorFechamento / MMExp9 - 1) * 100, 4) AS Perc_MME9 " + Environment.NewLine + ", ROUND(dia_atual.valormaximo + 0.01, 2) As ENTRADA " + ", ROUND(((dia_atual.valormaximo + 0.01) / dia_atual.valorfechamento - 1) * 100, 4) As PERC_ENTRADA " + Environment.NewLine + ", ROUND(dia_atual.valorminimo - 0.03, 2) As STOP_LOSS " + Environment.NewLine + ", ROUND(((dia_atual.valorminimo - 0.03) / (dia_atual.valormaximo + 0.01)  - 1) * 100, 4) As PERC_STOP_LOSS " + Environment.NewLine;
 
 			if (pdecPercentualStopGain != -1) {
-				strQuery = strQuery + ", ROUND((dia_atual.ValorMaximo + 0.01) " + "* (1 + " + FuncoesBD.CampoDecimalFormatar(pdecPercentualStopGain) + " / 100), 2) AS STOP_GAIN " + Environment.NewLine;
+				strQuery = strQuery + ", ROUND((dia_atual.ValorMaximo + 0.01) " + "* (1 + " + FuncoesBd.CampoDecimalFormatar(pdecPercentualStopGain) + " / 100), 2) AS STOP_GAIN " + Environment.NewLine;
 
 			}
-
-			string strAux = null;
 
 			//****início cálculo da quantidade e valor total que pode ser comprada com todo o capital disponível.
 
@@ -413,13 +386,13 @@ namespace prmCotacao
 
 			//1)divide o total do capital pelo valor de entrada e por 100, pois os lotes são de 100 ações.
 			//com isso teremos o nº de lotes em decimais, ou seja pode haver lotes quebrados
-			strAux = "CSTR(" + FuncoesBD.CampoDecimalFormatar(pdecValorCapital) + " / (dia_atual.valormaximo + 0.01) / 100)";
+			string strAux = "CSTR(" + FuncoesBd.CampoDecimalFormatar(pdecValorCapital) + " / (dia_atual.valormaximo + 0.01) / 100)";
 
 			//2) transforma o número em uma string e retorna apenas os números à esquerda da vírgula.
 			//Com isso temos o número de lotes inteiros que podem ser comprados. Transformamos então
 			//esse número em inteiro novamente e multiplicamos por 100 obtendo assim o total de ações que podem ser compradas
 
-			strAux = "CINT(LEFT(" + strAux + ", " + " IIF(INSTR(" + strAux + "," + FuncoesBD.CampoStringFormatar(",") + ") > 0 " + ", INSTR(" + strAux + "," + FuncoesBD.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" + strAux + ")" + "))) * 100";
+			strAux = "CINT(LEFT(" + strAux + ", " + " IIF(INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") > 0 " + ", INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" + strAux + ")" + "))) * 100";
 
 			strQuery = strQuery + ", " + strAux + " AS Quantidade_Capital" + Environment.NewLine;
 
@@ -429,7 +402,7 @@ namespace prmCotacao
 
 			//obtem o percentual de risco em relação ao capital total se for aplicar utilizando todo o capital sem manejo de risco.
 			//Para isso multiplica a quantidade que pode ser comprada pela perda por ação (entrada - stop)
-			strQuery = strQuery + ", ROUND((" + strAux + " * ((dia_atual.valormaximo + 0.01) - (dia_atual.valorminimo - 0.03)) " + "/ " + FuncoesBD.CampoDecimalFormatar(pdecValorCapital) + ") * 100, 4)  AS Perc_Risco_Capital " + Environment.NewLine;
+			strQuery = strQuery + ", ROUND((" + strAux + " * ((dia_atual.valormaximo + 0.01) - (dia_atual.valorminimo - 0.03)) " + "/ " + FuncoesBd.CampoDecimalFormatar(pdecValorCapital) + ") * 100, 4)  AS Perc_Risco_Capital " + Environment.NewLine;
 
 			//****Fim dos cálculos com todo o capital.
 
@@ -439,13 +412,13 @@ namespace prmCotacao
 
 			//1)divide o total do capital que pode ser perdido pelo valor de perda por ação e por 100, 
 			//pois os lotes são de 100 ações. com isso teremos o nº de lotes em decimais, ou seja pode haver lotes quebrados
-			strAux = "CSTR(" + FuncoesBD.CampoDecimalFormatar(pdecValorPerdaManejo) + " / " + "((dia_atual.valormaximo + 0.01) - (dia_atual.valorminimo - 0.03)) / 100)";
+			strAux = "CSTR(" + FuncoesBd.CampoDecimalFormatar(pdecValorPerdaManejo) + " / " + "((dia_atual.valormaximo + 0.01) - (dia_atual.valorminimo - 0.03)) / 100)";
 
 			//2) transforma o número em uma string e retorna apenas os números à esquerda da vírgula.
 			//Com isso temos o número de lotes inteiros que podem ser comprados. Transformamos então
 			//esse número em inteiro novamente e multiplicamos por 100 obtendo assim o total de ações que podem ser compradas
 
-			strAux = "CINT(LEFT(" + strAux + ", " + " IIF(INSTR(" + strAux + "," + FuncoesBD.CampoStringFormatar(",") + ") > 0 " + ", INSTR(" + strAux + "," + FuncoesBD.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" + strAux + ")" + "))) * 100";
+			strAux = "CINT(LEFT(" + strAux + ", " + " IIF(INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") > 0 " + ", INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" + strAux + ")" + "))) * 100";
 
 			strQuery = strQuery + ", " + strAux + " AS Quantidade_Manejo" + Environment.NewLine;
 
@@ -455,7 +428,7 @@ namespace prmCotacao
 
 			//obtem o percentual de risco em relação ao capital total se for aplicar utilizando manejo de risco.
 			//Para isso multiplica a quantidade que pode ser comprada pela perda por ação (entrada - stop)
-			strQuery = strQuery + ", ROUND((" + strAux + " * ((dia_atual.valormaximo + 0.01) -  (dia_atual.valorminimo - 0.03)) " + "/ " + FuncoesBD.CampoDecimalFormatar(pdecValorCapital) + ") * 100, 4)  AS Perc_Risco_Manejo " + Environment.NewLine;
+			strQuery = strQuery + ", ROUND((" + strAux + " * ((dia_atual.valormaximo + 0.01) -  (dia_atual.valorminimo - 0.03)) " + "/ " + FuncoesBd.CampoDecimalFormatar(pdecValorCapital) + ") * 100, 4)  AS Perc_Risco_Manejo " + Environment.NewLine;
 
 			//****Fim dos cálculos com manejo de risco.
 
@@ -468,9 +441,9 @@ namespace prmCotacao
 			//percentual em relação à média de 21 períodos
 			strQuery = strQuery + ", ROUND((dia_atual.ValorFechamento / MMExp21 - 1) * 100, 4) AS Perc_MME21 " + Environment.NewLine;
 
-			strQuery = strQuery + " FROM " + "(" + " SELECT c.codigo, valorabertura, valorfechamento, titulos_total " + " FROM " + pstrTabelaCotacao + " c INNER JOIN " + pstrTabelaMedia + " m " + " On c.codigo = m.codigo " + " And c.data = m.data " + " WHERE m.tipo = 'MME' " + " And m.numPeriodos = 9 " + " And valorfechamento > Round(m.valor, 2) " + " And c.data = " + FuncoesBD.CampoDateFormatar(pdtmDataAnterior) + " AND c.Oscilacao < 0 " + ") As dia_anterior " + " INNER JOIN " + "(" + " SELECT c.codigo, valorabertura, valorfechamento, m.valor As mmexp9 " + " , titulos_total, valorminimo, valormaximo, MME21.Valor AS MMExp21 " + " FROM ";
+			strQuery = strQuery + " FROM " + "(" + " SELECT c.codigo, valorabertura, valorfechamento, titulos_total " + " FROM " + pstrTabelaCotacao + " c INNER JOIN " + pstrTabelaMedia + " m " + " On c.codigo = m.codigo " + " And c.data = m.data " + " WHERE m.tipo = 'MME' " + " And m.numPeriodos = 9 " + " And valorfechamento > Round(m.valor, 2) " + " And c.data = " + FuncoesBd.CampoDateFormatar(pdtmDataAnterior) + " AND c.Oscilacao < 0 " + ") As dia_anterior " + " INNER JOIN " + "(" + " SELECT c.codigo, valorabertura, valorfechamento, m.valor As mmexp9 " + " , titulos_total, valorminimo, valormaximo, MME21.Valor AS MMExp21 " + " FROM ";
 
-			strTabelaAux = "(" + pstrTabelaCotacao + " c INNER JOIN " + pstrTabelaMedia + " m " + " On c.codigo = m.codigo " + " And c.data = m.data) ";
+			string strTabelaAux = "(" + pstrTabelaCotacao + " c INNER JOIN " + pstrTabelaMedia + " m " + " On c.codigo = m.codigo " + " And c.data = m.data) ";
 
 
 			if (pdblTitulosTotal != -1) {
@@ -484,23 +457,23 @@ namespace prmCotacao
 
 			strQuery = strQuery + strTabelaAux;
 
-			strQuery = strQuery + " WHERE m.tipo = " + FuncoesBD.CampoStringFormatar("MME") + " And m.numPeriodos = 9 " + " And valorfechamento > Round(m.valor, 2) " + " And c.data = " + FuncoesBD.CampoDateFormatar(pdtmDataAtual) + " AND c.Oscilacao < 0 ";
+			strQuery = strQuery + " WHERE m.tipo = " + FuncoesBd.CampoStringFormatar("MME") + " And m.numPeriodos = 9 " + " And valorfechamento > Round(m.valor, 2) " + " And c.data = " + FuncoesBd.CampoDateFormatar(pdtmDataAtual) + " AND c.Oscilacao < 0 ";
 
 
 			if (pdblTitulosTotal != -1) {
-				strQuery = strQuery + " And MV.Tipo = " + FuncoesBD.CampoStringFormatar("VMA") + " And MV.NumPeriodos = 21 " + " And MV.Valor >= " + FuncoesBD.CampoFloatFormatar(pdblTitulosTotal);
+				strQuery = strQuery + " And MV.Tipo = " + FuncoesBd.CampoStringFormatar("VMA") + " And MV.NumPeriodos = 21 " + " And MV.Valor >= " + FuncoesBd.CampoFloatFormatar(pdblTitulosTotal);
 
 			}
 
 
 			if (pintNegociosTotal != -1) {
-				strQuery = strQuery + " And c.negocios_total >= " + FuncoesBD.CampoFloatFormatar(pintNegociosTotal);
+				strQuery = strQuery + " And c.negocios_total >= " + FuncoesBd.CampoFloatFormatar(pintNegociosTotal);
 
 			}
 
 
 			if (pdecValorTotal != -1) {
-				strQuery = strQuery + " And c.valor_total >= " + FuncoesBD.CampoDecimalFormatar(pdecValorTotal);
+				strQuery = strQuery + " And c.valor_total >= " + FuncoesBd.CampoDecimalFormatar(pdecValorTotal);
 
 			}
 
@@ -535,34 +508,28 @@ namespace prmCotacao
 		int pintNegociosTotal = -1, decimal pdecValorTotal = -1, decimal pdecPercentualStopGain = -1)
 		{
 
-			string strQuery = null;
-
-			string strTabela = null;
-
-			strQuery = " SELECT " + pstrTabelaCotacao + ".codigo, ValorFechamento " + ", ROUND(" + pstrTabelaIFR + ".Valor, 2) AS IFR2" + Environment.NewLine + ", MME49.Valor as Valor_MME49 " + ", ROUND((ValorFechamento / MME49.Valor - 1) * 100, 4) AS Perc_MME49 " + Environment.NewLine + ", ROUND(valorfechamento,2) As entrada " + Environment.NewLine + ", ROUND(valorminimo - (valormaximo - valorminimo) * 1.3, 2) As stop_loss " + Environment.NewLine + ", ROUND(((valorminimo - (valormaximo - valorminimo) * 1.3) / valorfechamento -1) * 100, 4) As perc_stop_loss " + Environment.NewLine;
+            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
 
 
+		    string strQuery = " SELECT " + pstrTabelaCotacao + ".codigo, ValorFechamento " + ", ROUND(" + pstrTabelaIFR + ".Valor, 2) AS IFR2" + Environment.NewLine + ", MME49.Valor as Valor_MME49 " + ", ROUND((ValorFechamento / MME49.Valor - 1) * 100, 4) AS Perc_MME49 " + Environment.NewLine + ", ROUND(valorfechamento,2) As entrada " + Environment.NewLine + ", ROUND(valorminimo - (valormaximo - valorminimo) * 1.3, 2) As stop_loss " + Environment.NewLine + ", ROUND(((valorminimo - (valormaximo - valorminimo) * 1.3) / valorfechamento -1) * 100, 4) As perc_stop_loss " + Environment.NewLine;
 
 			if (pdecPercentualStopGain != -1) {
-				strQuery = strQuery + ", ROUND(VALORFECHAMENTO " + "* (1 + " + FuncoesBD.CampoDecimalFormatar(pdecPercentualStopGain) + " / 100), 4) AS STOP_GAIN " + Environment.NewLine;
-
+				strQuery = strQuery + ", ROUND(VALORFECHAMENTO " + "* (1 + " + FuncoesBd.CampoDecimalFormatar(pdecPercentualStopGain) + " / 100), 4) AS STOP_GAIN " + Environment.NewLine;
 			}
 
-			string strAux = null;
-
-			//****início cálculo da quantidade e valor total que pode ser comprada com todo o capital disponível.
+		    //****início cálculo da quantidade e valor total que pode ser comprada com todo o capital disponível.
 
 			//cálculo da quantidade
 
 			//1)divide o total do capital pelo valor de entrada e por 100, pois os lotes são de 100 ações.
 			//com isso teremos o nº de lotes em decimais, ou seja pode haver lotes quebrados
-			strAux = "CSTR(" + FuncoesBD.CampoDecimalFormatar(pdecValorCapital) + " / ValorFechamento / 100)";
+			string strAux = "CSTR(" + FuncoesBd.CampoDecimalFormatar(pdecValorCapital) + " / ValorFechamento / 100)";
 
 			//2) transforma o número em uma string e retorna apenas os números à esquerda da vírgula.
 			//Com isso temos o número de lotes inteiros que podem ser comprados. Transformamos então
 			//esse número em inteiro novamente e multiplicamos por 100 obtendo assim o total de ações que podem ser compradas
 
-			strAux = "CINT(LEFT(" + strAux + ", " + " IIF(INSTR(" + strAux + "," + FuncoesBD.CampoStringFormatar(",") + ") > 0 " + ", INSTR(" + strAux + "," + FuncoesBD.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" + strAux + ")" + "))) * 100";
+			strAux = "CINT(LEFT(" + strAux + ", " + " IIF(INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") > 0 " + ", INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" + strAux + ")" + "))) * 100";
 
 			strQuery = strQuery + ", " + strAux + " AS Quantidade_Capital" + Environment.NewLine;
 
@@ -572,7 +539,7 @@ namespace prmCotacao
 
 			//obtem o percentual de risco em relação ao capital total se for aplicar tudo que for possível sem manejo de risco.
 			//Para isso multiplica a quantidade que pode ser comprada pela perda por ação (entrada - stop)
-			strQuery = strQuery + ", ROUND((" + strAux + " * (valorfechamento  - (valorminimo - (valormaximo - valorminimo) * 1.3)) " + "/ " + FuncoesBD.CampoDecimalFormatar(pdecValorCapital) + ") * 100, 4)  AS Perc_Risco_Capital " + Environment.NewLine;
+			strQuery = strQuery + ", ROUND((" + strAux + " * (valorfechamento  - (valorminimo - (valormaximo - valorminimo) * 1.3)) " + "/ " + FuncoesBd.CampoDecimalFormatar(pdecValorCapital) + ") * 100, 4)  AS Perc_Risco_Capital " + Environment.NewLine;
 
 
 			//****Fim dos cálculos com todo o capital.
@@ -585,13 +552,13 @@ namespace prmCotacao
 			//pois os lotes são de 100 ações. com isso teremos o nº de lotes em decimais, ou seja pode haver lotes quebrados
 			//OBS: EXISTE UM IIF TESTANDO SE O VALOR MÁXIMO É DIFERENTE DO VALOR MÍNIMO PARA EVITAR ERROS
 			//DE DIVISÃO POR ZERO. ESTA CONDIÇÃO SÓ VAI ACONTECER EM AÇÕES MUITO POUCO LÍQUIDAS
-			strAux = "CSTR(IIF(ValorMaximo <> ValorMinimo " + ", " + FuncoesBD.CampoDecimalFormatar(pdecValorPerdaManejo) + " / " + "(ValorFechamento  - (ValorMinimo - (ValorMaximo - ValorMinimo) * 1.3)) " + ", " + FuncoesBD.CampoDecimalFormatar(pdecValorPerdaManejo) + ") / 100)";
+			strAux = "CSTR(IIF(ValorMaximo <> ValorMinimo " + ", " + FuncoesBd.CampoDecimalFormatar(pdecValorPerdaManejo) + " / " + "(ValorFechamento  - (ValorMinimo - (ValorMaximo - ValorMinimo) * 1.3)) " + ", " + FuncoesBd.CampoDecimalFormatar(pdecValorPerdaManejo) + ") / 100)";
 
 			//2) transforma o número em uma string e retorna apenas os números à esquerda da vírgula.
 			//Com isso temos o número de lotes inteiros que podem ser comprados. Transformamos então
 			//esse número em inteiro novamente e multiplicamos por 100 obtendo assim o total de ações que podem ser compradas
 
-			strAux = "CINT(LEFT(" + strAux + ", " + " IIF(INSTR(" + strAux + "," + FuncoesBD.CampoStringFormatar(",") + ") > 0 " + ", INSTR(" + strAux + "," + FuncoesBD.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" + strAux + ")" + "))) * 100";
+			strAux = "CINT(LEFT(" + strAux + ", " + " IIF(INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") > 0 " + ", INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" + strAux + ")" + "))) * 100";
 
 			strQuery = strQuery + ", " + strAux + " AS Quantidade_Manejo" + Environment.NewLine;
 
@@ -601,7 +568,7 @@ namespace prmCotacao
 
 			//obtem o percentual de risco em relação ao capital total se for aplicar o que o manejo de risco permitir.
 			//Para isso multiplica a quantidade que pode ser comprada pela perda por ação (entrada - stop)
-			strQuery = strQuery + ", ROUND((" + strAux + " * (valorfechamento  - (valorminimo - (valormaximo - valorminimo) * 1.3)) " + "/ " + FuncoesBD.CampoDecimalFormatar(pdecValorCapital) + ") * 100, 2)  AS Perc_Risco_Manejo " + Environment.NewLine;
+			strQuery = strQuery + ", ROUND((" + strAux + " * (valorfechamento  - (valorminimo - (valormaximo - valorminimo) * 1.3)) " + "/ " + FuncoesBd.CampoDecimalFormatar(pdecValorCapital) + ") * 100, 2)  AS Perc_Risco_Manejo " + Environment.NewLine;
 
 
 			//****Fim dos cálculos com manejo de risco.
@@ -609,16 +576,12 @@ namespace prmCotacao
 
 			if (pblnAlijamentoCalcular) {
 				strQuery = strQuery + ", ROUND(VALORFECHAMENTO * 2 - (valorminimo - (valormaximo - valorminimo) * 1.3), 2) as STOP_GAIN " + Environment.NewLine;
-
 			}
 
 			//percentual em relação à média de 21 períodos
 			strQuery = strQuery + ", ROUND((ValorFechamento / MME21.Valor - 1) * 100, 4) AS Perc_MME21 " + Environment.NewLine;
 
-
-			strTabela = "(" + pstrTabelaCotacao + " INNER JOIN " + pstrTabelaIFR + Environment.NewLine + " On " + pstrTabelaCotacao + ".Codigo = " + pstrTabelaIFR + ".Codigo " + Environment.NewLine + " And " + pstrTabelaCotacao + ".Data = " + pstrTabelaIFR + ".Data) " + Environment.NewLine;
-
-
+			string strTabela = "(" + pstrTabelaCotacao + " INNER JOIN " + pstrTabelaIFR + Environment.NewLine + " On " + pstrTabelaCotacao + ".Codigo = " + pstrTabelaIFR + ".Codigo " + Environment.NewLine + " And " + pstrTabelaCotacao + ".Data = " + pstrTabelaIFR + ".Data) " + Environment.NewLine;
 
 			if (pdblTitulosTotal != -1) {
 				//O filtro por quantidade de ações negociadas utilizada a média de 21 períodos do volume
@@ -632,17 +595,17 @@ namespace prmCotacao
 			//PORQUE O WHERE PELO TIPO = 'MME' AND NUMPERIODOS = 21 FAZ COM QUE OS REGISTROS
 			//QUE AINDA NÃO TENHAM A MÉDIA DE 21 NÃO SEJAM CONSIDERADOS.
 			//POR ISSO TEMOS QUE CRIAR UM SELECT INTERNO QUE FORMA A TABELA MME21
-			strTabela = "(" + strTabela + " LEFT JOIN " + Environment.NewLine + "(" + Environment.NewLine + '\t' + "SELECT Codigo, Data, Valor " + Environment.NewLine + '\t' + "FROM " + pstrTabelaMedia + Environment.NewLine + '\t' + " WHERE Data = " + FuncoesBD.CampoDateFormatar(pdtmDataAtual) + Environment.NewLine + '\t' + " AND Tipo = " + FuncoesBD.CampoStringFormatar("MME") + Environment.NewLine + '\t' + " And NumPeriodos = 21 " + Environment.NewLine + ") AS MME21 " + Environment.NewLine + " On " + pstrTabelaCotacao + ".Codigo = MME21.Codigo " + Environment.NewLine + " And " + pstrTabelaCotacao + ".Data = MME21.Data) " + Environment.NewLine;
+			strTabela = "(" + strTabela + " LEFT JOIN " + Environment.NewLine + "(" + Environment.NewLine + '\t' + "SELECT Codigo, Data, Valor " + Environment.NewLine + '\t' + "FROM " + pstrTabelaMedia + Environment.NewLine + '\t' + " WHERE Data = " + FuncoesBd.CampoDateFormatar(pdtmDataAtual) + Environment.NewLine + '\t' + " AND Tipo = " + FuncoesBd.CampoStringFormatar("MME") + Environment.NewLine + '\t' + " And NumPeriodos = 21 " + Environment.NewLine + ") AS MME21 " + Environment.NewLine + " On " + pstrTabelaCotacao + ".Codigo = MME21.Codigo " + Environment.NewLine + " And " + pstrTabelaCotacao + ".Data = MME21.Data) " + Environment.NewLine;
 
 			//GERA TABELA PARA BUSCAR A MÉDIA MÓVEL DE 49 PERÍODOS.
 			//NÃO PODE FAZER SIMPLESMENTE UM LEFT JOIN COM  A TABELA DE MÉDIAS
 			//PORQUE O WHERE PELO TIPO = 'MME' AND NUMPERIODOS = 49 FAZ COM QUE OS REGISTROS
 			//QUE AINDA NÃO TENHAM A MÉDIA DE 49 NÃO SEJAM CONSIDERADOS.
 			//POR ISSO TEMOS QUE CRIAR UM SELECT INTERNO QUE FORMA A TABELA MME49
-			strTabela = "(" + strTabela + " LEFT JOIN " + Environment.NewLine + "(" + Environment.NewLine + '\t' + "SELECT Codigo, Data, Valor " + Environment.NewLine + '\t' + "FROM " + pstrTabelaMedia + Environment.NewLine + '\t' + " WHERE Data = " + FuncoesBD.CampoDateFormatar(pdtmDataAtual) + Environment.NewLine + '\t' + " AND Tipo = " + FuncoesBD.CampoStringFormatar("MME") + Environment.NewLine + '\t' + " And NumPeriodos = 49 " + Environment.NewLine + ") AS MME49 " + Environment.NewLine + " On " + pstrTabelaCotacao + ".Codigo = MME49.Codigo " + Environment.NewLine + " And " + pstrTabelaCotacao + ".Data = MME49.Data) " + Environment.NewLine;
+			strTabela = "(" + strTabela + " LEFT JOIN " + Environment.NewLine + "(" + Environment.NewLine + '\t' + "SELECT Codigo, Data, Valor " + Environment.NewLine + '\t' + "FROM " + pstrTabelaMedia + Environment.NewLine + '\t' + " WHERE Data = " + FuncoesBd.CampoDateFormatar(pdtmDataAtual) + Environment.NewLine + '\t' + " AND Tipo = " + FuncoesBd.CampoStringFormatar("MME") + Environment.NewLine + '\t' + " And NumPeriodos = 49 " + Environment.NewLine + ") AS MME49 " + Environment.NewLine + " On " + pstrTabelaCotacao + ".Codigo = MME49.Codigo " + Environment.NewLine + " And " + pstrTabelaCotacao + ".Data = MME49.Data) " + Environment.NewLine;
 
 
-			strQuery = strQuery + " FROM " + strTabela + " WHERE " + pstrTabelaCotacao + ".Data = " + FuncoesBD.CampoDateFormatar(pdtmDataAtual) + " And " + pstrTabelaIFR + ".NumPeriodos = 2 " + " And " + pstrTabelaIFR + ".Valor <= " + FuncoesBD.CampoFloatFormatar(pdblIFR2LimiteSuperior);
+			strQuery = strQuery + " FROM " + strTabela + " WHERE " + pstrTabelaCotacao + ".Data = " + FuncoesBd.CampoDateFormatar(pdtmDataAtual) + " And " + pstrTabelaIFR + ".NumPeriodos = 2 " + " And " + pstrTabelaIFR + ".Valor <= " + FuncoesBd.CampoFloatFormatar(pdblIFR2LimiteSuperior);
 
 
 			if (pblnAcimaMME49) {
@@ -652,7 +615,7 @@ namespace prmCotacao
 
 
 			if (pdblTitulosTotal != -1) {
-				strQuery = strQuery + " And MV.Tipo = " + FuncoesBD.CampoStringFormatar("VMA") + " And MV.NumPeriodos = 21 " + " And MV.Valor >= " + FuncoesBD.CampoFloatFormatar(pdblTitulosTotal);
+				strQuery = strQuery + " And MV.Tipo = " + FuncoesBd.CampoStringFormatar("VMA") + " And MV.NumPeriodos = 21 " + " And MV.Valor >= " + FuncoesBd.CampoFloatFormatar(pdblTitulosTotal);
 
 			}
 
@@ -693,17 +656,19 @@ namespace prmCotacao
 
 		    dynamic lngSequencialAtual = plngSequencialInicial;
 			bool blnOK = false;
-			dynamic lngUltimoSequencialSobrevendido = plngSequencialInicial;
+			long lngUltimoSequencialSobrevendido = plngSequencialInicial;
 
 			//Enquanto não encontrar o número de tentativas
+
+		    FuncoesBd funcoesBd = objConexao.ObterFormatadorDeCampo();
 
 			while (!blnOK) {
 				string strSQL = "SELECT TOP 5 Sequencial, Valor " + Environment.NewLine;
 				strSQL = strSQL + " FROM Cotacao C INNER JOIN IFR_Diario IFR " + Environment.NewLine;
 				strSQL = strSQL + " ON C.Codigo = IFR.Codigo " + Environment.NewLine;
 				strSQL = strSQL + " AND C.Data = IFR.Data " + Environment.NewLine;
-				strSQL = strSQL + " WHERE C.Codigo = " + FuncoesBD.CampoFormatar(pstrCodigo) + Environment.NewLine;
-				strSQL = strSQL + " AND Sequencial < " + FuncoesBD.CampoFormatar(lngSequencialAtual) + Environment.NewLine;
+				strSQL = strSQL + " WHERE C.Codigo = " + funcoesBd.CampoFormatar(pstrCodigo) + Environment.NewLine;
+				strSQL = strSQL + " AND Sequencial < " + funcoesBd.CampoFormatar(lngSequencialAtual) + Environment.NewLine;
 				strSQL = strSQL + " ORDER BY Sequencial DESC ";
 
 				objRS.ExecuteQuery(strSQL);
@@ -733,7 +698,7 @@ namespace prmCotacao
 
 			}
 
-			return plngSequencialInicial - lngUltimoSequencialSobrevendido + 1;
+			return (int)  (plngSequencialInicial - lngUltimoSequencialSobrevendido + 1);
 
 		}
 
@@ -755,19 +720,19 @@ namespace prmCotacao
 
 		public void CalcularValoresRealizacao(string pstrCodigo, Setup pobjSetup, cClassifMedia pobjCM, cIFRSobrevendido pobjIFRSobrevendido, IList<cIFRSimulacaoDiariaFaixa> plstFaixas, decimal pdecValorEntrada, DateTime pdtmDataEntrada, ref string pstrValorRealizacaoParcialRet, ref string pstrValorRealizacaoFinalRet)
 		{
-			string strSQL = null;
-			string strWhere = String.Empty;
+		    string strWhere = String.Empty;
 
-			strSQL = " SELECT MIN(Percentual_Maximo) AS Percentual_Realizacao_Parcial, MAX(Percentual_Saida) AS Percentual_Saida_Maximo " + Environment.NewLine;
+			string strSQL = " SELECT MIN(Percentual_Maximo) AS Percentual_Realizacao_Parcial, MAX(Percentual_Saida) AS Percentual_Saida_Maximo " + Environment.NewLine;
 
+            FuncoesBd FuncoesBd  = objConexao.ObterFormatadorDeCampo();
 
 			strWhere += " FROM IFR_SIMULACAO_DIARIA D " + Environment.NewLine;
-			strWhere += " WHERE D.Codigo = " + FuncoesBD.CampoFormatar(pstrCodigo) + Environment.NewLine;
-			strWhere += " AND D.ID_Setup = " + FuncoesBD.CampoFormatar(pobjSetup.ID) + Environment.NewLine;
-			strWhere += " AND D.ID_CM = " + FuncoesBD.CampoFormatar(pobjCM.ID) + Environment.NewLine;
-			strWhere += " AND Verdadeiro = " + FuncoesBD.CampoFormatar(true) + Environment.NewLine;
-			strWhere += " AND Valor_IFR_Minimo <= " + FuncoesBD.CampoFormatar(pobjIFRSobrevendido.ValorMaximo) + Environment.NewLine;
-			strWhere += " AND Data_Saida <= " + FuncoesBD.CampoFormatar(pdtmDataEntrada);
+			strWhere += " WHERE D.Codigo = " + FuncoesBd.CampoFormatar(pstrCodigo) + Environment.NewLine;
+			strWhere += " AND D.ID_Setup = " + FuncoesBd.CampoFormatar(pobjSetup.ID) + Environment.NewLine;
+			strWhere += " AND D.ID_CM = " + FuncoesBd.CampoFormatar(pobjCM.ID) + Environment.NewLine;
+			strWhere += " AND Verdadeiro = " + FuncoesBd.CampoFormatar(true) + Environment.NewLine;
+			strWhere += " AND Valor_IFR_Minimo <= " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ValorMaximo) + Environment.NewLine;
+			strWhere += " AND Data_Saida <= " + FuncoesBd.CampoFormatar(pdtmDataEntrada);
 
 
 			foreach (cIFRSimulacaoDiariaFaixa objIFRFaixa in plstFaixas) {
@@ -775,9 +740,9 @@ namespace prmCotacao
 				strWhere += "(" + Environment.NewLine;
 				strWhere += '\t' + " SELECT 1 " + Environment.NewLine;
 				strWhere += '\t' + " FROM IFR_Simulacao_Diaria_Faixa F " + Environment.NewLine;
-				strWhere += '\t' + " WHERE ID = " + FuncoesBD.CampoFormatar(objIFRFaixa.ID) + Environment.NewLine;
+				strWhere += '\t' + " WHERE ID = " + FuncoesBd.CampoFormatar(objIFRFaixa.ID) + Environment.NewLine;
 				strWhere += '\t' + " AND " + objIFRFaixa.CriterioCM.CampoBD + " BETWEEN Valor_Minimo AND Valor_Maximo " + Environment.NewLine;
-				strWhere += '\t' + " AND ID_IFR_Sobrevendido = " + FuncoesBD.CampoFormatar(pobjIFRSobrevendido.ID) + Environment.NewLine;
+				strWhere += '\t' + " AND ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ID) + Environment.NewLine;
 				strWhere += ")";
 
 			}
@@ -792,14 +757,14 @@ namespace prmCotacao
 
 			double decPercentualSaidaMaximo = Convert.ToDouble(objRS.Field("Percentual_Saida_Maximo"));
 
-			pstrValorRealizacaoParcialRet = Math.Round(pdecValorEntrada * (1 + decPercentualRealizacaoParcial / 100), 2).ToString() + " (" + decPercentualRealizacaoParcial.ToString() + " %)";
+			pstrValorRealizacaoParcialRet = Math.Round(pdecValorEntrada * (1 + decPercentualRealizacaoParcial / 100), 2).ToString() + " (" + decPercentualRealizacaoParcial + " %)";
 
 			objRS.Fechar();
 
 			strSQL = " SELECT MIN(Percentual_Maximo) AS Percentual_Realizacao_Final " + Environment.NewLine;
 
 			strSQL = strSQL + strWhere;
-			strSQL = strSQL + " AND Percentual_Maximo > " + FuncoesBD.CampoFormatar(decPercentualSaidaMaximo);
+			strSQL = strSQL + " AND Percentual_Maximo > " + FuncoesBd.CampoFormatar(decPercentualSaidaMaximo);
 
 			objRS.ExecuteQuery(strSQL);
 
@@ -828,14 +793,14 @@ namespace prmCotacao
 
 		private string AproveitamentoConsultar(SimulacaoDiariaVO pobjSimulacaoDiariaVO)
 		{
-			string functionReturnValue = null;
+			string functionReturnValue;
 
 			cCarregadorDeResumoDoIFRDiario objCarregadorResumo = new cCarregadorDeResumoDoIFRDiario(objConexao);
 
 			cIFRSimulacaoDiariaFaixaResumo objResumo = objCarregadorResumo.Carregar(pobjSimulacaoDiariaVO);
 
 
-			if ((objResumo != null)) {
+			if (objResumo != null) {
 				functionReturnValue = objResumo.PercentualAcertosComFiltro.ToString("###,###0.00") + "% (" + objResumo.NumAcertosComFiltro.ToString("###") + " / " + objResumo.NumTradesComFiltro.ToString("###") + ")";
                 
 
@@ -861,10 +826,9 @@ namespace prmCotacao
 
 		private void SetupIFR2SemFiltroDiarioPersonalizadoVerificar(Setup pobjSetup, System.DateTime pdtmDataAtual, double pdblTitulosTotal = -1, Int32 pintNegociosTotal = -1, decimal pdecValorTotal = -1)
 		{
-			string strSQL = null;
-			string strTabela = null;
+            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
 
-			strTabela = "COTACAO CH INNER JOIN IFR_DIARIO IFRH " + Environment.NewLine;
+		    string strTabela = "COTACAO CH INNER JOIN IFR_DIARIO IFRH " + Environment.NewLine;
 			strTabela = strTabela + " On CH.CODIGO = IFRH.CODIGO " + Environment.NewLine;
 			strTabela = strTabela + " And CH.DATA = IFRH.DATA " + Environment.NewLine;
 
@@ -876,10 +840,10 @@ namespace prmCotacao
 
 			}
 
-			strSQL = " SELECT CH.CODIGO " + Environment.NewLine;
+			string strSQL = " SELECT CH.CODIGO " + Environment.NewLine;
 			strSQL = strSQL + " FROM " + strTabela;
 
-			strSQL = strSQL + " WHERE CH.DATA = " + FuncoesBD.CampoFormatar(pdtmDataAtual) + Environment.NewLine;
+			strSQL = strSQL + " WHERE CH.DATA = " + FuncoesBd.CampoFormatar(pdtmDataAtual) + Environment.NewLine;
 			strSQL = strSQL + " And CH.SEQUENCIAL > 200 " + Environment.NewLine;
 			//Não faz sentido começar a verificação se o papel tem apenas 200 períodos, pois precisamos da média de 200 nos cálculos
 
@@ -888,9 +852,9 @@ namespace prmCotacao
 
 
 			if (pdblTitulosTotal != -1) {
-				strSQL = strSQL + " AND MV.Tipo = " + FuncoesBD.CampoFormatar("VMA") + Environment.NewLine;
+				strSQL = strSQL + " AND MV.Tipo = " + FuncoesBd.CampoFormatar("VMA") + Environment.NewLine;
 				strSQL = strSQL + " AND MV.NumPeriodos = 21 " + Environment.NewLine;
-				strSQL = strSQL + " AND MV.Valor >= " + FuncoesBD.CampoFormatar(pdblTitulosTotal) + Environment.NewLine;
+				strSQL = strSQL + " AND MV.Valor >= " + FuncoesBd.CampoFormatar(pdblTitulosTotal) + Environment.NewLine;
 
 			}
 
@@ -921,7 +885,7 @@ namespace prmCotacao
 			strSQL += '\t' + '\t' + " SELECT 1 " + Environment.NewLine;
 			strSQL += '\t' + '\t' + " FROM COTACAO C2 " + Environment.NewLine;
 			strSQL += '\t' + '\t' + " WHERE C1.CODIGO = C2.CODIGO " + Environment.NewLine;
-			strSQL += '\t' + '\t' + " AND C2.Data <= " + FuncoesBD.CampoFormatar(pdtmDataAtual);
+			strSQL += '\t' + '\t' + " AND C2.Data <= " + FuncoesBd.CampoFormatar(pdtmDataAtual);
 			//Só pode verificar até a data de geração do relatório
 			strSQL += '\t' + '\t' + " And C2.DATA > C1.DATA " + Environment.NewLine;
 			strSQL += '\t' + '\t' + " And " + Environment.NewLine;
@@ -938,7 +902,7 @@ namespace prmCotacao
 			strSQL += '\t' + '\t' + " FROM IFR_SIMULACAO_DIARIA S " + Environment.NewLine;
 			strSQL += '\t' + '\t' + " WHERE C1.CODIGO = S.CODIGO " + Environment.NewLine;
 			strSQL += '\t' + '\t' + " And C1.DATA = S.DATA_ENTRADA_EFETIVA " + Environment.NewLine;
-			strSQL += '\t' + '\t' + " And S.ID_SETUP = " + FuncoesBD.CampoFormatar(pobjSetup.ID) + Environment.NewLine;
+			strSQL += '\t' + '\t' + " And S.ID_SETUP = " + FuncoesBd.CampoFormatar(pobjSetup.ID) + Environment.NewLine;
 			strSQL += '\t' + " ) " + Environment.NewLine;
 			strSQL += " )" + Environment.NewLine;
 
@@ -1078,6 +1042,8 @@ namespace prmCotacao
 		private string RelatIFR2SemFiltroDiarioPersonalizadoGerar(Setup pobjSetup, System.DateTime pdtmDataAtual, decimal pdecValorCapital, decimal pdecValorPerdaManejo, cIFRSobrevendido pobjIFRSobrevendido, double pdblIFR2LimiteSuperior = 5, double pdblTitulosTotal = -1, Int32 pintNegociosTotal = -1, decimal pdecValorTotal = -1)
 		{
 
+            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
+
 			//Chama função que verifica se existe alguma simulação pendente e pergunta se o usuário que executá-la antes de iniciar o relatório.
 			SetupIFR2SemFiltroDiarioPersonalizadoVerificar(pobjSetup, pdtmDataAtual, pdblTitulosTotal, pintNegociosTotal, pdecValorTotal);
 
@@ -1085,9 +1051,7 @@ namespace prmCotacao
 
 			objCommand.BeginTrans();
 
-			string strSQL = null;
-
-			strSQL = "DELETE " + Environment.NewLine;
+		    string strSQL = "DELETE " + Environment.NewLine;
 			strSQL = strSQL + " FROM Relat_IFR2_Sem_Filtro " + Environment.NewLine;
 
 			objCommand.Execute(strSQL);
@@ -1106,21 +1070,19 @@ namespace prmCotacao
 			strSQL += ", ROUND(valorminimo - (valormaximo - valorminimo) * 1.3, 2) As stop_loss " + Environment.NewLine;
 			strSQL += ", ROUND(((valorminimo - (valormaximo - valorminimo) * 1.3) / valorfechamento -1) * 100, 4) As perc_stop_loss " + Environment.NewLine;
 
-			string strAux = null;
-
-			//****início cálculo da quantidade e valor total que pode ser comprada com todo o capital disponível.
+		    //****início cálculo da quantidade e valor total que pode ser comprada com todo o capital disponível.
 
 			//cálculo da quantidade
 
 			//1)divide o total do capital pelo valor de entrada e por 100, pois os lotes são de 100 ações.
 			//com isso teremos o nº de lotes em decimais, ou seja pode haver lotes quebrados
-			strAux = "CSTR(" + FuncoesBD.CampoDecimalFormatar(pdecValorCapital) + " / ValorFechamento / 100)";
+			string strAux = "CSTR(" + FuncoesBd.CampoDecimalFormatar(pdecValorCapital) + " / ValorFechamento / 100)";
 
 			//2) transforma o número em uma string e retorna apenas os números à esquerda da vírgula.
 			//Com isso temos o número de lotes inteiros que podem ser comprados. Transformamos então
 			//esse número em inteiro novamente e multiplicamos por 100 obtendo assim o total de ações que podem ser compradas
 
-			strAux = "CINT(LEFT(" + strAux + ", " + " IIF(INSTR(" + strAux + "," + FuncoesBD.CampoStringFormatar(",") + ") > 0 " + ", INSTR(" + strAux + "," + FuncoesBD.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" + strAux + ")" + "))) * 100";
+			strAux = "CINT(LEFT(" + strAux + ", " + " IIF(INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") > 0 " + ", INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" + strAux + ")" + "))) * 100";
 
 			strSQL = strSQL + ", " + strAux + " AS Quantidade_Sem_Manejo" + Environment.NewLine;
 
@@ -1130,7 +1092,7 @@ namespace prmCotacao
 
 			//obtem o percentual de risco em relação ao capital total se for aplicar tudo que for possível sem manejo de risco.
 			//Para isso multiplica a quantidade que pode ser comprada pela perda por ação (entrada - stop)
-			strSQL = strSQL + ", ROUND((" + strAux + " * (valorfechamento  - (valorminimo - (valormaximo - valorminimo) * 1.3)) " + "/ " + FuncoesBD.CampoDecimalFormatar(pdecValorCapital) + ") * 100, 4)  AS Perc_Risco_Capital " + Environment.NewLine;
+			strSQL = strSQL + ", ROUND((" + strAux + " * (valorfechamento  - (valorminimo - (valormaximo - valorminimo) * 1.3)) " + "/ " + FuncoesBd.CampoDecimalFormatar(pdecValorCapital) + ") * 100, 4)  AS Perc_Risco_Capital " + Environment.NewLine;
 
 
 			//****Fim dos cálculos com todo o capital.
@@ -1143,13 +1105,13 @@ namespace prmCotacao
 			//pois os lotes são de 100 ações. com isso teremos o nº de lotes em decimais, ou seja pode haver lotes quebrados
 			//OBS: EXISTE UM IIF TESTANDO SE O VALOR MÁXIMO É DIFERENTE DO VALOR MÍNIMO PARA EVITAR ERROS
 			//DE DIVISÃO POR ZERO. ESTA CONDIÇÃO SÓ VAI ACONTECER EM AÇÕES MUITO POUCO LÍQUIDAS
-			strAux = "CSTR(IIF(ValorMaximo <> ValorMinimo " + ", " + FuncoesBD.CampoDecimalFormatar(pdecValorPerdaManejo) + " / " + "(ValorFechamento  - (ValorMinimo - (ValorMaximo - ValorMinimo) * 1.3)) " + ", " + FuncoesBD.CampoDecimalFormatar(pdecValorPerdaManejo) + ") / 100)";
+			strAux = "CSTR(IIF(ValorMaximo <> ValorMinimo " + ", " + FuncoesBd.CampoDecimalFormatar(pdecValorPerdaManejo) + " / " + "(ValorFechamento  - (ValorMinimo - (ValorMaximo - ValorMinimo) * 1.3)) " + ", " + FuncoesBd.CampoDecimalFormatar(pdecValorPerdaManejo) + ") / 100)";
 
 			//2) transforma o número em uma string e retorna apenas os números à esquerda da vírgula.
 			//Com isso temos o número de lotes inteiros que podem ser comprados. Transformamos então
 			//esse número em inteiro novamente e multiplicamos por 100 obtendo assim o total de ações que podem ser compradas
 
-			strAux = "CINT(LEFT(" + strAux + ", " + " IIF(INSTR(" + strAux + "," + FuncoesBD.CampoStringFormatar(",") + ") > 0 " + ", INSTR(" + strAux + "," + FuncoesBD.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" + strAux + ")" + "))) * 100";
+			strAux = "CINT(LEFT(" + strAux + ", " + " IIF(INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") > 0 " + ", INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" + strAux + ")" + "))) * 100";
 
 			strSQL = strSQL + ", " + strAux + " AS Quantidade_Manejo" + Environment.NewLine;
 
@@ -1159,7 +1121,7 @@ namespace prmCotacao
 
 			//obtem o percentual de risco em relação ao capital total se for aplicar o que o manejo de risco permitir.
 			//Para isso multiplica a quantidade que pode ser comprada pela perda por ação (entrada - stop)
-			strSQL = strSQL + ", ROUND((" + strAux + " * (valorfechamento  - (valorminimo - (valormaximo - valorminimo) * 1.3)) " + "/ " + FuncoesBD.CampoDecimalFormatar(pdecValorCapital) + ") * 100, 2)  AS Perc_Risco_Manejo " + Environment.NewLine;
+			strSQL = strSQL + ", ROUND((" + strAux + " * (valorfechamento  - (valorminimo - (valormaximo - valorminimo) * 1.3)) " + "/ " + FuncoesBd.CampoDecimalFormatar(pdecValorCapital) + ") * 100, 2)  AS Perc_Risco_Manejo " + Environment.NewLine;
 
 
 			//****Fim dos cálculos com manejo de risco.
@@ -1167,9 +1129,7 @@ namespace prmCotacao
 			//percentual em relação à média de 21 períodos
 			strSQL = strSQL + ", ROUND((ValorFechamento / MME21.Valor - 1) * 100, 4) AS Perc_MME21 " + Environment.NewLine;
 
-			string strTabela = null;
-
-			strTabela = "(Cotacao C INNER JOIN IFR_Diario IFR" + Environment.NewLine + " On C.Codigo = IFR.Codigo " + Environment.NewLine + " And C.Data = IFR.Data) " + Environment.NewLine;
+		    string strTabela = "(Cotacao C INNER JOIN IFR_Diario IFR" + Environment.NewLine + " On C.Codigo = IFR.Codigo " + Environment.NewLine + " And C.Data = IFR.Data) " + Environment.NewLine;
 
 
 
@@ -1191,24 +1151,24 @@ namespace prmCotacao
 
 
 
-			strSQL = strSQL + " FROM " + strTabela + Environment.NewLine + " WHERE C.Data = " + FuncoesBD.CampoDateFormatar(pdtmDataAtual) + Environment.NewLine + " AND C.Sequencial > 200" + " And IFR.NumPeriodos = 2 " + Environment.NewLine + " And IFR.Valor <= " + FuncoesBD.CampoFloatFormatar(pdblIFR2LimiteSuperior) + Environment.NewLine;
+			strSQL = strSQL + " FROM " + strTabela + Environment.NewLine + " WHERE C.Data = " + FuncoesBd.CampoDateFormatar(pdtmDataAtual) + Environment.NewLine + " AND C.Sequencial > 200" + " And IFR.NumPeriodos = 2 " + Environment.NewLine + " And IFR.Valor <= " + FuncoesBd.CampoFloatFormatar(pdblIFR2LimiteSuperior) + Environment.NewLine;
 
 
 			if (pdblTitulosTotal != -1) {
-				strSQL = strSQL + " And MV.Tipo = " + FuncoesBD.CampoStringFormatar("VMA") + Environment.NewLine + " And MV.NumPeriodos = 21 " + Environment.NewLine + " And MV.Valor >= " + FuncoesBD.CampoFloatFormatar(pdblTitulosTotal) + Environment.NewLine;
+				strSQL = strSQL + " And MV.Tipo = " + FuncoesBd.CampoStringFormatar("VMA") + Environment.NewLine + " And MV.NumPeriodos = 21 " + Environment.NewLine + " And MV.Valor >= " + FuncoesBd.CampoFloatFormatar(pdblTitulosTotal) + Environment.NewLine;
 
 			}
 
 			//WHERE RELATIVO AO RELACIONAMENTO DA COTAÇÃO COM A MÉDIA DE 21 PERIODOS
-			strSQL += " AND MME21.Tipo = " + FuncoesBD.CampoStringFormatar("MME") + Environment.NewLine;
+			strSQL += " AND MME21.Tipo = " + FuncoesBd.CampoStringFormatar("MME") + Environment.NewLine;
 			strSQL += " AND MME21.NumPeriodos = 21 " + Environment.NewLine;
 
 			//WHERE RELATIVO AO RELACIONAMENTO DA COTAÇÃO COM A MÉDIA DE 49 PERIODOS
-			strSQL += " AND MME49.Tipo = " + FuncoesBD.CampoStringFormatar("MME") + Environment.NewLine;
+			strSQL += " AND MME49.Tipo = " + FuncoesBd.CampoStringFormatar("MME") + Environment.NewLine;
 			strSQL += " AND MME49.NumPeriodos = 49 " + Environment.NewLine;
 
 			//WHERE RELATIVO AO RELACIONAMENTO DA COTAÇÃO COM A MÉDIA DE 200 PERIODOS
-			strSQL += " AND MME200.Tipo = " + FuncoesBD.CampoStringFormatar("MME") + Environment.NewLine;
+			strSQL += " AND MME200.Tipo = " + FuncoesBd.CampoStringFormatar("MME") + Environment.NewLine;
 			strSQL += " AND MME200.NumPeriodos = 200 " + Environment.NewLine;
 
 
@@ -1226,41 +1186,25 @@ namespace prmCotacao
 
 			objRS.ExecuteQuery(strSQL);
 
-			cClassifMedia objClassifMedia = null;
+		    IList<cIFRSimulacaoDiariaFaixa> lstFaixas = new List<cIFRSimulacaoDiariaFaixa>();
 
-			int intNumTentativas = 0;
+		    cValorCriterioClassifMediaVO objValorCriterioCMVO = new cValorCriterioClassifMediaVO();
 
-			int intSomatorioCriterios = 0;
-
-			IList<cIFRSimulacaoDiariaFaixa> lstFaixas = new List<cIFRSimulacaoDiariaFaixa>();
-
-			string strValorRealizacaoParcial = null;
-			string strValorRealizacaoFinal = null;
-
-			string strAproveitamento = null;
-
-			cValorCriterioClassifMediaVO objValorCriterioCMVO = new cValorCriterioClassifMediaVO();
-
-			cAtivo objAtivo = null;
-			cCotacaoDiaria objCotacaoDiaria = null;
-
-			dynamic objCarregadorCarteira = new cCarregadorCarteira(objConexao);
+		    dynamic objCarregadorCarteira = new cCarregadorCarteira(objConexao);
 			dynamic objCarteiraAtiva = objCarregadorCarteira.CarregaAtiva(pobjIFRSobrevendido);
 
-			string strCodigoAtivo = null;
-
-			//Para cada um dos itens que está com IFR sobrevendido.
+		    //Para cada um dos itens que está com IFR sobrevendido.
 
 			while ((!objRS.EOF) && (objConexao.TransStatus)) {
 				lstFaixas.Clear();
 
-				strValorRealizacaoParcial = string.Empty;
+				string strValorRealizacaoParcial = string.Empty;
 
-				strValorRealizacaoFinal = string.Empty;
+				string strValorRealizacaoFinal = string.Empty;
 
-				objAtivo = new cAtivo((string) objRS.Field("Codigo"), string.Empty);
+				cAtivo objAtivo = new cAtivo((string) objRS.Field("Codigo"), string.Empty);
 
-				objCotacaoDiaria = new cCotacaoDiaria(objAtivo, pdtmDataAtual);
+				cCotacaoDiaria objCotacaoDiaria = new cCotacaoDiaria(objAtivo, pdtmDataAtual);
 				objCotacaoDiaria.ValorFechamento = Convert.ToDecimal(objRS.Field("ValorFechamento"));
 
 				objCotacaoDiaria.Medias.Add(new cMediaDiaria(objCotacaoDiaria, "MME", 49, Convert.ToDouble(objRS.Field("MME49"))));
@@ -1269,10 +1213,10 @@ namespace prmCotacao
 				objAtivo.CotacoesDiarias.Add(objCotacaoDiaria);
 
 				//Calcula a classificação da média
-				objClassifMedia = objAtivo.ObterClassificacaoDeMediaNaData(pdtmDataAtual);
+				cClassifMedia objClassifMedia = objAtivo.ObterClassificacaoDeMediaNaData(pdtmDataAtual);
 
 				//Calcula o número de tentativas
-				intNumTentativas = NumTentativasCalcular((string) objRS.Field("Codigo"), Convert.ToInt64(objRS.Field("Sequencial")), pobjIFRSobrevendido.ValorMaximo);
+				int intNumTentativas = NumTentativasCalcular((string) objRS.Field("Codigo"), Convert.ToInt64(objRS.Field("Sequencial")), pobjIFRSobrevendido.ValorMaximo);
 
 				//Verifica se atende a todos os critérios
 				cVerificaSeDeveGerarEntrada objVerificaSeDeveGerarEntrada = new cVerificaSeDeveGerarEntrada(objConexao);
@@ -1293,7 +1237,7 @@ namespace prmCotacao
 
 				//Verifica se deve gerar entrada: atende a todos os critérios de classificação da média, quantidade de tentativas e percentual de acertos.
 				//Caso deva gerar entrada, retorna uma lista das faixas em que o trade se faixa (uma faixa para cada critério).
-				intSomatorioCriterios = objVerificaSeDeveGerarEntrada.Verificar(objSimulacaoDiariaVO, objValorCriterioCMVO, lstFaixas);
+				int intSomatorioCriterios = objVerificaSeDeveGerarEntrada.Verificar(objSimulacaoDiariaVO, objValorCriterioCMVO, lstFaixas);
 
 				if (intSomatorioCriterios == 0) {
 					//Se todos os critérios foram atendidos, calcula o valor de realização parcial e final em função das faixas selecionadas
@@ -1301,14 +1245,13 @@ namespace prmCotacao
 
 				}
 
-				strAproveitamento = AproveitamentoConsultar(objSimulacaoDiariaVO);
+				string strAproveitamento = AproveitamentoConsultar(objSimulacaoDiariaVO);
 
-				strCodigoAtivo = objRS.Field("Codigo").ToString();
+				string strCodigoAtivo = objRS.Field("Codigo").ToString();
 
 
 				if (objCarteiraAtiva.AtivoEstaNaCarteira(objAtivo)) {
 					strCodigoAtivo += " *";
-
 				}
 
 				//Lança na tabela temporária
@@ -1319,29 +1262,29 @@ namespace prmCotacao
 				strSQL = strSQL + ", Aproveitamento, Percentual_MM21, Percentual_MM49, Percentual_MM200 " + Environment.NewLine;
 				strSQL = strSQL + ", Diferenca_MM200_MM21, Diferenca_MM200_MM49, NumTentativas, SomatorioCriterios) " + Environment.NewLine;
 				strSQL = strSQL + " VALUES " + Environment.NewLine;
-				strSQL = strSQL + "(" + FuncoesBD.CampoFormatar(strCodigoAtivo);
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(pobjIFRSobrevendido.ID);
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(Convert.ToDouble(objRS.Field("IFR2")));
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(Convert.ToDecimal(objRS.Field("ValorFechamento")));
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(strValorRealizacaoParcial);
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(strValorRealizacaoFinal);
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(Convert.ToDecimal(objRS.Field("stop_loss")));
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(Convert.ToDecimal(objRS.Field("perc_stop_loss")));
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(Convert.ToInt32(objRS.Field("Quantidade_Sem_Manejo")));
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(Convert.ToDecimal(objRS.Field("Valor_Total_Sem_Manejo")));
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(Convert.ToDouble(objRS.Field("Perc_Risco_Capital")));
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(Convert.ToInt32(objRS.Field("Quantidade_Manejo")));
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(Convert.ToDecimal(objRS.Field("Valor_Manejo")));
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(Convert.ToDouble(objRS.Field("Perc_Risco_Manejo")));
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(objClassifMedia.ID);
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(strAproveitamento);
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(objValorCriterioCMVO.PercentualMM21);
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(objValorCriterioCMVO.PercentualMM49);
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(objValorCriterioCMVO.PercentualMM200);
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(objValorCriterioCMVO.PercentualMM200MM21);
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(objValorCriterioCMVO.PercentualMM200MM49);
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(intNumTentativas);
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(intSomatorioCriterios) + ")";
+				strSQL = strSQL + "(" + FuncoesBd.CampoFormatar(strCodigoAtivo);
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ID);
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(Convert.ToDouble(objRS.Field("IFR2")));
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(Convert.ToDecimal(objRS.Field("ValorFechamento")));
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(strValorRealizacaoParcial);
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(strValorRealizacaoFinal);
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(Convert.ToDecimal(objRS.Field("stop_loss")));
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(Convert.ToDecimal(objRS.Field("perc_stop_loss")));
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(Convert.ToInt32(objRS.Field("Quantidade_Sem_Manejo")));
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(Convert.ToDecimal(objRS.Field("Valor_Total_Sem_Manejo")));
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(Convert.ToDouble(objRS.Field("Perc_Risco_Capital")));
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(Convert.ToInt32(objRS.Field("Quantidade_Manejo")));
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(Convert.ToDecimal(objRS.Field("Valor_Manejo")));
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(Convert.ToDouble(objRS.Field("Perc_Risco_Manejo")));
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objClassifMedia.ID);
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(strAproveitamento);
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objValorCriterioCMVO.PercentualMM21);
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objValorCriterioCMVO.PercentualMM49);
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objValorCriterioCMVO.PercentualMM200);
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objValorCriterioCMVO.PercentualMM200MM21);
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objValorCriterioCMVO.PercentualMM200MM49);
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(intNumTentativas);
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(intSomatorioCriterios) + ")";
 
 				objCommand.Execute(strSQL);
 
@@ -1362,7 +1305,7 @@ namespace prmCotacao
 
 			strSQL = strSQL + ", SomatorioCriterios " + Environment.NewLine;
 			strSQL = strSQL + " FROM Relat_IFR2_Sem_Filtro " + Environment.NewLine;
-			strSQL = strSQL + " WHERE ID_IFR_Sobrevendido = " + FuncoesBD.CampoFormatar(pobjIFRSobrevendido.ID) + Environment.NewLine;
+			strSQL = strSQL + " WHERE ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ID) + Environment.NewLine;
 			strSQL = strSQL + " ORDER BY Percentual_Stop_Loss DESC";
 
 			return strSQL;
@@ -1387,32 +1330,31 @@ namespace prmCotacao
 		/// <param name="pdecPercentualStopGain"></param>
 		/// <returns></returns>
 		/// <remarks></remarks>
-		private string SetupIFR2ComFiltroQueryGerar(System.DateTime pdtmDataAnterior, System.DateTime pdtmDataAtual, string pstrTabelaCotacao, string pstrTabelaMedia, string pstrTabelaIFR, bool pblnAlijamentoCalcular, bool pblnAcimaMME49, decimal pdecValorCapital, decimal pdecValorPerdaManejo, double pdblTitulosTotal = -1,
+		private string SetupIFR2ComFiltroQueryGerar(DateTime pdtmDataAnterior, DateTime pdtmDataAtual, string pstrTabelaCotacao, string pstrTabelaMedia, string pstrTabelaIFR, bool pblnAlijamentoCalcular, bool pblnAcimaMME49, decimal pdecValorCapital, decimal pdecValorPerdaManejo, double pdblTitulosTotal = -1,
 		Int32 pintNegociosTotal = -1, decimal pdecValorTotal = -1, decimal pdecPercentualStopGain = -1)
 		{
 		    string strQuery = " SELECT segundo_dia.Codigo, segundo_dia.ValorFechamento " + ", ROUND(segundo_dia.Valor, 2) AS IFR2" + Environment.NewLine + ", MMExp49 AS Valor_MME49 " + ", ROUND((ValorFechamento / MMExp49 - 1) * 100, 4) AS Perc_MME49 " + Environment.NewLine + ", ROUND(segundo_dia.Valor_Entrada, 2) As entrada " + ", ROUND(((segundo_dia.Valor_Entrada) / segundo_dia.ValorFechamento - 1) * 100, 4) As perc_entrada " + ", ROUND(segundo_dia.Valor_Stop_Loss, 2) As stop_loss " + ", ROUND(((segundo_dia.Valor_Stop_Loss) / (segundo_dia.Valor_Entrada) -1) * 100, 4) As perc_stop_loss ";
 
+            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
 
 			if (pdecPercentualStopGain != -1) {
-				strQuery = strQuery + ", ROUND((segundo_dia.Valor_Entrada) " + "* (1 + " + FuncoesBD.CampoDecimalFormatar(pdecPercentualStopGain) + " / 100), 2) AS STOP_GAIN ";
+				strQuery = strQuery + ", ROUND((segundo_dia.Valor_Entrada) " + "* (1 + " + FuncoesBd.CampoDecimalFormatar(pdecPercentualStopGain) + " / 100), 2) AS STOP_GAIN ";
 
 			}
 
-			string strAux = null;
-
-			//****início cálculo da quantidade e valor total que pode ser comprada com todo o capital disponível.
+		    //****início cálculo da quantidade e valor total que pode ser comprada com todo o capital disponível.
 
 			//cálculo da quantidade
 
 			//1)divide o total do capital pelo valor de entrada e por 100, pois os lotes são de 100 ações.
 			//com isso teremos o nº de lotes em decimais, ou seja pode haver lotes quebrados
-			strAux = "CSTR(" + FuncoesBD.CampoDecimalFormatar(pdecValorCapital) + " / segundo_dia.Valor_Entrada / 100)";
+			string strAux = "CSTR(" + FuncoesBd.CampoDecimalFormatar(pdecValorCapital) + " / segundo_dia.Valor_Entrada / 100)";
 
 			//2) transforma o número em uma string e retorna apenas os números à esquerda da vírgula.
 			//Com isso temos o número de lotes inteiros que podem ser comprados. Transformamos então
 			//esse número em inteiro novamente e multiplicamos por 100 obtendo assim o total de ações que podem ser compradas
 
-			strAux = "CINT(LEFT(" + strAux + ", " + " IIF(INSTR(" + strAux + "," + FuncoesBD.CampoStringFormatar(",") + ") > 0 " + ", INSTR(" + strAux + "," + FuncoesBD.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" + strAux + ")" + "))) * 100";
+			strAux = "CINT(LEFT(" + strAux + ", " + " IIF(INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") > 0 " + ", INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" + strAux + ")" + "))) * 100";
 
 			strQuery = strQuery + ", " + strAux + " AS Quantidade_Capital" + Environment.NewLine;
 
@@ -1422,7 +1364,7 @@ namespace prmCotacao
 
 			//obtem o percentual de risco em relação ao capital total se for aplicar utilizando todo o capital sem manejo de risco.
 			//Para isso multiplica a quantidade que pode ser comprada pela perda por ação (entrada - stop)
-			strQuery = strQuery + ", ROUND((" + strAux + " * (segundo_dia.Valor_Entrada - segundo_dia.Valor_Stop_Loss) " + "/ " + FuncoesBD.CampoDecimalFormatar(pdecValorCapital) + ") * 100, 4)  AS Perc_Risco_Capital " + Environment.NewLine;
+			strQuery = strQuery + ", ROUND((" + strAux + " * (segundo_dia.Valor_Entrada - segundo_dia.Valor_Stop_Loss) " + "/ " + FuncoesBd.CampoDecimalFormatar(pdecValorCapital) + ") * 100, 4)  AS Perc_Risco_Capital " + Environment.NewLine;
 
 			//****Fim dos cálculos com todo o capital.
 
@@ -1432,13 +1374,13 @@ namespace prmCotacao
 
 			//1)divide o total do capital que pode ser perdido pelo valor de perda por ação e por 100, 
 			//pois os lotes são de 100 ações. com isso teremos o nº de lotes em decimais, ou seja pode haver lotes quebrados
-			strAux = "CSTR(" + FuncoesBD.CampoDecimalFormatar(pdecValorPerdaManejo) + " / " + "(segundo_dia.Valor_Entrada - segundo_dia.Valor_Stop_Loss) / 100)";
+			strAux = "CSTR(" + FuncoesBd.CampoDecimalFormatar(pdecValorPerdaManejo) + " / " + "(segundo_dia.Valor_Entrada - segundo_dia.Valor_Stop_Loss) / 100)";
 
 			//2) transforma o número em uma string e retorna apenas os números à esquerda da vírgula.
 			//Com isso temos o número de lotes inteiros que podem ser comprados. Transformamos então
 			//esse número em inteiro novamente e multiplicamos por 100 obtendo assim o total de ações que podem ser compradas
 
-			strAux = "CINT(LEFT(" + strAux + ", " + " IIF(INSTR(" + strAux + "," + FuncoesBD.CampoStringFormatar(",") + ") > 0 " + ", INSTR(" + strAux + "," + FuncoesBD.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" + strAux + ")" + "))) * 100";
+			strAux = "CINT(LEFT(" + strAux + ", " + " IIF(INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") > 0 " + ", INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" + strAux + ")" + "))) * 100";
 
 			strQuery = strQuery + ", " + strAux + " AS Quantidade_Manejo" + Environment.NewLine;
 
@@ -1448,30 +1390,29 @@ namespace prmCotacao
 
 			//obtem o percentual de risco em relação ao capital total se for aplicar utilizando manejo de risco.
 			//Para isso multiplica a quantidade que pode ser comprada pela perda por ação (entrada - stop)
-			strQuery = strQuery + ", ROUND((" + strAux + " * (segundo_dia.Valor_Entrada -  segundo_dia.Valor_Stop_Loss) " + "/ " + FuncoesBD.CampoDecimalFormatar(pdecValorCapital) + ") * 100, 4)  AS Perc_Risco_Manejo " + Environment.NewLine;
+			strQuery = strQuery + ", ROUND((" + strAux + " * (segundo_dia.Valor_Entrada -  segundo_dia.Valor_Stop_Loss) " + "/ " + FuncoesBd.CampoDecimalFormatar(pdecValorCapital) + ") * 100, 4)  AS Perc_Risco_Manejo " + Environment.NewLine;
 
 			//****Fim dos cálculos com manejo de risco.
 
 
 			if (pblnAlijamentoCalcular) {
 				strQuery = strQuery + ", ROUND(segundo_dia.Valor_Entrada * 2 - segundo_dia.Valor_Stop_Loss, 2)  as STOP_GAIN ";
-
 			}
 
 			//percentual do valor de fechamento em relação à média de 21 períodos
 			strQuery = strQuery + ", ROUND((ValorFechamento / MMExp21 - 1) * 100, 4) AS Perc_MME21 ";
 
-			strQuery = strQuery + " FROM " + Environment.NewLine + "(" + Environment.NewLine + '\t' + " SELECT " + pstrTabelaCotacao + ".Codigo " + Environment.NewLine + '\t' + " FROM ((" + pstrTabelaCotacao + " INNER JOIN " + pstrTabelaMedia + Environment.NewLine + '\t' + " On " + pstrTabelaCotacao + ".Codigo = " + pstrTabelaMedia + ".Codigo " + Environment.NewLine + '\t' + " And " + pstrTabelaCotacao + ".Data = " + pstrTabelaMedia + ".Data) " + Environment.NewLine + '\t' + " INNER JOIN " + pstrTabelaIFR + Environment.NewLine + '\t' + " On " + pstrTabelaCotacao + ".Codigo = " + pstrTabelaIFR + ".Codigo " + Environment.NewLine + '\t' + " And " + pstrTabelaCotacao + ".Data = " + pstrTabelaIFR + ".Data) " + Environment.NewLine + '\t' + " WHERE " + pstrTabelaCotacao + ".Data = " + FuncoesBD.CampoDateFormatar(pdtmDataAnterior) + Environment.NewLine + '\t' + " And " + pstrTabelaMedia + ".Tipo = " + FuncoesBD.CampoStringFormatar("IFR2") + Environment.NewLine + '\t' + " And " + pstrTabelaMedia + ".NumPeriodos = 13 " + Environment.NewLine + '\t' + " And " + pstrTabelaIFR + ".NumPeriodos = 2 " + Environment.NewLine + '\t' + " And " + pstrTabelaIFR + ".Valor < " + pstrTabelaMedia + ".Valor " + Environment.NewLine + ") As primeiro_dia " + Environment.NewLine + " INNER JOIN " + Environment.NewLine + "(" + Environment.NewLine + '\t' + " SELECT " + pstrTabelaCotacao + ".Codigo, valorfechamento " + '\t' + ", MME21.Valor AS MMExp21, MME49.Valor AS MMExp49, " + pstrTabelaIFR + ".Valor" + Environment.NewLine;
+			strQuery = strQuery + " FROM " + Environment.NewLine + "(" + Environment.NewLine + '\t' + " SELECT " + pstrTabelaCotacao + ".Codigo " + Environment.NewLine + '\t' + " FROM ((" + pstrTabelaCotacao + " INNER JOIN " + pstrTabelaMedia + Environment.NewLine + '\t' + " On " + pstrTabelaCotacao + ".Codigo = " + pstrTabelaMedia + ".Codigo " + Environment.NewLine + '\t' + " And " + pstrTabelaCotacao + ".Data = " + pstrTabelaMedia + ".Data) " + Environment.NewLine + '\t' + " INNER JOIN " + pstrTabelaIFR + Environment.NewLine + '\t' + " On " + pstrTabelaCotacao + ".Codigo = " + pstrTabelaIFR + ".Codigo " + Environment.NewLine + '\t' + " And " + pstrTabelaCotacao + ".Data = " + pstrTabelaIFR + ".Data) " + Environment.NewLine + '\t' + " WHERE " + pstrTabelaCotacao + ".Data = " + FuncoesBd.CampoDateFormatar(pdtmDataAnterior) + Environment.NewLine + '\t' + " And " + pstrTabelaMedia + ".Tipo = " + FuncoesBd.CampoStringFormatar("IFR2") + Environment.NewLine + '\t' + " And " + pstrTabelaMedia + ".NumPeriodos = 13 " + Environment.NewLine + '\t' + " And " + pstrTabelaIFR + ".NumPeriodos = 2 " + Environment.NewLine + '\t' + " And " + pstrTabelaIFR + ".Valor < " + pstrTabelaMedia + ".Valor " + Environment.NewLine + ") As primeiro_dia " + Environment.NewLine + " INNER JOIN " + Environment.NewLine + "(" + Environment.NewLine + '\t' + " SELECT " + pstrTabelaCotacao + ".Codigo, valorfechamento " + '\t' + ", MME21.Valor AS MMExp21, MME49.Valor AS MMExp49, " + pstrTabelaIFR + ".Valor" + Environment.NewLine;
 
 			//Para calcular o valor de entrada aplica 0,25% sobre o valor máximo do dia em que o IFR cruza a média. 
 			//Se este valor for maior ou igual a 0, 01 soma este valor ao valor máximo. Caso contrário soma 0,01 (1 centavo)
 			//ao valor máximo.
-			strQuery = strQuery + ", ValorMinimo - IIF(ROUND(ValorMinimo * " + FuncoesBD.CampoDecimalFormatar(0.0025M) + ", 2) >= " + FuncoesBD.CampoDecimalFormatar(0.01M) + ", ROUND(ValorMinimo * " + FuncoesBD.CampoDecimalFormatar(0.0025M) + ", 2), " + FuncoesBD.CampoDecimalFormatar(0.01M) + ")" + " AS Valor_Stop_Loss " + Environment.NewLine;
+			strQuery = strQuery + ", ValorMinimo - IIF(ROUND(ValorMinimo * " + FuncoesBd.CampoDecimalFormatar(0.0025M) + ", 2) >= " + FuncoesBd.CampoDecimalFormatar(0.01M) + ", ROUND(ValorMinimo * " + FuncoesBd.CampoDecimalFormatar(0.0025M) + ", 2), " + FuncoesBd.CampoDecimalFormatar(0.01M) + ")" + " AS Valor_Stop_Loss " + Environment.NewLine;
 
 			//Para calcular o valor de entrada aplica 0,25% sobre o valor máximo do dia em que o IFR cruza a média. 
 			//Se este valor for maior ou igual a 0, 01 soma este valor ao valor máximo. Caso contrário soma 0,01 (1 centavo)
 			//ao valor máximo.
-			strQuery = strQuery + ", ValorMaximo + IIF(ROUND(ValorMaximo * " + FuncoesBD.CampoDecimalFormatar(0.0025M) + ", 2) >= " + FuncoesBD.CampoDecimalFormatar(0.01M) + ", ROUND(ValorMaximo * " + FuncoesBD.CampoDecimalFormatar(0.0025M) + ", 2), " + FuncoesBD.CampoDecimalFormatar(0.01M) + ")" + " AS Valor_Entrada " + Environment.NewLine;
+			strQuery = strQuery + ", ValorMaximo + IIF(ROUND(ValorMaximo * " + FuncoesBd.CampoDecimalFormatar(0.0025M) + ", 2) >= " + FuncoesBd.CampoDecimalFormatar(0.01M) + ", ROUND(ValorMaximo * " + FuncoesBd.CampoDecimalFormatar(0.0025M) + ", 2), " + FuncoesBd.CampoDecimalFormatar(0.01M) + ")" + " AS Valor_Entrada " + Environment.NewLine;
 
 			string strTabela = " ((" + pstrTabelaCotacao + " INNER JOIN " + pstrTabelaMedia + Environment.NewLine + '\t' + " On " + pstrTabelaCotacao + ".Codigo = " + pstrTabelaMedia + ".Codigo " + Environment.NewLine + '\t' + " And " + pstrTabelaCotacao + ".Data = " + pstrTabelaMedia + ".Data) " + Environment.NewLine + '\t' + " INNER JOIN " + pstrTabelaIFR + Environment.NewLine + '\t' + " On " + pstrTabelaCotacao + ".Codigo = " + pstrTabelaIFR + ".Codigo " + Environment.NewLine + '\t' + " And " + pstrTabelaCotacao + ".Data = " + pstrTabelaIFR + ".Data) " + Environment.NewLine;
 
@@ -1488,16 +1429,16 @@ namespace prmCotacao
 			//PORQUE O WHERE PELO TIPO = 'MME' AND NUMPERIODOS = 21 FAZ COM QUE OS REGISTROS
 			//QUE AINDA NÃO TENHAM A MÉDIA DE 21 NÃO SEJAM CONSIDERADOS.
 			//POR ISSO TEMOS QUE CRIAR UM SELECT INTERNO QUE FORMA A TABELA MME21
-			strTabela = "(" + strTabela + '\t' + " LEFT JOIN " + Environment.NewLine + '\t' + "(" + Environment.NewLine + '\t' + '\t' + "SELECT Codigo, Data, Valor " + Environment.NewLine + '\t' + '\t' + "FROM " + pstrTabelaMedia + Environment.NewLine + '\t' + '\t' + " WHERE Data = " + FuncoesBD.CampoDateFormatar(pdtmDataAtual) + Environment.NewLine + '\t' + '\t' + " AND Tipo = " + FuncoesBD.CampoStringFormatar("MME") + Environment.NewLine + '\t' + '\t' + " And NumPeriodos = 21 " + Environment.NewLine + '\t' + ") AS MME21 " + Environment.NewLine + '\t' + " On " + pstrTabelaCotacao + ".Codigo = MME21.Codigo " + Environment.NewLine + '\t' + " And " + pstrTabelaCotacao + ".Data = MME21.Data) " + Environment.NewLine;
+			strTabela = "(" + strTabela + '\t' + " LEFT JOIN " + Environment.NewLine + '\t' + "(" + Environment.NewLine + '\t' + '\t' + "SELECT Codigo, Data, Valor " + Environment.NewLine + '\t' + '\t' + "FROM " + pstrTabelaMedia + Environment.NewLine + '\t' + '\t' + " WHERE Data = " + FuncoesBd.CampoDateFormatar(pdtmDataAtual) + Environment.NewLine + '\t' + '\t' + " AND Tipo = " + FuncoesBd.CampoStringFormatar("MME") + Environment.NewLine + '\t' + '\t' + " And NumPeriodos = 21 " + Environment.NewLine + '\t' + ") AS MME21 " + Environment.NewLine + '\t' + " On " + pstrTabelaCotacao + ".Codigo = MME21.Codigo " + Environment.NewLine + '\t' + " And " + pstrTabelaCotacao + ".Data = MME21.Data) " + Environment.NewLine;
 
 			//GERA TABELA PARA BUSCAR A MÉDIA MÓVEL DE 49 PERÍODOS.
 			//NÃO PODE FAZER SIMPLESMENTE UM LEFT JOIN COM  A TABELA DE MÉDIAS
 			//PORQUE O WHERE PELO TIPO = 'MME' AND NUMPERIODOS = 49 FAZ COM QUE OS REGISTROS
 			//QUE AINDA NÃO TENHAM A MÉDIA DE 49 NÃO SEJAM CONSIDERADOS.
 			//POR ISSO TEMOS QUE CRIAR UM SELECT INTERNO QUE FORMA A TABELA MME49
-			strTabela = "(" + strTabela + '\t' + " LEFT JOIN " + Environment.NewLine + '\t' + "(" + Environment.NewLine + '\t' + '\t' + "SELECT Codigo, Data, Valor " + Environment.NewLine + '\t' + '\t' + "FROM " + pstrTabelaMedia + Environment.NewLine + '\t' + '\t' + " WHERE Data = " + FuncoesBD.CampoDateFormatar(pdtmDataAtual) + Environment.NewLine + '\t' + '\t' + " AND Tipo = " + FuncoesBD.CampoStringFormatar("MME") + Environment.NewLine + '\t' + '\t' + " And NumPeriodos = 49 " + Environment.NewLine + '\t' + ") AS MME49 " + Environment.NewLine + '\t' + " On " + pstrTabelaCotacao + ".Codigo = MME49.Codigo " + Environment.NewLine + '\t' + " And " + pstrTabelaCotacao + ".Data = MME49.Data) " + Environment.NewLine;
+			strTabela = "(" + strTabela + '\t' + " LEFT JOIN " + Environment.NewLine + '\t' + "(" + Environment.NewLine + '\t' + '\t' + "SELECT Codigo, Data, Valor " + Environment.NewLine + '\t' + '\t' + "FROM " + pstrTabelaMedia + Environment.NewLine + '\t' + '\t' + " WHERE Data = " + FuncoesBd.CampoDateFormatar(pdtmDataAtual) + Environment.NewLine + '\t' + '\t' + " AND Tipo = " + FuncoesBd.CampoStringFormatar("MME") + Environment.NewLine + '\t' + '\t' + " And NumPeriodos = 49 " + Environment.NewLine + '\t' + ") AS MME49 " + Environment.NewLine + '\t' + " On " + pstrTabelaCotacao + ".Codigo = MME49.Codigo " + Environment.NewLine + '\t' + " And " + pstrTabelaCotacao + ".Data = MME49.Data) " + Environment.NewLine;
 
-			strQuery = strQuery + '\t' + " FROM " + strTabela + '\t' + " WHERE " + pstrTabelaCotacao + ".Data = " + FuncoesBD.CampoDateFormatar(pdtmDataAtual) + '\t' + " And " + pstrTabelaMedia + ".Tipo = " + FuncoesBD.CampoStringFormatar("IFR2") + '\t' + " And " + pstrTabelaMedia + ".NumPeriodos = 13 " + '\t' + " And " + pstrTabelaIFR + ".NumPeriodos = 2 " + '\t' + " And " + pstrTabelaIFR + ".Valor > " + pstrTabelaMedia + ".Valor ";
+			strQuery = strQuery + '\t' + " FROM " + strTabela + '\t' + " WHERE " + pstrTabelaCotacao + ".Data = " + FuncoesBd.CampoDateFormatar(pdtmDataAtual) + '\t' + " And " + pstrTabelaMedia + ".Tipo = " + FuncoesBd.CampoStringFormatar("IFR2") + '\t' + " And " + pstrTabelaMedia + ".NumPeriodos = 13 " + '\t' + " And " + pstrTabelaIFR + ".NumPeriodos = 2 " + '\t' + " And " + pstrTabelaIFR + ".Valor > " + pstrTabelaMedia + ".Valor ";
 
 
 			if (pblnAcimaMME49) {
@@ -1506,7 +1447,7 @@ namespace prmCotacao
 			}
 
 			if (pdblTitulosTotal != -1) {
-				strQuery = strQuery + '\t' + " And MV.Tipo = " + FuncoesBD.CampoStringFormatar("VMA") + Environment.NewLine + '\t' + " And MV.NumPeriodos = 21 " + Environment.NewLine + '\t' + " And MV.Valor >= " + FuncoesBD.CampoFloatFormatar(pdblTitulosTotal) + Environment.NewLine;
+				strQuery = strQuery + '\t' + " And MV.Tipo = " + FuncoesBd.CampoStringFormatar("VMA") + Environment.NewLine + '\t' + " And MV.NumPeriodos = 21 " + Environment.NewLine + '\t' + " And MV.Valor >= " + FuncoesBd.CampoFloatFormatar(pdblTitulosTotal) + Environment.NewLine;
 
 			}
 
@@ -1563,11 +1504,11 @@ namespace prmCotacao
 		public string RelatListagemCalcular(System.DateTime pdtmData, cEnum.enumSetup pintSetup, string pstrPeriodo, bool pblnAlijamentoCalcular, decimal pdecCapitalTotal, decimal pdecPercentualManejo, decimal pdecPercentualRealizacaoParcial = -1, double pdblIFR2LimiteSuperior = -1, bool pblnAcimaMME49 = true, double pdblTitulosTotal = -1,
 		Int32 pintNegociosTotal = -1, decimal pdecValorTotal = -1, cIFRSobrevendido pobjIFRSobrevendido = null)
 		{
-			string functionReturnValue = null;
+			string functionReturnValue;
 
 			cCotacao objCotacao = new cCotacao(objConexao);
 
-			System.DateTime dtmDataAtual = default(System.DateTime);
+			System.DateTime dtmDataAtual;
 			System.DateTime dtmDataAnterior = default(System.DateTime);
 
 			string strTabelaCotacao = String.Empty;
@@ -1587,17 +1528,7 @@ namespace prmCotacao
 
 			if (pstrPeriodo == "DIARIO") {
 
-				if (objCotacao.CotacaoDataExistir(pdtmData, strTabelaCotacao)) {
-					//se a data recebida por parâmetro é a data de cotação, então utiliza esta data.
-					dtmDataAtual = pdtmData;
-
-
-				} else {
-					//se a data recebida por parâmetro não é uma data de cotação, 
-					//busca a primeira cotação com data anterior.
-					dtmDataAtual = objCotacao.CotacaoAnteriorDataConsultar(pdtmData, strTabelaCotacao);
-
-				}
+				dtmDataAtual = objCotacao.CotacaoDataExistir(pdtmData, strTabelaCotacao) ? pdtmData : objCotacao.CotacaoAnteriorDataConsultar(pdtmData, strTabelaCotacao);
 
 
 			} else {
@@ -1634,17 +1565,17 @@ namespace prmCotacao
 
 					//Dim strQuery As String
 
-					System.DateTime dtmCotacaoSemanalDataFinal = default(System.DateTime);
+
+				    FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
 
 					//primeiro busca a data final da cotação semanal
+					objRS.ExecuteQuery(" SELECT Max(datafinal) As datafinal" + " FROM cotacao_semanal " + " WHERE Data = " + FuncoesBd.CampoDateFormatar(dtmDataAtual));
 
-					objRS.ExecuteQuery(" SELECT Max(datafinal) As datafinal" + " FROM cotacao_semanal " + " WHERE Data = " + FuncoesBD.CampoDateFormatar(dtmDataAtual));
-
-					dtmCotacaoSemanalDataFinal = Convert.ToDateTime(objRS.Field("DataFinal"));
+					DateTime dtmCotacaoSemanalDataFinal = Convert.ToDateTime(objRS.Field("DataFinal"));
 
 					objRS.Fechar();
 
-					objRS.ExecuteQuery(" SELECT Max (contador) As contador " + " FROM " + "(" + " SELECT codigo, Count(1) As contador " + " FROM cotacao " + " WHERE Data >= " + FuncoesBD.CampoDateFormatar(dtmDataAtual) + " And data <= " + FuncoesBD.CampoDateFormatar(dtmCotacaoSemanalDataFinal) + " GROUP BY codigo " + ")");
+					objRS.ExecuteQuery(" SELECT Max (contador) As contador " + " FROM " + "(" + " SELECT codigo, Count(1) As contador " + " FROM cotacao " + " WHERE Data >= " + FuncoesBd.CampoDateFormatar(dtmDataAtual) + " And data <= " + FuncoesBd.CampoDateFormatar(dtmCotacaoSemanalDataFinal) + " GROUP BY codigo " + ")");
 
 
 					if (pdblTitulosTotal != -1) {
@@ -1743,28 +1674,33 @@ namespace prmCotacao
 			string strTabelaCotacao = String.Empty;
 			string strTabelaMedia = String.Empty;
 
+            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
+
 			//Busca o nome das tabelas
 		    string pstrTabelaIFRRet = string.Empty;
 		    cCalculadorTabelas.TabelasCalcular(pstrPeriodicidade, ref strTabelaCotacao, ref strTabelaMedia,ref pstrTabelaIFRRet);
 
-			string strQuery = null;
-
-			strQuery = "Select TOP 1 DIA2.DATA " + ", DIA2.VALORMINIMO - 0.03  As STOP_LOSS " + "FROM " + "(" + "SELECT SEQUENCIAL " + "FROM " + strTabelaCotacao + " C INNER JOIN " + strTabelaMedia + " M " + "On C.CODIGO = M.CODIGO " + "WHERE C.CODIGO = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " And C.DATA = M.DATA " + " And M.TIPO = " + FuncoesBD.CampoStringFormatar("MME") + " And M.NUMPERIODOS = " + pintMediaNumPeriodos.ToString() + " And C.VALORFECHAMENTO >= M.VALOR " + " And C.DATA >= " + FuncoesBD.CampoDateFormatar(pdtmDataInicial);
+		    string strQuery = "Select TOP 1 DIA2.DATA " + ", DIA2.VALORMINIMO - 0.03  As STOP_LOSS " + "FROM " + "(" +
+		                      "SELECT SEQUENCIAL " + "FROM " + strTabelaCotacao + " C INNER JOIN " + strTabelaMedia + " M " +
+		                      "On C.CODIGO = M.CODIGO " + "WHERE C.CODIGO = " + FuncoesBd.CampoStringFormatar(pstrCodigo) +
+		                      " And C.DATA = M.DATA " + " And M.TIPO = " + FuncoesBd.CampoStringFormatar("MME") +
+		                      " And M.NUMPERIODOS = " + pintMediaNumPeriodos.ToString() + " And C.VALORFECHAMENTO >= M.VALOR " +
+		                      " And C.DATA >= " + FuncoesBd.CampoDateFormatar(pdtmDataInicial);
 
 			//se a data de stop final é uma data válida coloca o filtro no where
 
-			if (pdtmDataFinal != frwInterface.cConst.DataInvalida) {
-				strQuery = strQuery + " And C.DATA <= " + FuncoesBD.CampoDateFormatar(pdtmDataFinal);
+			if (pdtmDataFinal != cConst.DataInvalida) {
+				strQuery = strQuery + " And C.DATA <= " + FuncoesBd.CampoDateFormatar(pdtmDataFinal);
 
 			}
 
-			strQuery = strQuery + " ) As DIA1 " + " INNER JOIN " + "(" + " SELECT SEQUENCIAL, C.DATA, VALORMINIMO " + " FROM " + strTabelaCotacao + " C INNER JOIN " + strTabelaMedia + " M " + " On C.CODIGO = M.CODIGO " + " And C.DATA = M.DATA " + " WHERE C.CODIGO = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " And M.TIPO = " + FuncoesBD.CampoStringFormatar("MME") + " And M.NUMPERIODOS = " + pintMediaNumPeriodos.ToString() + " And C.VALORFECHAMENTO < M.VALOR " + " And C.DATA >= " + FuncoesBD.CampoDateFormatar(pdtmDataInicial) + " And C.VALORMINIMO - 0.03 > " + FuncoesBD.CampoDecimalFormatar(pdecValorStopAnterior);
+			strQuery = strQuery + " ) As DIA1 " + " INNER JOIN " + "(" + " SELECT SEQUENCIAL, C.DATA, VALORMINIMO " + " FROM " + strTabelaCotacao + " C INNER JOIN " + strTabelaMedia + " M " + " On C.CODIGO = M.CODIGO " + " And C.DATA = M.DATA " + " WHERE C.CODIGO = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " And M.TIPO = " + FuncoesBd.CampoStringFormatar("MME") + " And M.NUMPERIODOS = " + pintMediaNumPeriodos.ToString() + " And C.VALORFECHAMENTO < M.VALOR " + " And C.DATA >= " + FuncoesBd.CampoDateFormatar(pdtmDataInicial) + " And C.VALORMINIMO - 0.03 > " + FuncoesBd.CampoDecimalFormatar(pdecValorStopAnterior);
 			//stop tem que estar sempre acima do valor do stop anterior
 
 			//se a data de stop final é uma data válida coloca o filtro no where
 
-			if (pdtmDataFinal != frwInterface.cConst.DataInvalida) {
-				strQuery = strQuery + " And C.DATA <= " + FuncoesBD.CampoDateFormatar(pdtmDataFinal);
+			if (pdtmDataFinal != cConst.DataInvalida) {
+				strQuery = strQuery + " And C.DATA <= " + FuncoesBd.CampoDateFormatar(pdtmDataFinal);
 
 			}
 
@@ -1799,9 +1735,8 @@ namespace prmCotacao
 			cRS objRS = new cRS(objConexao);
 
 			cRSList objRSSplit = null;
-			bool blnSplitExistir = false;
 
-			string strQuery = null;
+		    string strQuery;
 
 			//inicializa o fator de conversão com 1.
 			double dblSplitFatorAcumulado = 1;
@@ -1810,12 +1745,11 @@ namespace prmCotacao
 			bool blnCruzamentoEncontrado = false;
 
 			System.DateTime dtmDataInicial = pdtmDataInicial;
-			System.DateTime dtmDataFinal = default(System.DateTime);
 
-			cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(this.objConexao);
+		    cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(this.objConexao);
 
 			//consulta os splits 
-			blnSplitExistir = objCarregadorSplit.SplitConsultar(pstrCodigo, pdtmDataInicial, "A",ref objRSSplit, pdtmDataFinal);
+			bool blnSplitExistir = objCarregadorSplit.SplitConsultar(pstrCodigo, pdtmDataInicial, "A",ref objRSSplit, pdtmDataFinal);
 
 
 			if (blnSplitExistir) {
@@ -1823,7 +1757,8 @@ namespace prmCotacao
 				//final recebida por parâmetro ou encontrar um cruzamento.
 				//Se um cruzamento for encontrado, os próximos splits não precisam ser procurados.
 
-				while (!objRSSplit.EOF && !blnCruzamentoEncontrado) {
+			    DateTime dtmDataFinal;
+			    while (!objRSSplit.EOF && !blnCruzamentoEncontrado) {
 					//busca a data um dia anteriro à data do split
 					dtmDataFinal = Convert.ToDateTime(objRSSplit.Field("Data")).AddDays(-1);
 
@@ -1909,15 +1844,15 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		private decimal TMP_CONTA_Saldo_Anterior_Consultar(long plngCod_Relatorio, System.DateTime pdtmData)
 		{
-			decimal functionReturnValue = default(decimal);
+		    cRS objRS = new cRS(objConexao);
 
-			cRS objRS = new cRS(objConexao);
+            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
 
 			//PARA CONSULTA A DATA IMEDIATAMENTE ANTERIOR TEM QUE ORDENAR AS DATAS EM ORDEM DECRESCENTE (DESC).
 			//ORDENA TAMBÉM POR SEQUENCIA DESC PARA O CASO DE HAVER MAIS DE UM REGISTRO NA MESMA DATA.
-			objRS.ExecuteQuery(" SELECT TOP 1 Saldo_Atual " + " FROM tmp_conta " + " WHERE COD_RELATORIO = " + plngCod_Relatorio.ToString() + " AND Data < " + FuncoesBD.CampoDateFormatar(pdtmData) + " ORDER BY Data DESC, Sequencia DESC");
+			objRS.ExecuteQuery(" SELECT TOP 1 Saldo_Atual " + " FROM tmp_conta " + " WHERE COD_RELATORIO = " + plngCod_Relatorio.ToString() + " AND Data < " + FuncoesBd.CampoDateFormatar(pdtmData) + " ORDER BY Data DESC, Sequencia DESC");
 
-			functionReturnValue = Convert.ToDecimal(objRS.Field("Saldo_Atual", 0));
+			decimal functionReturnValue = Convert.ToDecimal(objRS.Field("Saldo_Atual", 0));
 
 			objRS.Fechar();
 			return functionReturnValue;
@@ -1933,30 +1868,31 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		private decimal TMP_CONTA_Saldo_Atual_Consultar(long plngCod_Relatorio, System.DateTime pdtmData)
 		{
-			decimal functionReturnValue = default(decimal);
+		    cRS objRS = new cRS(objConexao);
 
-			cRS objRS = new cRS(objConexao);
+            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
 
 			//PARA CONSULTA A DATA IMEDIATAMENTE ANTERIOR TEM QUE ORDENAR AS DATAS EM ORDEM DECRESCENTE (DESC)
-			objRS.ExecuteQuery(" SELECT TOP 1 Data, Saldo_Atual " + " FROM tmp_conta " + " WHERE COD_RELATORIO = " + plngCod_Relatorio.ToString() + " AND Data <= " + FuncoesBD.CampoDateFormatar(pdtmData) + " ORDER BY Data DESC, Sequencia DESC");
+			objRS.ExecuteQuery(" SELECT TOP 1 Data, Saldo_Atual " + " FROM tmp_conta " + " WHERE COD_RELATORIO = " + plngCod_Relatorio + " AND Data <= " + FuncoesBd.CampoDateFormatar(pdtmData) + " ORDER BY Data DESC, Sequencia DESC");
 
-			functionReturnValue = Convert.ToDecimal(objRS.Field("Saldo_Atual", 0));
+			decimal functionReturnValue = Convert.ToDecimal(objRS.Field("Saldo_Atual", 0));
 
 			objRS.Fechar();
 			return functionReturnValue;
 
 		}
 
-		private bool TMP_CONTA_Saldo_Recalcular(long plngCod_Relatorio, System.DateTime pdtmData)
+		private bool TMP_CONTA_Saldo_Recalcular(long plngCod_Relatorio, DateTime pdtmData)
 		{
 
 			cRS objRS = new cRS(objConexao);
 
 			decimal decSaldoAnterior = 0;
-		    long lngSequencia = 0;
+
+		    FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
 
 			//verifica se existem movimentações com data maior que a data recebida por parâmetro
-			objRS.ExecuteQuery("SELECT Data, Sequencia, Valor_Movimentado " + " FROM tmp_conta " + " WHERE cod_relatorio = " + plngCod_Relatorio.ToString() + " AND Data > " + FuncoesBD.CampoDateFormatar(pdtmData) + " ORDER BY Data, Sequencia");
+			objRS.ExecuteQuery("SELECT Data, Sequencia, Valor_Movimentado " + " FROM tmp_conta " + " WHERE cod_relatorio = " + plngCod_Relatorio.ToString() + " AND Data > " + FuncoesBd.CampoDateFormatar(pdtmData) + " ORDER BY Data, Sequencia");
 
 			cCommand objCommand = new cCommand(objConexao);
 
@@ -1968,15 +1904,14 @@ namespace prmCotacao
 
 			}
 
-
 			while (!objRS.EOF) {
-				lngSequencia = Convert.ToInt64(objRS.Field("Sequencia"));
+				long lngSequencia = Convert.ToInt64(objRS.Field("Sequencia"));
 
 				decimal decValorMovimentado = Convert.ToDecimal(objRS.Field("Valor_Movimentado"));
 
 				//atualiza o saldo, na data, somando o valor movimentado ao saldo anterior.
 
-				objCommand.Execute("UPDATE TMP_CONTA SET " + "Saldo_Anterior = " + FuncoesBD.CampoDecimalFormatar(decSaldoAnterior) + ", Saldo_Atual = " + FuncoesBD.CampoDecimalFormatar(decSaldoAnterior + decValorMovimentado) + " WHERE cod_relatorio = " + plngCod_Relatorio.ToString() + " AND Data = " + FuncoesBD.CampoDateFormatar(Convert.ToDateTime(objRS.Field("Data"))) + " AND Sequencia = " + lngSequencia.ToString());
+				objCommand.Execute("UPDATE TMP_CONTA SET " + "Saldo_Anterior = " + FuncoesBd.CampoDecimalFormatar(decSaldoAnterior) + ", Saldo_Atual = " + FuncoesBd.CampoDecimalFormatar(decSaldoAnterior + decValorMovimentado) + " WHERE cod_relatorio = " + plngCod_Relatorio.ToString() + " AND Data = " + FuncoesBd.CampoDateFormatar(Convert.ToDateTime(objRS.Field("Data"))) + " AND Sequencia = " + lngSequencia.ToString());
 
 				//atualiza o saldo anterior na variável para a próxima iteração.
 				//com isso não precisaremos consultar o saldo anterior no banco de dados novamente.
@@ -2006,11 +1941,11 @@ namespace prmCotacao
 
 			cCommand objCommand = new cCommand(objConexao);
 
-			decimal decSaldoAnterior = default(decimal);
+		    decimal decSaldoAnterior = TMP_CONTA_Saldo_Atual_Consultar(plngCod_Relatorio, pdtmData);
 
-			decSaldoAnterior = TMP_CONTA_Saldo_Atual_Consultar(plngCod_Relatorio, pdtmData);
+            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
 
-			objCommand.Execute(" INSERT INTO TMP_CONTA " + "(cod_relatorio, Data, Saldo_Anterior, Valor_Movimentado, Saldo_Atual) " + " VALUES " + "(" + plngCod_Relatorio.ToString() + ", " + FuncoesBD.CampoDateFormatar(pdtmData) + ", " + FuncoesBD.CampoDecimalFormatar(decSaldoAnterior) + ", " + FuncoesBD.CampoDecimalFormatar(pdecValorMovimentado) + ", " + FuncoesBD.CampoDecimalFormatar(decSaldoAnterior + pdecValorMovimentado) + ")");
+			objCommand.Execute(" INSERT INTO TMP_CONTA " + "(cod_relatorio, Data, Saldo_Anterior, Valor_Movimentado, Saldo_Atual) " + " VALUES " + "(" + plngCod_Relatorio.ToString() + ", " + FuncoesBd.CampoDateFormatar(pdtmData) + ", " + FuncoesBd.CampoDecimalFormatar(decSaldoAnterior) + ", " + FuncoesBd.CampoDecimalFormatar(pdecValorMovimentado) + ", " + FuncoesBd.CampoDecimalFormatar(decSaldoAnterior + pdecValorMovimentado) + ")");
 
 			//chama a função que recalcula o saldo nas movimentações com data posterior à data em que foi inserida a movimentação.
 			//Se não existirem movimentações em datas posteriores nada será executado.
@@ -2030,21 +1965,21 @@ namespace prmCotacao
 		/// Esta data será passada geralmente quando houver tratamento de splits.</param>
 		/// <returns>A query que será utilizada para fazer a busca no banco de dados</returns>
 		/// <remarks></remarks>
-		private string StopAcionamentoQueryGerar(string pstrCodigo, decimal pdecValorStop, System.DateTime pdtmDataInicial, System.DateTime pdtmDataFinal)
+		private string StopAcionamentoQueryGerar(string pstrCodigo, decimal pdecValorStop, DateTime pdtmDataInicial, DateTime pdtmDataFinal)
 		{
 
-			string strQuery = null;
+            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
 
-			//para verificar em qual data ocorrerá utiliza o gráfico diário, porque pode ocorrer em qualquer dia da semana.
+		    //para verificar em qual data ocorrerá utiliza o gráfico diário, porque pode ocorrer em qualquer dia da semana.
 			//busca a menor data em que atingir valores menores ou iguais ao valor de stop informado. 
 			//Utiliza valores menores que o stop informado porque pode ocorrer um gap e o mercado já abrir abaixo do stop.
 			//Se ocorrer este gap, será considerado que a venda será no valor de ABERTURA desta data, pois no momento que abrir abaixo
 			//do stop será considerado que o stop será disparado a valor de mercado.
-			strQuery = " SELECT MIN(Data) as Data " + " FROM Cotacao " + " WHERE Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " AND Data >= " + FuncoesBD.CampoDateFormatar(pdtmDataInicial) + " AND ValorMinimo <= " + FuncoesBD.CampoDecimalFormatar(pdecValorStop);
+			string strQuery = " SELECT MIN(Data) as Data " + " FROM Cotacao " + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " AND Data >= " + FuncoesBd.CampoDateFormatar(pdtmDataInicial) + " AND ValorMinimo <= " + FuncoesBd.CampoDecimalFormatar(pdecValorStop);
 
 
 			if (pdtmDataFinal != frwInterface.cConst.DataInvalida) {
-				strQuery = strQuery + " AND Data <= " + FuncoesBD.CampoDateFormatar(pdtmDataFinal);
+				strQuery = strQuery + " AND Data <= " + FuncoesBd.CampoDateFormatar(pdtmDataFinal);
 
 			}
 
@@ -2065,34 +2000,30 @@ namespace prmCotacao
 			System.DateTime functionReturnValue = default(System.DateTime);
 
 			cRSList objRSSplit = null;
-			bool blnSplitExistir = false;
 
-			cRS objRS = new cRS(objConexao);
+		    cRS objRS = new cRS(objConexao);
 
-			string strQuery = null;
+			string strQuery;
 
 			//indica se encontrou um acionamento para o split.
 			bool blnAcionamentoEncontrado = false;
 
-			System.DateTime dtmDataInicial = pdtmDataInicial;
-			System.DateTime dtmDataFinal = default(System.DateTime);
-
-			double dblSplitFatorAcumulado = 1;
+		    double dblSplitFatorAcumulado = 1;
 
 			cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(this.objConexao);
 
 			//consulta os splits 
-			blnSplitExistir = objCarregadorSplit.SplitConsultar(pstrCodigo, pdtmDataInicial, "A", ref objRSSplit, cConst.DataInvalida);
+			bool blnSplitExistir = objCarregadorSplit.SplitConsultar(pstrCodigo, pdtmDataInicial, "A", ref objRSSplit, cConst.DataInvalida);
 
 
 			if (blnSplitExistir) {
-				dtmDataInicial = pdtmDataInicial;
+				DateTime dtmDataInicial = pdtmDataInicial;
 
 
 				while (!objRSSplit.EOF && !blnAcionamentoEncontrado) {
 					//a data final é sempre um dia antes da data do split
 
-					dtmDataFinal = Convert.ToDateTime(objRSSplit.Field("Data")).AddDays(-1);
+					DateTime dtmDataFinal = Convert.ToDateTime(objRSSplit.Field("Data")).AddDays(-1);
 
 					//estamos sempre buscando as datas anteriores a data do registro corrente do split
 
@@ -2178,11 +2109,12 @@ namespace prmCotacao
 		/// <param name="pdtmDataFinal">Data final de busca da realização parcial na tabela de cotações</param>
 		/// <returns>String contendo a query que deve ser executada</returns>
 		/// <remarks></remarks>
-		private string RealizacaoParcialQueryGerar(string pstrCodigo, cEnum.enumRealizacaoParcialTipo pintRealizacaoParcialTipo, string pstrPeriodicidade, bool pblnRealizacaoParcialPermitirDayTrade, System.DateTime pdtmDataInicial, decimal pdecValorRealizacaoParcial, string pstrTabelaCotacao, System.DateTime pdtmDataFinal)
+		private string RealizacaoParcialQueryGerar(string pstrCodigo, cEnum.enumRealizacaoParcialTipo pintRealizacaoParcialTipo, string pstrPeriodicidade, bool pblnRealizacaoParcialPermitirDayTrade, DateTime pdtmDataInicial, decimal pdecValorRealizacaoParcial, string pstrTabelaCotacao, System.DateTime pdtmDataFinal)
 		{
 
-			string strQuery = null;
+			string strQuery;
 
+            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
 
 			if (pintRealizacaoParcialTipo == cEnum.enumRealizacaoParcialTipo.AlijamentoRisco || pintRealizacaoParcialTipo == cEnum.enumRealizacaoParcialTipo.PercentualFixo) {
 				//*********MONTA QUERY PARA A REALIZAÇÃO PARCIAL COM ALIJAMENTO DE RISCO OU COM PERCENTUAL FIXO*******
@@ -2191,29 +2123,29 @@ namespace prmCotacao
 				//pois a realização pode acontecer em qualquer dia da semana.
 
 				//se tem realização parcial, busca a data da realização parcial de acordo com o tipo de realização
-				strQuery = "SELECT MIN(Data) AS Data " + " FROM Cotacao " + " WHERE Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo);
+				strQuery = "SELECT MIN(Data) AS Data " + " FROM Cotacao " + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo);
 
 
 				if (pblnRealizacaoParcialPermitirDayTrade) {
 					//SE PERMITE DAY TRADE, A DATA DE REALIZAÇÃO PODE SER A MESMA DATA DE ENTRADA,
 					//OU ENTÃO UMA DATA POSTERIOR
-					strQuery = strQuery + " AND Data >= " + FuncoesBD.CampoDateFormatar(pdtmDataInicial);
+					strQuery = strQuery + " AND Data >= " + FuncoesBd.CampoDateFormatar(pdtmDataInicial);
 
 
 				} else {
 					//SE NÃO PERMITE DAY TRADE NA REALIZAÇÃO PARCIAL, ENTÃO A DATA TEM QUE SER 
 					//OBRIGATORIAMENTE UMA DATA POSTERIOR À DATA DE ENTRADA
-					strQuery = strQuery + " AND Data > " + FuncoesBD.CampoDateFormatar(pdtmDataInicial);
+					strQuery = strQuery + " AND Data > " + FuncoesBd.CampoDateFormatar(pdtmDataInicial);
 
 				}
 
 
 				if (pdtmDataFinal != frwInterface.cConst.DataInvalida) {
-					strQuery = strQuery + " AND Data <= " + FuncoesBD.CampoDateFormatar(pdtmDataFinal);
+					strQuery = strQuery + " AND Data <= " + FuncoesBd.CampoDateFormatar(pdtmDataFinal);
 
 				}
 
-				strQuery = strQuery + " AND ValorMaximo >= " + FuncoesBD.CampoDecimalFormatar(pdecValorRealizacaoParcial);
+				strQuery = strQuery + " AND ValorMaximo >= " + FuncoesBd.CampoDecimalFormatar(pdecValorRealizacaoParcial);
 
 
 			} else if (pintRealizacaoParcialTipo == cEnum.enumRealizacaoParcialTipo.PrimeiroLucro) {
@@ -2232,13 +2164,13 @@ namespace prmCotacao
 
 				}
 
-				strQuery = strQuery + " FROM " + pstrTabelaCotacao + " WHERE Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo);
+				strQuery = strQuery + " FROM " + pstrTabelaCotacao + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo);
 
 
 				if (pblnRealizacaoParcialPermitirDayTrade) {
 					//SE PERMITE DAY TRADE, A DATA DE REALIZAÇÃO PODE SER A MESMA DATA DE ENTRADA,
 					//OU ENTÃO UMA DATA POSTERIOR
-					strQuery = strQuery + " AND Data >= " + FuncoesBD.CampoDateFormatar(pdtmDataInicial);
+					strQuery = strQuery + " AND Data >= " + FuncoesBd.CampoDateFormatar(pdtmDataInicial);
 
 
 				} else {
@@ -2247,7 +2179,7 @@ namespace prmCotacao
 
 					//PARA OS CASOS DE PERIODICIDADE "SEMANAL", CONSIDERA A DATA FINAL, POIS O FECHAMENTO
 					//SEMPRE ACONTECE NA DATA FINAL
-					strQuery = strQuery + " AND " + (pstrPeriodicidade == "DIARIO" ? "Data" : "DataFinal") + " > " + FuncoesBD.CampoDateFormatar(pdtmDataInicial);
+					strQuery = strQuery + " AND " + (pstrPeriodicidade == "DIARIO" ? "Data" : "DataFinal") + " > " + FuncoesBd.CampoDateFormatar(pdtmDataInicial);
 
 
 					if (pdtmDataFinal != frwInterface.cConst.DataInvalida) {
@@ -2255,14 +2187,14 @@ namespace prmCotacao
 						//pois se ocorrerem depois não adianta, pois a operação será estopada antes.
 						//essa restrição de datas também vai melhorar o tempo de resposta da query,
 						//pois o número de registros a serem verificados será menor
-						strQuery = strQuery + " AND " + (pstrPeriodicidade == "DIARIO" ? "Data" : "DataFinal") + " < " + FuncoesBD.CampoDateFormatar(pdtmDataFinal);
+						strQuery = strQuery + " AND " + (pstrPeriodicidade == "DIARIO" ? "Data" : "DataFinal") + " < " + FuncoesBd.CampoDateFormatar(pdtmDataFinal);
 
 					}
 
 					//para a realização no primeiro fechamento com lucro, tem que buscar o fechamento
 					//em que o percentual entre o valor de fechamento e o valor de entrada na operação
 					//for maior ou igual ao percentual configurado
-					strQuery = strQuery + " AND ValorFechamento >= " + FuncoesBD.CampoDecimalFormatar(pdecValorRealizacaoParcial);
+					strQuery = strQuery + " AND ValorFechamento >= " + FuncoesBd.CampoDecimalFormatar(pdecValorRealizacaoParcial);
 
 				}
 
@@ -2307,9 +2239,7 @@ namespace prmCotacao
 
 			cRS objRS = new cRS(objConexao);
 
-			string strQuery = null;
-
-			cCotacao objCotacao = new cCotacao(objConexao);
+		    cCotacao objCotacao = new cCotacao(objConexao);
 			cCalculadorData objCalculadorData = new cCalculadorData(this.objConexao);
 
 			//utilizado na busca dos splits durante o período de duração da operação
@@ -2469,7 +2399,8 @@ namespace prmCotacao
 
 				//While Not blnPeriodoTotalPercorrido And (Not blnStopCalculado Or Not blnRealizacaoParcialCalculada)
 
-				while (!blnPeriodoTotalPercorrido && (!blnStopCalculado)) {
+			    string strQuery;
+			    while (!blnPeriodoTotalPercorrido && (!blnStopCalculado)) {
 				    DateTime dtmPeriodoDataFinal;
 				    if (objRSSplit.EOF) {
 
@@ -2862,19 +2793,21 @@ namespace prmCotacao
 
 				}
 
-				strQuery = strQuery + ") VALUES " + "(" + plngCodigoRelatorio.ToString() + ", " + lngOrdem.ToString() + ", " + FuncoesBD.CampoDateFormatar(pdtmDataEntrada) + ", " + intQuantidadeEntrada.ToString() + ", " + FuncoesBD.CampoDecimalFormatar(pdecValorEntrada) + ", " + FuncoesBD.CampoDecimalFormatar(pdecValorStopInicial) + ", " + FuncoesBD.CampoDecimalFormatar((pdecValorStopInicial / pdecValorEntrada - 1) * 100) + ", " + intNumAcoesEMCARTEIRA.ToString();
+                FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
+
+				strQuery = strQuery + ") VALUES " + "(" + plngCodigoRelatorio + ", " + lngOrdem + ", " + FuncoesBd.CampoDateFormatar(pdtmDataEntrada) + ", " + intQuantidadeEntrada + ", " + FuncoesBd.CampoDecimalFormatar(pdecValorEntrada) + ", " + FuncoesBd.CampoDecimalFormatar(pdecValorStopInicial) + ", " + FuncoesBd.CampoDecimalFormatar((pdecValorStopInicial / pdecValorEntrada - 1) * 100) + ", " + intNumAcoesEMCARTEIRA;
 
 
 				if (dtmDataRealizacaoParcial != cConst.DataInvalida) {
 					//SE TEM REALIZAÇÃO PARCIAL, ADICIONA OS CAMPOS NA QUERY
-					strQuery = strQuery + ", " + FuncoesBD.CampoDateFormatar(dtmDataRealizacaoParcial) + ", " + intQuantidadeRealizacaoParcial.ToString() + ", " + FuncoesBD.CampoDecimalFormatar(decValorRealizacaoParcial) + ", " + FuncoesBD.CampoDecimalFormatar(decPercentualRealizacaoParcial);
+					strQuery = strQuery + ", " + FuncoesBd.CampoDateFormatar(dtmDataRealizacaoParcial) + ", " + intQuantidadeRealizacaoParcial + ", " + FuncoesBd.CampoDecimalFormatar(decValorRealizacaoParcial) + ", " + FuncoesBd.CampoDecimalFormatar(decPercentualRealizacaoParcial);
 
 				}
 
 
 				if (dtmDataStopReal != cConst.DataInvalida) {
 					//SE ENCONTROU UMA DATA DE SAÍDA DA OPERAÇÃO ENTÃO INCLUI OS RESPECTIVOS CAMPOS NO INSERT
-					strQuery = strQuery + ", " + FuncoesBD.CampoDateFormatar(dtmDataStopReal) + ", " + FuncoesBD.CampoDecimalFormatar(pdecValorStopInicial) + ", " + FuncoesBD.CampoDecimalFormatar(decPercentualSaida) + ", " + FuncoesBD.CampoDecimalFormatar(decValorFinalOperacao) + ", " + FuncoesBD.CampoDecimalFormatar(decPercentualFinalOperacao);
+					strQuery = strQuery + ", " + FuncoesBd.CampoDateFormatar(dtmDataStopReal) + ", " + FuncoesBd.CampoDecimalFormatar(pdecValorStopInicial) + ", " + FuncoesBd.CampoDecimalFormatar(decPercentualSaida) + ", " + FuncoesBd.CampoDecimalFormatar(decValorFinalOperacao) + ", " + FuncoesBd.CampoDecimalFormatar(decPercentualFinalOperacao);
 
 				}
 
@@ -2945,16 +2878,14 @@ namespace prmCotacao
 			//utilizada como acumulador para calcualar o saldo ao final das operações.
 			decimal decSaldoFinal = 0;
 
-			string strFiltroMME49 = null;
 
-
-			objCommand.BeginTrans();
+		    objCommand.BeginTrans();
 
 			//Calcula a data inicial da operação
 
 			if (pdtmDataInicial == frwInterface.cConst.DataInvalida) {
 				//se não há uma data inicial busca a data da primeira cotação
-				objRSOperacao.ExecuteQuery("SELECT Data " + " FROM Cotacao " + " WHERE Codigo = " + FuncoesBD.CampoStringFormatar(pstrCodigo) + " AND Sequencial = 1");
+				objRSOperacao.ExecuteQuery("SELECT Data " + " FROM Cotacao " + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " AND Sequencial = 1");
 
 				dtmOperacaoDataInicial = Convert.ToDateTime(objRSOperacao.Field("Data"));
 
@@ -2973,7 +2904,8 @@ namespace prmCotacao
 			//para isso percorre o array dos setups escolhidos
 
 			for (intI = 0; intI <= parrSetup.Length - 1; intI++) {
-				switch (parrSetup[intI].strCodigoSetup) {
+			    string strFiltroMME49;
+			    switch (parrSetup[intI].strCodigoSetup) {
 
 					case "MME9.1":
 
@@ -2992,11 +2924,7 @@ namespace prmCotacao
 						break;
 					case "IFR2SOBREVEND":
 
-						if (parrSetup[intI].blnMME49Filtrar) {
-							strFiltroMME49 = "ACIMA";
-						} else {
-							strFiltroMME49 = "TODOS";
-						}
+						strFiltroMME49 = parrSetup[intI].blnMME49Filtrar ? "ACIMA" : "TODOS";
 
 						strQueryAux = cGeradorQuery.BackTestingIFRSemFiltroEntradaQueryGerar(pstrCodigo, pstrPeriodicidade, strFiltroMME49, parrSetup[intI].dblIFR2SobrevendidoValorMaximo, intI + 1, pintMediaTipo);
 
@@ -3009,7 +2937,7 @@ namespace prmCotacao
 							strFiltroMME49 = "TODOS";
 						}
 
-						strQueryAux = cGeradorQuery.BackTestingIFRComFiltroEntradaQueryGerar(pstrCodigo, pstrPeriodicidade, strFiltroMME49, intI + 1, pintMediaTipo, pdtmDataInicial);
+						strQueryAux = cGeradorQuery.BackTestingIFRComFiltroEntradaQueryGerar(objConexao.ObterFormatadorDeCampo(), pstrCodigo, pstrPeriodicidade, strFiltroMME49, intI + 1, pintMediaTipo, pdtmDataInicial);
 
 						break;
 					default:
@@ -3118,7 +3046,7 @@ namespace prmCotacao
 			objRSOperacao.Fechar();
 
 			//insere o registro principal da operação na tabela RELATORIOS_SPOOL
-			objCommand.Execute("INSERT INTO RELATORIOS_SPOOL " + "(COD_RELATORIO, DESCRICAO, CODIGO_SETUP, CODIGO, PERIODO, SALDO_INICIAL " + ", SALDO_FINAL, PERCENTUAL_ACUMULADO, DATA)" + " VALUES " + "(" + plngCodRelatorioRet.ToString() + ", " + FuncoesBD.CampoStringFormatar(pstrRelatoriosSpoolDescricao) + ", " + FuncoesBD.CampoStringFormatar(strCodigoSetup) + ", " + FuncoesBD.CampoStringFormatar(pstrCodigo) + ", " + FuncoesBD.CampoStringFormatar(pstrPeriodicidade) + ", " + FuncoesBD.CampoDecimalFormatar(pdecValorCapitalInicial) + ", " + FuncoesBD.CampoDecimalFormatar(decSaldoFinal) + ", " + FuncoesBD.CampoDecimalFormatar((decSaldoFinal / pdecValorCapitalInicial - 1) * 100) + ", NOW)");
+			objCommand.Execute("INSERT INTO RELATORIOS_SPOOL " + "(COD_RELATORIO, DESCRICAO, CODIGO_SETUP, CODIGO, PERIODO, SALDO_INICIAL " + ", SALDO_FINAL, PERCENTUAL_ACUMULADO, DATA)" + " VALUES " + "(" + plngCodRelatorioRet.ToString() + ", " + FuncoesBd.CampoStringFormatar(pstrRelatoriosSpoolDescricao) + ", " + FuncoesBd.CampoStringFormatar(strCodigoSetup) + ", " + FuncoesBd.CampoStringFormatar(pstrCodigo) + ", " + FuncoesBd.CampoStringFormatar(pstrPeriodicidade) + ", " + FuncoesBd.CampoDecimalFormatar(pdecValorCapitalInicial) + ", " + FuncoesBd.CampoDecimalFormatar(decSaldoFinal) + ", " + FuncoesBd.CampoDecimalFormatar((decSaldoFinal / pdecValorCapitalInicial - 1) * 100) + ", NOW)");
 
 			objCommand.CommitTrans();
 
@@ -3182,7 +3110,7 @@ namespace prmCotacao
 			string strFiltro = null;
 
 			//Calcula a média de 21 dias do volume de negócios e compara com o valor atual
-			strFiltro = "(" + FuncoesBD.CampoFormatar(pintValor) + " < " + Environment.NewLine;
+			strFiltro = "(" + FuncoesBd.CampoFormatar(pintValor) + " < " + Environment.NewLine;
 			strFiltro = strFiltro + "(" + Environment.NewLine;
 			strFiltro = strFiltro + '\t' + " SELECT AVG(Negocios_Total) " + Environment.NewLine;
 			strFiltro = strFiltro + '\t' + " FROM " + pstrTabelaCotacaoFiltro + " CN " + Environment.NewLine;
@@ -3207,7 +3135,7 @@ namespace prmCotacao
 			string strFiltro = null;
 
 			//Calcula a média de 21 dias do volume financeiro e compara com o valor atual
-			strFiltro = "(" + FuncoesBD.CampoFormatar(pdecValor) + " < " + Environment.NewLine;
+			strFiltro = "(" + FuncoesBd.CampoFormatar(pdecValor) + " < " + Environment.NewLine;
 			strFiltro = strFiltro + "(" + Environment.NewLine;
 			strFiltro = strFiltro + '\t' + " SELECT AVG(Valor_Total) " + Environment.NewLine;
 			strFiltro = strFiltro + '\t' + " FROM " + pstrTabelaCotacaoFiltro + " CN " + Environment.NewLine;

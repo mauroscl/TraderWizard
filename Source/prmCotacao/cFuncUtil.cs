@@ -27,6 +27,8 @@ namespace prmCotacao
 
 			cRS objRSAux = new cRS(objConexao);
 
+            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
+
 		    string strTabelaCotacao;
 			string strTabelaMedia;
 
@@ -45,13 +47,17 @@ namespace prmCotacao
 			objRS.ExecuteQuery(strQuery);
 
 			while (!objRS.EOF) {
-                strQuery = " SELECT TOP 2 DATA " + " FROM " + "(" + " SELECT DATA " + " FROM " + strTabelaMedia + " WHERE CODIGO = " + FuncoesBD.CampoStringFormatar(Convert.ToString(objRS.Field("Codigo"))) + " and Tipo = " + FuncoesBD.CampoStringFormatar("IFR2") + " And NumPeriodos = 13 " + " order by data " + ")";
+                strQuery = " SELECT TOP 2 DATA " + " FROM " + "(" + " SELECT DATA " + " FROM " + strTabelaMedia + " WHERE CODIGO = " + FuncoesBd.CampoStringFormatar(Convert.ToString(objRS.Field("Codigo"))) + " and Tipo = " + FuncoesBd.CampoStringFormatar("IFR2") + " And NumPeriodos = 13 " + " order by data " + ")";
 
 				objRSAux.ExecuteQuery(strQuery);
 
 
-				while (!objRSAux.EOF) {
-                    strQuery = "DELETE" + " FROM " + strTabelaMedia + " WHERE CODIGO = " + FuncoesBD.CampoStringFormatar(Convert.ToString(objRS.Field("Codigo"))) + " and Tipo = " + FuncoesBD.CampoStringFormatar("IFR2") + " And NumPeriodos = 13 " + " AND DATA = " + FuncoesBD.CampoDateFormatar((DateTime) objRSAux.Field("Data"));
+				while (!objRSAux.EOF)
+				{
+				    strQuery = "DELETE" + " FROM " + strTabelaMedia + " WHERE CODIGO = " +
+				               FuncoesBd.CampoStringFormatar(Convert.ToString(objRS.Field("Codigo"))) + " and Tipo = " +
+				               FuncoesBd.CampoStringFormatar("IFR2") + " And NumPeriodos = 13 " + " AND DATA = " +
+				               FuncoesBd.CampoDateFormatar((DateTime) objRSAux.Field("Data"));
 
 					objCommand.Execute(strQuery);
 

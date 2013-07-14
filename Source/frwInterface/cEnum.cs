@@ -134,6 +134,12 @@ namespace frwInterface
             Click,
             Move
         }
+
+	    public enum BancoDeDados
+	    {
+	        SqlServer,
+            Access
+	    }
            
 
 	}

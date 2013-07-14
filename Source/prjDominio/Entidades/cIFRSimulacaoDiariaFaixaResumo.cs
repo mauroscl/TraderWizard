@@ -116,26 +116,27 @@ namespace prjModelo.Entidades
 		{
 			cCommand objCommand = new cCommand(pobjConexao);
 
-			string strSQL = null;
-
-			//Somente salva se houve algum trade com ou sem filtro.
+		    //Somente salva se houve algum trade com ou sem filtro.
 
 			if (intNumTradesSemFiltro > 0 || intNumTradesComFiltro > 0) {
-				strSQL = "INSERT INTO IFR_Simulacao_Diaria_Faixa_Resumo" + Environment.NewLine;
+
+                FuncoesBd FuncoesBd = pobjConexao.ObterFormatadorDeCampo();
+
+				string strSQL = "INSERT INTO IFR_Simulacao_Diaria_Faixa_Resumo" + Environment.NewLine;
 				strSQL = strSQL + "(Codigo, ID_Setup, ID_CM, ID_IFR_Sobrevendido, Data, NumTradesSemFiltro, NumAcertosSemFiltro, PercentualAcertosSemFiltro " + Environment.NewLine;
 				strSQL = strSQL + ", NumTradesComFiltro, NumAcertosComFiltro, PercentualAcertosComFiltro)" + Environment.NewLine;
 				strSQL = strSQL + " VALUES ";
-				strSQL = strSQL + "(" + FuncoesBD.CampoFormatar(objAtivo.Codigo);
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(objSetup.ID);
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(objCM.ID);
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(objIFRSobrevendido.ID);
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(Data);
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(intNumTradesSemFiltro);
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(intNumAcertosSemFiltro);
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(dblPercentualAcertosSemFiltro);
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(intNumTradesComFiltro);
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(intNumAcertosComFiltro);
-				strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(PercentualAcertosComFiltro);
+				strSQL = strSQL + "(" + FuncoesBd.CampoFormatar(objAtivo.Codigo);
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objSetup.ID);
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objCM.ID);
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objIFRSobrevendido.ID);
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(Data);
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(intNumTradesSemFiltro);
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(intNumAcertosSemFiltro);
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(dblPercentualAcertosSemFiltro);
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(intNumTradesComFiltro);
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(intNumAcertosComFiltro);
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(PercentualAcertosComFiltro);
 				strSQL = strSQL + ")";
 
 				objCommand.Execute(strSQL);

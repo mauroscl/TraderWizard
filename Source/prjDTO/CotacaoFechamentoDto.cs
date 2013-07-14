@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace prjDTO
 {
-    class CotacaoFechamentoDto
+    public class CotacaoFechamentoDto
     {
+        public DateTime DataInicial { get; set; }
+        public DateTime DataFinal { get; set; }
+        public decimal ValorDeFechamento { get; set; }
+
     }
 }

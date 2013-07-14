@@ -1,12 +1,13 @@
 using System;
-
 //Descrição: contém funcões auxiliares para facilitar o acesso ao banco de dados
+using System.Text;
 
 namespace DataBase
 {
 
 	public class FuncoesBd
 	{
+	    protected string OperadorDeConcatenacao;
 
 		public static string CampoStringFormatar(string pstrValor)
 		{
@@ -60,10 +61,9 @@ namespace DataBase
 
 		}
 
-		public static string CampoDateFormatar(System.DateTime pdtmData)
+		public virtual string CampoDateFormatar(DateTime pdtmData)
 		{
-			return "#" + pdtmData.Month + "/" + pdtmData.Day + "/" + pdtmData.Year + "#";
-
+			return "";
 		}
 
 
@@ -116,12 +116,12 @@ namespace DataBase
             return Convert.ToString(plngValor);
 		}
 
-		public static string CampoFormatar(DateTime pdtmValor)
+		public string CampoFormatar(DateTime pdtmValor)
 		{
 			return CampoDateFormatar(pdtmValor);
 		}
 
-		public static string CampoFormatar(DateTime? pdtmValor)
+		public string CampoFormatar(DateTime? pdtmValor)
 		{
 		    return pdtmValor.HasValue ? CampoDateFormatar(pdtmValor.Value) : "NULL";
 		}
@@ -146,7 +146,7 @@ namespace DataBase
 		    return pdblValor.HasValue ? CampoFloatFormatar(pdblValor) : "NULL";
 		}
 
-	    public static string CampoFormatar(string pstrValor)
+	    public string CampoFormatar(string pstrValor)
 	    {
 	        return !string.IsNullOrEmpty(pstrValor) ? CampoStringFormatar(pstrValor) : "NULL";
 	    }
@@ -156,6 +156,122 @@ namespace DataBase
 			return (pblnValor ? "TRUE" : "FALSE");
 		}
 
+	    public string ConcatenarString(string string1, string string2)
+	    {
+            return string1 + OperadorDeConcatenacao + string2;	        
+	    }
 
+	    public string ConcatenarStrings(string[] strings)
+	    {
+	        if (strings.Length <= 1)
+	        {
+	            throw new Exception("São necessárias pelo menos duas strings para serem concatenadas.");
+	        }
+
+	        string stringConcatenada = "";
+
+	        foreach (string termo in strings)
+	        {
+	            if (stringConcatenada != "")
+	            {
+	                stringConcatenada += OperadorDeConcatenacao;
+	            }
+	            stringConcatenada += termo;
+	        }
+
+	        return stringConcatenada;
+	    }
+
+        /// <summary>
+        /// formata uma query para que possa ser usada como uma tabela em uma subquery
+        /// </summary>
+        /// <param name="select">query que será usada como subselect</param>
+        /// <returns>subselect na sintaxe que pode ser usada como uma tabela</returns>
+	    public virtual string FormataSubSelect(string select)
+        {
+            return "(" + select + ")";
+        }
+
+	    public virtual string ConvertParaString(string expressao)
+	    {
+	        throw new NotImplementedException();
+	    }
+
+
+	    /// <summary>
+	    /// formata a cláusula SQL que verifica o indice da primeira ocorrência de uma substring e uma string
+	    /// </summary>
+	    /// <param name="expressaoParaProcurar">termo que será  procurado (substring)</param>
+	    /// <param name="expressaoParaPesquisar">expressão onde o termo será procurado</param>
+	    /// <returns>string com a expressão SQL</returns>
+	    public virtual string IndiceDaSubString(string expressaoParaProcurar, string expressaoParaPesquisar)
+	    {
+	        throw new NotImplementedException();
+	    }
+
+	    public virtual string ConverterParaPontoFlutuante(string nomeDaColuna)
+	    {
+	        throw new NotImplementedException();
+	    }
 	}
+
+    public class FuncoesBdAccess : FuncoesBd
+    {
+        public FuncoesBdAccess()
+        {
+            OperadorDeConcatenacao = " & ";
+        }
+
+        public override string CampoDateFormatar(DateTime pdtmData)
+        {
+            return "#" + pdtmData.ToString("MM/dd/yyyy") + "#";
+        }
+
+        public override string ConvertParaString(string expressao)
+        {
+            return "CSTR(" + expressao + ")";
+        }
+
+        public override string IndiceDaSubString(string expressaoParaProcurar, string expressaoParaPesquisar)
+        {
+            return "INSTR(" + expressaoParaPesquisar + ","+  expressaoParaProcurar  +  ")";
+        }
+
+        public override string ConverterParaPontoFlutuante(string nomeDaColuna)
+        {
+            return "CDBL(" + nomeDaColuna + ")";
+        }
+    }
+
+    public class FuncoesBdSqlServer : FuncoesBd
+    {
+        public FuncoesBdSqlServer()
+        {
+            OperadorDeConcatenacao = " + ";
+        }
+        public override string CampoDateFormatar(DateTime pdtmData)
+        {
+            return "'" + pdtmData.ToString("yyyy-dd-MM") + "'";
+        }
+
+        public override string ConvertParaString(string expressao)
+        {
+            return "CONVERT(VARCHAR, " + expressao + ")";
+        }
+
+        public override string IndiceDaSubString(string expressaoParaProcurar, string expressaoParaPesquisar)
+        {
+            return "CHARINDEX(" + expressaoParaProcurar + ","+  expressaoParaPesquisar  +  ")";
+        }
+
+        public override string FormataSubSelect(string select)
+        {
+            return base.FormataSubSelect(select) + " AS TABELA ";
+        }
+
+        public override string ConverterParaPontoFlutuante(string nomeDaColuna)
+        {
+            return "CONVERT(FLOAT, " + nomeDaColuna + ")";
+        }
+    }
 }

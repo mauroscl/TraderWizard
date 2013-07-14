@@ -50,38 +50,42 @@ namespace prjModelo.DomainServices
 
 			cRS objRS = new cRS(objConexao);
 
-			string strQuery = null;
-
-			System.DateTime dtmDataInicial = default(System.DateTime);
-			System.DateTime dtmDataFinal = default(System.DateTime);
-			//Dim blnEncontrouPositivo As Boolean = False
+		    //Dim blnEncontrouPositivo As Boolean = False
 			bool blnEncontrouNegativo = false;
 			double dblIFR = 0;
 
-			string strTabelaMME21 = null;
-			string strTabelaMME49 = null;
-			//Dim strTabelaMME200 As String
+		    //Dim strTabelaMME200 As String
 
 			//primeiro dia do mês.
-            dtmDataInicial = new DateTime(pdtmData.Year, pdtmData.Month, 1);
+            DateTime dtmDataInicial = new DateTime(pdtmData.Year, pdtmData.Month, 1);
 			//começa com um dia antes da data recebida por parâmetro, depois será a última data do mês.
-            dtmDataFinal = pdtmData.AddDays(-1);
+            DateTime dtmDataFinal = pdtmData.AddDays(-1);
 
-			//While (Not blnEncontrouPositivo) Or (Not blnEncontrouNegativo)
+            FuncoesBd  FuncoesBd = objConexao.ObterFormatadorDeCampo();
 
 			while ((!blnEncontrouNegativo)) {
 				//enquanto não encontrou as oscilações positivas e negativas
 
-				strTabelaMME21 = '\t' + "SELECT Codigo, Data, Valor " + Environment.NewLine + '\t' + " FROM " + pstrTabelaMedia + Environment.NewLine + '\t' + " WHERE Codigo = " + FuncoesBD.CampoStringFormatar(objAtivo.Codigo) + Environment.NewLine + '\t' + " AND Tipo = " + FuncoesBD.CampoStringFormatar("MME") + Environment.NewLine + '\t' + " AND NumPeriodos = 21 " + Environment.NewLine + '\t' + " AND Data >= " + FuncoesBD.CampoDateFormatar(dtmDataInicial) + Environment.NewLine + '\t' + " AND Data <= " + FuncoesBD.CampoDateFormatar(dtmDataFinal) + Environment.NewLine;
+			    string strTabelaMME21 = '\t' + "SELECT Codigo, Data, Valor " + Environment.NewLine + '\t' + " FROM " + pstrTabelaMedia +
+			                            Environment.NewLine + '\t' + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(objAtivo.Codigo) +
+			                            Environment.NewLine + '\t' + " AND Tipo = " + FuncoesBd.CampoStringFormatar("MME") +
+			                            Environment.NewLine + '\t' + " AND NumPeriodos = 21 " + Environment.NewLine + '\t' +
+			                            " AND Data >= " + FuncoesBd.CampoDateFormatar(dtmDataInicial) + Environment.NewLine + '\t' +
+			                            " AND Data <= " + FuncoesBd.CampoDateFormatar(dtmDataFinal) + Environment.NewLine;
 
-				strTabelaMME49 = '\t' + "SELECT Codigo, Data, Valor " + Environment.NewLine + '\t' + " FROM " + pstrTabelaMedia + Environment.NewLine + '\t' + " WHERE Codigo = " + FuncoesBD.CampoStringFormatar(objAtivo.Codigo) + Environment.NewLine + '\t' + " AND Tipo = " + FuncoesBD.CampoStringFormatar("MME") + Environment.NewLine + '\t' + " AND NumPeriodos = 49 " + Environment.NewLine + '\t' + " AND Data >= " + FuncoesBD.CampoDateFormatar(dtmDataInicial) + Environment.NewLine + '\t' + " AND Data <= " + FuncoesBD.CampoDateFormatar(dtmDataFinal) + Environment.NewLine;
+			    string strTabelaMME49 = '\t' + "SELECT Codigo, Data, Valor " + Environment.NewLine + '\t' + " FROM " + pstrTabelaMedia +
+			                            Environment.NewLine + '\t' + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(objAtivo.Codigo) +
+			                            Environment.NewLine + '\t' + " AND Tipo = " + FuncoesBd.CampoStringFormatar("MME") +
+			                            Environment.NewLine + '\t' + " AND NumPeriodos = 49 " + Environment.NewLine + '\t' +
+			                            " AND Data >= " + FuncoesBd.CampoDateFormatar(dtmDataInicial) + Environment.NewLine + '\t' +
+			                            " AND Data <= " + FuncoesBd.CampoDateFormatar(dtmDataFinal) + Environment.NewLine;
 
 				//Busca as cotações em ordem decrescente.
-				strQuery = "SELECT C.ValorFechamento, C.Oscilacao, IFR.Valor, MME21.Valor AS MME21, MME49.Valor AS MME49 " + Environment.NewLine;
+				string strQuery = "SELECT C.ValorFechamento, C.Oscilacao, IFR.Valor, MME21.Valor AS MME21, MME49.Valor AS MME49 " + Environment.NewLine;
 
 				strQuery += " FROM (((" + pstrTabelaCotacao + " C INNER JOIN " + pstrTabelaIFR + " IFR" + Environment.NewLine + " ON C.Codigo = IFR.Codigo " + Environment.NewLine + " AND C.Data = IFR.Data) " + Environment.NewLine + " LEFT JOIN " + Environment.NewLine + "(" + Environment.NewLine + strTabelaMME21 + ") MME21 " + Environment.NewLine + " ON C.Codigo = MME21.Codigo " + Environment.NewLine + " AND C.Data = MME21.Data) " + Environment.NewLine + " LEFT JOIN " + Environment.NewLine + "(" + Environment.NewLine + strTabelaMME49 + ") MME49 " + Environment.NewLine + " ON C.Codigo = MME49.Codigo " + Environment.NewLine + " AND C.Data = MME49.Data " + Environment.NewLine;
 
-				strQuery += " WHERE C.Codigo = " + FuncoesBD.CampoStringFormatar(objAtivo.Codigo) + Environment.NewLine + " AND IFR.NumPeriodos = 2 " + Environment.NewLine + " AND C.Data >= " + FuncoesBD.CampoDateFormatar(dtmDataInicial) + Environment.NewLine + " AND C.Data <= " + FuncoesBD.CampoDateFormatar(dtmDataFinal) + Environment.NewLine + " ORDER BY C.Data DESC";
+				strQuery += " WHERE C.Codigo = " + FuncoesBd.CampoStringFormatar(objAtivo.Codigo) + Environment.NewLine + " AND IFR.NumPeriodos = 2 " + Environment.NewLine + " AND C.Data >= " + FuncoesBd.CampoDateFormatar(dtmDataInicial) + Environment.NewLine + " AND C.Data <= " + FuncoesBd.CampoDateFormatar(dtmDataFinal) + Environment.NewLine + " ORDER BY C.Data DESC";
 
 				objRS.ExecuteQuery(strQuery);
 

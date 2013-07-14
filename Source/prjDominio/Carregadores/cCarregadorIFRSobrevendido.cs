@@ -30,7 +30,7 @@ namespace prjModelo.Carregadores
 
 			strSQL = "SELECT ID " + Environment.NewLine;
 			strSQL = strSQL + " FROM IFR_Sobrevendido " + Environment.NewLine;
-			strSQL = strSQL + " WHERE ValorMaximo = " + FuncoesBD.CampoFormatar(pdblValorMaximo);
+			strSQL = strSQL + " WHERE ValorMaximo = " + FuncoesBd.CampoFormatar(pdblValorMaximo);
 
 			objRS.ExecuteQuery(strSQL);
 
@@ -92,7 +92,7 @@ namespace prjModelo.Carregadores
 
 			strSQL = "SELECT ID, ValorMaximo " + Environment.NewLine;
 			strSQL = strSQL + " FROM IFR_Sobrevendido " + Environment.NewLine;
-			strSQL = strSQL + " WHERE ValorMaximo >= " + FuncoesBD.CampoFormatar(pdblValor);
+			strSQL = strSQL + " WHERE ValorMaximo >= " + FuncoesBd.CampoFormatar(pdblValor);
 
 			objRS.ExecuteQuery(strSQL);
 
@@ -122,7 +122,7 @@ namespace prjModelo.Carregadores
 
 			strSQL = "SELECT ValorMaximo " + Environment.NewLine;
 			strSQL = strSQL + " FROM IFR_Sobrevendido " + Environment.NewLine;
-			strSQL = strSQL + " WHERE ID = " + FuncoesBD.CampoFormatar(pintID);
+			strSQL = strSQL + " WHERE ID = " + FuncoesBd.CampoFormatar(pintID);
 
 			objRS.ExecuteQuery(strSQL);
 

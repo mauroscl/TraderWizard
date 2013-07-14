@@ -78,24 +78,23 @@ namespace prjModelo.Entidades
 
 		public bool Salvar(cConexao pobjConexao)
 		{
+		    cCommand objCommand = new cCommand(pobjConexao);
 
-			string strSQL = null;
-
-			cCommand objCommand = new cCommand(pobjConexao);
+            FuncoesBd FuncoesBd = pobjConexao.ObterFormatadorDeCampo();
 
 			//O Campo ID da tabela IFR_Simulacao_Diaria_Faixa é do tipo IDENTITY
-			strSQL = "INSERT INTO IFR_Simulacao_Diaria_Faixa " + Environment.NewLine;
+			string strSQL = "INSERT INTO IFR_Simulacao_Diaria_Faixa " + Environment.NewLine;
 			strSQL = strSQL + "(Codigo, ID_Setup, ID_CM, ID_Criterio_CM, ID_IFR_Sobrevendido, Data, Valor_Minimo, Valor_Maximo, NumTentativas_Minimo)" + Environment.NewLine;
 			strSQL = strSQL + " VALUES " + Environment.NewLine;
-			strSQL = strSQL + "(" + FuncoesBD.CampoFormatar(strCodigo);
-			strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(objSetup.ID);
-			strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(objCM.ID);
-			strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(objCriterioCM.ID);
-			strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(objIFRSobrevendido.ID);
-			strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(this.Data);
-			strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(dblValorMinimo);
-			strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(dblValorMaximo);
-			strSQL = strSQL + ", " + FuncoesBD.CampoFormatar(intNumTentativasMinimo) + ")";
+			strSQL = strSQL + "(" + FuncoesBd.CampoFormatar(strCodigo);
+			strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objSetup.ID);
+			strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objCM.ID);
+			strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objCriterioCM.ID);
+			strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objIFRSobrevendido.ID);
+			strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(Data);
+			strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(dblValorMinimo);
+			strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(dblValorMaximo);
+			strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(intNumTentativasMinimo) + ")";
 
 			objCommand.Execute(strSQL);
 

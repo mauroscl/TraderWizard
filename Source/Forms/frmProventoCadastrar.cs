@@ -1,3 +1,4 @@
+using Forms;
 using Microsoft.VisualBasic;
 using System;
 using System.Windows.Forms;
@@ -26,7 +27,7 @@ namespace TraderWizard
 
 		private void frmProventoCadastrar_Load(object sender, System.EventArgs e)
 		{
-			mCotacao.cmbAtivoPreencher(cmbAtivo, objConexao, true);
+			mCotacao.ComboAtivoPreencher(cmbAtivo, objConexao,"", true);
 
 			mdlGeral.ComboProventoTipoPreencher(cmbProventoTipo);
 

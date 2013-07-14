@@ -44,6 +44,12 @@
     <Compile Include="cBuscarConfiguracao.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\frwInterface\frwInterface.csproj">
+      <Project>{AA04D3D2-F5CE-4D2E-A9AF-A304638AC603}</Project>
+      <Name>frwInterface</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
