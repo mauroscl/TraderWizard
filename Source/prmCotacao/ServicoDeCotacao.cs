@@ -16,7 +16,7 @@ using prjConfiguracao;
 namespace prmCotacao
 {
 
-	public class cCotacao
+	public class ServicoDeCotacao
 	{
 
 		/// <summary>
@@ -44,7 +44,7 @@ namespace prmCotacao
 		/// por parâmetro</param>
 		/// <remarks></remarks>
 
-		public cCotacao(cConexao pobjConexao)
+		public ServicoDeCotacao(cConexao pobjConexao)
 		{
 			objConexao = pobjConexao;
 			objWeb = new cWeb(pobjConexao);
@@ -2746,25 +2746,25 @@ namespace prmCotacao
 					}
 
 					//calcula a média 
-					double dblMMExp = MMExponencialCalcular(cotacaoFechamentoDto.ValorDeFechamento, pintNumPeriodos, (decimal) dblMmExpAnterior);
+					double dblMediaMovelMExponencial = MMExponencialCalcular(cotacaoFechamentoDto.ValorDeFechamento, pintNumPeriodos, (decimal) dblMmExpAnterior);
 
 					// = "DATABASE" Then
 					if (pstrArmazenamentoLocal == "DATABASE") {
 
 						//atualiza na tabela a média.
-						MMAtualizar(pstrCodigo, cotacaoFechamentoDto.DataInicial, pintNumPeriodos, strTabelaMedia, dblMMExp, "MME", objConnAux);
+						MMAtualizar(pstrCodigo, cotacaoFechamentoDto.DataInicial, pintNumPeriodos, strTabelaMedia, dblMediaMovelMExponencial, "MME", objConnAux);
 
 
 					} else if (pstrArmazenamentoLocal == "MEMORIA") {
 
-						parrMediaRet[intArrayIndice] = dblMMExp;
+						parrMediaRet[intArrayIndice] = dblMediaMovelMExponencial;
 
 						intArrayIndice = intArrayIndice + 1;
 
 					}
 
 					//atribui a média calculada como média anterior para a próxima iteração;
-					dblMmExpAnterior = dblMMExp;
+					dblMmExpAnterior = dblMediaMovelMExponencial;
 
 				}
 

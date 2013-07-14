@@ -41,7 +41,7 @@ namespace TraderWizard
 
             cConexao objConexao = new cConexao();
 
-		    cCotacao objCotacao = new cCotacao(objConexao);
+		    ServicoDeCotacao objCotacao = new ServicoDeCotacao(objConexao);
 
 		    DateTime dtmDataFinal;
 		    if (!DateTime.TryParse(txtDataFinal.Text, out dtmDataFinal) ) {

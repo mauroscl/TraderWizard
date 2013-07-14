@@ -1506,7 +1506,7 @@ namespace prmCotacao
 		{
 			string functionReturnValue;
 
-			cCotacao objCotacao = new cCotacao(objConexao);
+			ServicoDeCotacao objCotacao = new ServicoDeCotacao(objConexao);
 
 			System.DateTime dtmDataAtual;
 			System.DateTime dtmDataAnterior = default(System.DateTime);
@@ -2239,7 +2239,7 @@ namespace prmCotacao
 
 			cRS objRS = new cRS(objConexao);
 
-		    cCotacao objCotacao = new cCotacao(objConexao);
+		    ServicoDeCotacao objCotacao = new ServicoDeCotacao(objConexao);
 			cCalculadorData objCalculadorData = new cCalculadorData(this.objConexao);
 
 			//utilizado na busca dos splits durante o período de duração da operação
@@ -2846,7 +2846,7 @@ namespace prmCotacao
 
 			cRS objRSOperacao = new cRS(objConexao);
 
-			cCotacao objCotacao = new cCotacao(objConexao);
+			ServicoDeCotacao objCotacao = new ServicoDeCotacao(objConexao);
 
 			string strQueryPrincipal = String.Empty;
 			string strQueryAux = null;

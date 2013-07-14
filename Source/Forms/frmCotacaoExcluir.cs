@@ -187,7 +187,7 @@ namespace TraderWizard
 			cEnum.enumRetorno intRetorno = default(cEnum.enumRetorno);
 
 
-			cCotacao objCotacao = new cCotacao(objConexao);
+			ServicoDeCotacao objCotacao = new ServicoDeCotacao(objConexao);
 
 			intRetorno = objCotacao.CotacaoExcluir(arrData, true);
 

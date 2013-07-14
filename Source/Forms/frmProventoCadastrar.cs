@@ -96,7 +96,7 @@ namespace TraderWizard
 
 			}
 
-			cCotacao objCotacao = new cCotacao(objConexao);
+			ServicoDeCotacao objCotacao = new ServicoDeCotacao(objConexao);
 
 			cEnum.enumRetorno intRetorno = default(cEnum.enumRetorno);
 

@@ -45,7 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="cCotacao.cs" />
+    <Compile Include="ServicoDeCotacao.cs" />
     <Compile Include="cCotacaoAjustada.cs" />
     <Compile Include="cFuncUtil.cs" />
     <Compile Include="cInvestimento.cs" />

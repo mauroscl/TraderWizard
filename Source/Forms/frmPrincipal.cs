@@ -242,7 +242,7 @@ namespace TraderWizard
 
         private void OutrasOperaçõesToolStripMenuItem_Click(Object sender, EventArgs e)
         {
-            var objCotacao = new cCotacao(objConexao);
+            var objCotacao = new ServicoDeCotacao(objConexao);
 
             //If objCotacao.SequencialPreencher() Then
 
@@ -283,7 +283,7 @@ namespace TraderWizard
 
         private void mniBackTestUnitTest_Click(Object sender, EventArgs e)
         {
-            var objCotacao = new cCotacao(objConexao);
+            var objCotacao = new ServicoDeCotacao(objConexao);
 
             if (
                 MessageBox.Show("Confirma o recálculo das cotações?", Text, MessageBoxButtons.YesNo,
@@ -337,7 +337,7 @@ namespace TraderWizard
                 "do número de cotações?"
                 , Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                var objCotacao = new cCotacao(objConexao);
+                var objCotacao = new ServicoDeCotacao(objConexao);
 
                 bool blnRetorno = false;
 

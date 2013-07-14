@@ -432,7 +432,7 @@ namespace TraderWizard
 
 			cRS objRS = new cRS(objConexao);
 
-			cCotacao objCotacao = new cCotacao(objConexao);
+			ServicoDeCotacao objCotacao = new ServicoDeCotacao(objConexao);
 
 			//código do ativo atual.
 
@@ -2367,7 +2367,7 @@ namespace TraderWizard
 
 			//***********************TRATAMENTO PARA OS VALORES MÍNIMO E MÁXIMO DO GRÁFICO***************************
 
-			cCotacao objCotacao = new cCotacao(objConexao);
+			ServicoDeCotacao objCotacao = new ServicoDeCotacao(objConexao);
 
 			int intIFRNumRegistros = 0;
 			int intIFRMedioNumRegistros = 0;

@@ -60,7 +60,7 @@ namespace prmCotacao
 		{
 			bool functionReturnValue;
 
-			cCotacao objCotacao = new cCotacao(_conexao);
+			ServicoDeCotacao objCotacao = new ServicoDeCotacao(_conexao);
 
 
 		    try {
@@ -138,7 +138,7 @@ namespace prmCotacao
 		{
 			bool functionReturnValue;
 
-			cCotacao objCotacao = new cCotacao(_conexao);
+			ServicoDeCotacao objCotacao = new ServicoDeCotacao(_conexao);
 
 
 		    try {
@@ -209,7 +209,7 @@ namespace prmCotacao
 		{
 			bool functionReturnValue = false;
 
-			cCotacao objCotacao = new cCotacao(_conexao);
+			ServicoDeCotacao objCotacao = new ServicoDeCotacao(_conexao);
 
 
 			try {

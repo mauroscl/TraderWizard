@@ -268,7 +268,7 @@ namespace TraderWizard
 
 				}
 
-				cCotacao objCotacao = new cCotacao(_conexao);
+				ServicoDeCotacao objCotacao = new ServicoDeCotacao(_conexao);
 
 				bool blnCotacaoDiariaOscilacaoRecalcular = false;
 				bool blnCotacaoDiariaIFRRecalcular = false;

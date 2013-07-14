@@ -59,7 +59,7 @@ namespace TraderWizard
 
 			BeginInvoke(callBack,  new object[]{Cursors.WaitCursor} );
 
-		    cCotacao objCotacao = new cCotacao(objConexao);
+		    ServicoDeCotacao objCotacao = new ServicoDeCotacao(objConexao);
 
 			if (intTipo == enumAtualizacaoDiariaTipo.Online) {
 				objCotacao.CotacaoPeriodoAtualizar(pdtmDataInicial, pdtmDataFinal, pstrCodigo, pblnCalcularDados);
@@ -81,7 +81,7 @@ namespace TraderWizard
 
 		private void btnOK_Click(object sender, EventArgs e)
 		{
-			cCotacao objCotacao = null;
+			ServicoDeCotacao objCotacao = null;
 
 			cEnum.enumRetorno intRetorno = default(cEnum.enumRetorno);
 
@@ -184,7 +184,7 @@ namespace TraderWizard
 
 				Cursor = Cursors.WaitCursor;
 
-				objCotacao = new cCotacao(objConexao);
+				objCotacao = new ServicoDeCotacao(objConexao);
 
 				intRetorno = objCotacao.CotacaoHistoricaAnoAtualizar(Convert.ToInt32(txtAno.Text));
 

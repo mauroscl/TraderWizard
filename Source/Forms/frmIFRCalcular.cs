@@ -78,7 +78,7 @@ namespace TraderWizard
 
 			bool blnOK = false;
 
-			cCotacao objCotacao = new cCotacao(objConexao);
+			ServicoDeCotacao objCotacao = new ServicoDeCotacao(objConexao);
 
 
 			foreach (object item in lstAtivosEscolhidos.Items) {
