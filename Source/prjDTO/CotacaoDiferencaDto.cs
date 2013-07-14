@@ -5,7 +5,7 @@ using System.Text;
 
 namespace prjDTO
 {
-    public class CotacaoDto
+    class CotacaoDiferencaDto
     {
     }
 }

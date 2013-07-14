@@ -1,4 +1,3 @@
-using Microsoft.VisualBasic;
 using System;
 
 //Descrição: contém funcões auxiliares para facilitar o acesso ao banco de dados
@@ -6,7 +5,7 @@ using System;
 namespace DataBase
 {
 
-	public class FuncoesBD
+	public class FuncoesBd
 	{
 
 		public static string CampoStringFormatar(string pstrValor)
@@ -44,14 +43,9 @@ namespace DataBase
 		//Retorno: A nova chave para a tabela
 		public static long CodigoChaveGerar(string pstrTabela, string pstrCampo, cCommand pobjCommand, string pstrWhere = "")
 		{
+		    cRS objRS = new cRS(pobjCommand.Conexao);
 
-			cRS objRS = null;
-			objRS = new cRS(pobjCommand.Conexao);
-
-			string strQuery = null;
-
-			strQuery = " select max( " + pstrCampo + ") as NovoCodigo " + " from " + pstrTabela;
-
+		    string strQuery = " select max( " + pstrCampo + ") as NovoCodigo " + " from " + pstrTabela;
 
 			if (!string.IsNullOrEmpty(pstrWhere)) {
 				strQuery = strQuery + " where " + pstrWhere;
@@ -84,22 +78,14 @@ namespace DataBase
 		/// </alteracoes>    
 		public static string CampoFloatFormatar(double? pdblValor)
 		{
+		    if (!pdblValor.HasValue) return "NULL";
+		    string strAux = Convert.ToString(pdblValor);
+		    strAux = strAux.Replace(",", ".");
 
-			if (pdblValor.HasValue) {
-                string strAux = Convert.ToString(pdblValor);
-				strAux = strAux.Replace(",", ".");
-
-				return strAux;
-
-
-			} else {
-				return "NULL";
-
-			}
-
+		    return strAux;
 		}
 
-		/// <summary>
+	    /// <summary>
 		/// Formata um campo decimal
 		/// </summary>
 		/// <param name="pdecValor">conteúdo que deve ser formatado</param>
@@ -110,59 +96,42 @@ namespace DataBase
 		/// </alteracoes>    
 		public static string CampoDecimalFormatar(decimal? pdecValor)
 		{
-
-			//Return Format(pdecValor, "#,##")
+		    //Return Format(pdecValor, "#,##")
 			//Return FormatNumber(pdecValor, 2, TriState.False, TriState.False, TriState.False)
-			if (pdecValor.HasValue) {
-				return Convert.ToString(pdecValor).Replace( ",", ".");
-			} else {
-				return "NULL";
-			}
-
+		    return pdecValor.HasValue ? Convert.ToString(pdecValor).Replace( ",", ".") : "NULL";
 		}
 
-		public static string CampoFormatar(int pintValor)
+	    public static string CampoFormatar(int pintValor)
 		{
-			return pintValor.ToString();
+            return Convert.ToString(pintValor);
 		}
 
 		public static string CampoFormatar(long? plngValor)
 		{
-			if (plngValor.HasValue) {
-				return plngValor.ToString();
-			} else {
-				return "NULL";
-			}
+		    return plngValor.HasValue ? plngValor.ToString() : "NULL";
 		}
 
-		public static string CampoFormatar(long plngValor)
+	    public static string CampoFormatar(long plngValor)
 		{
-			return plngValor.ToString();
+            return Convert.ToString(plngValor);
 		}
 
-		public static string CampoFormatar(System.DateTime pdtmValor)
+		public static string CampoFormatar(DateTime pdtmValor)
 		{
 			return CampoDateFormatar(pdtmValor);
 		}
 
-		public static string CampoFormatar(System.DateTime? pdtmValor)
+		public static string CampoFormatar(DateTime? pdtmValor)
 		{
-			if (pdtmValor.HasValue) {
-				return CampoDateFormatar(pdtmValor.Value);
-			} else {
-				return "NULL";
-			}
-		}
-		public static string CampoFormatar(decimal? pdecValor)
-		{
-			if (pdecValor.HasValue) {
-				return CampoDecimalFormatar(pdecValor);
-			} else {
-				return "NULL";
-			}
+		    return pdtmValor.HasValue ? CampoDateFormatar(pdtmValor.Value) : "NULL";
 		}
 
-		public static string CampoFormatar(decimal pdecValor)
+	    public static string CampoFormatar(decimal? pdecValor)
+		{
+		    return pdecValor.HasValue ? CampoDecimalFormatar(pdecValor) : "NULL";
+		}
+
+	    public static string CampoFormatar(decimal pdecValor)
 		{
 			return CampoDecimalFormatar(pdecValor);
 		}
@@ -174,23 +143,15 @@ namespace DataBase
 
 		public static string CampoFormatar(double? pdblValor)
 		{
-			if (pdblValor.HasValue) {
-				return CampoFloatFormatar(pdblValor);
-			} else {
-				return "NULL";
-			}
+		    return pdblValor.HasValue ? CampoFloatFormatar(pdblValor) : "NULL";
 		}
 
-		public static string CampoFormatar(string pstrValor)
-		{
-			if (!string.IsNullOrEmpty(pstrValor)) {
-				return CampoStringFormatar(pstrValor);
-			} else {
-				return "NULL";
-			}
-		}
+	    public static string CampoFormatar(string pstrValor)
+	    {
+	        return !string.IsNullOrEmpty(pstrValor) ? CampoStringFormatar(pstrValor) : "NULL";
+	    }
 
-		public static string CampoFormatar(bool pblnValor)
+	    public static string CampoFormatar(bool pblnValor)
 		{
 			return (pblnValor ? "TRUE" : "FALSE");
 		}
