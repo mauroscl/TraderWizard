@@ -5,5 +5,6 @@ _ReSharper.TraderWizard
 *.resources
 *.tlog
 *.trx
+*.suo
 bin
 obj
