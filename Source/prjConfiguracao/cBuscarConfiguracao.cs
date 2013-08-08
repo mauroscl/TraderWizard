@@ -53,7 +53,7 @@ namespace prjConfiguracao
             {
                 throw new Exception("Banco de dados não configurado para a aplicação. Verifique o arquivo de configuração.");
             }
-            return (cEnum.BancoDeDados) Enum.Parse(typeof (cEnum.BancoDeDados), "SqlServer", true);
+            return (cEnum.BancoDeDados) Enum.Parse(typeof (cEnum.BancoDeDados), bancoDeDados, true);
         }
     }
 }
