@@ -2802,7 +2802,7 @@ namespace prmCotacao
 		/// FALSE - OCORREU ERRO NA EXECUÇÃO DA MÉDIA MÓVEL PARA PELO MENOS UM DOS ATIVOS.
 		/// </returns>
 		/// <remarks></remarks>
-		public bool MMGeralCalcular(string pstrPeriodoDuracao, string pstrArmazenamentoLocal, List<cMediaDTO> plstMedias, DateTime pdtmDataInicial, string pstrAtivos, double[] parrMediaRet, ref double pdblValorMinimoRet, ref double pdblValorMaximoRet)
+		public bool MediaMovelGeralCalcular(string pstrPeriodoDuracao, string pstrArmazenamentoLocal, List<cMediaDTO> plstMedias, DateTime pdtmDataInicial, string pstrAtivos, double[] parrMediaRet, ref double pdblValorMinimoRet, ref double pdblValorMaximoRet)
 		{
 			bool functionReturnValue = false;
 
@@ -2889,11 +2889,18 @@ namespace prmCotacao
 
 		    while (!objRSAtivo.EOF)
 		    {
-                ativos.Add(new CotacaoDataDto
+
+		        var cotacaoDataDto = new CotacaoDataDto
+		        {
+		            Codigo = (string) objRSAtivo.Field("Codigo")
+		        };
+
+                if (pdtmDataInicial != cConst.DataInvalida)
                 {
-                    Codigo = (string) objRSAtivo.Field("Codigo"),
-                    Data = Convert.ToDateTime(objRSAtivo.Field("DataInicial"))
-                });		        
+                    cotacaoDataDto.Data = Convert.ToDateTime(objRSAtivo.Field("DataInicial"));
+                }
+
+                ativos.Add(cotacaoDataDto);
 
                 objRSAtivo.MoveNext();
 		    }
@@ -3044,42 +3051,41 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		private DateTime PrimeiraSemanaDataCalcular(DateTime pdtmDataBase)
 		{
-		    //intervalor de incremento das datas
-
-		    //tem que descontar para bater com os valores do enum.
-			int intDiaSemana = (int)pdtmDataBase.DayOfWeek - 1;
 
 			//se a data é uma segunda-feira retorna a própria data
 			DateTime dtmDataAux = pdtmDataBase;
 
+            DayOfWeek diaDaSemana = dtmDataAux.DayOfWeek;
 
-			if (intDiaSemana != (int) DayOfWeek.Monday) {
-			    double dblIntervalo;
-			    if (intDiaSemana == (int) DayOfWeek.Saturday || intDiaSemana == (int) DayOfWeek.Sunday) {
-					//se o dia da semana é sábado ou domingo tem que buscar a próxima segunda-feira,
-					//então o incremento tem que ser positivo para a data ir para uma data posterior
-					dblIntervalo = 1;
+		    if (diaDaSemana == DayOfWeek.Monday)
+		    {
+		        return dtmDataAux;
+		    }
 
-
-				} else {
-					//se a data está entre terça e sexta, o incremento tem que ser negativo para a data
-					//voltar até a segunda-feira anterior
-					dblIntervalo = -1;
-
-				}
+		    double dblIntervalo;
+		    if (diaDaSemana ==  DayOfWeek.Saturday || diaDaSemana == DayOfWeek.Sunday) {
+		        //se o dia da semana é sábado ou domingo tem que buscar a próxima segunda-feira,
+		        //então o incremento tem que ser positivo para a data ir para uma data posterior
+		        dblIntervalo = 1;
 
 
-				while ((intDiaSemana != (int) DayOfWeek.Monday)) {
-					dtmDataAux = dtmDataAux.AddDays(dblIntervalo);
+		    } else {
+		        //se a data está entre terça e sexta, o incremento tem que ser negativo para a data
+		        //voltar até a segunda-feira anterior
+		        dblIntervalo = -1;
 
-					//tem que descontar 1 para bater com o enum.
-					intDiaSemana = (int) dtmDataAux.DayOfWeek - 1;
+		    }
 
-				}
 
-			}
+		    while (diaDaSemana != DayOfWeek.Monday) {
+		        dtmDataAux = dtmDataAux.AddDays(dblIntervalo);
 
-			return dtmDataAux;
+		        //tem que descontar 1 para bater com o enum.
+		        diaDaSemana = dtmDataAux.DayOfWeek;
+
+		    }
+
+		    return dtmDataAux;
 
 		}
 
@@ -3650,7 +3656,7 @@ namespace prmCotacao
 			{
 			    double pdblValorMaximoRet = 0.0;
 			    double pdblValorMinimoRet = 0.0;
-			    blnMMExpOK = MMGeralCalcular("DIARIO", "DATABASE", lstMediasSelecionadas, pdtmDataBase, pstrAtivos,null, ref pdblValorMinimoRet, ref pdblValorMaximoRet);
+			    blnMMExpOK = MediaMovelGeralCalcular("DIARIO", "DATABASE", lstMediasSelecionadas, pdtmDataBase, pstrAtivos,null, ref pdblValorMinimoRet, ref pdblValorMaximoRet);
 
 			}
 
@@ -3767,7 +3773,7 @@ namespace prmCotacao
 				{
 				    double pdblValorMaximoRet = 0.0;
 				    double pdblValorMinimoRet = 0.0;
-				    if (!MMGeralCalcular("SEMANAL", "DATABASE", lstMediasSelecionadas, pdtmDataBase, pstrAtivos,null, ref pdblValorMinimoRet, ref pdblValorMaximoRet)) {
+				    if (!MediaMovelGeralCalcular("SEMANAL", "DATABASE", lstMediasSelecionadas, pdtmDataBase, pstrAtivos,null, ref pdblValorMinimoRet, ref pdblValorMaximoRet)) {
 						blnOK = false;
 
 					}
@@ -3909,7 +3915,7 @@ namespace prmCotacao
 
 					    double pdblValorMinimoRet = 0.0;
 					    double pdblValorMaximoRet = 0.0;
-					    blnRetorno = MMGeralCalcular(pstrPeriodoDuracao, "DATABASE", lstMediasSelecionadasAux, Convert.ToDateTime(objRS.Field("Data")), "#" + pstrCodigo + "#",null,ref pdblValorMinimoRet,ref pdblValorMaximoRet);
+					    blnRetorno = MediaMovelGeralCalcular(pstrPeriodoDuracao, "DATABASE", lstMediasSelecionadasAux, Convert.ToDateTime(objRS.Field("Data")), "#" + pstrCodigo + "#",null,ref pdblValorMinimoRet,ref pdblValorMaximoRet);
 
 					}
 
@@ -3926,7 +3932,7 @@ namespace prmCotacao
 					//se não tem média calculada, tem que calcular para todo o período calculado
 				    double pdblValorMaximoRet = 0.0;
 				    double pdblValorMinimoRet = 0.0;
-				    blnRetorno = MMGeralCalcular(pstrPeriodoDuracao, "DATABASE", lstMediasSelecionadasAux,cConst.DataInvalida , "#" + pstrCodigo + "#", null, ref pdblValorMinimoRet, ref pdblValorMaximoRet);
+				    blnRetorno = MediaMovelGeralCalcular(pstrPeriodoDuracao, "DATABASE", lstMediasSelecionadasAux,cConst.DataInvalida , "#" + pstrCodigo + "#", null, ref pdblValorMinimoRet, ref pdblValorMaximoRet);
 
 				}
 
