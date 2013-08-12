@@ -34,6 +34,7 @@ namespace TraderWizard
 		[System.Diagnostics.DebuggerStepThrough()]
 		private void InitializeComponent()
 		{
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmDadosRecalcular));
             this.Panel1 = new System.Windows.Forms.Panel();
             this.btnCancelar = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
@@ -63,6 +64,8 @@ namespace TraderWizard
             this.chkCotacaoDiariaIFRRecalcular = new System.Windows.Forms.CheckBox();
             this.chkCotacaoDiariaOscilacaoRecalcular = new System.Windows.Forms.CheckBox();
             this.txtDataInicial = new System.Windows.Forms.TextBox();
+            this.btnCalendario = new System.Windows.Forms.Button();
+            this.Calendario = new System.Windows.Forms.MonthCalendar();
             this.Panel1.SuspendLayout();
             this.Panel2.SuspendLayout();
             this.pnlAtivosEscolher.SuspendLayout();
@@ -262,6 +265,7 @@ namespace TraderWizard
             this.lstAtivosEscolhidos.Size = new System.Drawing.Size(198, 225);
             this.lstAtivosEscolhidos.Sorted = true;
             this.lstAtivosEscolhidos.TabIndex = 5;
+            this.lstAtivosEscolhidos.DoubleClick += new System.EventHandler(this.lstAtivosEscolhidos_DoubleClick);
             // 
             // lstAtivosNaoEscolhidos
             // 
@@ -272,6 +276,7 @@ namespace TraderWizard
             this.lstAtivosNaoEscolhidos.Size = new System.Drawing.Size(198, 225);
             this.lstAtivosNaoEscolhidos.Sorted = true;
             this.lstAtivosNaoEscolhidos.TabIndex = 0;
+            this.lstAtivosNaoEscolhidos.DoubleClick += new System.EventHandler(this.lstAtivosNaoEscolhidos_DoubleClick);
             // 
             // pnlCotacaoSemanalOpcoes
             // 
@@ -377,6 +382,27 @@ namespace TraderWizard
             this.txtDataInicial.Size = new System.Drawing.Size(89, 20);
             this.txtDataInicial.TabIndex = 3;
             // 
+            // btnCalendario
+            // 
+            this.btnCalendario.Enabled = false;
+            this.btnCalendario.Image = ((System.Drawing.Image)(resources.GetObject("btnCalendario.Image")));
+            this.btnCalendario.Location = new System.Drawing.Point(189, 144);
+            this.btnCalendario.Name = "btnCalendario";
+            this.btnCalendario.Size = new System.Drawing.Size(24, 24);
+            this.btnCalendario.TabIndex = 16;
+            this.btnCalendario.UseVisualStyleBackColor = true;
+            this.btnCalendario.Click += new System.EventHandler(this.btnCalendario_Click);
+            // 
+            // Calendario
+            // 
+            this.Calendario.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.Calendario.Location = new System.Drawing.Point(215, 144);
+            this.Calendario.MaxSelectionCount = 1;
+            this.Calendario.Name = "Calendario";
+            this.Calendario.TabIndex = 17;
+            this.Calendario.Visible = false;
+            this.Calendario.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.Calendario_DateSelected);
+            // 
             // frmDadosRecalcular
             // 
             this.AcceptButton = this.btnOK;
@@ -384,6 +410,8 @@ namespace TraderWizard
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancelar;
             this.ClientSize = new System.Drawing.Size(536, 502);
+            this.Controls.Add(this.Calendario);
+            this.Controls.Add(this.btnCalendario);
             this.Controls.Add(this.txtDataInicial);
             this.Controls.Add(this.pnlCotacaoDiariaOpcoes);
             this.Controls.Add(this.pnlCotacaoSemanalOpcoes);
@@ -439,5 +467,7 @@ namespace TraderWizard
 		private System.Windows.Forms.CheckBox chkCotacaoSemanalVolumeMedioRecalcular;
 		private System.Windows.Forms.CheckBox chkCotacaoSemanalIFR2MedioRecalcular;
 		private System.Windows.Forms.CheckBox chkCotacaoDiariaIFR2MedioRecalcular;
+        private Button btnCalendario;
+        private MonthCalendar Calendario;
 	}
 }

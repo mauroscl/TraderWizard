@@ -1581,7 +1581,8 @@ namespace prmCotacao
 
 		}
 
-		public decimal IFRCalcular(string pstrCodigo, DateTime pdtmDataInicial, DateTime pdtmDataFinal, int pintNumPeriodos, string pstrTabela, ref double pdblMediaAltaAnteriorRet, ref double pdblMediaBaixaAnteriorRet, cConexao pobjConexao = null)
+		public decimal IFRCalcular(string pstrCodigo, DateTime pdtmDataInicial, DateTime pdtmDataFinal, int pintNumPeriodos, string pstrTabela, 
+            out double pdblMediaAltaAnteriorRet, out double pdblMediaBaixaAnteriorRet, cConexao pobjConexao = null)
 		{
 		    cRS objRS = pobjConexao == null ? new cRS(objConexao) : new cRS(pobjConexao);
 
@@ -1845,7 +1846,7 @@ namespace prmCotacao
 
 				if (NumPeriodosDataInicialCalcular(pstrCodigo, pintNumPeriodos, false, ref dtmDataInicial, ref dtmDataFinal, pstrTabela,-1 , objConnAux)) {
 					//calcula o IFR inicial no período retornado pela função
-					dblIFR = Convert.ToDouble( IFRCalcular(pstrCodigo, dtmDataInicial, dtmDataFinal, pintNumPeriodos, pstrTabela, ref dblMediaAltaAnterior, ref dblMediaBaixaAnterior, objConnAux));
+					dblIFR = Convert.ToDouble( IFRCalcular(pstrCodigo, dtmDataInicial, dtmDataFinal, pintNumPeriodos, pstrTabela, out dblMediaAltaAnterior, out dblMediaBaixaAnterior, objConnAux));
 
 					//tem que excluir os registros caso já existam
 					objCommand.Execute(" DELETE " + " FROM " + strTabelaIfr + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBd.CampoDateFormatar(dtmDataFinal) + " and NumPeriodos = " + pintNumPeriodos.ToString());
@@ -3025,19 +3026,9 @@ namespace prmCotacao
 
 			DateTime dtmDataAux = Convert.ToDateTime(objRs.Field("Data"));
 
-			int intDiaSemana = (int) dtmDataAux.DayOfWeek - 1;
+            objRs.Fechar();
 
-			while ((intDiaSemana != 1)) {
-				dtmDataAux = dtmDataAux.AddDays(-1);
-
-				//tem que descontar 1 para bater com o enum.
-				intDiaSemana = (int) dtmDataAux.DayOfWeek - 1;
-
-			}
-
-			objRs.Fechar();
-
-			return dtmDataAux;
+			return PrimeiraSemanaDataCalcular(dtmDataAux);
 
 		}
 
@@ -3477,20 +3468,21 @@ namespace prmCotacao
 		}
 
 
-
-		/// <summary>
-		/// Calcula os dados da cotação semanal para todos os ativos
-		/// </summary>
-		/// <param name="pdtmData">
-		/// Quando este parâmetro é uma data válida calcula os dados a partir desta data, inclusive.
-		/// Quando este parâmetro é uma data inválida calcula os dados desde a primeira data em que existe cotação diária.
-		/// </param>
-		/// ''' <param name="pblnCalcularApenasEmSplit">Indica se é para fazer o recálculo das cotações semanais apenas 
-		/// nas semanas que houver split. Neste caso também tem que calcular na semana subsequente, pois esta
-		/// é dependente da primeira para calcular os campos "Diferenca" e "Oscilacao"</param>
-		/// <returns></returns>
-		/// <remarks></remarks>
-		private bool CotacaoSemanalRetroativoGeralCalcular(DateTime pdtmData, string pstrAtivos = "", bool pblnCalcularApenasEmSplit = false)
+	    /// <summary>
+	    /// Calcula os dados da cotação semanal para todos os ativos
+	    /// </summary>
+	    /// <param name="pdtmData">
+	    /// Quando este parâmetro é uma data válida calcula os dados a partir desta data, inclusive.
+	    /// Quando este parâmetro é uma data inválida calcula os dados desde a primeira data em que existe cotação diária.
+	    /// </param>
+	    /// '''
+	    /// <param name="pstrAtivos">Lista dos ativos para os quais será calculada a cotação</param>
+	    /// <param name="pblnCalcularApenasEmSplit">Indica se é para fazer o recálculo das cotações semanais apenas 
+	    /// nas semanas que houver split. Neste caso também tem que calcular na semana subsequente, pois esta
+	    /// é dependente da primeira para calcular os campos "Diferenca" e "Oscilacao"</param>
+	    /// <returns></returns>
+	    /// <remarks></remarks>
+	    private bool CotacaoSemanalRetroativoGeralCalcular(DateTime pdtmData, string pstrAtivos = "", bool pblnCalcularApenasEmSplit = false)
 		{
 
 			cRS objRS = new cRS();

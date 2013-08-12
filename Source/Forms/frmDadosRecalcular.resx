@@ -117,4 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="btnCalendario.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAANlJREFUOE9j
+        oBicqDf/TwlmOFFn/v9anwdZGKSXYW+M+n9KMMPKvRf/kwsquhdQZkBmzSRUA24+/0oUhoG0yn5MA2AA
+        xsZFgwBWA2D457Y1cIwsDsIwgNcFII3/3r4C0yAAkyNoAAxT7AIYGxf97ds3iAELt54EC4AASJIQvv70
+        8/83b978v3PnDsSAiUt2QrUTBj9+/Pj/4MGD/8eOHfv/7NkziAENk1dCpXGDf//+/f/w4QPY1hs3bvx/
+        +vTp/9+/f0MMyG+a8T+9agKYgwunVvSBMaZc/38ApgcqID2D1ssAAAAASUVORK5CYII=
+</value>
+  </data>
 </root>

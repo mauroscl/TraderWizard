@@ -1,16 +1,11 @@
 using Microsoft.VisualBasic;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using System.Drawing;
-using System.Diagnostics;
 using System.Windows.Forms;
 using DataBase;
 using prjModelo.Entidades;
 using prmCotacao;
 using TraderWizard.Infra.Repositorio;
-using System.Linq;
 
 namespace TraderWizard
 {
@@ -52,7 +47,9 @@ namespace TraderWizard
 
 		private void chkDataInicialUtilizar_CheckedChanged(System.Object sender, System.EventArgs e)
 		{
-			txtDataInicial.Enabled = chkDataInicialUtilizar.Checked;
+            bool habilitado = chkDataInicialUtilizar.Checked;
+			txtDataInicial.Enabled = habilitado;
+		    btnCalendario.Enabled = habilitado;
 		}
 
 		private void rdbAtivosEscolher_CheckedChanged(System.Object sender, System.EventArgs e)
@@ -120,24 +117,21 @@ namespace TraderWizard
 
 		private void btnAdicionar_Click(System.Object sender, System.EventArgs e)
 		{
-			int intI = 0;
+            var colItem = new Collection();
 
-			Collection colItem = new Collection();
+            for (var intI = 0; intI <= lstAtivosNaoEscolhidos.SelectedItems.Count - 1; intI++)
+            {
+                lstAtivosEscolhidos.Items.Add(lstAtivosNaoEscolhidos.SelectedItems[intI]);
 
+                colItem.Add(lstAtivosNaoEscolhidos.SelectedItems[intI]);
 
-		    for (intI = 0; intI <= lstAtivosNaoEscolhidos.SelectedItems.Count - 1; intI++) {
-				lstAtivosEscolhidos.Items.Add(lstAtivosNaoEscolhidos.SelectedItems[intI]);
+            }
 
-				colItem.Add(lstAtivosNaoEscolhidos.SelectedItems[intI]);
+            foreach (var item in colItem)
+            {
+                lstAtivosNaoEscolhidos.Items.Remove(item);
+            }
 
-			}
-
-
-			foreach (object item in colItem)
-			{
-			    object objItem = item;
-			    lstAtivosNaoEscolhidos.Items.Remove(objItem);
-			}
 		}
 
 
@@ -320,6 +314,33 @@ namespace TraderWizard
 			}
 
 		}
+
+        private void lstAtivosNaoEscolhidos_DoubleClick(object sender, EventArgs e)
+        {
+            btnAdicionar_Click(sender, e);
+        }
+
+        private void lstAtivosEscolhidos_DoubleClick(object sender, EventArgs e)
+        {
+            btnRemover_Click(sender, e);
+        }
+
+        private void btnCalendario_Click(object sender, EventArgs e)
+        {
+            if (Information.IsDate(txtDataInicial.Text))
+            {
+                Calendario.SetDate(Convert.ToDateTime(txtDataInicial.Text));
+            }
+
+            Calendario.Show();
+
+        }
+
+        private void Calendario_DateSelected(object sender, DateRangeEventArgs e)
+        {
+            txtDataInicial.Text = Calendario.SelectionRange.Start.ToString("dd/MM/yyyy");
+            Calendario.Hide();
+        }
 
 	}
 }
