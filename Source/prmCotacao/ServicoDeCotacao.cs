@@ -5748,27 +5748,34 @@ namespace prmCotacao
 		}
 
 
-		/// <summary>
-		/// Calcula os valores máximo e mínimo das áreas de desenho do gráfico  (cotação, volume, ifr). 
-		/// Função unitária que não considera splits.
-		/// </summary>
-		/// <param name="pdtmDataInicial">Data do primeiro candle que será mostrado na área de visualização do gráfico</param>
-		/// <param name="pdtmDataFinal">Data do último candle que será mostrado na área de visualização do gráfico</param>
-		/// <param name="pdblOperador">Operador que será utilizando para fazer as conversão dos preços. 
-		/// Quando a área de dados não possuir splits, o valor é "1" para não alterar o valor dos dados </param>
-		/// <param name="pdblOperadorInvertido">Operador que será utilizando para fazer as conversão dos volumes. 
-		/// Quando a área de dados não possuir splits, o valor é "1" para não alterar o valor dos dados </param>
-		/// <param name="pdecValorMinimoRet">Valor mínimo que será mostrado na área de preços</param>
-		/// <param name="pdecValorMaximoRet">Valor máximo que será mostrado na área de preços</param>
-		/// <param name="plstMediasRet">lista que contém o número de registros que serão desenhadas para cada uma das médias do gráfico</param>
-		/// <param name="pdblVolumeMinimoRet">Menor valor que será mostrado na área de volume</param>
-		/// <param name="pdblVolumeMaximoRet">Maior valor que será mostrado na área de volume</param>
-		/// <param name="pintContadorIFRMedioRet">Número de registros de média do IFR que serão mostrados</param>
-		/// <param name="pintContadorIFRRet">Núumero de registros do IFR que serão mostrados</param>
-		/// <param name="pintVolumeMedioNumRegistrosRet">Número de registros do volume que serão mostrados</param>
-		/// <remarks></remarks>
-		private void ValoresExtremosUnitarioCalcular(string pstrCodigoAtivo, string pstrPeriodicidade, bool pblnMMDesenhar, List<cMediaDTO> plstMediasSelecionadas, bool pblnVolumeDesenhar, bool pblnIFRDesenhar, int pintIFRNumPeriodos, DateTime pdtmDataInicial, DateTime pdtmDataFinal, double pdblOperador,
-		double pdblOperadorInvertido, ref decimal pdecValorMinimoRet, ref decimal pdecValorMaximoRet, ref double pdblVolumeMinimoRet, ref double pdblVolumeMaximoRet, ref int pintContadorIFRRet, ref int pintContadorIFRMedioRet, ref int pintVolumeMedioNumRegistrosRet, ref List<cMediaDTO> plstMediasRet)
+	    /// <summary>
+	    /// Calcula os valores máximo e mínimo das áreas de desenho do gráfico  (cotação, volume, ifr). 
+	    /// Função unitária que não considera splits.
+	    /// </summary>
+	    /// <param name="pdtmDataInicial">Data do primeiro candle que será mostrado na área de visualização do gráfico</param>
+	    /// <param name="pdtmDataFinal">Data do último candle que será mostrado na área de visualização do gráfico</param>
+	    /// <param name="pdblOperador">Operador que será utilizando para fazer as conversão dos preços. 
+	    /// Quando a área de dados não possuir splits, o valor é "1" para não alterar o valor dos dados </param>
+	    /// <param name="pdblOperadorInvertido">Operador que será utilizando para fazer as conversão dos volumes. 
+	    /// Quando a área de dados não possuir splits, o valor é "1" para não alterar o valor dos dados </param>
+	    /// <param name="pdecValorMinimoRet">Valor mínimo que será mostrado na área de preços</param>
+	    /// <param name="pdecValorMaximoRet">Valor máximo que será mostrado na área de preços</param>
+	    /// <param name="plstMediasRet">lista que contém o número de registros que serão desenhadas para cada uma das médias do gráfico</param>
+	    /// <param name="pdblVolumeMinimoRet">Menor valor que será mostrado na área de volume</param>
+	    /// <param name="pdblVolumeMaximoRet">Maior valor que será mostrado na área de volume</param>
+	    /// <param name="pintContadorIFRMedioRet">Número de registros de média do IFR que serão mostrados</param>
+	    /// <param name="pintContadorIFRRet">Núumero de registros do IFR que serão mostrados</param>
+	    /// <param name="pintVolumeMedioNumRegistrosRet">Número de registros do volume que serão mostrados</param>
+	    /// <param name="pblnVolumeDesenhar"></param>
+	    /// <param name="pblnIFRDesenhar"></param>
+	    /// <param name="pstrCodigoAtivo"></param>
+	    /// <param name="pstrPeriodicidade"></param>
+	    /// <param name="pblnMediaMovelDesenhar"></param>
+	    /// <remarks></remarks>
+	    private bool ValoresExtremosUnitarioCalcular(string pstrCodigoAtivo, string pstrPeriodicidade, bool pblnMediaMovelDesenhar, List<cMediaDTO> plstMediasSelecionadas, 
+        bool pblnVolumeDesenhar, bool pblnIFRDesenhar, int pintIFRNumPeriodos, DateTime pdtmDataInicial, DateTime pdtmDataFinal, double pdblOperador,
+		double pdblOperadorInvertido, ref decimal pdecValorMinimoRet, ref decimal pdecValorMaximoRet, ref double pdblVolumeMinimoRet, ref double pdblVolumeMaximoRet, 
+        ref int pintContadorIFRRet, ref int pintContadorIFRMedioRet, ref int pintVolumeMedioNumRegistrosRet, ref List<cMediaDTO> plstMediasRet)
 		{
 			cRS objRS = new cRS(objConexao);
 
@@ -5781,6 +5788,11 @@ namespace prmCotacao
 			string strQuery = ConsultaUnitariaGerar(pstrCodigoAtivo, pdtmDataInicial, pdtmDataFinal, strTabelaCotacao, pdblOperador, pdblOperadorInvertido, "EXTREMOS");
 
 			objRS.ExecuteQuery(strQuery);
+
+            if (Convert.ToInt32(objRS.Field("ContadorVolumeMedio")) == 0)
+		    {
+		        return false;
+		    }
 
 			pdecValorMinimoRet = Convert.ToDecimal(objRS.Field("ValorMinimo"));
 			pdecValorMaximoRet = Convert.ToDecimal(objRS.Field("ValorMaximo"));
@@ -5860,7 +5872,7 @@ namespace prmCotacao
 			//********************INICIO DO TRATAMENTO PARA AS MÉDIAS MÓVEIS*******************
 
 
-			if (pblnMMDesenhar) {
+			if (pblnMediaMovelDesenhar) {
 				plstMediasRet = new List<cMediaDTO>();
 
 				//percorre a collection que contém todas as médias que serão desenhadas e calcula
@@ -5906,6 +5918,7 @@ namespace prmCotacao
 
 			//********************FIM DO TRATAMENTO PARA AS MÉDIAS MÓVEIS EXPONENCIAIS*******************
 
+		    return true;
 		}
 
 
@@ -6015,90 +6028,91 @@ namespace prmCotacao
 
 						//Regra do parâmetro "pdtmDataFinal": se a data final de busca (pdtmDataFinal) for menor que a data maxima da iteração
 						//tem que utilizar a data final, senão utiliza a data máxima
-						ValoresExtremosUnitarioCalcular(pstrCodigoAtivo, pstrPeriodicidade, pblnMMDesenhar, plstMediasSelecionadas, pblnVolumeDesenhar, pblnIFRDesenhar, pintIFRNumPeriodos, dtmDataMinima, dtmDataMaxima, dblOperador,
-						dblOperadorInvertido, ref decValorMinimoAux, ref decValorMaximoAux, ref dblVolumeMinimoAux, ref dblVolumeMaximoAux, ref intContadorIFRAux, ref intContadorIFRMedioAux, ref intVolumeMedioNumRegistrosAux, ref lstMediasAux);
+						if (ValoresExtremosUnitarioCalcular(pstrCodigoAtivo, pstrPeriodicidade, pblnMMDesenhar, plstMediasSelecionadas, pblnVolumeDesenhar, pblnIFRDesenhar, pintIFRNumPeriodos, 
+                            dtmDataMinima, dtmDataMaxima, dblOperador,dblOperadorInvertido, ref decValorMinimoAux, ref decValorMaximoAux, ref dblVolumeMinimoAux, ref dblVolumeMaximoAux, 
+                            ref intContadorIFRAux, ref intContadorIFRMedioAux, ref intVolumeMedioNumRegistrosAux, ref lstMediasAux))
+						{
+						    if (blnPrimeiraIteracao) {
+						        //Se é a primeira iteração atribui diretamente nas variáveis de retorno sem comparação
+						        pdecValorMinimoRet = decValorMinimoAux;
+						        pdecValorMaximoRet = decValorMaximoAux;
+
+						        pdblVolumeMinimoRet = dblVolumeMinimoAux;
+						        pdblVolumeMaximoRet = dblVolumeMaximoAux;
+
+						        pintContadorIFRRet = intContadorIFRAux;
+						        pintContadorIFRMedioRet = intContadorIFRMedioAux;
+
+						        pintVolumeMedioNumRegistrosRet = intVolumeMedioNumRegistrosAux;
+
+						        plstMediasRet = lstMediasAux;
 
 
-						if (blnPrimeiraIteracao) {
-							//Se é a primeira iteração atribui diretamente nas variáveis de retorno sem comparação
-							pdecValorMinimoRet = decValorMinimoAux;
-							pdecValorMaximoRet = decValorMaximoAux;
+						    } else {
 
-							pdblVolumeMinimoRet = dblVolumeMinimoAux;
-							pdblVolumeMaximoRet = dblVolumeMaximoAux;
+						        if (decValorMinimoAux < pdecValorMinimoRet) {
+						            pdecValorMinimoRet = decValorMinimoAux;
 
-							pintContadorIFRRet = intContadorIFRAux;
-							pintContadorIFRMedioRet = intContadorIFRMedioAux;
-
-							pintVolumeMedioNumRegistrosRet = intVolumeMedioNumRegistrosAux;
-
-							plstMediasRet = lstMediasAux;
+						        }
 
 
-						} else {
+						        if (decValorMaximoAux > pdecValorMaximoRet) {
+						            pdecValorMaximoRet = decValorMaximoAux;
 
-							if (decValorMinimoAux < pdecValorMinimoRet) {
-								pdecValorMinimoRet = decValorMinimoAux;
-
-							}
+						        }
 
 
-							if (decValorMaximoAux > pdecValorMaximoRet) {
-								pdecValorMaximoRet = decValorMaximoAux;
+						        if (dblVolumeMinimoAux < pdblVolumeMinimoRet) {
+						            pdblVolumeMinimoRet = dblVolumeMinimoAux;
 
-							}
-
-
-							if (dblVolumeMinimoAux < pdblVolumeMinimoRet) {
-								pdblVolumeMinimoRet = dblVolumeMinimoAux;
-
-							}
+						        }
 
 
-							if (dblVolumeMaximoAux > pdblVolumeMaximoRet) {
-								pdblVolumeMaximoRet = dblVolumeMaximoAux;
+						        if (dblVolumeMaximoAux > pdblVolumeMaximoRet) {
+						            pdblVolumeMaximoRet = dblVolumeMaximoAux;
 
-							}
+						        }
 
-							pintContadorIFRRet = pintContadorIFRRet + intContadorIFRAux;
+						        pintContadorIFRRet = pintContadorIFRRet + intContadorIFRAux;
 
-							pintContadorIFRMedioRet = pintContadorIFRMedioRet + intContadorIFRMedioAux;
+						        pintContadorIFRMedioRet = pintContadorIFRMedioRet + intContadorIFRMedioAux;
 
-							pintVolumeMedioNumRegistrosRet = pintVolumeMedioNumRegistrosRet + intVolumeMedioNumRegistrosAux;
+						        pintVolumeMedioNumRegistrosRet = pintVolumeMedioNumRegistrosRet + intVolumeMedioNumRegistrosAux;
 
-							//Percorre cada um dos items da collection retorna pela função "ValoresExtremosUnitarioCalcular".
+						        //Percorre cada um dos items da collection retorna pela função "ValoresExtremosUnitarioCalcular".
 
-							foreach (cMediaDTO objMediaAux in lstMediasAux) {
-								//marca como item não encontrado
-								bool blnItemEncontrado = false;
-
-
-								for (int intI = 0; intI <= plstMediasRet.Count - 1; intI++) {
-
-									if (plstMediasRet[intI].Equals(objMediaAux)) {
-										blnItemEncontrado = true;
-
-										//Incrementa o número de registros do item atual na collection geral.
-										plstMediasRet[intI].IncrementaNumRegistros(objMediaAux.NumRegistros);
-
-										//No momento que  encontrou o item pode sair do for
-										break; // TODO: might not be correct. Was : Exit For
-
-									}
-
-								}
+						        foreach (cMediaDTO objMediaAux in lstMediasAux) {
+						            //marca como item não encontrado
+						            bool blnItemEncontrado = false;
 
 
-								if (!blnItemEncontrado) {
-									//Se o item não foi encontrado, adiciona na collection geral
-									plstMediasRet.Add(objMediaAux);
+						            for (int intI = 0; intI <= plstMediasRet.Count - 1; intI++) {
 
-								}
+						                if (plstMediasRet[intI].Equals(objMediaAux)) {
+						                    blnItemEncontrado = true;
 
-							}
+						                    //Incrementa o número de registros do item atual na collection geral.
+						                    plstMediasRet[intI].IncrementaNumRegistros(objMediaAux.NumRegistros);
 
-						}
-						// If blnPrimeiraIteracao Then
+						                    //No momento que  encontrou o item pode sair do for
+						                    break; // TODO: might not be correct. Was : Exit For
+
+						                }
+
+						            }
+
+
+						            if (!blnItemEncontrado) {
+						                //Se o item não foi encontrado, adiciona na collection geral
+						                plstMediasRet.Add(objMediaAux);
+
+						            }
+
+						        }
+
+						    }
+						    
+						}						// If blnPrimeiraIteracao Then
 
 						//Marca como false, para nas próximas iterações comparar com os valores já atribuidos nas variáveis.
 						blnPrimeiraIteracao = false;
