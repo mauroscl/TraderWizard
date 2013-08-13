@@ -630,6 +630,26 @@ namespace TraderWizard
 			txtData.Text = Calendario.SelectionRange.Start.ToString("dd/MM/yyyy");
 			Calendario.Hide();
 
-		}
+        }
+
+        private void Calendario_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyValue != (int) Keys.Escape) return;
+
+            var calendario = sender as MonthCalendar;
+            if (calendario != null)
+            {
+                calendario.Hide();
+            }
+        }
+
+        private void Calendario_MouseHover(object sender, EventArgs e)
+        {
+            var calendario = sender as MonthCalendar;
+            if (calendario != null)
+            {
+                calendario.Focus();
+            }
+        }
 	}
 }

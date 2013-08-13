@@ -681,17 +681,9 @@ namespace TraderWizard
 			{
 			    //data minima
 
-				if (lngSequencialBuscaInicial == lngAreaDadosSequencialInicial) {
-					//se o sequencial inicial de busca é o sequencial inicial da área de dados
-					dtmDataMinimaBusca = dtmDataMinimaAreaDados;
+			    dtmDataMinimaBusca = lngSequencialBuscaInicial == lngAreaDadosSequencialInicial ? dtmDataMinimaAreaDados : objCotacao.AtivoSequencialDataBuscar(strCodigoAtivo, lngSequencialBuscaInicial, strTabelaCotacao);
 
-
-				} else {
-					dtmDataMinimaBusca = objCotacao.AtivoSequencialDataBuscar(strCodigoAtivo, lngSequencialBuscaInicial, strTabelaCotacao);
-
-				}
-
-				//data máxima de busca
+			    //data máxima de busca
 
 			    dtmDataMaximaBusca = lngSequencialBuscaFinal == lngAreaDadosSequencialFinal ? dtmDataMaximaAreaDados : objCotacao.AtivoSequencialDataBuscar(strCodigoAtivo, lngSequencialBuscaFinal, strTabelaCotacao);
 			}
