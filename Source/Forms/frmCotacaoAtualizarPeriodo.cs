@@ -40,7 +40,7 @@ namespace TraderWizard
 
 		}
 
-		private enum enumAtualizacaoDiariaTipo
+		private enum EnumAtualizacaoDiariaTipo
 		{
 			Online = 1,
 			Historica = 2,
@@ -55,7 +55,7 @@ namespace TraderWizard
 		public delegate void AlterCursorDoMouseCallback(Cursor pNovoCursor);
 
 
-		private void CotacaoDiariaAtualizar(string pstrCodigo, System.DateTime pdtmDataInicial, System.DateTime pdtmDataFinal, bool pblnCalcularDados, enumAtualizacaoDiariaTipo intTipo)
+		private void CotacaoDiariaAtualizar(string pstrCodigo, System.DateTime pdtmDataInicial, System.DateTime pdtmDataFinal, bool pblnCalcularDados, EnumAtualizacaoDiariaTipo intTipo)
 		{
 			AlterCursorDoMouseCallback callBack = new AlterCursorDoMouseCallback(AlterCursorDoMouse);
 
@@ -63,15 +63,15 @@ namespace TraderWizard
 
 		    ServicoDeCotacao objCotacao = new ServicoDeCotacao(objConexao);
 
-			if (intTipo == enumAtualizacaoDiariaTipo.Online) {
+			if (intTipo == EnumAtualizacaoDiariaTipo.Online) {
 				objCotacao.CotacaoPeriodoAtualizar(pdtmDataInicial, pdtmDataFinal, pstrCodigo, pblnCalcularDados);
 
 
-			} else if (intTipo == enumAtualizacaoDiariaTipo.Historica) {
+			} else if (intTipo == EnumAtualizacaoDiariaTipo.Historica) {
 				objCotacao.CotacaoHistoricaPeriodoAtualizar(pdtmDataInicial, pdtmDataFinal, pblnCalcularDados);
 
 
-			} else if (intTipo == enumAtualizacaoDiariaTipo.IntraDay) {
+			} else if (intTipo == EnumAtualizacaoDiariaTipo.IntraDay) {
 				objCotacao.CotacaoIntraDayAtualizar(pdtmDataInicial, pblnCalcularDados);
 
 			}
@@ -83,13 +83,7 @@ namespace TraderWizard
 
 		private void btnOK_Click(object sender, EventArgs e)
 		{
-			ServicoDeCotacao objCotacao = null;
-
-			cEnum.enumRetorno intRetorno = default(cEnum.enumRetorno);
-
-
-
-			if (rdbAtualizacaoDiaria.Checked) {
+		    if (rdbAtualizacaoDiaria.Checked) {
 			    //verificação dos campos obrigatórios para a atualização diária.
 
 
@@ -147,14 +141,14 @@ namespace TraderWizard
 
 				//Me.Cursor = Cursors.WaitCursor
 
-				enumAtualizacaoDiariaTipo intAtualizacaoTipo = default(enumAtualizacaoDiariaTipo);
+				EnumAtualizacaoDiariaTipo intAtualizacaoTipo = default(EnumAtualizacaoDiariaTipo);
 
 				if (rdbOnline.Checked) {
-					intAtualizacaoTipo = enumAtualizacaoDiariaTipo.Online;
+					intAtualizacaoTipo = EnumAtualizacaoDiariaTipo.Online;
 				} else if (rdbHistorica.Checked) {
-					intAtualizacaoTipo = enumAtualizacaoDiariaTipo.Historica;
+					intAtualizacaoTipo = EnumAtualizacaoDiariaTipo.Historica;
 				} else if (rdbIntraday.Checked) {
-					intAtualizacaoTipo = enumAtualizacaoDiariaTipo.IntraDay;
+					intAtualizacaoTipo = EnumAtualizacaoDiariaTipo.IntraDay;
 				}
 
 				bool blnCalcularDados = chkCalcularDados.Checked;
@@ -183,9 +177,9 @@ namespace TraderWizard
 
 				Cursor = Cursors.WaitCursor;
 
-				objCotacao = new ServicoDeCotacao(objConexao);
+				var objCotacao = new ServicoDeCotacao(objConexao);
 
-				intRetorno = objCotacao.CotacaoHistoricaAnoAtualizar(Convert.ToInt32(txtAno.Text));
+				cEnum.enumRetorno intRetorno = objCotacao.CotacaoHistoricaAnoAtualizar(Convert.ToInt32(txtAno.Text));
 
 				Cursor = Cursors.Default;
 

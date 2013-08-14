@@ -438,50 +438,26 @@ namespace TraderWizard
 
 			dtmDataDeGeracaoDoRelatorio = Convert.ToDateTime(txtData.Text);
 
-			cEnum.enumSetup intSetup;
-			Int32 intNegociosTotal;
-			double dblTitulosTotal;
-			decimal decValorTotal;
-			string strPeriodo;
-			decimal decPercentualStopGain;
+		    int intNegociosTotal = Information.IsNumeric(txtNegociosTotal.Text) ? Convert.ToInt32(txtNegociosTotal.Text) : -1;
 
-			if (Information.IsNumeric(txtNegociosTotal.Text)) {
-				intNegociosTotal = Convert.ToInt32(txtNegociosTotal.Text);
-			} else {
-				intNegociosTotal = -1;
-			}
+		    double dblTitulosTotal = Information.IsNumeric(txtTitulosTotal.Text) ? Convert.ToDouble(txtTitulosTotal.Text) : -1;
 
-			if (Information.IsNumeric(txtTitulosTotal.Text)) {
-				dblTitulosTotal = Convert.ToDouble(txtTitulosTotal.Text);
-			} else {
-				dblTitulosTotal = -1;
-			}
+		    decimal decValorTotal = Information.IsNumeric(txtValorTotal.Text) ? Convert.ToDecimal(txtValorTotal.Text) : -1;
 
-			if (Information.IsNumeric(txtValorTotal.Text)) {
-				decValorTotal = Convert.ToDecimal(txtValorTotal.Text);
-			} else {
-				decValorTotal = -1;
-			}
+            string strPeriodo = String.Empty;
 
-			if (rdbDiario.Checked) {
+            if (rdbDiario.Checked)
+            {
 				strPeriodo = "DIARIO";
 			} else if (rdbSemanal.Checked) {
 				strPeriodo = "SEMANAL";
-			} else {
-				strPeriodo = String.Empty;
-			}
+			} 
 
-			if (rdbStopGainPercentual.Checked) {
-				decPercentualStopGain = Convert.ToDecimal(txtStopGainPercentual.Text);
-			} else {
-				decPercentualStopGain = -1;
-			}
+		    decimal decPercentualStopGain = rdbStopGainPercentual.Checked ? Convert.ToDecimal(txtStopGainPercentual.Text) : -1;
 
-			string strQuery = null;
+		    var objRelatorio = new cRelatorio(objConexao);
 
-			cRelatorio objRelatorio = new cRelatorio(objConexao);
-
-			intSetup = ComboSetupMapear();
+			cEnum.enumSetup intSetup = ComboSetupMapear();
 
 			this.Cursor = Cursors.WaitCursor;
 
@@ -493,8 +469,8 @@ namespace TraderWizard
 
 			}
 
-			strQuery = objRelatorio.RelatListagemCalcular(dtmDataDeGeracaoDoRelatorio, intSetup, strPeriodo, rdbStopGainAlijamento.Checked, Convert.ToDecimal(txtValorCapital.Text), Convert.ToDecimal(txtPercentualManejo.Text), decPercentualStopGain, Convert.ToDouble(txtIFR2Maximo.Text), chkAcimaMME49.Checked, dblTitulosTotal,
-			intNegociosTotal, decValorTotal, objIFRSobrevendido);
+			string strQuery = objRelatorio.RelatListagemCalcular(dtmDataDeGeracaoDoRelatorio, intSetup, strPeriodo, rdbStopGainAlijamento.Checked, Convert.ToDecimal(txtValorCapital.Text), Convert.ToDecimal(txtPercentualManejo.Text), decPercentualStopGain, Convert.ToDouble(txtIFR2Maximo.Text), chkAcimaMME49.Checked, dblTitulosTotal,
+			    intNegociosTotal, decValorTotal, objIFRSobrevendido);
 
 			GridCarregar(strQuery);
 

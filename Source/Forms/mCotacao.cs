@@ -57,7 +57,7 @@ namespace Forms
 
 		    foreach (var ativo in ativosValidos )
 		    {
-		        pcmbAtivo.Items.Add(new cAtivo(ativo.Codigo, ativo.Codigo + " - " + ativo.Descricao));
+		        pcmbAtivo.Items.Add(ativo);
 
 		        if (pblnSelecionarItem && ativo.Codigo == codigoDoAtivoParaSelecionar)
 		        {
