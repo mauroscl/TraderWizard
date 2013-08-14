@@ -137,7 +137,7 @@ namespace TraderWizard
 
 		private void btnRemover_Click(System.Object sender, System.EventArgs e)
 		{
-			Collection colItem = new Collection();
+			var colItem = new Collection();
 
 
 			for (var intI = 0; intI <= lstAtivosEscolhidos.SelectedItems.Count - 1; intI++) {
@@ -176,50 +176,43 @@ namespace TraderWizard
 			}
 
 
-			if (!blnOperacoesExecutar) {
+		    if (!blnOperacoesExecutar && chkCotacaoSemanal.Checked)
+		    {
+		        blnOperacoesExecutar = (chkCotacaoSemanalDadosGeraisRecalcular.Checked ||
+		                                chkCotacaoSemanalIFRRecalcular.Checked || chkCotacaoSemanalMMExpRecalcular.Checked ||
+		                                chkCotacaoSemanalVolumeMedioRecalcular.Checked ||
+		                                chkCotacaoSemanalIFR2MedioRecalcular.Checked);
+		    }
 
-				if (chkCotacaoSemanal.Checked) {
-					blnOperacoesExecutar = (chkCotacaoSemanalDadosGeraisRecalcular.Checked || chkCotacaoSemanalIFRRecalcular.Checked || chkCotacaoSemanalMMExpRecalcular.Checked || chkCotacaoSemanalVolumeMedioRecalcular.Checked || chkCotacaoSemanalIFR2MedioRecalcular.Checked);
 
-				}
-
-			}
-
-
-			if (!blnOperacoesExecutar) {
+		    if (!blnOperacoesExecutar) {
 				//se não tem operações para executar emite mensagem  e retorna false
-				Interaction.MsgBox("Não foram selecionadas operações para serem executadas.", MsgBoxStyle.Information, this.Text);
+		        MessageBox.Show("Não foram selecionadas operações para serem executadas.", this.Text, MessageBoxButtons.OK,MessageBoxIcon.Information);
 
 				return false;
 
 			}
 
 
-			if (chkDataInicialUtilizar.Checked) {
+            
+		    if (chkDataInicialUtilizar.Checked /*&& !Information.IsDate(txtDataInicial.Text)*/)
+		    {
+                MessageBox.Show(
+		            "Campo " + Strings.Chr(34) + "Data Inicial" + Strings.Chr(34) + " não preenchido ou com valor inválido.", this.Text,
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-				if (!Information.IsDate(txtDataInicial.Text)) {
-					Interaction.MsgBox("Campo " + Strings.Chr(34) + "Data Inicial" + Strings.Chr(34) + " não preenchido ou com valor inválido.", MsgBoxStyle.Exclamation, this.Text);
-
-					return false;
-
-				}
-
-			}
+		        return false;
+		    }
 
 
-			if (rdbAtivosEscolher.Checked) {
-				//se não tem ativos selecionados
+		    if (rdbAtivosEscolher.Checked && lstAtivosEscolhidos.Items.Count == 0)
+		    {
+		        MessageBox.Show("Nenhum ativo foi escolhido.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-				if (lstAtivosEscolhidos.Items.Count == 0) {
-					Interaction.MsgBox("Nenhum ativo foi escolhido.", MsgBoxStyle.Exclamation, this.Text);
+		        return false;
+		    }
 
-					return false;
-
-				}
-
-			}
-
-			return true;
+		    return true;
 
 		}
 
@@ -229,7 +222,7 @@ namespace TraderWizard
 
 			if (Consistir()) {
 
-				if (Interaction.MsgBox("Recalcular dados das cotações. Confirma a execução da operação?", MsgBoxStyle.YesNo, this.Text) != MsgBoxResult.Yes) {
+				if (MessageBox.Show("Recalcular dados das cotações. Confirma a execução da operação?", this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) {
 					return;
 
 				}
@@ -254,7 +247,7 @@ namespace TraderWizard
 
 				}
 
-				System.DateTime dtmDataInicial = frwInterface.cConst.DataInvalida;
+				DateTime dtmDataInicial = frwInterface.cConst.DataInvalida;
 
 
 				if (chkDataInicialUtilizar.Checked) {
@@ -299,13 +292,12 @@ namespace TraderWizard
 				this.Cursor = Cursors.WaitCursor;
 
 				if (objCotacao.DadosRecalcular(blnCotacaoDiariaOscilacaoRecalcular, blnCotacaoDiariaOscilacaoRecalcular, blnCotacaoDiariaIFRRecalcular, blnCotacaoDiariaMMExpRecalcular, blnCotacaoDiariaVolumeMedioRecalcular, blnCotacaoDiariaIFRMedioRecalcular, blnCotacaoSemanalDadosGeraisRecalcular, blnCotacaoSemanalIFRRecalcular, blnCotacaoSemanalMMExpRecalcular, blnCotacaoSemanalVolumeMedioRecalcular,
-
 				blnCotacaoSemanalIFRMedioRecalcular, dtmDataInicial, strAtivos)) {
-					Interaction.MsgBox("Operação executada com sucesso.", MsgBoxStyle.Information, this.Text);
+                    MessageBox.Show("Operação executada com sucesso.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 
 				} else {
-					Interaction.MsgBox("Ocorreram alguns erros ao executar a operação. Veja o log de erros.", MsgBoxStyle.Exclamation, this.Text);
+                    MessageBox.Show("Ocorreram alguns erros ao executar a operação. Veja o log de erros.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
 				}
 

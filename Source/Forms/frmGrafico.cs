@@ -11,6 +11,7 @@ using prjModelo.Entidades;
 using prmCotacao;
 using prjDTO;
 using frwInterface;
+using TraderWizard.Extensoes;
 using TraderWizard.Infra.Repositorio;
 
 namespace TraderWizard
@@ -1624,10 +1625,9 @@ namespace TraderWizard
 
 			//pega o mês do primeiro candle para quando trocar de mês imprimir a última data do mês.
 			//e adiciona um mês.
-			DateTime dtmDataAtual = DateAndTime.DateAdd(DateInterval.Month, 1, arrCandle[intArrayCandlePosicaoInicial].Data);
 
 			//pega a primeira data do próximo mês
-			dtmDataAtual = DateAndTime.DateSerial(DateAndTime.DatePart(DateInterval.Year, dtmDataAtual), DateAndTime.DatePart(DateInterval.Month, dtmDataAtual), 1);
+            DateTime dtmDataAtual = arrCandle[intArrayCandlePosicaoInicial].Data.AddMonths(1).FirstDayOfMonth();
 
 			int intArrayVolume = 0;
 
@@ -1654,19 +1654,9 @@ namespace TraderWizard
 						LabelHorizontalAdicionar(Strings.Format(dtmData, "dd/MM/yyyy"), intAreaBottom, intAreaLeft, intCaudaX, Color.Black);
 
 					}
-					//if blnDadosAtualizar then
 
-					//atualiza a data para a próxima iteração
-					//dtmDataAtual = dtmData
-
-					dtmDataAtual = DateAndTime.DateAdd(DateInterval.Day, intNumDiasIntervaloLabels, dtmDataAtual);
-
-					//'depois do primeiro label, se a cotação é semanal, troca o intervalo entre labels para 3 meses
-					//If ToolStripcmbPeriodoDuracao.SelectedItem = "Semanal" Then
-					//    'gráfico semanal coloca 1 label a cada 3 meses
-					//    intNumMesesIntervaloLabels = 3
-					//End If
-
+                    //atualiza a data para a próxima iteração
+				    dtmDataAtual = dtmDataAtual.AddDays(intNumDiasIntervaloLabels);
 
 				}
 

@@ -537,9 +537,9 @@ namespace TraderWizard
 			//seta o combo de setups para começar com a opção "IFR Sobrevendido Sem Filtro"
 			cmbSetup.SelectedIndex = 3;
 
-			txtData.Text = mCotacao.DataFormatoConverter(Strings.FormatDateTime(DateAndTime.Now, DateFormat.ShortDate)).ToString("dd/MM/yyyy");
+			txtData.Text = DateTime.Now.ToString("dd/MM/yyyy");
 
-			string strValor = String.Empty;
+			string strValor;
 
 			//consulta valores da tabela configuração para preencher os campos
 			mdlGeral.ParametroConsultar(objConexao, "ValorCapital", out strValor);

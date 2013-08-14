@@ -1,3 +1,4 @@
+using System.Windows.Forms.VisualStyles;
 using Forms;
 using Microsoft.VisualBasic;
 using System;
@@ -8,6 +9,7 @@ using frwInterface;
 using prjDTO;
 using System.Threading;
 using prjModelo.Regras;
+using TraderWizard.Extensoes;
 
 namespace TraderWizard
 {
@@ -88,34 +90,32 @@ namespace TraderWizard
 
 
 			if (rdbAtualizacaoDiaria.Checked) {
-				System.DateTime dtmDataInicial = default(System.DateTime);
-				System.DateTime dtmDataFinal = default(System.DateTime);
-
-				//verificação dos campos obrigatórios para a atualização diária.
+			    //verificação dos campos obrigatórios para a atualização diária.
 
 
-				if (!Information.IsDate(txtDataInicial.Text)) {
-					Interaction.MsgBox("Campo " + Strings.Chr(34) + "Data Inicial" + Strings.Chr(34) + " não preenchido ou com valor inválido.", MsgBoxStyle.Exclamation, Text);
+				if (!txtDataInicial.Text.IsDate()) {
+                    MessageBox.Show("Campo " + Strings.Chr(34) + "Data Inicial" + Strings.Chr(34) + " não preenchido ou com valor inválido.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 					return;
 
 				}
 
 
-				if (!Information.IsDate(txtDataFinal.Text)) {
-					Interaction.MsgBox("Campo " + Strings.Chr(34) + "Data Final" + Strings.Chr(34) + " não preenchido ou com valor inválido.", MsgBoxStyle.Exclamation, Text);
+				if (!txtDataFinal.Text.IsDate()) {
+                    MessageBox.Show("Campo " + Strings.Chr(34) + "Data Final" + Strings.Chr(34) + " não preenchido ou com valor inválido.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 					return;
 
 				}
 
-				dtmDataInicial = mCotacao.DataFormatoConverter(txtDataInicial.Text);
+				DateTime dtmDataInicial = Convert.ToDateTime(txtDataInicial.Text);
 
-				dtmDataFinal = mCotacao.DataFormatoConverter(txtDataFinal.Text);
+                DateTime dtmDataFinal = Convert.ToDateTime(txtDataFinal.Text);
 
 
 				if (dtmDataInicial > dtmDataFinal) {
-					Interaction.MsgBox("Campo " + Strings.Chr(34) + "Data Inicial" + Strings.Chr(34) + " não pode ter uma data superior ao campo " + Strings.Chr(34) + "Data Final" + Strings.Chr(34) + ".", MsgBoxStyle.Exclamation, Text);
+					MessageBox.Show("Campo " + Strings.Chr(34) + "Data Inicial" + Strings.Chr(34) + " não pode ter uma data superior ao campo " + Strings.Chr(34) + "Data Final" + Strings.Chr(34) + ".",
+                        Text,MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 					return;
 
@@ -125,7 +125,7 @@ namespace TraderWizard
 				if (rdbIntraday.Checked) {
 
 					if (dtmDataInicial != dtmDataFinal) {
-						Interaction.MsgBox("Para atualizações intraday as datas inicial e final devem ser as mesmas.", MsgBoxStyle.Exclamation, Text);
+                        MessageBox.Show("Para atualizações intraday as datas inicial e final devem ser as mesmas.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 						return;
 
@@ -136,9 +136,8 @@ namespace TraderWizard
 					//verifica se a data é um dia útil. Se não for, não permite a execução
 
 					if (!objCalculadorData.DiaUtilVerificar(Convert.ToDateTime(txtDataInicial.Text))) {
-						Interaction.MsgBox("Data não é um dia útil. Não é possível atualizar as cotações.", MsgBoxStyle.Exclamation, Text);
 
-						//objCotacao = Nothing
+                        MessageBox.Show("Data não é um dia útil. Não é possível atualizar as cotações.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 						return;
 
@@ -176,7 +175,7 @@ namespace TraderWizard
 				//verificação dos campos obrigatórios para a atualização anual
 
 				if (!Information.IsNumeric(txtAno.Text)) {
-					Interaction.MsgBox("Campo " + Strings.Chr(34) + "Ano" + Strings.Chr(34) + " não preenchido ou com valor inválido.", MsgBoxStyle.Exclamation, Text);
+                    MessageBox.Show("Campo " + Strings.Chr(34) + "Ano" + Strings.Chr(34) + " não preenchido ou com valor inválido.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 					return;
 
@@ -199,22 +198,22 @@ namespace TraderWizard
 
 					case cEnum.enumRetorno.RetornoOK:
 
-						Interaction.MsgBox("Operação realizada com sucesso.", MsgBoxStyle.Information, Text);
+                        MessageBox.Show("Operação realizada com sucesso.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 						break;
 					case cEnum.enumRetorno.RetornoErroInesperado:
 
-						Interaction.MsgBox("Ocorreram erros ao executar a operação.", MsgBoxStyle.Exclamation, Text);
+                        MessageBox.Show("Ocorreram erros ao executar a operação.", Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
 						break;
 					case cEnum.enumRetorno.RetornoErro2:
 
-						Interaction.MsgBox("Já existe cotação para o ano " + txtAno.Text + ".", MsgBoxStyle.Exclamation, Text);
+                        MessageBox.Show("Já existe cotação para o ano " + txtAno.Text + ".", Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
 						break;
 					case cEnum.enumRetorno.RetornoErro3:
 
-						Interaction.MsgBox("Não foi possível descompactar o arquivo zip ou abrir o arquivo texto com as cotações.", MsgBoxStyle.Exclamation, Text);
+                        MessageBox.Show("Não foi possível descompactar o arquivo zip ou abrir o arquivo texto com as cotações.", Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
 						break;
 				}

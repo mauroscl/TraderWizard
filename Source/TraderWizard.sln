@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.20617.1 PREVIEW
+VisualStudioVersion = 12.0.20623.1 VSUPREVIEW
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dominio", "Dominio", "{58730C71-9E62-4304-B244-DC2776BCDF02}"
 EndProject
@@ -57,6 +57,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "Services\Services.csproj", "{8BAE22CC-832B-4151-8B2F-222403B12F8B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TraderWizard.Infra.Repositorio", "TraderWizard.Infra.Repositorio\TraderWizard.Infra.Repositorio.csproj", "{ABD88985-5583-4D96-9E41-7AB3842DC1F9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensoes", "Extensoes", "{3D792207-A703-4B62-A243-05E90D68BE47}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TraderWizard.Extensoes", "TraderWizard.Extensoes\TraderWizard.Extensoes.csproj", "{D6DB2ACC-0F07-406A-B105-8E509FCA45F6}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
@@ -261,6 +265,16 @@ Global
 		{ABD88985-5583-4D96-9E41-7AB3842DC1F9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{ABD88985-5583-4D96-9E41-7AB3842DC1F9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{ABD88985-5583-4D96-9E41-7AB3842DC1F9}.Release|x86.ActiveCfg = Release|Any CPU
+		{D6DB2ACC-0F07-406A-B105-8E509FCA45F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6DB2ACC-0F07-406A-B105-8E509FCA45F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6DB2ACC-0F07-406A-B105-8E509FCA45F6}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{D6DB2ACC-0F07-406A-B105-8E509FCA45F6}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{D6DB2ACC-0F07-406A-B105-8E509FCA45F6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D6DB2ACC-0F07-406A-B105-8E509FCA45F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6DB2ACC-0F07-406A-B105-8E509FCA45F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6DB2ACC-0F07-406A-B105-8E509FCA45F6}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{D6DB2ACC-0F07-406A-B105-8E509FCA45F6}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{D6DB2ACC-0F07-406A-B105-8E509FCA45F6}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -284,5 +298,6 @@ Global
 		{A902DC79-0E9C-4C2D-894E-8301DB0D9849} = {6BC89F85-F0C8-4751-94BE-8E8E6F52B90B}
 		{8BAE22CC-832B-4151-8B2F-222403B12F8B} = {6BC89F85-F0C8-4751-94BE-8E8E6F52B90B}
 		{ABD88985-5583-4D96-9E41-7AB3842DC1F9} = {6BC89F85-F0C8-4751-94BE-8E8E6F52B90B}
+		{D6DB2ACC-0F07-406A-B105-8E509FCA45F6} = {3D792207-A703-4B62-A243-05E90D68BE47}
 	EndGlobalSection
 EndGlobal

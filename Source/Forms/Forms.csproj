@@ -312,6 +312,10 @@
       <Project>{D0B52B8A-8A9C-4E34-B324-745E7A126573}</Project>
       <Name>ServicosDeInterface</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TraderWizard.Extensoes\TraderWizard.Extensoes.csproj">
+      <Project>{D6DB2ACC-0F07-406A-B105-8E509FCA45F6}</Project>
+      <Name>TraderWizard.Extensoes</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TraderWizard.Infra.Repositorio\TraderWizard.Infra.Repositorio.csproj">
       <Project>{ABD88985-5583-4D96-9E41-7AB3842DC1F9}</Project>
       <Name>TraderWizard.Infra.Repositorio</Name>

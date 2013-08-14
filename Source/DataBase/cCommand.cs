@@ -172,71 +172,43 @@ namespace DataBase
 		{
 			OleDbCommand cmd = null;
 
-			bool blnContinuarExecutando = true;
+		    if (!this.TransStatus) return;
 
-			int intNumeroDeExecucoes = 0;
+		    try {
 
-
-			while (blnContinuarExecutando) {
-				//só executa o comando se o status da transação está OK.
-
-				if (this.TransStatus) {
-
-					try {
-						intNumeroDeExecucoes = intNumeroDeExecucoes + 1;
-
-					    if (intNumeroDeExecucoes > 10) {
-					        blnContinuarExecutando = false;
-					    }
-
-					    if (intNumeroDeExecucoes > 1) {
-							Trace.WriteLine("Comando: " + pstrComando + " - Tentativas: " + intNumeroDeExecucoes);
-						}
-
-						cmd = CriarComando(pstrComando);
-						intLinhasAfetadas = cmd.ExecuteNonQuery();
-						blnContinuarExecutando = false;
+		        cmd = CriarComando(pstrComando);
+		        intLinhasAfetadas = cmd.ExecuteNonQuery();
 
 
-					} catch (InvalidOperationException ex) {
-						RollBackTrans();
+		    } catch (InvalidOperationException ex) {
+		        RollBackTrans();
 
-                        MessageBox.Show(ex.Message, "Executar Comando", MessageBoxButtons.OK,MessageBoxIcon.Error);
-
-
-					} catch (OleDbException ex) {
-
-						if (ex.ErrorCode == -2147467259 && blnContinuarExecutando) {
-							//Erro de objeto bloqueado
-							System.Threading.Thread.Sleep(1000);
+		        MessageBox.Show(ex.Message, "Executar Comando", MessageBoxButtons.OK,MessageBoxIcon.Error);
 
 
-						} else {
-							RollBackTrans();
+		    } catch (OleDbException ex) {
 
-							frmInformacao objfrmInformacao = new frmInformacao("Erro - Código: " + ex.ErrorCode + " - Descrição: " + ex.Message + Environment.NewLine + " - Query: " + pstrComando);
+		        RollBackTrans();
 
-							objfrmInformacao.ShowDialog();
+		        var objfrmInformacao = new frmInformacao("Erro - Código: " + ex.ErrorCode + 
+                    " - Descrição: " + ex.Message + Environment.NewLine + 
+                    " - Query: " + pstrComando);
 
-						}
-
-
-					} catch (Exception ex) {
-						RollBackTrans();
-
-                        MessageBox.Show(ex.Message, "Executar Comando", MessageBoxButtons.OK, MessageBoxIcon.Error);
+		        objfrmInformacao.ShowDialog();
 
 
-					} finally {
-						//último comando executado
-						this.strUltimoComando = pstrComando;
-						cmd.Dispose();
-					}
+		    } catch (Exception ex) {
+		        RollBackTrans();
 
-				}
+		        MessageBox.Show(ex.Message, "Executar Comando", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-			}
 
+		    } finally
+		    {
+		        //último comando executado
+		        this.strUltimoComando = pstrComando;
+		        if (cmd != null) cmd.Dispose();
+		    }
 		}
 
 

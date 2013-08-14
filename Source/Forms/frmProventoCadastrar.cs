@@ -31,7 +31,7 @@ namespace TraderWizard
 
 			mdlGeral.ComboProventoTipoPreencher(cmbProventoTipo);
 
-			txtDataEx.Text = DateAndTime.Now.Date.ToString("dd/MM/yyyy");
+			txtDataEx.Text = DateTime.Now.Date.ToString("dd/MM/yyyy");
 
 		}
 
