@@ -103,7 +103,7 @@ namespace TraderWizard
 			this.Cursor = Cursors.WaitCursor;
 
 
-			intRetorno = objCotacao.ProventoCadastrar(mCotacao.cmbAtivoCodigoRetornar(cmbAtivo),  mdlGeral.ComboProventoTipoCodigoRetornar(cmbProventoTipo), Convert.ToDateTime(txtDataAprovacao.Text), Convert.ToDateTime(txtDataEx.Text), Convert.ToDecimal(txtValorPorAcao.Text));
+			intRetorno = objCotacao.ProventoCadastrar(mCotacao.ObterCodigoDoAtivoSelecionado(cmbAtivo),  mdlGeral.ComboProventoTipoCodigoRetornar(cmbProventoTipo), Convert.ToDateTime(txtDataAprovacao.Text), Convert.ToDateTime(txtDataEx.Text), Convert.ToDecimal(txtValorPorAcao.Text));
 
 			this.Cursor = Cursors.Default;
 

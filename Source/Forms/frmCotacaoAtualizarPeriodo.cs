@@ -152,7 +152,7 @@ namespace TraderWizard
 				}
 
 				bool blnCalcularDados = chkCalcularDados.Checked;
-				string strCodigo = mCotacao.cmbAtivoCodigoRetornar(cmbAtivo);
+				string strCodigo = mCotacao.ObterCodigoDoAtivoSelecionado(cmbAtivo);
 
                 //Thread thread = new Thread((ThreadStart)CotacaoDiariaAtualizar(strCodigo, dtmDataInicial, dtmDataFinal, blnCalcularDados, intAtualizacaoTipo));
 

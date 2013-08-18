@@ -77,12 +77,12 @@ namespace Forms
 
 		}
 
-		public static string cmbAtivoCodigoRetornar(ComboBox pcmbAtivo)
+		public static string ObterCodigoDoAtivoSelecionado(ComboBox pcmbAtivo)
 		{
 		    if (pcmbAtivo.Text == string.Empty) {
 				return string.Empty;
 			}
-		    cAtivo objAtivo = (cAtivo)pcmbAtivo.SelectedItem;
+		    var objAtivo = (cAtivo)pcmbAtivo.SelectedItem;
 		    return objAtivo.Codigo;
 		}
 

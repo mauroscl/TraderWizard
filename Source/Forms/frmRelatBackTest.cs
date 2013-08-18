@@ -402,7 +402,7 @@ namespace TraderWizard
 
 
 				    DateTime dataInicio;
-					if (objRelatorio.RelatBackTestOperacoesExecutar(mCotacao.cmbAtivoCodigoRetornar(cmbAtivo), arrSetup, strPeriodicidade
+					if (objRelatorio.RelatBackTestOperacoesExecutar(mCotacao.ObterCodigoDoAtivoSelecionado(cmbAtivo), arrSetup, strPeriodicidade
                         , Convert.ToDecimal(txtCapitalIncial.Text), chkRealizacaoParcialPermitirDayTrade.Checked, txtDescricao.Text.Trim()
                         , intMediaTipo, Convert.ToInt32(txtNumAcoesLote.Text)
                         , DateTime.TryParse(txtDataInicio.Text, out dataInicio) ? dataInicio : cConst.DataInvalida, ref lngCodRelatorio)) {
