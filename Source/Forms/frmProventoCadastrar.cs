@@ -4,7 +4,7 @@ using System;
 using System.Windows.Forms;
 using DataBase;
 using prmCotacao;
-using frwInterface;
+using TraderWizard.Enumeracoes;
 
 namespace TraderWizard
 {

@@ -1,9 +1,10 @@
-using frwInterface;
 using System;
 using System.Data;
 using System.Data.OleDb;
 using System.Windows.Forms;
 using prjConfiguracao;
+using TraderWizard.Enumeracoes;
+
 namespace DataBase
 {
 

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Configuration;
-using frwInterface;
+using FluentNHibernate.Cfg.Db;
+using TraderWizard.Enumeracoes;
 
 namespace prjConfiguracao
 {
@@ -55,5 +56,21 @@ namespace prjConfiguracao
             }
             return (cEnum.BancoDeDados) Enum.Parse(typeof (cEnum.BancoDeDados), bancoDeDados, true);
         }
+
+        public static IPersistenceConfigurer ObterConfiguracaoDoNHibernate()
+        {
+            cEnum.BancoDeDados bancoDeDados = ObterBancoDeDados();
+            string connectionString = ObterConnectionStringPadrao(bancoDeDados);
+            switch (bancoDeDados)
+            {
+                case cEnum.BancoDeDados.Access:
+                    return JetDriverConfiguration.Standard.ConnectionString(c => c.Is(connectionString));
+                case cEnum.BancoDeDados.SqlServer:
+                    return MsSqlConfiguration.MsSql2008.ConnectionString(c => c.Is(connectionString));
+                default:
+                    throw new ConfigurationErrorsException( "configuração de bando de dados inválida");
+            }
+        }
+
     }
 }

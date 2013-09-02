@@ -60,9 +60,9 @@
       <Project>{CC20BB02-78E9-487E-A9EC-6BFC64D2B0CB}</Project>
       <Name>DataBase</Name>
     </ProjectReference>
-    <ProjectReference Include="..\frwInterface\frwInterface.csproj">
+    <ProjectReference Include="..\TraderWizard.Enumeracoes\TraderWizard.Enumeracoes.csproj">
       <Project>{AA04D3D2-F5CE-4D2E-A9AF-A304638AC603}</Project>
-      <Name>frwInterface</Name>
+      <Name>TraderWizard.Enumeracoes</Name>
     </ProjectReference>
     <ProjectReference Include="..\prjConfiguracao\prjConfiguracao.csproj">
       <Project>{B9DCD706-44A1-4B5F-BF93-5C0A3F9BD6D5}</Project>

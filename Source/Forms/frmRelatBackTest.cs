@@ -7,10 +7,10 @@ using System.Data;
 using System.Drawing;
 using System.Diagnostics;
 using System.Windows.Forms;
-using frwInterface;
-using frwInterface;
 using DataBase;
 using prmCotacao;
+using TraderWizard.Enumeracoes;
+
 namespace TraderWizard
 {
 
@@ -88,7 +88,7 @@ namespace TraderWizard
 
 		}
 
-		private string RealizacaoParcialTipoDescricaoGerar(frwInterface.cEnum.enumRealizacaoParcialTipo pintRealizacaoParcialTipo)
+		private string RealizacaoParcialTipoDescricaoGerar(cEnum.enumRealizacaoParcialTipo pintRealizacaoParcialTipo)
 		{
 
 			switch (pintRealizacaoParcialTipo) {
@@ -125,7 +125,7 @@ namespace TraderWizard
 		/// <param name="pstructBackTestSetup">estrutura contendo todos os atributos do SETUP</param>
 		/// <returns></returns>
 		/// <remarks></remarks>
-		public bool GridAtualizar(string pstrOperacao, frwInterface.cEstrutura.structBackTestSetup pstructBackTestSetup)
+		public bool GridAtualizar(string pstrOperacao, cEstrutura.structBackTestSetup pstructBackTestSetup)
 		{
 
 			Collection colSubItems = null;
@@ -360,7 +360,7 @@ namespace TraderWizard
 			if (lstSetup.Items.Count > 0) {
 
 				if (Consistir()) {
-					frwInterface.cEstrutura.structBackTestSetup[] arrSetup = {
+					cEstrutura.structBackTestSetup[] arrSetup = {
 						
 					};
 
@@ -525,7 +525,7 @@ namespace TraderWizard
 
 			ListViewItem objListViewItem = lstSetup.Items[pintIndex];
 
-			frwInterface.cEstrutura.structBackTestSetup objBackTestSetup = default(frwInterface.cEstrutura.structBackTestSetup);
+			cEstrutura.structBackTestSetup objBackTestSetup = default(cEstrutura.structBackTestSetup);
 
 			objBackTestSetup.strCodigoSetup = objListViewItem.Text;
 

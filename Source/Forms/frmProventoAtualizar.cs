@@ -3,7 +3,8 @@ using System;
 using System.Windows.Forms;
 using prmCotacao;
 using DataBase;
-using frwInterface;
+using TraderWizard.Enumeracoes;
+
 namespace TraderWizard
 {
 

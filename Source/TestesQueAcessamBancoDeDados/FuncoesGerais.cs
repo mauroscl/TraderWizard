@@ -7,16 +7,18 @@ using System.Xml.Linq;
 using Microsoft.VisualBasic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DataBase;
+using prjDominio.Entidades;
 using prjModelo.Carregadores;
 using prjModelo.Entidades;
-using frwInterface;
+using TraderWizard.Enumeracoes;
+
 namespace TestProject1
 {
 
 	public class FuncoesGerais
 	{
 
-		public static Setup CarregarSetup(frwInterface.cEnum.enumSetup pintIDSetup)
+		public static Setup CarregarSetup(cEnum.enumSetup pintIDSetup)
 		{
 
 			cCarregadorSetup objCarregadorSetup = new cCarregadorSetup();

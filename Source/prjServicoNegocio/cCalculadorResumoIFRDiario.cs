@@ -1,17 +1,13 @@
 using System.Windows.Forms;
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
-using System.Xml.Linq;
-using prjModelo;
+using prjDominio.Entidades;
 using prjModelo.Entidades;
 using prjModelo.Carregadores;
 using DataBase;
 using prjModelo.ValueObjects;
+using TraderWizard.Infra.Repositorio;
+
 namespace prjServicoNegocio
 {
 
@@ -38,6 +34,7 @@ namespace prjServicoNegocio
 
 			    cIFRSimulacaoDiariaFaixaResumo objRetorno = new cIFRSimulacaoDiariaFaixaResumo(objAtivo, objSetup, pobjCalculoResumoFaixaVO.ClassifMedia, pobjIFRSobrevendido, pobjCalculoResumoFaixaVO.DataSaida);
 
+
 				cCarregadorCriterioClassificacaoMedia objCarregadorCriterioClassifMedia = new cCarregadorCriterioClassificacaoMedia();
 
 				IList<cCriterioClassifMedia> lstCriteriosCM = objCarregadorCriterioClassifMedia.CarregaTodos();
@@ -45,7 +42,7 @@ namespace prjServicoNegocio
 			    FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
 
 			    string strWherePadrao = " WHERE Codigo = " + FuncoesBd.CampoFormatar(objAtivo.Codigo) + Environment.NewLine;
-				strWherePadrao += " AND ID_Setup = " + FuncoesBd.CampoFormatar(objSetup.ID) + Environment.NewLine;
+				strWherePadrao += " AND ID_Setup = " + FuncoesBd.CampoFormatar(objSetup.Id) + Environment.NewLine;
 				strWherePadrao += " AND ID_CM = " + FuncoesBd.CampoFormatar(pobjCalculoResumoFaixaVO.ClassifMedia.ID) + Environment.NewLine;
 				strWherePadrao += " AND Valor_IFR_Minimo <= " + pobjIFRSobrevendido.ValorMaximo + Environment.NewLine;
 				strWherePadrao += " AND Data_Saida <= " + FuncoesBd.CampoFormatar(pobjCalculoResumoFaixaVO.DataSaida) + Environment.NewLine;
@@ -118,7 +115,8 @@ namespace prjServicoNegocio
 
 				}
 
-				objRetorno.Salvar(objConexao);
+			    var repositorio = new RepositorioDeIfrSimulacaoDiariaFaixaResumo(objConexao);
+				repositorio.Salvar(objRetorno);
 
 				return true;
 

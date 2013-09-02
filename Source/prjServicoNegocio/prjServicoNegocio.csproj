@@ -44,20 +44,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BuscaValorMinimoAnterior.cs" />
+    <Compile Include="cAjustarCotacao.cs" />
+    <Compile Include="cCalculadorData.cs" />
+    <Compile Include="cCalculadorDeTentativas.cs" />
     <Compile Include="cCalculadorFaixasEResumoIFRDiario.cs" />
     <Compile Include="cCalculadorFaixasIFRDiario.cs" />
+    <Compile Include="cCalculadorIFRSimulacaoDiariaDetalhe.cs" />
+    <Compile Include="cCalculadorMelhorEntrada.cs" />
     <Compile Include="cCalculadorResumoIFRDiario.cs" />
     <Compile Include="cSimuladorIFRDiario.cs" />
+    <Compile Include="cVerificaSeAtingiuPercentualMinimo.cs" />
+    <Compile Include="cVerificaSeDeveGerarEntrada.cs" />
+    <Compile Include="cVerificaSeValorEstaDentroDaFaixa.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SimuladorDeTrade.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataBase\DataBase.csproj">
       <Project>{CC20BB02-78E9-487E-A9EC-6BFC64D2B0CB}</Project>
       <Name>DataBase</Name>
     </ProjectReference>
-    <ProjectReference Include="..\frwInterface\frwInterface.csproj">
+    <ProjectReference Include="..\Services\Services.csproj">
+      <Project>{8BAE22CC-832B-4151-8B2F-222403B12F8B}</Project>
+      <Name>Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TraderWizard.Enumeracoes\TraderWizard.Enumeracoes.csproj">
       <Project>{AA04D3D2-F5CE-4D2E-A9AF-A304638AC603}</Project>
-      <Name>frwInterface</Name>
+      <Name>TraderWizard.Enumeracoes</Name>
     </ProjectReference>
     <ProjectReference Include="..\prjDominio\prjDominio.csproj">
       <Project>{9DAFFBC6-2218-40FF-BDF9-86774B91DA7A}</Project>
@@ -66,6 +80,14 @@
     <ProjectReference Include="..\prjDTO\prjDTO.csproj">
       <Project>{BD01A0C5-77D7-4FAA-A662-38EA575DED34}</Project>
       <Name>prjDTO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\pWeb\pWeb.csproj">
+      <Project>{a902dc79-0e9c-4c2d-894e-8301db0d9849}</Project>
+      <Name>pWeb</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TraderWizard.Infra.Repositorio\TraderWizard.Infra.Repositorio.csproj">
+      <Project>{ABD88985-5583-4D96-9E41-7AB3842DC1F9}</Project>
+      <Name>TraderWizard.Infra.Repositorio</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

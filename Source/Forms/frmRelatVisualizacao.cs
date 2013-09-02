@@ -10,8 +10,9 @@ using prjModelo.Carregadores;
 using DataBase;
 using frwTela;
 using prmCotacao;
-using frwInterface;
 using ServicosDeInterface;
+using TraderWizard.Enumeracoes;
+
 namespace TraderWizard
 {
 

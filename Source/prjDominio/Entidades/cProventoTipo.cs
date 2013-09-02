@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
-using frwInterface;
+using TraderWizard.Enumeracoes;
 
 namespace prjModelo.Entidades
 {

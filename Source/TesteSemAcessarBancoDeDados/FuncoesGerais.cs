@@ -7,9 +7,11 @@ using System.Linq;
 using System.Xml.Linq;
 using Microsoft.VisualBasic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using frwInterface;
 using prjCandle;
+using prjDominio.Entidades;
 using prjModelo.Entidades;
+using TraderWizard.Enumeracoes;
+
 namespace TesteSemAcessarBancoDeDados
 {
 

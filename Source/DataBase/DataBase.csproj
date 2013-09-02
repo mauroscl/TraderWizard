@@ -34,6 +34,27 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FluentNHibernate">
+      <HintPath>..\packages\FluentNHibernate.1.3.0.733\lib\FluentNHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections">
+      <HintPath>..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>..\packages\NHibernate.3.3.3.4001\lib\Net35\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate.Caches.SysCache2">
+      <HintPath>..\packages\NHibernate.Caches.SysCache2.3.2.0.4000\lib\Net35\NHibernate.Caches.SysCache2.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate.Validator">
+      <HintPath>..\packages\NHibernate.Validator.1.3.2.4000\lib\Net35\NHibernate.Validator.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate.Validator.Specific">
+      <HintPath>..\packages\NHibernate.Validator.1.3.2.4000\lib\Net35\NHibernate.Validator.Specific.dll</HintPath>
+    </Reference>
+    <Reference Include="StructureMap">
+      <HintPath>..\packages\structuremap.2.6.4.1\lib\net40\StructureMap.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -45,10 +66,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Carregadores\cCarregadorCarteira.cs" />
+    <Compile Include="Carregadores\cCarregadorClassificacaoMedia.cs" />
+    <Compile Include="Carregadores\cCarregadorCotacaoDiaria.cs" />
+    <Compile Include="Carregadores\cCarregadorCriterioClassificacaoMedia.cs" />
+    <Compile Include="Carregadores\cCarregadorDeResumoDoIFRDiario.cs" />
+    <Compile Include="Carregadores\cCarregadorGenerico.cs" />
+    <Compile Include="Carregadores\cCarregadorIFRDiario.cs" />
+    <Compile Include="Carregadores\cCarregadorIFRDiarioFaixa.cs" />
+    <Compile Include="Carregadores\cCarregadorIFRSimulacaoDiariaDetalhe.cs" />
+    <Compile Include="Carregadores\cCarregadorIFRSobrevendido.cs" />
+    <Compile Include="Carregadores\cCarregadorMediaDiaria.cs" />
+    <Compile Include="Carregadores\cCarregadorSetup.cs" />
+    <Compile Include="Carregadores\cCarregadorSimulacaoIFRDiario.cs" />
+    <Compile Include="Carregadores\cCarregadorSplit.cs" />
+    <Compile Include="Carregadores\cGeradorOperacaoBDPadrao.cs" />
+    <Compile Include="Carregadores\cManipuladorIFRSimulacaoDiaria.cs" />
+    <Compile Include="Carregadores\cManipuladorIFRSimulacaoDiariaDetalhe.cs" />
+    <Compile Include="Carregadores\cOperacaoBD.cs" />
+    <Compile Include="Carregadores\cRemovedorSimulacaoIFRDiario.cs" />
+    <Compile Include="Carregadores\VerificaSePossuiFaixaDoIFR.cs" />
     <Compile Include="cCampoDB.cs" />
     <Compile Include="cCommand.cs" />
     <Compile Include="cConexao.cs" />
     <Compile Include="cDadosDB.cs" />
+    <Compile Include="cGeradorQuery.cs" />
     <Compile Include="cRS.cs" />
     <Compile Include="cRSList.cs" />
     <Compile Include="frmInformacao.cs">
@@ -58,7 +100,12 @@
       <DependentUpon>frmInformacao.cs</DependentUpon>
     </Compile>
     <Compile Include="FuncoesBd.cs" />
+    <Compile Include="Interfaces\ICarregadorCotacao.cs" />
+    <Compile Include="Interfaces\ICarregadorIFR.cs" />
+    <Compile Include="Interfaces\ICarregadorMedia.cs" />
+    <Compile Include="Mapeamentos\AtivoMap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SessionManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="frmInformacao.resx">
@@ -67,14 +114,25 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\frwInterface\frwInterface.csproj">
+    <ProjectReference Include="..\TraderWizard.Enumeracoes\TraderWizard.Enumeracoes.csproj">
       <Project>{AA04D3D2-F5CE-4D2E-A9AF-A304638AC603}</Project>
-      <Name>frwInterface</Name>
+      <Name>TraderWizard.Enumeracoes</Name>
     </ProjectReference>
     <ProjectReference Include="..\prjConfiguracao\prjConfiguracao.csproj">
       <Project>{B9DCD706-44A1-4B5F-BF93-5C0A3F9BD6D5}</Project>
       <Name>prjConfiguracao</Name>
     </ProjectReference>
+    <ProjectReference Include="..\prjDominio\prjDominio.csproj">
+      <Project>{9DAFFBC6-2218-40FF-BDF9-86774B91DA7A}</Project>
+      <Name>prjDominio</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\prjDTO\prjDTO.csproj">
+      <Project>{BD01A0C5-77D7-4FAA-A662-38EA575DED34}</Project>
+      <Name>prjDTO</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

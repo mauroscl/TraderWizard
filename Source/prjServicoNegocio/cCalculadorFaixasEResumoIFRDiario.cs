@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using DataBase;
+using prjDominio.Entidades;
 using prjModelo.Entidades;
 using prjModelo.ValueObjects;
 namespace prjServicoNegocio

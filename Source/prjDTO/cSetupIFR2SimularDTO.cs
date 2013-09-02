@@ -1,4 +1,5 @@
-using frwInterface;
+using TraderWizard.Enumeracoes;
+
 namespace prjDTO
 {
 

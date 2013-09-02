@@ -4,13 +4,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using prjDominio.Entidades;
 using prjModelo.DomainServices;
 using prjModelo.Entidades;
 using prjModelo.Carregadores;
 using DataBase;
 using prjDTO;
 using prjModelo.ValueObjects;
-using frwInterface;
+using TraderWizard.Enumeracoes;
+
 namespace prjServicoNegocio
 {
 
@@ -27,7 +29,9 @@ namespace prjServicoNegocio
 
 		private readonly cAtivo objAtivo;
 
-		private Setup objSetup = null;
+		private Setup objSetup;
+
+	    private readonly ServicoDeCotacaoDeAtivo _servicoDeCotacaoDeAtivo;
 
 		private void CarregarSetup()
 		{
@@ -51,7 +55,9 @@ namespace prjServicoNegocio
 
 			objConexao = new cConexao();
 
-			objAtivo = new cAtivo(objSetupIFR2SimularCodigoDTO.Codigo, objConexao);
+			objAtivo = new cAtivo(objSetupIFR2SimularCodigoDTO.Codigo);
+
+            _servicoDeCotacaoDeAtivo = new ServicoDeCotacaoDeAtivo(objAtivo, objConexao);
 
 			CarregarSetup();
 
@@ -86,7 +92,7 @@ namespace prjServicoNegocio
 			}
 
 			//carrega todos os desdobramentos do ativo para ser utilizado posteriormente
-			objAtivo.CarregarTodosDesdobramentos();
+			_servicoDeCotacaoDeAtivo.CarregarTodosDesdobramentos();
 
 
 			if (objSetupIFR2SimularCodigoDTO.IFRTipo == cEnum.enumIFRTipo.ComFiltro) {
@@ -97,7 +103,7 @@ namespace prjServicoNegocio
 			    string strQuery = "SELECT MAX(Data) AS Data " + Environment.NewLine + " FROM IFR_Simulacao_Diaria " +
 			                      Environment.NewLine + " WHERE Codigo = " +
 			                      FuncoesBd.CampoFormatar(objSetupIFR2SimularCodigoDTO.Codigo) + Environment.NewLine +
-			                      " AND ID_Setup = " + FuncoesBd.CampoFormatar(objSetup.ID);
+			                      " AND ID_Setup = " + FuncoesBd.CampoFormatar(objSetup.Id);
 
 				objRSAux.ExecuteQuery(strQuery);
 
@@ -105,12 +111,12 @@ namespace prjServicoNegocio
 
 				objRSAux.Fechar();
 
-				objAtivo.CarregarCotacoesParaIFRComFiltro(objSetup, objSetupIFR2SimularCodigoDTO.MediaTipo, dtmDataInicial);
+				_servicoDeCotacaoDeAtivo.CarregarCotacoesParaIFRComFiltro(objSetup, objSetupIFR2SimularCodigoDTO.MediaTipo, dtmDataInicial);
 
 
 
 			} else {
-				objAtivo.CarregarCotacoesIFRSobrevendidoSemSimulacao(objSetup, 10, objSetupIFR2SimularCodigoDTO.MediaTipo);
+				_servicoDeCotacaoDeAtivo.CarregarCotacoesIFRSobrevendidoSemSimulacao(objSetup, 10, objSetupIFR2SimularCodigoDTO.MediaTipo);
 
 			}
 
@@ -121,7 +127,7 @@ namespace prjServicoNegocio
 			IList<cIFRSobrevendido> lstIFRSobrevendido = null;
 
 			//separa as cotações com ifr sobrevendido, pois novas cotações podem ser adicionadas no ativo durante a execução da simulação.
-			var lstCotacoesComIfrSobrevendido = (from c in objAtivo.CotacoesDiarias select c).ToList();
+			var lstCotacoesComIfrSobrevendido = (from c in _servicoDeCotacaoDeAtivo.CotacoesDiarias select c).ToList();
 
 			if (!lstCotacoesComIfrSobrevendido.Any()) {
 
@@ -135,7 +141,7 @@ namespace prjServicoNegocio
 				lstIFRSobrevendido = objCarregadorIFRSobrevendido.CarregarTodos();
 
 				//carrega última simulação de cada ifr sobrevendido para depois ser utilizado no cálculo das próprias
-				objAtivo.CarregarUltimasSimulacoes(objSetup, lstIFRSobrevendido, lstCotacoesComIfrSobrevendido.First().Data);
+				_servicoDeCotacaoDeAtivo.CarregarUltimasSimulacoes(objSetup, lstIFRSobrevendido, lstCotacoesComIfrSobrevendido.First().Data);
 
 			}
 

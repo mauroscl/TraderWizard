@@ -3,8 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using DataBase;
+using prjDominio.Entidades;
 using prjModelo.Entidades;
 using prmCotacao;
+using TraderWizard.Enumeracoes;
+using TraderWizard.Extensoes;
 using TraderWizard.Infra.Repositorio;
 
 namespace TraderWizard
@@ -195,8 +198,9 @@ namespace TraderWizard
 
 
             
-		    if (chkDataInicialUtilizar.Checked /*&& !Information.IsDate(txtDataInicial.Text)*/)
+		    if (chkDataInicialUtilizar.Checked && !txtDataInicial.Text.IsDate())
 		    {
+
                 MessageBox.Show(
 		            "Campo " + Strings.Chr(34) + "Data Inicial" + Strings.Chr(34) + " não preenchido ou com valor inválido.", this.Text,
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -247,7 +251,7 @@ namespace TraderWizard
 
 				}
 
-				DateTime dtmDataInicial = frwInterface.cConst.DataInvalida;
+				DateTime dtmDataInicial = cConst.DataInvalida;
 
 
 				if (chkDataInicialUtilizar.Checked) {

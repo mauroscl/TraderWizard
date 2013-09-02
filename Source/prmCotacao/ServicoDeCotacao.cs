@@ -1,9 +1,10 @@
-using System.Linq;
+﻿using System.Linq;
 using System.Windows.Forms;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Ionic.Zip;
+using prjServicoNegocio;
 using Services;
 using prjModelo.Carregadores;
 using prjModelo;
@@ -11,8 +12,9 @@ using pWeb;
 using DataBase;
 using prjDTO;
 using prjModelo.Regras;
-using frwInterface;
 using prjConfiguracao;
+using TraderWizard.Enumeracoes;
+
 namespace prmCotacao
 {
 
@@ -72,7 +74,7 @@ namespace prmCotacao
 
 		    DateTime dtmDataUltimaCotacao = cConst.DataInvalida;
 
-			cCalculadorData objCalculadorData = new cCalculadorData(objConexao);
+			var objCalculadorData = new cCalculadorData(objConexao);
 
 			//enquanto a data inicial for menor que a data final.
 
@@ -1856,7 +1858,7 @@ namespace prmCotacao
 
 					//neste caso a data base tem que ser um dia posterior à data final da data calculada
 					//pdtmDataBase = DateAdd(DateInterval.Day, 1, dtmDataFinal)
-					cCalculadorData objCalculadorData = new cCalculadorData(objConnAux);
+					var objCalculadorData = new cCalculadorData(objConnAux);
 					pdtmDataBase = objCalculadorData.CalcularDataProximoPeriodo(pstrCodigo, dtmDataFinal, pstrTabela);
 
 

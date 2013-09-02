@@ -3,12 +3,13 @@ using Forms;
 using Microsoft.VisualBasic;
 using System;
 using System.Windows.Forms;
+using prjServicoNegocio;
 using prmCotacao;
 using DataBase;
-using frwInterface;
 using prjDTO;
 using System.Threading;
 using prjModelo.Regras;
+using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;
 
 namespace TraderWizard
@@ -125,7 +126,7 @@ namespace TraderWizard
 
 					}
 
-					cCalculadorData objCalculadorData = new cCalculadorData(objConexao);
+					var objCalculadorData = new cCalculadorData(objConexao);
 
 					//verifica se a data é um dia útil. Se não for, não permite a execução
 

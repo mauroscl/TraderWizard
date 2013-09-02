@@ -1,6 +1,6 @@
 using System;
 using System.Drawing;
-using frwInterface;
+using TraderWizard.Enumeracoes;
 
 namespace prjCandle
 {

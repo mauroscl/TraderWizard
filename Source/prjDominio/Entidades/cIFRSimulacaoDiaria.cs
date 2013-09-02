@@ -1,23 +1,15 @@
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Xml.Linq;
-using DataBase;
 using prjDTO;
 using prjModelo.DomainServices;
-using prjModelo.Regras;
+using prjModelo.Entidades;
 
-namespace prjModelo.Entidades
+namespace prjDominio.Entidades
 {
 
 	public class cIFRSimulacaoDiaria : cModelo
 	{
-
-
-		private readonly cConexao objConexao;
 
 		public System.DateTime? DataCruzamentoMedia = null;
 		public cAtivo Ativo { get; set; }
@@ -48,16 +40,18 @@ namespace prjModelo.Entidades
 
 		public IList<cIFRSimulacaoDiariaDetalhe> Detalhes { get; set; }
 
-		public cIFRSimulacaoDiaria(cConexao pobjConexao)
+		public cIFRSimulacaoDiaria(/*cConexao pobjConexao*/)
 		{
-			objConexao = pobjConexao;
+			//objConexao = pobjConexao;
 			Detalhes = new List<cIFRSimulacaoDiariaDetalhe>();
 		}
 
 
-		public cIFRSimulacaoDiaria(cConexao pobjConexao, cAtivo pobjAtivo, Setup pobjSetup, cCotacaoDiaria pobjCotacaoDeAcionamentoDoSetup, cCotacaoDiaria pobjCotacaoDeEntrada, cCotacaoDiaria pobjCotacaoDoValorMaximo, cCotacaoDiaria pobjCotacaoDeSaida, InformacoesDoTradeDTO pobjInformacoesDoTradeDTO, IList<cIFRSobrevendido> plstIFRSobrevendido)
+		public cIFRSimulacaoDiaria(cAtivo pobjAtivo, Setup pobjSetup, cCotacaoDiaria pobjCotacaoDeAcionamentoDoSetup, 
+            cCotacaoDiaria pobjCotacaoDeEntrada, cCotacaoDiaria pobjCotacaoDoValorMaximo, cCotacaoDiaria pobjCotacaoDeSaida, 
+            InformacoesDoTradeDTO pobjInformacoesDoTradeDTO)
 		{
-			objConexao = pobjConexao;
+			//objConexao = pobjConexao;
 			Detalhes = new List<cIFRSimulacaoDiariaDetalhe>();
 
 			Ativo = pobjAtivo;
@@ -129,9 +123,6 @@ namespace prjModelo.Entidades
 			ValorMME21Minima = pobjInformacoesDoTradeDTO.MME21Minima;
 			ValorMME49Minima = pobjInformacoesDoTradeDTO.MME49Minima;
 
-			cCalculadorIFRSimulacaoDiariaDetalhe objCalculadorDetalhe = new cCalculadorIFRSimulacaoDiariaDetalhe(objConexao);
-			objCalculadorDetalhe.CalcularDetalhes(this, plstIFRSobrevendido);
-
 		}
 
 		public decimal PercentualMME200MME49 {
@@ -160,34 +151,21 @@ namespace prjModelo.Entidades
 
 		}
 
-		/// <summary>
-		///  Verifica se esta simulação é melhor entrada (valor de fechamento mais baixo) do que a simulação recebida por parâmetro. 
-		/// </summary>
-		/// <param name="pobjOutraSimulacao"></param>
-		/// <returns>
-		/// TRUE - Esta simulação é melhor entrada do que a simulação recebida por parâmetro
-		/// FALSE - A simulação recebida por parâmetro é melhor entrada do que esta simulação
-		/// </returns>
-		/// <remarks>Para fazer a comparação sao considerados os desdobramentos</remarks>
-		public bool EhMelhorEntrada(cIFRSimulacaoDiaria pobjOutraSimulacao)
+	    /// <summary>
+	    ///  Verifica se esta simulação é melhor entrada (valor de fechamento mais baixo) do que a simulação recebida por parâmetro. 
+	    /// </summary>
+	    /// <param name="pobjOutraSimulacao"></param>
+	    /// <param name="cotacao">cotação da outra simulação</param>
+	    /// <returns>
+	    /// TRUE - Esta simulação é melhor entrada do que a simulação recebida por parâmetro
+	    /// FALSE - A simulação recebida por parâmetro é melhor entrada do que esta simulação
+	    /// </returns>
+	    /// <remarks>Para fazer a comparação sao considerados os desdobramentos</remarks>
+	    public bool EhMelhorEntrada(cIFRSimulacaoDiaria pobjOutraSimulacao, cCotacaoAbstract cotacao)
 		{
 
-			cAjustarCotacao objAjustarCotacao = new cAjustarCotacao();
-
-			//Dim decValorConvertido As System.Decimal
-
-			//converte o valor de entrada da simulação recebida por parâmetro para a mesma data de entrada desta simulação
-			//decValorConvertido = objAjustarCotacao.ConverterCotacaoParaData(Ativo.Codigo, pobjOutraSimulacao.DataEntradaEfetiva, pobjOutraSimulacao.ValorEntradaOriginal, DataEntradaEfetiva)
-
-			//obtém a cotação na data de entrada da simulação recebida por parâmetro
-			var objCotacaoParaConverter = pobjOutraSimulacao.Ativo.ObterCotacaoNaData(pobjOutraSimulacao.DataEntradaEfetiva);
-
-			//converte a cotação para a data de entrada desta simulação. OBS: se houver splits a função de conversão clona o objeto de cotação 
-			//e o que está na lista de cotações do ativo permanece inalterado para não intervir no resultado de outras simulações.
-			objAjustarCotacao.ConverterCotacaoParaData((cCotacaoDiaria) objCotacaoParaConverter, DataEntradaEfetiva);
-
 			//o setup calcula qual seria o valor de entrada com os valores convertidos
-			var decValorDeEntradaDaOutraSimulacaoConvertido = pobjOutraSimulacao.Setup.CalculaValorEntrada(objCotacaoParaConverter);
+			var decValorDeEntradaDaOutraSimulacaoConvertido = pobjOutraSimulacao.Setup.CalculaValorEntrada(cotacao);
 
 			//compara os valores
 			if (ValorEntradaOriginal < decValorDeEntradaDaOutraSimulacaoConvertido) {
@@ -200,15 +178,6 @@ namespace prjModelo.Entidades
 			}
 
 		}
-
-		public cIFRSimulacaoDiaria BuscaSimulacaoAnterior(cIFRSobrevendido pobjIFRSobrevendido)
-		{
-
-			return (from s in Ativo.Simulacoes from d in s.Value.Detalhes where s.Value.DataEntradaEfetiva < DataEntradaEfetiva && d.IFRSobreVendido.Equals(pobjIFRSobrevendido) select s ).LastOrDefault().Value;
-
-		}
-
-
 
 	}
 

@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using prjDominio.Entidades;
 using prjModelo.Entidades;
 using prjModelo.Carregadores;
 using DataBase;
-using frwInterface;
+using TraderWizard.Enumeracoes;
+
 namespace ServicosDeInterface
 {
 	public class GeradorToolTip

@@ -1,7 +1,8 @@
 using Forms;
 using Microsoft.VisualBasic;
 using System;
-using frwInterface;
+using TraderWizard.Enumeracoes;
+
 namespace TraderWizard
 {
 
@@ -36,7 +37,7 @@ namespace TraderWizard
 		}
 
 
-		public frmRelatBackTestDetalhe(frwInterface.cEstrutura.structBackTestSetup pstructBackTestSetup, frmRelatBackTest pfrmGrid)
+		public frmRelatBackTestDetalhe(cEstrutura.structBackTestSetup pstructBackTestSetup, frmRelatBackTest pfrmGrid)
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();

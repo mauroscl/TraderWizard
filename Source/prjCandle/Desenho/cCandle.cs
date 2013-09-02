@@ -2,7 +2,8 @@ using System.Windows.Forms;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using frwInterface;
+using TraderWizard.Enumeracoes;
+
 namespace prjCandle
 {
 

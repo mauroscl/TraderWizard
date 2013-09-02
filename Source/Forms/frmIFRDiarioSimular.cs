@@ -7,10 +7,12 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Windows.Forms;
 using DataBase;
-using frwInterface;
 using prjDTO;
 using prjModelo.Regras;
+using prjServicoNegocio;
 using prmCotacao;
+using TraderWizard.Enumeracoes;
+
 namespace TraderWizard
 {
 
@@ -226,11 +228,11 @@ namespace TraderWizard
 
 		private void ListAtivosPreencher()
 		{
-			cCalculadorData objCalculadorData = new cCalculadorData(objConexao);
+			var objCalculadorData = new cCalculadorData(objConexao);
 
 			DateTime dtmDataUltimaCotacao = objCalculadorData.ObtemDataDaUltimaCotacao();
 
-			cRelatorio objRelatorio = new cRelatorio(objConexao);
+			var objRelatorio = new cRelatorio(objConexao);
 
             FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
 

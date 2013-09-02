@@ -7,11 +7,12 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Windows.Forms;
 using DataBase;
-using frwInterface;
-using frwInterface;
 using prjDTO;
 using prjModelo.Regras;
+using prjServicoNegocio;
 using prmCotacao;
+using TraderWizard.Enumeracoes;
+
 namespace TraderWizard
 {
 

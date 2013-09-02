@@ -6,7 +6,7 @@ using System.Linq;
 using System.Xml.Linq;
 using Microsoft.VisualBasic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using frwInterface;
+using prjDominio.Entidades;
 using prjDTO;
 using prjModelo.Carregadores;
 using prjModelo.Entidades;
@@ -15,6 +15,8 @@ using prjModelo.Regras;
 using TesteBase;
 using prjModelo.ValueObjects;
 using prjModelo.VOBuilders;
+using TraderWizard.Enumeracoes;
+
 namespace TestProject1
 {
 

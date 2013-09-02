@@ -1,15 +1,5 @@
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Xml.Linq;
-using DataBase;
-using prjModelo.DomainServices;
-using prjModelo.Regras;
-using prjModelo.ValueObjects;
-using prjModelo.VOBuilders;
+using prjDominio.Entidades;
 
 namespace prjModelo.Entidades
 {
@@ -18,8 +8,7 @@ namespace prjModelo.Entidades
 	{
 
 
-		private readonly cConexao objConexao;
-		private readonly cIFRSobrevendido objIFRSobrevendido;
+		private readonly cIFRSobrevendido _ifrSobrevendido;
 		private readonly byte bytNumTentativas;
 	    //Private blnGerouEntrada As Boolean 'Indica se gerou entrada pelos filtros adicionais
 	    public UInt32 AgrupadorDeTentativas { get; set; }
@@ -39,7 +28,7 @@ namespace prjModelo.Entidades
 		public cIFRSimulacaoDiariaDetalhe(cIFRSobrevendido pobjIFRSobrevendido, byte pbytNumTentativas, bool pblnMelhorEntrada, int pintSomatorioCriterios, UInt32 pintAgrupadorDeTentativas, cIFRSimulacaoDiaria pobjIFRSimulacaoDiaria)
 		{
 
-			objIFRSobrevendido = pobjIFRSobrevendido;
+			_ifrSobrevendido = pobjIFRSobrevendido;
 			bytNumTentativas = pbytNumTentativas;
 			AgrupadorDeTentativas = pintAgrupadorDeTentativas;
 
@@ -51,39 +40,18 @@ namespace prjModelo.Entidades
 
 		}
 
-		/// <summary>
-		/// Construtor utilizado para quando é calculado um novo detalhe. O próprio construtor chama os cálculos necessários
-		/// </summary>
-		/// <param name="pobjConexao"></param>
-		/// <param name="pobjIFRSobrevendido"></param>
-		/// <param name="pobjIFRSimulacaoDiaria"></param>
-		/// <remarks></remarks>
+	    public cIFRSimulacaoDiariaDetalhe(cIFRSobrevendido ifrSobreVendido, byte numTentativas, uint agrupadorDeTentativas, cIFRSimulacaoDiaria simulacaoDiaria)
+	    {
+	        _ifrSobrevendido = ifrSobreVendido;
+	        bytNumTentativas = numTentativas;
+	        AgrupadorDeTentativas = agrupadorDeTentativas;
+            objIFRSimulacaoDiaria = simulacaoDiaria;
 
-		public cIFRSimulacaoDiariaDetalhe(cConexao pobjConexao, cIFRSobrevendido pobjIFRSobrevendido, cIFRSimulacaoDiaria pobjIFRSimulacaoDiaria)
-		{
-			objConexao = pobjConexao;
-
-			objIFRSobrevendido = pobjIFRSobrevendido;
-
-			objIFRSimulacaoDiaria = pobjIFRSimulacaoDiaria;
-
-			cCalculadorDeTentativas objCalculadorTentativas = new cCalculadorDeTentativas();
-
-			var objTentativaVO = objCalculadorTentativas.Calcular(objIFRSimulacaoDiaria, objIFRSobrevendido);
-
-			AgrupadorDeTentativas = (uint) objTentativaVO.AgrupadorDeTentativas;
-			bytNumTentativas = objTentativaVO.NumTentativas;
-
-			CalcularMelhorEntrada(objTentativaVO.GerouNovoAgrupadorDeTentativas);
-
-			VerificarSeDeveGerarEntrada();
+	    }
 
 
-		}
-
-
-		public cIFRSobrevendido IFRSobreVendido {
-			get { return objIFRSobrevendido; }
+	    public cIFRSobrevendido IFRSobreVendido {
+			get { return _ifrSobrevendido; }
 		}
 
 		public byte NumTentativas {
@@ -93,7 +61,6 @@ namespace prjModelo.Entidades
 	    public bool MelhorEntrada { get; private set; }
 
 	    public bool GerouEntrada {
-//Return blnGerouEntrada
 			get { return (SomatorioCriterios == 0); }
 		}
 
@@ -104,29 +71,15 @@ namespace prjModelo.Entidades
 			MelhorEntrada = pblnValor;
 		}
 
+	    public void AlterarSomatorioDeCriterios(int somatorioDeCriterios)
+	    {
+	        SomatorioCriterios = somatorioDeCriterios;
+	    }
+
 		public cIFRSimulacaoDiaria IFRSimulacaoDiaria {
 			get { return objIFRSimulacaoDiaria; }
 		}
 
-		private void CalcularMelhorEntrada(bool pblnGerouNovoAgrupadorDeTentativas)
-		{
-			cCalculadorMelhorEntrada objCalcularMelhorEntrada = new cCalculadorMelhorEntrada(objConexao);
-			MelhorEntrada = objCalcularMelhorEntrada.Calcular(this, pblnGerouNovoAgrupadorDeTentativas);
-		}
-
-
-		public void VerificarSeDeveGerarEntrada()
-		{
-			cSimulacaoDiariaVOBuilder objSimulacaoDiariaVOBuilder = new cSimulacaoDiariaVOBuilder();
-			var objSimulacaoDiariaVO = objSimulacaoDiariaVOBuilder.Build(this);
-
-			cValorCriterioClassifMediaVOBuilder objValorCriterioClassifMediaVOBuilder = new cValorCriterioClassifMediaVOBuilder();
-			var objValorCriterioClassifMediaVO = objValorCriterioClassifMediaVOBuilder.Build(IFRSimulacaoDiaria);
-
-			cVerificaSeDeveGerarEntrada objVerifica = new cVerificaSeDeveGerarEntrada(objConexao);
-			SomatorioCriterios = objVerifica.Verificar(objSimulacaoDiariaVO, objValorCriterioClassifMediaVO, null);
-			//blnGerouEntrada = (intSomatorioCriterios = 0)
-		}
 
 	}
 

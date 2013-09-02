@@ -44,28 +44,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Carregadores\cCarregadorCarteira.cs" />
-    <Compile Include="Carregadores\cCarregadorClassificacaoMedia.cs" />
-    <Compile Include="Carregadores\cCarregadorCotacaoDiaria.cs" />
-    <Compile Include="Carregadores\cCarregadorCriterioClassificacaoMedia.cs" />
-    <Compile Include="Carregadores\cCarregadorDeResumoDoIFRDiario.cs" />
-    <Compile Include="Carregadores\cCarregadorGenerico.cs" />
-    <Compile Include="Carregadores\cCarregadorIFRDiario.cs" />
-    <Compile Include="Carregadores\cCarregadorIFRDiarioFaixa.cs" />
-    <Compile Include="Carregadores\cCarregadorIFRSimulacaoDiariaDetalhe.cs" />
-    <Compile Include="Carregadores\cCarregadorIFRSobrevendido.cs" />
-    <Compile Include="Carregadores\cCarregadorMediaDiaria.cs" />
-    <Compile Include="Carregadores\cCarregadorSetup.cs" />
-    <Compile Include="Carregadores\cCarregadorSimulacaoIFRDiario.cs" />
-    <Compile Include="Carregadores\cCarregadorSplit.cs" />
-    <Compile Include="Carregadores\cGeradorOperacaoBDPadrao.cs" />
-    <Compile Include="Carregadores\cManipuladorIFRSimulacaoDiaria.cs" />
-    <Compile Include="Carregadores\cManipuladorIFRSimulacaoDiariaDetalhe.cs" />
-    <Compile Include="Carregadores\cOperacaoBD.cs" />
-    <Compile Include="Carregadores\cRemovedorSimulacaoIFRDiario.cs" />
-    <Compile Include="Carregadores\VerificaSePossuiFaixaDoIFR.cs" />
-    <Compile Include="DomainServices\cCalculadorIFRSimulacaoDiariaDetalhe.cs" />
-    <Compile Include="DomainServices\SimuladorDeTrade.cs" />
     <Compile Include="Entidades\cAtivo.cs" />
     <Compile Include="Entidades\cCarteira.cs" />
     <Compile Include="Entidades\cClassifMedia.cs" />
@@ -82,24 +60,12 @@
     <Compile Include="Entidades\cModelo.cs" />
     <Compile Include="Entidades\cProventoTipo.cs" />
     <Compile Include="Entidades\Setup.cs" />
-    <Compile Include="Interfaces\ICarregadorCotacao.cs" />
-    <Compile Include="Interfaces\ICarregadorIFR.cs" />
-    <Compile Include="Interfaces\ICarregadorMedia.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Regras\BuscaValorMinimoAnterior.cs" />
-    <Compile Include="Regras\cAjustarCotacao.cs" />
-    <Compile Include="Regras\cCalculadorData.cs" />
-    <Compile Include="Regras\cCalculadorDeTentativas.cs" />
-    <Compile Include="Regras\cCalculadorMelhorEntrada.cs" />
     <Compile Include="Regras\cCalculadorTabelas.cs" />
     <Compile Include="Regras\cGeradorNomeArquivo.cs" />
-    <Compile Include="Regras\cGeradorQuery.cs" />
     <Compile Include="Regras\cObterValorCriterioClassificacaoMedia.cs" />
     <Compile Include="Regras\cUtil.cs" />
     <Compile Include="Regras\cVerificadorMediasAlinhadas.cs" />
-    <Compile Include="Regras\cVerificaSeAtingiuPercentualMinimo.cs" />
-    <Compile Include="Regras\cVerificaSeDeveGerarEntrada.cs" />
-    <Compile Include="Regras\cVerificaSeValorEstaDentroDaFaixa.cs" />
     <Compile Include="ValueObjects\cCalculoResumoFaixaVO.cs" />
     <Compile Include="ValueObjects\cTentativaVO.cs" />
     <Compile Include="ValueObjects\cValorCriterioClassifMediaVO.cs" />
@@ -108,21 +74,13 @@
     <Compile Include="VOBuilders\cValorCriterioClassifMediaVOBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DataBase\DataBase.csproj">
-      <Project>{CC20BB02-78E9-487E-A9EC-6BFC64D2B0CB}</Project>
-      <Name>DataBase</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\frwInterface\frwInterface.csproj">
+    <ProjectReference Include="..\TraderWizard.Enumeracoes\TraderWizard.Enumeracoes.csproj">
       <Project>{AA04D3D2-F5CE-4D2E-A9AF-A304638AC603}</Project>
-      <Name>frwInterface</Name>
+      <Name>TraderWizard.Enumeracoes</Name>
     </ProjectReference>
     <ProjectReference Include="..\prjDTO\prjDTO.csproj">
       <Project>{BD01A0C5-77D7-4FAA-A662-38EA575DED34}</Project>
       <Name>prjDTO</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\pWeb\pWeb.csproj">
-      <Project>{A902DC79-0E9C-4C2D-894E-8301DB0D9849}</Project>
-      <Name>pWeb</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

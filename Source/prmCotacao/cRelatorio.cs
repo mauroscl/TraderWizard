@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using frwInterface;
+using prjDominio.Entidades;
 using prjModelo.Entidades;
 using prjModelo.Carregadores;
 using DataBase;
@@ -12,6 +12,7 @@ using prjDTO;
 using prjModelo.Regras;
 using prjModelo.ValueObjects;
 using prjServicoNegocio;
+using TraderWizard.Enumeracoes;
 
 namespace prmCotacao
 {
@@ -728,7 +729,7 @@ namespace prmCotacao
 
 			strWhere += " FROM IFR_SIMULACAO_DIARIA D " + Environment.NewLine;
 			strWhere += " WHERE D.Codigo = " + FuncoesBd.CampoFormatar(pstrCodigo) + Environment.NewLine;
-			strWhere += " AND D.ID_Setup = " + FuncoesBd.CampoFormatar(pobjSetup.ID) + Environment.NewLine;
+			strWhere += " AND D.ID_Setup = " + FuncoesBd.CampoFormatar(pobjSetup.Id) + Environment.NewLine;
 			strWhere += " AND D.ID_CM = " + FuncoesBd.CampoFormatar(pobjCM.ID) + Environment.NewLine;
 			strWhere += " AND Verdadeiro = " + FuncoesBd.CampoFormatar(true) + Environment.NewLine;
 			strWhere += " AND Valor_IFR_Minimo <= " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ValorMaximo) + Environment.NewLine;
@@ -740,8 +741,8 @@ namespace prmCotacao
 				strWhere += "(" + Environment.NewLine;
 				strWhere += '\t' + " SELECT 1 " + Environment.NewLine;
 				strWhere += '\t' + " FROM IFR_Simulacao_Diaria_Faixa F " + Environment.NewLine;
-				strWhere += '\t' + " WHERE ID = " + FuncoesBd.CampoFormatar(objIFRFaixa.ID) + Environment.NewLine;
-				strWhere += '\t' + " AND " + objIFRFaixa.CriterioCM.CampoBD + " BETWEEN Valor_Minimo AND Valor_Maximo " + Environment.NewLine;
+				strWhere += '\t' + " WHERE ID = " + FuncoesBd.CampoFormatar(objIFRFaixa.Id) + Environment.NewLine;
+				strWhere += '\t' + " AND " + objIFRFaixa.CriterioDeClassificacaoDaMedia.CampoBD + " BETWEEN Valor_Minimo AND Valor_Maximo " + Environment.NewLine;
 				strWhere += '\t' + " AND ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ID) + Environment.NewLine;
 				strWhere += ")";
 
@@ -902,7 +903,7 @@ namespace prmCotacao
 			strSQL += '\t' + '\t' + " FROM IFR_SIMULACAO_DIARIA S " + Environment.NewLine;
 			strSQL += '\t' + '\t' + " WHERE C1.CODIGO = S.CODIGO " + Environment.NewLine;
 			strSQL += '\t' + '\t' + " And C1.DATA = S.DATA_ENTRADA_EFETIVA " + Environment.NewLine;
-			strSQL += '\t' + '\t' + " And S.ID_SETUP = " + FuncoesBd.CampoFormatar(pobjSetup.ID) + Environment.NewLine;
+			strSQL += '\t' + '\t' + " And S.ID_SETUP = " + FuncoesBd.CampoFormatar(pobjSetup.Id) + Environment.NewLine;
 			strSQL += '\t' + " ) " + Environment.NewLine;
 			strSQL += " )" + Environment.NewLine;
 
@@ -1039,7 +1040,7 @@ namespace prmCotacao
 		/// <param name="pdecValorTotal">Filtro pelo valor total em moeda negociado</param>
 		/// <returns></returns>
 		/// <remarks></remarks>
-		private string RelatIFR2SemFiltroDiarioPersonalizadoGerar(Setup pobjSetup, System.DateTime pdtmDataAtual, decimal pdecValorCapital, decimal pdecValorPerdaManejo, cIFRSobrevendido pobjIFRSobrevendido, double pdblIFR2LimiteSuperior = 5, double pdblTitulosTotal = -1, Int32 pintNegociosTotal = -1, decimal pdecValorTotal = -1)
+		private string RelatIFR2SemFiltroDiarioPersonalizadoGerar(Setup pobjSetup, DateTime pdtmDataAtual, decimal pdecValorCapital, decimal pdecValorPerdaManejo, cIFRSobrevendido pobjIFRSobrevendido, double pdblIFR2LimiteSuperior = 5, double pdblTitulosTotal = -1, Int32 pintNegociosTotal = -1, decimal pdecValorTotal = -1)
 		{
 
             FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
@@ -1204,22 +1205,24 @@ namespace prmCotacao
 
 				cAtivo objAtivo = new cAtivo((string) objRS.Field("Codigo"), string.Empty);
 
+			    var servicoDeCotacaoDeAtivo = new ServicoDeCotacaoDeAtivo(objAtivo, objConexao);
+
 				cCotacaoDiaria objCotacaoDiaria = new cCotacaoDiaria(objAtivo, pdtmDataAtual);
 				objCotacaoDiaria.ValorFechamento = Convert.ToDecimal(objRS.Field("ValorFechamento"));
 
 				objCotacaoDiaria.Medias.Add(new cMediaDiaria(objCotacaoDiaria, "MME", 49, Convert.ToDouble(objRS.Field("MME49"))));
 				objCotacaoDiaria.Medias.Add(new cMediaDiaria(objCotacaoDiaria, "MME", 200, Convert.ToDouble(objRS.Field("MME200"))));
 
-				objAtivo.CotacoesDiarias.Add(objCotacaoDiaria);
+                servicoDeCotacaoDeAtivo.CotacoesDiarias.Add(objCotacaoDiaria);
 
 				//Calcula a classificação da média
-				cClassifMedia objClassifMedia = objAtivo.ObterClassificacaoDeMediaNaData(pdtmDataAtual);
+                cClassifMedia objClassifMedia = servicoDeCotacaoDeAtivo.ObterClassificacaoDeMediaNaData(pdtmDataAtual);
 
 				//Calcula o número de tentativas
 				int intNumTentativas = NumTentativasCalcular((string) objRS.Field("Codigo"), Convert.ToInt64(objRS.Field("Sequencial")), pobjIFRSobrevendido.ValorMaximo);
 
 				//Verifica se atende a todos os critérios
-				cVerificaSeDeveGerarEntrada objVerificaSeDeveGerarEntrada = new cVerificaSeDeveGerarEntrada(objConexao);
+				var objVerificaSeDeveGerarEntrada = new cVerificaSeDeveGerarEntrada(objConexao);
 
 				objValorCriterioCMVO.PercentualMM21 = Convert.ToDouble(objRS.Field("Percentual_MME21"));
 				objValorCriterioCMVO.PercentualMM49 = Convert.ToDouble(objRS.Field("Percentual_MME49"));
@@ -1227,7 +1230,7 @@ namespace prmCotacao
 				objValorCriterioCMVO.PercentualMM200MM21 = Convert.ToDouble(objRS.Field("Diferenca_MM200_MM21"));
 				objValorCriterioCMVO.PercentualMM200MM49 = Convert.ToDouble(objRS.Field("Diferenca_MM200_MM49"));
 
-				SimulacaoDiariaVO objSimulacaoDiariaVO = new SimulacaoDiariaVO();
+				var objSimulacaoDiariaVO = new SimulacaoDiariaVO();
 				objSimulacaoDiariaVO.Ativo = objAtivo;
 				objSimulacaoDiariaVO.Setup = pobjSetup;
 				objSimulacaoDiariaVO.ClassificacaoMedia = objClassifMedia;
@@ -1773,7 +1776,7 @@ namespace prmCotacao
 						//caso tenha encontrado o cruzamento, marca variável para em seguida sair do loop.
 						blnCruzamentoEncontrado = true;
 
-						pdtmDataStopRet = Convert.ToDateTime(objRS.Field("DATA", frwInterface.cConst.DataInvalida));
+						pdtmDataStopRet = Convert.ToDateTime(objRS.Field("DATA", cConst.DataInvalida));
 
 						pdecValorStopRet = Convert.ToDecimal(objRS.Field("STOP_LOSS", 0));
 
@@ -1805,7 +1808,7 @@ namespace prmCotacao
 
 					objRS.ExecuteQuery(strQuery);
 
-					pdtmDataStopRet = Convert.ToDateTime(objRS.Field("DATA", frwInterface.cConst.DataInvalida));
+					pdtmDataStopRet = Convert.ToDateTime(objRS.Field("DATA", cConst.DataInvalida));
 
 					pdecValorStopRet = Convert.ToDecimal(objRS.Field("STOP_LOSS", 0));
 
@@ -1823,7 +1826,7 @@ namespace prmCotacao
 
 				objRS.ExecuteQuery(strQuery);
 
-				pdtmDataStopRet = Convert.ToDateTime(objRS.Field("DATA", frwInterface.cConst.DataInvalida));
+				pdtmDataStopRet = Convert.ToDateTime(objRS.Field("DATA", cConst.DataInvalida));
 
 				pdecValorStopRet = Convert.ToDecimal(objRS.Field("STOP_LOSS", 0));
 
@@ -1978,7 +1981,7 @@ namespace prmCotacao
 			string strQuery = " SELECT MIN(Data) as Data " + " FROM Cotacao " + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " AND Data >= " + FuncoesBd.CampoDateFormatar(pdtmDataInicial) + " AND ValorMinimo <= " + FuncoesBd.CampoDecimalFormatar(pdecValorStop);
 
 
-			if (pdtmDataFinal != frwInterface.cConst.DataInvalida) {
+			if (pdtmDataFinal != cConst.DataInvalida) {
 				strQuery = strQuery + " AND Data <= " + FuncoesBd.CampoDateFormatar(pdtmDataFinal);
 
 			}
@@ -2037,7 +2040,7 @@ namespace prmCotacao
 					//If objRS.DadosExistir Then
 
 
-					if (Convert.ToDateTime(objRS.Field("Data", frwInterface.cConst.DataInvalida)) != frwInterface.cConst.DataInvalida) {
+					if (Convert.ToDateTime(objRS.Field("Data", cConst.DataInvalida)) != cConst.DataInvalida) {
 						//caso tenha encontrado o acionamento, marca variável para em seguida sair do loop.
 						blnAcionamentoEncontrado = true;
 
@@ -2140,7 +2143,7 @@ namespace prmCotacao
 				}
 
 
-				if (pdtmDataFinal != frwInterface.cConst.DataInvalida) {
+				if (pdtmDataFinal != cConst.DataInvalida) {
 					strQuery = strQuery + " AND Data <= " + FuncoesBd.CampoDateFormatar(pdtmDataFinal);
 
 				}
@@ -2182,7 +2185,7 @@ namespace prmCotacao
 					strQuery = strQuery + " AND " + (pstrPeriodicidade == "DIARIO" ? "Data" : "DataFinal") + " > " + FuncoesBd.CampoDateFormatar(pdtmDataInicial);
 
 
-					if (pdtmDataFinal != frwInterface.cConst.DataInvalida) {
+					if (pdtmDataFinal != cConst.DataInvalida) {
 						//busca as datas de realização sempre anteriores à data do stop, 
 						//pois se ocorrerem depois não adianta, pois a operação será estopada antes.
 						//essa restrição de datas também vai melhorar o tempo de resposta da query,
@@ -2304,7 +2307,7 @@ namespace prmCotacao
 
 			//DATA EM QUE REALMENTE OCORRERÁ O STOP. PODE SER TANTO PELO STOP INICIAL
 			//COMO PELA VIRADA DA MÉDIA
-			System.DateTime dtmDataStopReal = frwInterface.cConst.DataInvalida;
+			System.DateTime dtmDataStopReal = cConst.DataInvalida;
 
 		    //variável de controle que indica se o stop foi ou não acionado.
 			bool blnStopCalculado = false;
@@ -2404,7 +2407,7 @@ namespace prmCotacao
 				    DateTime dtmPeriodoDataFinal;
 				    if (objRSSplit.EOF) {
 
-						if (dtmDataAcionamentoStopInicial != frwInterface.cConst.DataInvalida) {
+						if (dtmDataAcionamentoStopInicial != cConst.DataInvalida) {
 							//Se encontrou uma data para o acionamento do stop inicial.
 
 							//se já percorreu todo o RS de splits, então a data final é a data de acionamento do stop inicial
@@ -2435,7 +2438,7 @@ namespace prmCotacao
 					} else {
 						//Se ainda não percorreu todos os RS dos splits...
 
-						if (dtmDataAcionamentoStopInicial != frwInterface.cConst.DataInvalida) {
+						if (dtmDataAcionamentoStopInicial != cConst.DataInvalida) {
 
 							if (dtmDataAcionamentoStopInicial < Convert.ToDateTime(objRSSplit.Field("Data")).AddDays(-1)) {
 								//se a data de acionamento do stop inicial é anterior ao split,
@@ -2729,7 +2732,7 @@ namespace prmCotacao
 				//faz os tratamentos necessários caso a operação tenha terminado, ou seja,
 				//tenha encontrado uma data de saída da operação.
 
-				if (dtmDataStopReal != frwInterface.cConst.DataInvalida) {
+				if (dtmDataStopReal != cConst.DataInvalida) {
                     
 					//consulta o valor de abertura no dia do stop, ou seja, no dia da saída total da operação.
 				    decimal pdecValorFechamentoRet = -1;
@@ -2780,14 +2783,14 @@ namespace prmCotacao
 
 
 
-				if (dtmDataRealizacaoParcial != frwInterface.cConst.DataInvalida) {
+				if (dtmDataRealizacaoParcial != cConst.DataInvalida) {
 					//SE TEM REALIZAÇÃO PARCIAL, ADICIONA OS CAMPOS NA QUERY
 					strQuery = strQuery + ", DATA_REALIZACAO_PARCIAL, QUANTIDADE_REALIZACAO_PARCIAL " + ", VALOR_REALIZACAO_PARCIAL, PERCENTUAL_REALIZACAO_PARCIAL";
 
 				}
 
 
-				if (dtmDataStopReal != frwInterface.cConst.DataInvalida) {
+				if (dtmDataStopReal != cConst.DataInvalida) {
 					//SE ENCONTROU UMA DATA DE SAÍDA DA OPERAÇÃO ENTÃO INCLUI OS RESPECTIVOS CAMPOS NO INSERT
 					strQuery = strQuery + ", DATA_SAIDA, VALOR_SAIDA, PERCENTUAL_SAIDA, VALOR_FINAL_OPERACAO " + ", PERCENTUAL_FINAL_OPERACAO";
 
@@ -2883,7 +2886,7 @@ namespace prmCotacao
 
 			//Calcula a data inicial da operação
 
-			if (pdtmDataInicial == frwInterface.cConst.DataInvalida) {
+			if (pdtmDataInicial == cConst.DataInvalida) {
 				//se não há uma data inicial busca a data da primeira cotação
 				objRSOperacao.ExecuteQuery("SELECT Data " + " FROM Cotacao " + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " AND Sequencial = 1");
 

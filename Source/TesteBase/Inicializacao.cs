@@ -1,3 +1,4 @@
+using System.Configuration;
 using Microsoft.VisualBasic;
 using System;
 using System.Collections;
@@ -17,6 +18,7 @@ namespace TesteBase
 		public static void Inicializa()
 		{
 			objConexao = new cConexao();
+            SessionManager.ConfigureDataAccess();
 		}
 
 

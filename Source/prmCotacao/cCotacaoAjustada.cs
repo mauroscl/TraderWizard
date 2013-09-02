@@ -1,7 +1,7 @@
 using System;
 using prjModelo.Carregadores;
 using DataBase;
-using frwInterface;
+using TraderWizard.Enumeracoes;
 
 namespace prmCotacao
 {

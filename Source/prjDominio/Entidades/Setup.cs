@@ -1,34 +1,23 @@
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Xml.Linq;
 using prjDTO;
+using prjModelo.Entidades;
 using prjModelo.Regras;
 
-namespace prjModelo.Entidades
+namespace prjDominio.Entidades
 {
 
 	public abstract class Setup
 	{
+	    public int Id { get; protected set; }
 
-		protected int intID;
+	    public string Descricao { get; protected set; }
 
-		protected string strDescricao;
-		public int ID {
-			get { return intID; }
-		}
-
-		public string Descricao {
-			get { return strDescricao; }
-		}
-
-		public override bool Equals(object obj)
+	    public override bool Equals(object obj)
 		{
 			var objSetup = (Setup)obj;
-			return (ID == objSetup.ID);
+			return (Id == objSetup.Id);
 		}
 
 		protected decimal CalcularValorMargem(decimal pdecValor)
@@ -64,18 +53,12 @@ namespace prjModelo.Entidades
 
 		}
 
-		public virtual decimal CalculaValorStopLossDeSaida(cCotacaoAbstract pobjCotacao, InformacoesDoTradeDTO pobjInformacoesDoTradeDTO)
-		{
+        public virtual decimal CalculaValorStopLossDeSaida(cCotacaoAbstract pobjCotacao, InformacoesDoTradeDTO pobjInformacoesDoTradeDTO, cCotacaoAbstract cotacaoDoValorMinimoAnterior)
+        {
+            decimal decNovoValorDeStop = pobjCotacao.ValorMinimo - CalcularValorMargem(pobjCotacao.ValorMinimo);
 
-			decimal decNovoValorDeStop = default(decimal);
-
-			decNovoValorDeStop = pobjCotacao.ValorMinimo - CalcularValorMargem(pobjCotacao.ValorMinimo);
-
-			return VerificaQualValorDeStopDeveSerUtilizado(decNovoValorDeStop, pobjInformacoesDoTradeDTO.ValorDoStopLoss);
-
-		}
-
-
+            return VerificaQualValorDeStopDeveSerUtilizado(decNovoValorDeStop, pobjInformacoesDoTradeDTO.ValorDoStopLoss);
+        }
 	}
 
 	public class SetupIFR2SemFiltro : Setup
@@ -83,8 +66,8 @@ namespace prjModelo.Entidades
 
 		public SetupIFR2SemFiltro()
 		{
-			intID = 1;
-			strDescricao = "IFR 2 sem filtro";
+			Id = 1;
+			Descricao = "IFR 2 sem filtro";
 		}
 
 		public override bool GeraEntradaNaCotacaoDoAcionamento {
@@ -133,8 +116,8 @@ namespace prjModelo.Entidades
 
 		public SetupIFR2SemFiltroRealizacaoParcial()
 		{
-			intID = 10;
-			strDescricao = "IFR 2 sem filtro - RP";
+			Id = 10;
+			Descricao = "IFR 2 sem filtro - RP";
 		}
 
 		public override bool GeraEntradaNaCotacaoDoAcionamento {
@@ -177,7 +160,7 @@ namespace prjModelo.Entidades
 			return pobjCotacao.ValorFechamento * 1.05M;
 		}
 
-		public override decimal CalculaValorStopLossDeSaida(cCotacaoAbstract pobjCotacao, InformacoesDoTradeDTO pobjInformacoesDoTradeDTO)
+		public decimal CalculaValorStopLossDeSaida(cCotacaoAbstract pobjCotacao, InformacoesDoTradeDTO pobjInformacoesDoTradeDTO, cCotacaoAbstract cotacaoDoValorMinimoAnterior)
 		{
 
 			if (!pobjInformacoesDoTradeDTO.IFRCruzouMediaParaCima || !pobjInformacoesDoTradeDTO.PermitiuRealizarParcial) {
@@ -193,8 +176,8 @@ namespace prjModelo.Entidades
 
 
 			if (pobjCotacao.ValorFechamento > decMaiorMedia || cVerificadorMediasAlinhadas.Verificar(ref lstMedias)) {
-				cCotacaoAbstract objCotacaoDoValorMinimoAnterior = BuscaCotacaoValorMinimoAnterior.Buscar(pobjCotacao);
-				decNovoValorDoStop = objCotacaoDoValorMinimoAnterior.ValorMinimo - CalcularValorMargem(objCotacaoDoValorMinimoAnterior.ValorMinimo);
+				//cCotacaoAbstract objCotacaoDoValorMinimoAnterior = BuscaCotacaoValorMinimoAnterior.Buscar(pobjCotacao);
+                decNovoValorDoStop = cotacaoDoValorMinimoAnterior.ValorMinimo - CalcularValorMargem(cotacaoDoValorMinimoAnterior.ValorMinimo);
 
 			} else {
 				decNovoValorDoStop = pobjCotacao.ValorMinimo - CalcularValorMargem(pobjCotacao.ValorMinimo);
@@ -211,8 +194,8 @@ namespace prjModelo.Entidades
 
 		public SetupIFR2ComFiltro()
 		{
-			intID = 2;
-			strDescricao = "IFR 2 com filtro";
+			Id = 2;
+			Descricao = "IFR 2 com filtro";
 		}
 
 		public override bool GeraEntradaNaCotacaoDoAcionamento {
@@ -244,18 +227,15 @@ namespace prjModelo.Entidades
 
 		public override decimal CalculaValorRealizacaoParcial(cCotacaoAbstract pobjCotacao)
 		{
+		    decimal decValorEntrada = CalculaValorEntrada(pobjCotacao);
 
-			decimal decValorRP = default(decimal);
+			decimal valorDaRealizacaoParcial = decValorEntrada + pobjCotacao.ValorMaximo - pobjCotacao.ValorMinimo;
 
-			decimal decValorEntrada = CalculaValorEntrada(pobjCotacao);
-
-			decValorRP = decValorEntrada + pobjCotacao.ValorMaximo - pobjCotacao.ValorMinimo;
-
-			if ((decValorRP / decValorEntrada) < 1.03M) {
-				decValorRP = Math.Round(decValorEntrada * 1.03M, 2);
+			if ((valorDaRealizacaoParcial / decValorEntrada) < 1.03M) {
+				valorDaRealizacaoParcial = Math.Round(decValorEntrada * 1.03M, 2);
 			}
 
-			return decValorRP;
+			return valorDaRealizacaoParcial;
 		}
 
 

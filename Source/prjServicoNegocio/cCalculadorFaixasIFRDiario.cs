@@ -1,19 +1,16 @@
 using System.Windows.Forms;
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
 using System.Linq;
-using System.Xml.Linq;
+using prjDominio.Entidades;
 using prjModelo.DomainServices;
 using prjModelo.Carregadores;
 using DataBase;
 using prjModelo.Entidades;
-using prjModelo;
 using prjDTO;
 using prjModelo.ValueObjects;
+using TraderWizard.Infra.Repositorio;
+
 namespace prjServicoNegocio
 {
 
@@ -43,7 +40,7 @@ namespace prjServicoNegocio
 		private cFaixaDTO FaixaCalcular(IList<cTradeDTO> plstTrades, IList<cTradeDTO> plstTradesMelhorEntrada, double pdblValorMinimo, double pdblValorMaximo)
 		{
 
-			cFaixaDTO objFaixaRetorno = null;
+			cFaixaDTO objFaixaRetorno;
 
 			//inclui a tolerância nos valores mínimo e máximo para o cálculo do número mínimo de tentativas e do número de trades com melhor entrada
 			double dblValorMinimoAux = pdblValorMinimo + intTolerancia;
@@ -267,15 +264,9 @@ namespace prjServicoNegocio
 					} else if (objFaixaUnicaDTO.NumTradesTotal == intNumTradesDuasFaixas) {
 						if (objFaixaUnicaDTO.NumTradesVerdadeiro >= (objFaixaInferiorDTORetorno.NumTradesVerdadeiro + objFaixaSuperiorDTORetorno.NumTradesVerdadeiro)) {
 							blnUtilizarFaixaUnica = true;
-						} else {
-							blnUtilizarFaixaUnica = false;
 						}
-					} else {
-						blnUtilizarFaixaUnica = false;
 					}
-
-
-				} else {
+			    } else {
 					//Se não conseguiu encontrar faixas, utiliza a faixa única.
 					blnUtilizarFaixaUnica = true;
 
@@ -325,7 +316,7 @@ namespace prjServicoNegocio
 			try {
 			    IList<cIFRSimulacaoDiariaFaixa> lstFaixasTotal = new List<cIFRSimulacaoDiariaFaixa>();
 
-				cCarregadorCriterioClassificacaoMedia objCarregadorCriterioCM = new cCarregadorCriterioClassificacaoMedia();
+				var objCarregadorCriterioCM = new cCarregadorCriterioClassificacaoMedia();
 
 			    IList<cCriterioClassifMedia> lstCriterioCM = objCarregadorCriterioCM.CarregaTodos();
 
@@ -345,7 +336,7 @@ namespace prjServicoNegocio
 				strSQL = strSQL + " AND SD.ID_Setup = D.ID_Setup " + Environment.NewLine;
 				strSQL = strSQL + " AND SD.Data_Entrada_Efetiva = D.Data_Entrada_Efetiva " + Environment.NewLine;
 				strSQL = strSQL + " WHERE SD.Codigo = " + FuncoesBd.CampoFormatar(objAtivo.Codigo) + Environment.NewLine;
-				strSQL = strSQL + " AND SD.ID_Setup = " + FuncoesBd.CampoFormatar(objSetup.ID) + Environment.NewLine;
+				strSQL = strSQL + " AND SD.ID_Setup = " + FuncoesBd.CampoFormatar(objSetup.Id) + Environment.NewLine;
 				strSQL = strSQL + " AND SD.ID_CM = " + FuncoesBd.CampoFormatar(pobjCalcularFaixaResumoVO.ClassifMedia.ID) + Environment.NewLine;
 				strSQL = strSQL + " AND Data_Saida <= " + FuncoesBd.CampoFormatar(pobjCalcularFaixaResumoVO.DataSaida) + Environment.NewLine;
 				strSQL = strSQL + " AND Valor_IFR_Minimo <= " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ValorMaximo) + Environment.NewLine;
@@ -389,9 +380,11 @@ namespace prjServicoNegocio
 
 				}
 
+			    var repositorio = new RepositorioDeIfrSimulacaoDiariaFaixa(objConexao);
+
 				//Faz a persistência de todas as faixas no banco de dados.
 				foreach (cIFRSimulacaoDiariaFaixa objFaixa in lstFaixasTotal) {
-					objFaixa.Salvar(objConexao);
+                    repositorio.Salvar(objFaixa);
 				}
 
 				return true;

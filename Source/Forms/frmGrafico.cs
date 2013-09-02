@@ -4,13 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using prjDominio.Entidades;
 using prjModelo.Carregadores;
 using DataBase;
 using prjCandle;
 using prjModelo.Entidades;
 using prmCotacao;
 using prjDTO;
-using frwInterface;
+using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;
 using TraderWizard.Infra.Repositorio;
 
