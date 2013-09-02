@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>frwInterface</name>
+    </assembly>
+    <members>
+        <member name="T:frwInterface.cEstrutura.structMediaValor">
+            <summary>
+            Estrutura utilizada para armazenar as principais propriedades do indicador MEDIA
+            </summary>
+            <remarks></remarks>
+        </member>
+    </members>
+</doc>
