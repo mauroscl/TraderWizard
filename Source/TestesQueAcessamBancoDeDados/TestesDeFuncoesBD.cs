@@ -32,8 +32,7 @@ namespace TestProject1
             dadosDB.CampoAdicionar("Valor", false, "");
 
             dadosDB.DadosBDConsultar();
-            string ativoPadrao;
-            ativoPadrao = dadosDB.CampoConsultar("Valor");            
+            string ativoPadrao = dadosDB.CampoConsultar("Valor");            
             Assert.AreEqual("ELPL4", ativoPadrao);
         }
     }

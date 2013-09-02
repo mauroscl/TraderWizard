@@ -3,7 +3,20 @@ using System;
 namespace prjDominio.Entidades
 {
 	public class cAtivo
-	{
+    {
+        #region Equality Members
+        protected bool Equals(cAtivo other)
+	    {
+	        return string.Equals(Codigo, other.Codigo);
+	    }
+
+	    public override int GetHashCode()
+	    {
+	        return Codigo.GetHashCode();
+	    }
+
+
+#endregion
 
 	    public cAtivo(string pstrCodigo)
 		{
@@ -16,18 +29,10 @@ namespace prjDominio.Entidades
 			Descricao = pstrDescricao;
 		}
 
-	    public string Descricao { get; set; }
-        public string Codigo { get; private set; }
+        protected cAtivo(){}
 
-        public override bool Equals(object obj)
-		{
-		    if (obj is DBNull)
-		    {
-		        return false;
-		    }
-		    var objAtivo = (cAtivo) obj;
-		    return (Codigo == objAtivo.Codigo);
-		}
+	    public virtual string Descricao { get; protected  internal set; }
+        public virtual string Codigo { get; protected  internal set; }
 
 	    public override string ToString()
 		{

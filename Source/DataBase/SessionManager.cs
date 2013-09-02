@@ -32,11 +32,11 @@ namespace DataBase
 
         private static void ConfigureDataAccess(ConfigurationExpression i, IPersistenceConfigurer databaseConfigurer)
         {
-            ValidatorEngine validatorEngine;
+            //ValidatorEngine validatorEngine;
             //Configura o IoC para session factory do nhibernate ser singleton por toda a aplicação
             i.For<ISessionFactory>()
                 .Singleton()
-                .Use(ConfigureNHibernate(databaseConfigurer, out validatorEngine));
+                .Use(ConfigureNHibernate(databaseConfigurer/*, out validatorEngine*/));
 
             //Configura o IoC para criar uma nova sessão a cada requisição
             i.For<ISession>()
@@ -46,9 +46,9 @@ namespace DataBase
                          ().OpenSession());
 
             //Configura o validador de entidades do nhibernate
-            i.For<ValidatorEngine>()
+            /*i.For<ValidatorEngine>()
                 .Singleton()
-                .Use(validatorEngine);
+                .Use(validatorEngine);*/
         }
 
         /// <summary>
@@ -57,10 +57,10 @@ namespace DataBase
         /// <param name="databaseConfigurer"></param>
         /// <param name="validatorEngine"></param>
         /// <returns></returns>
-        private static ISessionFactory ConfigureNHibernate(IPersistenceConfigurer databaseConfigurer,
-                                                           out ValidatorEngine validatorEngine)
+        private static ISessionFactory ConfigureNHibernate(IPersistenceConfigurer databaseConfigurer/*,
+                                                           out ValidatorEngine validatorEngine*/)
         {
-            ValidatorEngine ve = null;
+            //ValidatorEngine ve = null;
 
             ISessionFactory factory = Fluently.Configure()
                 .Database(databaseConfigurer)
@@ -75,14 +75,14 @@ namespace DataBase
                     )
                 .ExposeConfiguration(c =>
                                          {
-                                             ve = ConfigureValidator(c);
+                                             //ve = ConfigureValidator(c);
                                              c.SetProperty("adonet.batch_size", "5");
                                              c.SetProperty("generate_statistics", "false");
                                              //c.SetProperty("cache.use_second_level_cache", "true");
                                          })
                 .BuildConfiguration().BuildSessionFactory();
 
-            validatorEngine = ve;
+            //validatorEngine = ve;
             return factory;
         }
 

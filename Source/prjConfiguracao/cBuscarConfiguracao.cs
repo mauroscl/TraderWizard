@@ -41,6 +41,22 @@ namespace prjConfiguracao
 
         }
 
+        public static string ObterConnectionStringDoNHibernate(cEnum.BancoDeDados bancoDeDados)
+        {
+            string nomeDaConexao = "";
+            switch (bancoDeDados)
+            {
+                case cEnum.BancoDeDados.SqlServer:
+                    nomeDaConexao = "NHibernateSqlServer";
+                    break;
+                case cEnum.BancoDeDados.Access:
+                    nomeDaConexao = "NHibernateAccess";
+                    break;
+            }
+            return ConfigurationManager.ConnectionStrings[nomeDaConexao].ConnectionString;
+
+        }
+
 
         public static int NumeroDeAtivosCotacaoIntraday()
         {
@@ -60,7 +76,7 @@ namespace prjConfiguracao
         public static IPersistenceConfigurer ObterConfiguracaoDoNHibernate()
         {
             cEnum.BancoDeDados bancoDeDados = ObterBancoDeDados();
-            string connectionString = ObterConnectionStringPadrao(bancoDeDados);
+            string connectionString = ObterConnectionStringDoNHibernate(bancoDeDados);
             switch (bancoDeDados)
             {
                 case cEnum.BancoDeDados.Access:

@@ -107,7 +107,7 @@ namespace TestProject1
 			objInformacoesDoTradeDTO.ValorDoStopLoss = 22.45M;
 			//TODO: verificar se o valor do stop loss anterior era mesmo 22.35
 
-			decimal decValorStop = objSetup.CalculaValorStopLossDeSaida((cCotacaoAbstract) objCotacao, objInformacoesDoTradeDTO);
+			decimal decValorStop = objSetup.CalculaValorStopLossDeSaida((cCotacaoAbstract) objCotacao, objInformacoesDoTradeDTO,null);
 
 			Assert.AreEqual(new decimal(22.29), decValorStop);
 

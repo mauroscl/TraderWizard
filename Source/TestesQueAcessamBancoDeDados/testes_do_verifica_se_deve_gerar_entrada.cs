@@ -12,6 +12,7 @@ using prjModelo.Carregadores;
 using prjModelo.Entidades;
 using DataBase;
 using prjModelo.Regras;
+using prjServicoNegocio;
 using TesteBase;
 using prjModelo.ValueObjects;
 using prjModelo.VOBuilders;
@@ -86,7 +87,7 @@ namespace TestProject1
 			cValorCriterioClassifMediaVOBuilder objValorCriterioClassifMediaVOBuilder = new cValorCriterioClassifMediaVOBuilder();
 			var objValorCriterioClassifMediaVO = objValorCriterioClassifMediaVOBuilder.Build(objDetalhe.IFRSimulacaoDiaria);
 
-			cVerificaSeDeveGerarEntrada objVerifica = new cVerificaSeDeveGerarEntrada(objConexao);
+			var objVerifica = new cVerificaSeDeveGerarEntrada(objConexao);
 
 			var intRetorno = objVerifica.Verificar(objSimulacaoDiariaVO, objValorCriterioClassifMediaVO, null);
 

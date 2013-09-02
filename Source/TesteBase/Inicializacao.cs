@@ -25,7 +25,6 @@ namespace TesteBase
 		public static void Finaliza()
 		{
 			objConexao.FecharConexao();
-
 		}
 
 	}

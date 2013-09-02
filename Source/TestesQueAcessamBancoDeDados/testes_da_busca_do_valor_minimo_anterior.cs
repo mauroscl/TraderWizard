@@ -12,6 +12,7 @@ using prjModelo.Carregadores;
 using prjModelo.Entidades;
 using DataBase;
 using prjModelo.Regras;
+using prjServicoNegocio;
 using TesteBase;
 namespace TestProject1
 {
@@ -70,12 +71,15 @@ namespace TestProject1
 
 		public void QuandoNaoTiverSplitEntreOsCandlesTemQueRetornarValorMinimoDoPrimeiroCandleAnteriorComValorMinimoMenorDoQueOValorMinimoDaDataPassadaPorParametro()
 		{
-			cCarregadorCotacaoDiaria objCarregadorCotacao = new cCarregadorCotacaoDiaria(objConexao);
+			var objCarregadorCotacao = new cCarregadorCotacaoDiaria(objConexao);
 
-			var objCotacao = objCarregadorCotacao.CarregarPorPeriodo(new cAtivo("CSNA3", ""), new System.DateTime(2011, 5, 13), new System.DateTime(2011, 5, 13), string.Empty, new List<cMediaDTO>(), false).Single();
+		    var ativo = new cAtivo("CSNA3", "");
+			var objCotacao = objCarregadorCotacao.CarregarPorPeriodo(ativo, new System.DateTime(2011, 5, 13), new System.DateTime(2011, 5, 13), string.Empty, new List<cMediaDTO>(), false).Single();
 
 			//TODO: ver o que fazer com o valor 22.09. Talvez tenha que chamar o método do setup que calcula o stop loss.
-			var objCotacaoDoValorMinimoAnterior = BuscaCotacaoValorMinimoAnterior.Buscar(objCotacao);
+		    var servicoDeCotacaoDeAtivo = new ServicoDeCotacaoDeAtivo(ativo, objConexao);
+		    var buscaValorMinimoAnterior = new BuscaCotacaoValorMinimoAnterior(servicoDeCotacaoDeAtivo);
+            var objCotacaoDoValorMinimoAnterior = buscaValorMinimoAnterior.Buscar(objCotacao);
 
 			Assert.AreEqual(new decimal(22.01), objCotacaoDoValorMinimoAnterior.ValorMinimo);
 
@@ -85,12 +89,16 @@ namespace TestProject1
 
 		public void QuandoTiverSplitEntreOsCandlesTemQueRetornarValorMinimoDoPrimeiroCandleAnteriorComValorMinimoMenorDoQueOValorMinimoDaDataPassadaPorParametroConvertidoParaOSplitQueFoiGerado()
 		{
-			cCarregadorCotacaoDiaria objCarregadorCotacao = new cCarregadorCotacaoDiaria(objConexao);
+			var objCarregadorCotacao = new cCarregadorCotacaoDiaria(objConexao);
 
-			var objCotacao = objCarregadorCotacao.CarregarPorPeriodo(new cAtivo("CSNA3", ""), new System.DateTime(2010, 3, 26), new System.DateTime(2010, 3, 26), string.Empty, new List<cMediaDTO>(), false).Single();
+		    var ativo = new cAtivo("CSNA3", "");
+			var objCotacao = objCarregadorCotacao.CarregarPorPeriodo(ativo, new DateTime(2010, 3, 26), new DateTime(2010, 3, 26), string.Empty, new List<cMediaDTO>(), false).Single();
 
 			//TODO: ver o que fazer com o valor 34.21. Talvez tenha que chamar o método do setup que calcula o stop loss.
-			var objCotacaoDoValorMinimoAnterior = BuscaCotacaoValorMinimoAnterior.Buscar(objCotacao);
+            var servicoDeCotacaoDeAtivo = new ServicoDeCotacaoDeAtivo(ativo, objConexao);
+            var buscaValorMinimoAnterior = new BuscaCotacaoValorMinimoAnterior(servicoDeCotacaoDeAtivo);
+
+            var objCotacaoDoValorMinimoAnterior = buscaValorMinimoAnterior.Buscar(objCotacao);
 
 			Assert.AreEqual(new decimal(34.1), objCotacaoDoValorMinimoAnterior.ValorMinimo);
 
@@ -100,12 +108,16 @@ namespace TestProject1
 
 		public void QuandoTiverMaisDeUmSplitNoMesmoDiaEntreOsCandlesTemQueRetornarValorMinimoDoPrimeiroCandleAnteriorComValorMinimoMenorDoQueOValorMinimoDaDataPassadaPorParametroConvertidoParaOSplitQueFoiGerado()
 		{
-			cCarregadorCotacaoDiaria objCarregadorCotacao = new cCarregadorCotacaoDiaria(objConexao);
+			var objCarregadorCotacao = new cCarregadorCotacaoDiaria(objConexao);
 
-			var objCotacao = objCarregadorCotacao.CarregarPorPeriodo(new cAtivo("ETER3", ""), new System.DateTime(2011, 5, 10), new System.DateTime(2011, 5, 10), string.Empty, new List<cMediaDTO>(), false).Single();
+		    var ativo = new cAtivo("ETER3", "");
+		    var objCotacao = objCarregadorCotacao.CarregarPorPeriodo(ativo, new DateTime(2011, 5, 10), new DateTime(2011, 5, 10), string.Empty, new List<cMediaDTO>(), false).Single();
 
 			//TODO: ver o que fazer com o valor 10.36. Talvez tenha que chamar o método do setup que calcula o stop loss.
-			var objCotacaoDoValorMinimoAnterior = BuscaCotacaoValorMinimoAnterior.Buscar(objCotacao);
+            var servicoDeCotacaoDeAtivo = new ServicoDeCotacaoDeAtivo(ativo, objConexao);
+            var buscaValorMinimoAnterior = new BuscaCotacaoValorMinimoAnterior(servicoDeCotacaoDeAtivo);
+
+            var objCotacaoDoValorMinimoAnterior = buscaValorMinimoAnterior.Buscar(objCotacao);
 
 
 			Assert.AreEqual(new decimal(10.24), Math.Round(objCotacaoDoValorMinimoAnterior.ValorMinimo, 2));

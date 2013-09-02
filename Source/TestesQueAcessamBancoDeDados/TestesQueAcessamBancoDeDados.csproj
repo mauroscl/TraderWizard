@@ -41,7 +41,8 @@
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DocumentationFile>TestProject1.xml</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
@@ -61,7 +62,6 @@
     <Reference Include="Iesi.Collections">
       <HintPath>..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="NHibernate">
       <HintPath>..\packages\NHibernate.3.3.3.4001\lib\Net35\NHibernate.dll</HintPath>
@@ -73,6 +73,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -80,7 +81,6 @@
     <Compile Include="cWebTest.cs" />
     <Compile Include="FuncoesGerais.cs" />
     <Compile Include="My Project\AssemblyInfo.cs" />
-    <Compile Include="MyNamespaceSupportForCSharp.cs" />
     <Compile Include="testes_da_busca_do_valor_minimo_anterior.cs" />
     <Compile Include="testes_de_carteira_de_ativos.cs" />
     <Compile Include="testes_do_calculador_de_stop.cs" />
@@ -114,6 +114,14 @@
     <ProjectReference Include="..\DataBase\DataBase.csproj">
       <Project>{CC20BB02-78E9-487E-A9EC-6BFC64D2B0CB}</Project>
       <Name>DataBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\prjServicoNegocio\prjServicoNegocio.csproj">
+      <Project>{E03891F1-F42B-4141-B2AF-FA405D710B22}</Project>
+      <Name>prjServicoNegocio</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Services\Services.csproj">
+      <Project>{8BAE22CC-832B-4151-8B2F-222403B12F8B}</Project>
+      <Name>Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\TraderWizard.Enumeracoes\TraderWizard.Enumeracoes.csproj">
       <Project>{AA04D3D2-F5CE-4D2E-A9AF-A304638AC603}</Project>
