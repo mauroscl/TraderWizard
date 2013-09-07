@@ -2,7 +2,6 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
-using Microsoft.VisualBasic;
 
 namespace pWeb
 {
@@ -24,36 +23,34 @@ namespace pWeb
 
 		public string Criptografar(string pstrTexto)
 		{
-
-			string strAux = "";
-
 		    try {
 				//Create a UnicodeEncoder to convert between byte array and string.
-				UnicodeEncoding ByteConverter = new UnicodeEncoding();
+				var ByteConverter = new UnicodeEncoding();
 
 				//Create byte arrays to hold original, encrypted, and decrypted data.
 				byte[] dataToEncrypt = ByteConverter.GetBytes(pstrTexto);
-				byte[] encryptedData;
 
-				//Create a new instance of RSACryptoServiceProvider to generate
+		        //Create a new instance of RSACryptoServiceProvider to generate
 				//public and private key data.
 				//RSACryptoServiceProvider RSA = new RSACryptoServiceProvider();
 
 				//Pass the data to ENCRYPT, the public key information 
 				//(using RSACryptoServiceProvider.ExportParameters(false),
 				//and a boolean flag specifying no OAEP padding.
-				encryptedData = RSAEncrypt(dataToEncrypt, objPublicParameters, false);
+				byte[] encryptedData = RSAEncrypt(dataToEncrypt, objPublicParameters, false);
 
+		        string strAux = "";
+                for (int intI = 0; intI < encryptedData.Length; intI++)
+                {
+                    //converte o byte para hexadecimal. Quando a conversão retornar apenas um caracter
+                    //coloca um zero à esquerda, usando a função PadLeft;
+                    //strAux = strAux + Conversion.Hex(encryptedData[intI]).PadLeft(2, '0');
+                    strAux += encryptedData[intI].ToString("X2");
+                }
 
-			    for (int intI = 0; intI <= encryptedData.Length - 1; intI++) {
-					//converte o byte para hexadecimal. Quando a conversão retornar apenas um caracter
-					//coloca um zero à esquerda, usando a função PadLeft;
-					strAux = strAux + Conversion.Hex(encryptedData[intI]).PadLeft(2, '0');
-				}
+		        //string strAux = BitConverter.ToString(encryptedData);
 
-
-
-				//return the decrypted plaintext in hexadecimal format
+                //return the decrypted plaintext in hexadecimal format
 				return strAux;
 
 			} catch (ArgumentNullException) {
