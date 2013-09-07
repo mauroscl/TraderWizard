@@ -1,14 +1,9 @@
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Xml.Linq;
+using prjDominio.Entidades;
 using prjModelo.Entidades;
-using DataBase;
 
-namespace prjModelo.Carregadores
+namespace DataBase.Carregadores
 {
 
 	public class cCarregadorIFRSobrevendido

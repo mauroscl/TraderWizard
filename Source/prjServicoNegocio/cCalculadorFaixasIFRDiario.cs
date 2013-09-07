@@ -3,12 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using prjDominio.Entidades;
+using prjDominio.ValueObjects;
 using prjModelo.DomainServices;
 using prjModelo.Carregadores;
 using DataBase;
 using prjModelo.Entidades;
 using prjDTO;
-using prjModelo.ValueObjects;
 using TraderWizard.Infra.Repositorio;
 
 namespace prjServicoNegocio
@@ -340,7 +340,7 @@ namespace prjServicoNegocio
 				strSQL = strSQL + " AND SD.ID_CM = " + FuncoesBd.CampoFormatar(pobjCalcularFaixaResumoVO.ClassifMedia.ID) + Environment.NewLine;
 				strSQL = strSQL + " AND Data_Saida <= " + FuncoesBd.CampoFormatar(pobjCalcularFaixaResumoVO.DataSaida) + Environment.NewLine;
 				strSQL = strSQL + " AND Valor_IFR_Minimo <= " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ValorMaximo) + Environment.NewLine;
-				strSQL = strSQL + " AND D.ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ID) + Environment.NewLine;
+				strSQL = strSQL + " AND D.ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.Id) + Environment.NewLine;
 
 				objRSTrades.AdicionarQuery(strSQL);
 

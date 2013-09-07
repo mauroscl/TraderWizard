@@ -4,9 +4,8 @@ using System.Linq;
 using System.Windows.Forms;
 using DataBase;
 using prjDominio.Entidades;
+using prjDominio.VOBuilders;
 using prjModelo.Entidades;
-using prjModelo.Regras;
-using prjModelo.VOBuilders;
 using Services;
 
 namespace prjServicoNegocio

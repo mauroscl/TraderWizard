@@ -1,6 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using prjDominio.Entidades;
-using prjModelo.Entidades;
+
 namespace TesteSemAcessarBancoDeDados
 {
 

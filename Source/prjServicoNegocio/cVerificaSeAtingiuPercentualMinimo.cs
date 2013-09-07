@@ -1,7 +1,7 @@
 using DataBase;
+using prjDominio.ValueObjects;
 using prjModelo.Carregadores;
 using prjModelo.Entidades;
-using prjModelo.ValueObjects;
 
 namespace prjServicoNegocio
 {

@@ -1,15 +1,9 @@
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
 using System.Data;
-using System.Diagnostics;
-using System.Linq;
-
 //Imports Oracle.DataAccess.Client
 //Imports System.Data.OracleClient
 using System.Data.OleDb;
 using DataBase;
-using System.Reflection;
 using System.Windows.Forms;
 namespace frwTela
 {
@@ -17,10 +11,11 @@ namespace frwTela
 	{
 
 		private string strTabela;
-		private string strQuery;
 
-		private cConexao objConexao;
-		public cGrid(cConexao pobjConexao)
+	    private cConexao objConexao;
+	    private string _query;
+
+	    public cGrid(cConexao pobjConexao)
 		{
 			objConexao = pobjConexao;
 		}
@@ -30,14 +25,13 @@ namespace frwTela
 			set { this.strTabela = value; }
 		}
 
-		public string Query {
-			get { return this.strQuery; }
-			set { this.strQuery = value; }
-		}
+	    public string Query
+	    {
+	        get { return _query; }
+	        set { _query = value; }
+	    }
 
-		//Public Function Atualizar(ByVal ds As DataSet, ByVal pcolColuna As Collection) As Boolean
-
-		public bool Atualizar(DataSet ds)
+	    public bool Atualizar(DataSet ds)
 		{
 
 			int intI = 0;
@@ -45,15 +39,13 @@ namespace frwTela
 			cRS objRS = new cRS(objConexao);
 			cColuna objColuna = null;
 
-			OleDbDataReader objOleDbDataReader = null;
 
-
-			try {
+	        try {
 				//Executa a query
 
-				objRS.ExecuteQuery(strQuery);
+				objRS.ExecuteQuery(Query);
 
-				objOleDbDataReader = objRS.GetDataReader;
+				OleDbDataReader objOleDbDataReader = objRS.GetDataReader;
 
 				// percorre o resultado gerado pelo DataReader
 
@@ -88,13 +80,11 @@ namespace frwTela
 				//    intI = intI + 1
 				//Next schemaRow
 
-				DataColumn objDataColumn = null;
-
-				//For Each objColuna In pcolColuna
+	            //For Each objColuna In pcolColuna
 
 
 				for (intI = 0; intI <= objOleDbDataReader.FieldCount - 1; intI++) {
-					objDataColumn = new DataColumn();
+					var objDataColumn = new DataColumn();
 
 					//objDataColumn.DataType = objColuna.Tipo
 					//objDataColumn.ColumnName = objColuna.Nome

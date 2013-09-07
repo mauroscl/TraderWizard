@@ -1,20 +1,11 @@
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Xml.Linq;
-using prjDominio.Entidades;
 
-namespace prjModelo.Entidades
+namespace prjDominio.Entidades
 {
 
 	public abstract class cDesdobramento
 	{
-
-		private readonly Ativo objAtivo;
-		private readonly DateTime dtmData;
+	    private readonly DateTime dtmData;
 		private readonly double dblNumeradorDaConversao;
 
 		private readonly double dblDenominadorDaConversao;
@@ -25,8 +16,7 @@ namespace prjModelo.Entidades
 
 		public cDesdobramento(Ativo pobjAtivo, DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao)
 		{
-			objAtivo = pobjAtivo;
-			dtmData = pdtmData;
+		    dtmData = pdtmData;
 			dblNumeradorDaConversao = pdblNumeradorDaConversao;
 			dblDenominadorDaConversao = pdblDenominadorDaConversao;
 

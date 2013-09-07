@@ -1,12 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Xml.Linq;
-using Microsoft.VisualBasic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Text;
 using prjModelo.Carregadores;
 using TesteBase;
 namespace TestProject1
@@ -41,7 +35,7 @@ namespace TestProject1
 
 			Assert.AreEqual(1, objCarteira.IdCarteira);
 			Assert.AreEqual("IFR Máximo: 5", objCarteira.Descricao);
-			Assert.AreEqual(1, objCarteira.IFRSobrevendido.ID);
+			Assert.AreEqual(1, objCarteira.IFRSobrevendido.Id);
 			Assert.AreEqual(objCarteira.DataInicio, new DateTime(2011, 9, 11));
 			Assert.IsNull(objCarteira.DataFim);
 			Assert.IsTrue(objCarteira.Ativo);

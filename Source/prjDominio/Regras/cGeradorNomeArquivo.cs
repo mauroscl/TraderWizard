@@ -1,11 +1,6 @@
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Xml.Linq;
-namespace prjModelo
+
+namespace prjDominio.Regras
 {
 	public class cGeradorNomeArquivo
 	{
@@ -23,14 +18,9 @@ namespace prjModelo
 
 		public static string GerarNomeArquivoRemoto(System.DateTime pdtmData)
 		{
+		    string strDia = FormatarComDoisDigitos(pdtmData.Day);
 
-			string strDia = null;
-
-			string strMes = null;
-
-			strDia = FormatarComDoisDigitos(pdtmData.Day);
-
-			strMes = FormatarComDoisDigitos(pdtmData.Month);
+			string strMes = FormatarComDoisDigitos(pdtmData.Month);
 
 			return "bdi" + strMes + strDia + ".zip";
 
@@ -38,12 +28,8 @@ namespace prjModelo
 
 		public static string GerarNomeArquivoLocal(DateTime pdtmData)
 		{
-
-			string strDia = null;
-			string strMes = null;
-
-			strDia = FormatarComDoisDigitos(pdtmData.Day);
-			strMes = FormatarComDoisDigitos(pdtmData.Month);
+		    string strDia = FormatarComDoisDigitos(pdtmData.Day);
+			string strMes = FormatarComDoisDigitos(pdtmData.Month);
 
 			return "bdi" + Convert.ToString(pdtmData.Year) + strMes + strDia + ".zip";
 

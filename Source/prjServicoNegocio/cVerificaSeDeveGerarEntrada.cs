@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using DataBase;
+using DataBase.Carregadores;
 using prjDominio.Entidades;
+using prjDominio.ValueObjects;
 using prjModelo.Carregadores;
 using prjModelo.Entidades;
-using prjModelo.Regras;
-using prjModelo.ValueObjects;
 
 namespace prjServicoNegocio
 {

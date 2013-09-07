@@ -5,7 +5,6 @@ using DataBase;
 using prjDominio.Entidades;
 using prjDTO;
 using prjModelo.Entidades;
-using prjModelo.Regras;
 using TraderWizard.Enumeracoes;
 
 namespace prjModelo.Carregadores

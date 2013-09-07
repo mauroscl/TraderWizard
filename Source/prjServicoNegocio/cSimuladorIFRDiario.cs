@@ -1,16 +1,12 @@
-using Microsoft.VisualBasic;
+using DataBase.Carregadores;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using prjDominio.Entidades;
-using prjModelo.DomainServices;
-using prjModelo.Entidades;
-using prjModelo.Carregadores;
+using prjDominio.ValueObjects;
 using DataBase;
 using prjDTO;
-using prjModelo.ValueObjects;
 using Services;
 using TraderWizard.Enumeracoes;
 

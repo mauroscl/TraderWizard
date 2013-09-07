@@ -1,11 +1,6 @@
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Xml.Linq;
-namespace prjModelo
+
+namespace prjDominio.Regras
 {
 	public class cCalculadorTabelas
 	{

@@ -1,12 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
-using System.Xml.Linq;
-using Microsoft.VisualBasic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using prjCandle;
 using prjDominio.Entidades;
 using prjModelo.Entidades;
@@ -30,7 +22,7 @@ namespace TesteSemAcessarBancoDeDados
 
 		public static CotacaoDiaria GeraCotacaoPadrao()
 		{
-			return new CotacaoDiaria(GeraAtivoPadrao(), DateAndTime.Now);
+			return new CotacaoDiaria(GeraAtivoPadrao(), DateTime.Now);
 		}
 
 		private static cIFRSobrevendido RetornaIFRSobrevendido()
@@ -40,7 +32,7 @@ namespace TesteSemAcessarBancoDeDados
 
 		public static cCarteira RetornaCarteiraPadrao()
 		{
-			var objRetorno = new cCarteira(1, "Teste", RetornaIFRSobrevendido(), true, DateAndTime.Now.Date);
+			var objRetorno = new cCarteira(1, "Teste", RetornaIFRSobrevendido(), true, DateTime.Now.Date);
 			objRetorno.AdicionaAtivo(GeraAtivoPadrao());
 			objRetorno.AdicionaAtivo(GeraAtivo("BBAS3"));
 			return objRetorno;

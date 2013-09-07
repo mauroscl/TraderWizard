@@ -121,7 +121,6 @@
     <Compile Include="cGrid.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MyNamespaceSupportForCSharp.cs" />
   </ItemGroup>
   <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />

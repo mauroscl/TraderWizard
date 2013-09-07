@@ -1,17 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Xml.Linq;
-using Microsoft.VisualBasic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using prjDominio.Entidades;
 using prjDTO;
 using prjModelo.Carregadores;
-using prjModelo.Entidades;
-using DataBase;
-using prjModelo.Regras;
 using prjServicoNegocio;
 using Services;
 using TesteBase;

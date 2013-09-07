@@ -1,12 +1,9 @@
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
+using Microsoft.VisualBasic;
+
 namespace pWeb
 {
 
@@ -54,6 +51,8 @@ namespace pWeb
 					strAux = strAux + Conversion.Hex(encryptedData[intI]).PadLeft(2, '0');
 				}
 
+
+
 				//return the decrypted plaintext in hexadecimal format
 				return strAux;
 
@@ -89,7 +88,7 @@ namespace pWeb
 				//percorre a string de caracteres dois a dois, que é um conjunto de caracteres em hexadecimal.
 				//Converte cada número de hexadecimal para byte
 
-				for (int intI = 1; intI <= pstrTexto.Length; intI += 2) {
+				for (int intI = 0; intI < pstrTexto.Length; intI += 2) {
 					//usa base 16 (hexadecimal) para converter de hexadecimal para byte.
                     dataToDecrypt[intArrayPosition] = Convert.ToByte(pstrTexto.Substring(intI, 2), 16);
 

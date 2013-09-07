@@ -1,14 +1,8 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Xml.Linq;
-using Microsoft.VisualBasic;
+using DataBase.Carregadores;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using prjModelo.Carregadores;
-using DataBase;
-
 using TesteBase;
 namespace TestProject1
 {
@@ -71,7 +65,7 @@ namespace TestProject1
 
 			var objIFRSobrevendido = objCarregadorIFRSobrevendido.CarregaPorID(1);
 
-			Assert.AreEqual(1, objIFRSobrevendido.ID);
+			Assert.AreEqual(1, objIFRSobrevendido.Id);
 
 		}
 

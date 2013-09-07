@@ -1,4 +1,5 @@
 ﻿using System;
+using prjDominio.Regras;
 using prjModelo;
 using TraderWizard.Enumeracoes;
 

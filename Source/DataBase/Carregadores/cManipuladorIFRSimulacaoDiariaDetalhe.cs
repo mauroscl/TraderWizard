@@ -1,15 +1,8 @@
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Xml.Linq;
-using DataBase;
 using prjDominio.Entidades;
 using prjModelo.Entidades;
 
-namespace prjModelo.Carregadores
+namespace DataBase.Carregadores
 {
 
 	public class cManipuladorIFRSimulacaoDiariaDetalhe : cGeradorOperacaoBDPadrao
@@ -30,7 +23,7 @@ namespace prjModelo.Carregadores
 			strSQL = strSQL + " VALUES " + Environment.NewLine;
 			strSQL = strSQL + "(" + FuncoesBd.CampoFormatar(objItem.IFRSimulacaoDiaria.Ativo.Codigo);
 			strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objItem.IFRSimulacaoDiaria.Setup.Id);
-			strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objItem.IFRSobreVendido.ID);
+			strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objItem.IFRSobreVendido.Id);
 			strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objItem.IFRSimulacaoDiaria.DataEntradaEfetiva);
 			strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objItem.NumTentativas);
 			strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objItem.MelhorEntrada);
@@ -53,7 +46,7 @@ namespace prjModelo.Carregadores
 			strSQL = strSQL + ", MelhorEntrada = " + FuncoesBd.CampoFormatar(objItem.MelhorEntrada) + Environment.NewLine;
 			strSQL = strSQL + " WHERE Codigo = " + FuncoesBd.CampoFormatar(objItem.IFRSimulacaoDiaria.Ativo.Codigo) + Environment.NewLine;
 			strSQL = strSQL + " AND ID_Setup = " + FuncoesBd.CampoFormatar(objItem.IFRSimulacaoDiaria.Setup.Id) + Environment.NewLine;
-			strSQL = strSQL + " AND ID_IFR_SobreVendido = " + FuncoesBd.CampoFormatar(objItem.IFRSobreVendido.ID) + Environment.NewLine;
+			strSQL = strSQL + " AND ID_IFR_SobreVendido = " + FuncoesBd.CampoFormatar(objItem.IFRSobreVendido.Id) + Environment.NewLine;
 			strSQL = strSQL + " AND Data_Entrada_Efetiva = " + FuncoesBd.CampoFormatar(objItem.IFRSimulacaoDiaria.DataEntradaEfetiva);
 
 			return strSQL;

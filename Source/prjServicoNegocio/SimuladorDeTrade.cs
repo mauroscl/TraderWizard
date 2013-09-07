@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DataBase.Carregadores;
 using prjDominio.Entidades;
+using prjDominio.Regras;
 using prjDTO;
 using prjModelo;
 using prjModelo.Carregadores;

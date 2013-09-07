@@ -1,8 +1,7 @@
-using Microsoft.VisualBasic;
 using System;
 using System.Windows.Forms;
 using DataBase;
-using prjModelo.Entidades;
+using prjDominio.Entidades;
 using TraderWizard.Enumeracoes;
 
 namespace TraderWizard

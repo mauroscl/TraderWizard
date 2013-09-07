@@ -1,16 +1,11 @@
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Xml.Linq;
-using DataBase;
 using prjDominio.Entidades;
+using prjModelo.Carregadores;
 using prjModelo.Entidades;
 using TraderWizard.Enumeracoes;
 
-namespace prjModelo.Carregadores
+namespace DataBase.Carregadores
 {
 
 	public class cCarregadorSimulacaoIFRDiario : cCarregadorGenerico
@@ -137,7 +132,7 @@ namespace prjModelo.Carregadores
 			strWhereAdicional += '\t' + " WHERE D.Codigo = S.Codigo " + Environment.NewLine;
 			strWhereAdicional += '\t' + " AND D.ID_Setup = S.ID_Setup " + Environment.NewLine;
 			strWhereAdicional += '\t' + " AND D.Data_Entrada_Efetiva = S.Data_Entrada_Efetiva " + Environment.NewLine;
-			strWhereAdicional += '\t' + " AND D.ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ID) + Environment.NewLine;
+			strWhereAdicional += '\t' + " AND D.ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.Id) + Environment.NewLine;
 			strWhereAdicional += '\t' + " AND D.MelhorEntrada = " + FuncoesBd.CampoFormatar(true) + Environment.NewLine;
 			strWhereAdicional += '\t' + " AND D.AgrupadorTentativas = " + FuncoesBd.CampoFormatar(pintAgrupadorDeTentativas);
 			strWhereAdicional += ")" + Environment.NewLine;
@@ -157,7 +152,7 @@ namespace prjModelo.Carregadores
 			strWhereAdicional += '\t' + " WHERE D.Codigo = S.Codigo " + Environment.NewLine;
 			strWhereAdicional += '\t' + " AND D.ID_Setup = S.ID_Setup " + Environment.NewLine;
 			strWhereAdicional += '\t' + " AND D.Data_Entrada_Efetiva = S.Data_Entrada_Efetiva " + Environment.NewLine;
-			strWhereAdicional += '\t' + " AND D.ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ID) + Environment.NewLine;
+			strWhereAdicional += '\t' + " AND D.ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.Id) + Environment.NewLine;
 			strWhereAdicional += '\t' + " AND D.MelhorEntrada = " + FuncoesBd.CampoFormatar(true) + Environment.NewLine;
 			strWhereAdicional += '\t' + " AND S.Data_Saida = " + FuncoesBd.CampoFormatar(pdtmDataSaida);
             strWhereAdicional += ")" + Environment.NewLine;
@@ -187,7 +182,7 @@ namespace prjModelo.Carregadores
 			strWhereAdicional += '\t' + " WHERE D.Codigo = S.Codigo " + Environment.NewLine;
 			strWhereAdicional += '\t' + " AND D.ID_Setup = S.ID_Setup " + Environment.NewLine;
 			strWhereAdicional += '\t' + " AND D.Data_Entrada_Efetiva = S.Data_Entrada_Efetiva " + Environment.NewLine;
-			strWhereAdicional += '\t' + " AND D.ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ID);
+			strWhereAdicional += '\t' + " AND D.ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.Id);
 			strWhereAdicional += ")" + Environment.NewLine;
 
 			//gera query que retorna a última simulação anterior à data de referência

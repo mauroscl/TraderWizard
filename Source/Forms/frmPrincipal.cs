@@ -2,7 +2,6 @@ using System;
 using System.Windows.Forms;
 using DataBase;
 using Forms.Properties;
-using Microsoft.VisualBasic;
 using prmCotacao;
 
 namespace TraderWizard

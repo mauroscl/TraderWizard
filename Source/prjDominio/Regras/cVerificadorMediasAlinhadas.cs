@@ -1,14 +1,8 @@
-using Microsoft.VisualBasic;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Xml.Linq;
 using prjDominio.Entidades;
-using prjModelo.Entidades;
 
-namespace prjModelo.Regras
+namespace prjDominio.Regras
 {
 
 	public class cVerificadorMediasAlinhadas

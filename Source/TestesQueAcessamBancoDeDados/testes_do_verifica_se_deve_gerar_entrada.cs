@@ -1,21 +1,12 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Xml.Linq;
-using Microsoft.VisualBasic;
+using DataBase.Carregadores;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using prjDominio.Entidades;
-using prjDTO;
+using prjDominio.VOBuilders;
 using prjModelo.Carregadores;
-using prjModelo.Entidades;
-using DataBase;
-using prjModelo.Regras;
 using prjServicoNegocio;
 using TesteBase;
-using prjModelo.ValueObjects;
-using prjModelo.VOBuilders;
 using TraderWizard.Enumeracoes;
 
 namespace TestProject1

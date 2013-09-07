@@ -1,16 +1,10 @@
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Xml.Linq;
-using DataBase;
 using prjDominio.Entidades;
 using prjModelo.Entidades;
 using TraderWizard.Enumeracoes;
 
-namespace prjModelo.Carregadores
+namespace DataBase.Carregadores
 {
 
 	public class cCarregadorSplit

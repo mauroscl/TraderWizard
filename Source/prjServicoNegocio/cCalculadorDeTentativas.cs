@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using prjDominio.Entidades;
+using prjDominio.ValueObjects;
 using prjModelo.Entidades;
-using prjModelo.ValueObjects;
 using Services;
 
 namespace prjServicoNegocio

@@ -1,15 +1,9 @@
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Xml.Linq;
-using DataBase;
 using prjDominio.Entidades;
+using prjModelo.Carregadores;
 using prjModelo.Entidades;
 
-namespace prjModelo.Carregadores
+namespace DataBase.Carregadores
 {
 
 	public class cManipuladorIFRSimulacaoDiaria : cGeradorOperacaoBDPadrao

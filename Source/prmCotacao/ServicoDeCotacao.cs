@@ -3,7 +3,9 @@ using System.Windows.Forms;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using DataBase.Carregadores;
 using Ionic.Zip;
+using prjDominio.Regras;
 using prjServicoNegocio;
 using Services;
 using prjModelo.Carregadores;
@@ -11,7 +13,6 @@ using prjModelo;
 using pWeb;
 using DataBase;
 using prjDTO;
-using prjModelo.Regras;
 using prjConfiguracao;
 using TraderWizard.Enumeracoes;
 

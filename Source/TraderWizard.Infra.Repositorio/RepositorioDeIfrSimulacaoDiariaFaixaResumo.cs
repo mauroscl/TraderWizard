@@ -35,7 +35,7 @@ namespace TraderWizard.Infra.Repositorio
                 strSQL = strSQL + "(" + FuncoesBd.CampoFormatar(resumo.Ativo.Codigo);
                 strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(resumo.Setup.Id);
                 strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(resumo.ClassificacaoDaMedia.ID);
-                strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(resumo.IfrSobrevendido.ID);
+                strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(resumo.IfrSobrevendido.Id);
                 strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(resumo.Data);
                 strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(resumo.NumTradesSemFiltro);
                 strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(resumo.NumAcertosSemFiltro);

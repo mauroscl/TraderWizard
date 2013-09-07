@@ -1,14 +1,8 @@
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Xml.Linq;
-using prjModelo.Entidades;
-using prjModelo.ValueObjects;
+using prjDominio.Entidades;
+using prjDominio.ValueObjects;
 
-namespace prjModelo.Regras
+namespace prjDominio.Regras
 {
 
 	public class cObterValorCriterioClassificacaoMedia

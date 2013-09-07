@@ -1,13 +1,8 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Xml.Linq;
-using Microsoft.VisualBasic;
+using DataBase.Carregadores;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using prjModelo.Carregadores;
-using DataBase;
 using TesteBase;
 using TraderWizard.Enumeracoes;
 

@@ -2,10 +2,10 @@ using System.Windows.Forms;
 using System;
 using System.Collections.Generic;
 using prjDominio.Entidades;
+using prjDominio.ValueObjects;
 using prjModelo.Entidades;
 using prjModelo.Carregadores;
 using DataBase;
-using prjModelo.ValueObjects;
 using TraderWizard.Infra.Repositorio;
 
 namespace prjServicoNegocio

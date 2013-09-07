@@ -1,6 +1,4 @@
-using Microsoft.VisualBasic;
 using System;
-using System.Diagnostics;
 using System.Data.OleDb;
 using System.Windows.Forms;
 namespace DataBase

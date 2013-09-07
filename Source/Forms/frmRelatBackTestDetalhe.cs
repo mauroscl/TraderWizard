@@ -1,6 +1,5 @@
 using System.Windows.Forms;
 using Forms;
-using Microsoft.VisualBasic;
 using System;
 using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;

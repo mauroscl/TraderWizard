@@ -28,7 +28,7 @@ namespace TraderWizard.Infra.Repositorio
             strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(ifrSimulacaoDiariaFaixa.Setup.Id);
             strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(ifrSimulacaoDiariaFaixa.ClassificacaoDaMedia.ID);
             strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(ifrSimulacaoDiariaFaixa.CriterioDeClassificacaoDaMedia.ID);
-            strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(ifrSimulacaoDiariaFaixa.IfrSobrevendido.ID);
+            strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(ifrSimulacaoDiariaFaixa.IfrSobrevendido.Id);
             strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(ifrSimulacaoDiariaFaixa.Data);
             strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(ifrSimulacaoDiariaFaixa.ValorMinimo);
             strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(ifrSimulacaoDiariaFaixa.ValorMaximo);

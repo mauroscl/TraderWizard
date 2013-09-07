@@ -1,15 +1,8 @@
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Xml.Linq;
 using prjDominio.Entidades;
-using prjModelo.Entidades;
-using prjModelo.ValueObjects;
+using prjDominio.ValueObjects;
 
-namespace prjModelo.VOBuilders
+namespace prjDominio.VOBuilders
 {
 	public class cValorCriterioClassifMediaVOBuilder
 	{
@@ -18,15 +11,16 @@ namespace prjModelo.VOBuilders
 		{
 
 
-			cValorCriterioClassifMediaVO objRetorno = new cValorCriterioClassifMediaVO();
+			var objRetorno = new cValorCriterioClassifMediaVO
+			{
+			    PercentualMM21 = Convert.ToDouble(pobjIFRSimulacaoDiaria.PercentualMME21),
+			    PercentualMM49 = Convert.ToDouble(pobjIFRSimulacaoDiaria.PercentualMME49),
+			    PercentualMM200 = Convert.ToDouble(pobjIFRSimulacaoDiaria.PercentualMME200),
+			    PercentualMM200MM21 = Convert.ToDouble(pobjIFRSimulacaoDiaria.PercentualMME200MME21),
+			    PercentualMM200MM49 = Convert.ToDouble(pobjIFRSimulacaoDiaria.PercentualMME200MME49)
+			};
 
-			objRetorno.PercentualMM21 = Convert.ToDouble( pobjIFRSimulacaoDiaria.PercentualMME21);
-			objRetorno.PercentualMM49 = Convert.ToDouble( pobjIFRSimulacaoDiaria.PercentualMME49);
-			objRetorno.PercentualMM200 = Convert.ToDouble( pobjIFRSimulacaoDiaria.PercentualMME200);
-			objRetorno.PercentualMM200MM21 = Convert.ToDouble( pobjIFRSimulacaoDiaria.PercentualMME200MME21);
-			objRetorno.PercentualMM200MM49 = Convert.ToDouble( pobjIFRSimulacaoDiaria.PercentualMME200MME49);
-
-			return objRetorno;
+		    return objRetorno;
 
 		}
 

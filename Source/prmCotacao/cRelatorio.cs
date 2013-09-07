@@ -3,14 +3,15 @@ using System.Windows.Forms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DataBase.Carregadores;
 using prjDominio.Entidades;
+using prjDominio.Regras;
+using prjDominio.ValueObjects;
 using prjModelo.Entidades;
 using prjModelo.Carregadores;
 using DataBase;
 using prjModelo;
 using prjDTO;
-using prjModelo.Regras;
-using prjModelo.ValueObjects;
 using prjServicoNegocio;
 using Services;
 using TraderWizard.Enumeracoes;
@@ -744,7 +745,7 @@ namespace prmCotacao
 				strWhere += '\t' + " FROM IFR_Simulacao_Diaria_Faixa F " + Environment.NewLine;
 				strWhere += '\t' + " WHERE ID = " + FuncoesBd.CampoFormatar(objIFRFaixa.Id) + Environment.NewLine;
 				strWhere += '\t' + " AND " + objIFRFaixa.CriterioDeClassificacaoDaMedia.CampoBD + " BETWEEN Valor_Minimo AND Valor_Maximo " + Environment.NewLine;
-				strWhere += '\t' + " AND ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ID) + Environment.NewLine;
+				strWhere += '\t' + " AND ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.Id) + Environment.NewLine;
 				strWhere += ")";
 
 			}
@@ -1267,7 +1268,7 @@ namespace prmCotacao
 				strSQL = strSQL + ", Diferenca_MM200_MM21, Diferenca_MM200_MM49, NumTentativas, SomatorioCriterios) " + Environment.NewLine;
 				strSQL = strSQL + " VALUES " + Environment.NewLine;
 				strSQL = strSQL + "(" + FuncoesBd.CampoFormatar(strCodigoAtivo);
-				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ID);
+				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.Id);
 				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(Convert.ToDouble(objRS.Field("IFR2")));
 				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(Convert.ToDecimal(objRS.Field("ValorFechamento")));
 				strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(strValorRealizacaoParcial);
@@ -1309,7 +1310,7 @@ namespace prmCotacao
 
 			strSQL = strSQL + ", SomatorioCriterios " + Environment.NewLine;
 			strSQL = strSQL + " FROM Relat_IFR2_Sem_Filtro " + Environment.NewLine;
-			strSQL = strSQL + " WHERE ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ID) + Environment.NewLine;
+			strSQL = strSQL + " WHERE ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.Id) + Environment.NewLine;
 			strSQL = strSQL + " ORDER BY Percentual_Stop_Loss DESC";
 
 			return strSQL;

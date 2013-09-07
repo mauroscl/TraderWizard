@@ -1,12 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Xml.Linq;
-using Microsoft.VisualBasic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DataBase;
+using DataBase.Carregadores;
 using prjDominio.Entidades;
 using prjModelo.Carregadores;
 using prjModelo.Entidades;

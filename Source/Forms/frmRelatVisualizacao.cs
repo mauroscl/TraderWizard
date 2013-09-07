@@ -1,11 +1,10 @@
-using Forms;
-using Microsoft.VisualBasic;
+using DataBase.Carregadores;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
-using prjModelo.Entidades;
+using prjDominio.Entidades;
 using prjModelo.Carregadores;
 using DataBase;
 using frwTela;

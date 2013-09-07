@@ -1,15 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
 using System.Linq;
-using System.Xml.Linq;
-using Microsoft.VisualBasic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Text;
+using prjDominio.Entidades;
 using prjModelo.Entidades;
-using prjModelo;
+
 namespace TesteSemAcessarBancoDeDados
 {
 
@@ -26,7 +21,7 @@ namespace TesteSemAcessarBancoDeDados
 				new cIFRSobrevendido(2, 10)
 			};
 
-		    var cIFRSobrevendido = lstLista.FirstOrDefault(x => x.ID == 1);
+		    var cIFRSobrevendido = lstLista.FirstOrDefault(x => x.Id == 1);
 		    if (cIFRSobrevendido != null)
 		        cIFRSobrevendido.ValorMaximo = 6;
 

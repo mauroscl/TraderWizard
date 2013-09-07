@@ -1,5 +1,6 @@
 ﻿using System;
 using DataBase;
+using prjDominio.Regras;
 using prjDTO;
 using prjModelo;
 using pWeb;

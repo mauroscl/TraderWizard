@@ -19,7 +19,7 @@ namespace prjModelo.Carregadores
 
 			var strSQL = "SELECT IdCarteira, Descricao, Ativo, Data_Inicio, Data_Fim " + Environment.NewLine;
 			strSQL += " FROM Carteira " + Environment.NewLine;
-			strSQL += " WHERE ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ID) + Environment.NewLine;
+			strSQL += " WHERE ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.Id) + Environment.NewLine;
 			strSQL += " AND Ativo = " + FuncoesBd.CampoFormatar(true);
 
 			var objRS = new cRS(Conexao);

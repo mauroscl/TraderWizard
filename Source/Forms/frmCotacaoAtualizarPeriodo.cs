@@ -1,6 +1,4 @@
-using System.Windows.Forms.VisualStyles;
 using Forms;
-using Microsoft.VisualBasic;
 using System;
 using System.Windows.Forms;
 using prjServicoNegocio;
@@ -8,7 +6,6 @@ using prmCotacao;
 using DataBase;
 using prjDTO;
 using System.Threading;
-using prjModelo.Regras;
 using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;
 
@@ -238,7 +235,7 @@ namespace TraderWizard
 		{
 			mCotacao.ComboAtivoPreencher(cmbAtivo, objConexao,"", false);
 
-			cCalculadorData objCalculadorData = new cCalculadorData(objConexao);
+			var objCalculadorData = new cCalculadorData(objConexao);
 
 			cSugerirAtualizacaoCotacaoDTO objRetornoDTO = objCalculadorData.SugerirAtualizarCotacao();
 

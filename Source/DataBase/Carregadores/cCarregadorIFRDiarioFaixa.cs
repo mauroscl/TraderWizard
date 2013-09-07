@@ -1,10 +1,5 @@
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Xml.Linq;
 using DataBase;
 using prjDominio.Entidades;
 using prjModelo.Entidades;
@@ -48,7 +43,7 @@ namespace prjModelo.Carregadores
 			strSQL += " WHERE Codigo = " + FuncoesBd.CampoFormatar(pstrCodigo) + Environment.NewLine;
 			strSQL += " AND ID_CM = " + FuncoesBd.CampoFormatar(pobjCM.ID) + Environment.NewLine;
 			strSQL += " AND ID_Setup = " + FuncoesBd.CampoFormatar(pobjSetup.Id) + Environment.NewLine;
-			strSQL += " AND ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ID);
+			strSQL += " AND ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.Id);
 			strSQL += " AND Data <= " + FuncoesBd.CampoFormatar(dtmDataSolicitacao);
 
 			if ((pobjCriterioCM != null)) {
@@ -82,7 +77,7 @@ namespace prjModelo.Carregadores
 			strSQL = strSQL + " AND ID_CM = " + FuncoesBd.CampoFormatar(pobjCM.ID) + Environment.NewLine;
 			strSQL = strSQL + " AND ID_Setup = " + FuncoesBd.CampoFormatar(pobjSetup.Id) + Environment.NewLine;
 			strSQL = strSQL + " AND ID_Criterio_CM = " + FuncoesBd.CampoFormatar(pobjCriterioCM.ID);
-			strSQL = strSQL + " AND ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ID);
+			strSQL = strSQL + " AND ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.Id);
 			strSQL = strSQL + " AND Data = " + FuncoesBd.CampoFormatar(dtmUltimaData);
 
 			objRS.ExecuteQuery(strSQL);
@@ -116,7 +111,7 @@ namespace prjModelo.Carregadores
 			strSQL = strSQL + " WHERE Codigo = " + FuncoesBd.CampoFormatar(pstrCodigo) + Environment.NewLine;
 			strSQL = strSQL + " AND ID_CM = " + FuncoesBd.CampoFormatar(pobjCM.ID) + Environment.NewLine;
 			strSQL = strSQL + " AND ID_Setup = " + FuncoesBd.CampoFormatar(pobjSetup.Id) + Environment.NewLine;
-			strSQL = strSQL + " AND ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ID);
+			strSQL = strSQL + " AND ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.Id);
 			strSQL = strSQL + " AND Data = " + FuncoesBd.CampoFormatar(dtmUltimaData);
 
 			objRS.ExecuteQuery(strSQL);

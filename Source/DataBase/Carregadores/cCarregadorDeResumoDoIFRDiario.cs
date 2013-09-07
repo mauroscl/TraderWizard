@@ -1,7 +1,7 @@
 using System;
 using DataBase;
+using prjDominio.ValueObjects;
 using prjModelo.Entidades;
-using prjModelo.ValueObjects;
 
 namespace prjModelo.Carregadores
 {
@@ -28,7 +28,7 @@ namespace prjModelo.Carregadores
 			strSQL += " WHERE Codigo = " + FuncoesBd.CampoFormatar(pobjSimulacaoDiariaVO.Ativo.Codigo) + Environment.NewLine;
 			strSQL += " AND ID_Setup = " + FuncoesBd.CampoFormatar(pobjSimulacaoDiariaVO.Setup.Id) + Environment.NewLine;
 			strSQL += " AND ID_CM = " + FuncoesBd.CampoFormatar(pobjSimulacaoDiariaVO.ClassificacaoMedia.ID) + Environment.NewLine;
-			strSQL += " AND ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjSimulacaoDiariaVO.IFRSobrevendido.ID) + Environment.NewLine;
+			strSQL += " AND ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjSimulacaoDiariaVO.IFRSobrevendido.Id) + Environment.NewLine;
 			strSQL += " AND Data = ";
 			strSQL += "( " + Environment.NewLine;
 			strSQL += '\t' + " SELECT MAX(Data) " + Environment.NewLine;

@@ -1,16 +1,9 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Xml.Linq;
-using Microsoft.VisualBasic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using prjDominio.Entidades;
 using prjDTO;
-using prjModelo.Entidades;
 using prjModelo.Carregadores;
-using DataBase;
 using TesteBase;
 using TraderWizard.Enumeracoes;
 

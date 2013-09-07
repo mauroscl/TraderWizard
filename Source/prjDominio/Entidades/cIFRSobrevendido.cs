@@ -1,42 +1,28 @@
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Xml.Linq;
-namespace prjModelo.Entidades
+
+namespace prjDominio.Entidades
 {
 	public class cIFRSobrevendido
 	{
 	    protected bool Equals(cIFRSobrevendido other)
 	    {
-	        return lngID == other.lngID;
+	        return Id == other.Id;
 	    }
 
 	    public override int GetHashCode()
 	    {
-	        return lngID;
+	        return Id;
 	    }
 
-	    private Int32 lngID;
+	    public int Id { get; set; }
 
-		private double dblValorMaximo;
-		public Int32 ID {
-			get { return lngID; }
-			set { lngID = value; }
-		}
-
-		public double ValorMaximo {
-			get { return dblValorMaximo; }
-			set { dblValorMaximo = value; }
-		}
+	    public double ValorMaximo { get; set; }
 
 
-		public cIFRSobrevendido(Int32 plngID, double pdblValorMaximo)
+	    public cIFRSobrevendido(Int32 plngID, double pdblValorMaximo)
 		{
-			lngID = plngID;
-			dblValorMaximo = pdblValorMaximo;
+			Id = plngID;
+			ValorMaximo = pdblValorMaximo;
 
 		}
 
@@ -50,7 +36,7 @@ namespace prjModelo.Entidades
 
 	    public override string ToString()
 		{
-			return Convert.ToString(dblValorMaximo);
+			return Convert.ToString(ValorMaximo);
 		}
 
 	}

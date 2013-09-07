@@ -1,14 +1,7 @@
-using Microsoft.VisualBasic;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Xml.Linq;
+using prjDominio.ValueObjects;
 using prjModelo.Entidades;
-using prjModelo.ValueObjects;
 
-namespace prjModelo.VOBuilders
+namespace prjDominio.VOBuilders
 {
 
 	public class cSimulacaoDiariaVOBuilder

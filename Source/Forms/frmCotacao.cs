@@ -1,4 +1,3 @@
-using Microsoft.VisualBasic;
 using System;
 using System.Data;
 using System.Drawing;
@@ -18,12 +17,9 @@ namespace TraderWizard
 
 		private void GridCorAjustar()
 		{
-			int intI = 0;
-			decimal decOscilacao;
-
-
-			for (intI = 0; intI <= DataGridView1.Rows.Count - 1; intI++) {
-				if (!decimal.TryParse((string) DataGridView1.Rows[intI].Cells["Oscilacao"].Value, out decOscilacao)) {
+		    for (var intI = 0; intI <= DataGridView1.Rows.Count - 1; intI++) {
+			    decimal decOscilacao;
+			    if (!decimal.TryParse((string) DataGridView1.Rows[intI].Cells["Oscilacao"].Value, out decOscilacao)) {
 					decOscilacao = 0;
 				}
 
@@ -44,9 +40,7 @@ namespace TraderWizard
 		{
 			cWeb objWeb = new cWeb(objConexao);
 
-			int intI = 0;
-
-			DataSet objDataSet = new DataSet();
+		    DataSet objDataSet = new DataSet();
 
 			objDataSet.Clear();
 
@@ -68,7 +62,7 @@ namespace TraderWizard
 
 				//Em cada uma das linhas de dados.
 
-				for (intI = 0; intI <= DataGridView1.Rows.Count - 1; intI++) {
+			    for (var intI = 0; intI <= DataGridView1.Rows.Count - 1; intI++) {
 					//Para a quarta coluna (indice 3, pois é base zero), separa a hora data colocando um espaço
 				    string value = (string) DataGridView1.Rows[intI].Cells[3].Value;
 					DataGridView1.Rows[intI].Cells[3].Value = value.Substring(0,10) + " " + value.Substring(10);
@@ -79,7 +73,7 @@ namespace TraderWizard
 				DataGridView1.Columns[3].ValueType = System.Type.GetType("DateTime");
 
 
-				for (intI = 0; intI <= DataGridView1.Columns.Count - 1; intI++)
+				for (var intI = 0; intI <= DataGridView1.Columns.Count - 1; intI++)
 				{
 
 				    int width;
