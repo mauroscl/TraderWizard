@@ -54,7 +54,7 @@ namespace TraderWizard
 
 
 			} catch (Exception ex) {
-				Interaction.MsgBox("Erro ao preencher combo de tipo de provento. " + Environment.NewLine + "Descrição do erro:" + Environment.NewLine + ex.Message);
+				MessageBox.Show("Erro ao preencher combo de tipo de provento. " + Environment.NewLine + "Descrição do erro:" + Environment.NewLine + ex.Message);
 
 			}
 
@@ -63,7 +63,7 @@ namespace TraderWizard
 		public static cEnum.enumProventoTipo ComboProventoTipoCodigoRetornar(ComboBox pcmbProventoTipo)
 		{
 
-			cProventoTipo objProventoTipo = (cProventoTipo)pcmbProventoTipo.SelectedItem;
+			var objProventoTipo = (cProventoTipo)pcmbProventoTipo.SelectedItem;
 			return objProventoTipo.GetEnumProventoTipo;
 
 		}

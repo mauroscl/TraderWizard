@@ -7,7 +7,7 @@ namespace prjModelo.Entidades
 	public class cIFRSimulacaoDiariaFaixaResumo
 	{
 
-		public cAtivo Ativo { get; private set; }
+		public Ativo Ativo { get; private set; }
         public Setup Setup { get; private set; }
         public cClassifMedia ClassificacaoDaMedia { get; private set; }
         public cIFRSobrevendido IfrSobrevendido { get; private set; }
@@ -20,7 +20,7 @@ namespace prjModelo.Entidades
 		public double PercentualAcertosComFiltro { get; set; }
 
 
-		public cIFRSimulacaoDiariaFaixaResumo(cAtivo pobjAtivo, Setup pobjSetup, cClassifMedia pobjCM, cIFRSobrevendido pobjIFRSobrevendido, DateTime pdtmData)
+		public cIFRSimulacaoDiariaFaixaResumo(Ativo pobjAtivo, Setup pobjSetup, cClassifMedia pobjCM, cIFRSobrevendido pobjIFRSobrevendido, DateTime pdtmData)
 		{
 			Ativo = pobjAtivo;
 			Setup = pobjSetup;

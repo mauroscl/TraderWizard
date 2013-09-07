@@ -1,4 +1,3 @@
-using Microsoft.VisualBasic;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,7 +7,6 @@ using System.Diagnostics;
 using System.Windows.Forms;
 namespace TraderWizard
 {
-	[Microsoft.VisualBasic.CompilerServices.DesignerGenerated()]
 	partial class frmIndicadorEscolha : System.Windows.Forms.Form
 	{
 

@@ -13,6 +13,7 @@ using prjModelo.Entidades;
 using DataBase;
 using prjModelo.Regras;
 using prjServicoNegocio;
+using Services;
 using TesteBase;
 namespace TestProject1
 {
@@ -73,7 +74,7 @@ namespace TestProject1
 		{
 			var objCarregadorCotacao = new cCarregadorCotacaoDiaria(objConexao);
 
-		    var ativo = new cAtivo("CSNA3", "");
+		    var ativo = new Ativo("CSNA3", "");
 			var objCotacao = objCarregadorCotacao.CarregarPorPeriodo(ativo, new System.DateTime(2011, 5, 13), new System.DateTime(2011, 5, 13), string.Empty, new List<cMediaDTO>(), false).Single();
 
 			//TODO: ver o que fazer com o valor 22.09. Talvez tenha que chamar o método do setup que calcula o stop loss.
@@ -91,7 +92,7 @@ namespace TestProject1
 		{
 			var objCarregadorCotacao = new cCarregadorCotacaoDiaria(objConexao);
 
-		    var ativo = new cAtivo("CSNA3", "");
+		    var ativo = new Ativo("CSNA3", "");
 			var objCotacao = objCarregadorCotacao.CarregarPorPeriodo(ativo, new DateTime(2010, 3, 26), new DateTime(2010, 3, 26), string.Empty, new List<cMediaDTO>(), false).Single();
 
 			//TODO: ver o que fazer com o valor 34.21. Talvez tenha que chamar o método do setup que calcula o stop loss.
@@ -110,7 +111,7 @@ namespace TestProject1
 		{
 			var objCarregadorCotacao = new cCarregadorCotacaoDiaria(objConexao);
 
-		    var ativo = new cAtivo("ETER3", "");
+		    var ativo = new Ativo("ETER3", "");
 		    var objCotacao = objCarregadorCotacao.CarregarPorPeriodo(ativo, new DateTime(2011, 5, 10), new DateTime(2011, 5, 10), string.Empty, new List<cMediaDTO>(), false).Single();
 
 			//TODO: ver o que fazer com o valor 10.36. Talvez tenha que chamar o método do setup que calcula o stop loss.

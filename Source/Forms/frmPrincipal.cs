@@ -313,30 +313,27 @@ namespace TraderWizard
 
         private void mnuSequencialCalcular_Click(Object sender, EventArgs e)
         {
-            if (MessageBox.Show(
-                "Recalcular os Sequenciais dos ativos em que o valor do sequencial máximo for diferente " +
-                "do número de cotações?"
-                , Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (MessageBox.Show("Recalcular os Sequenciais dos ativos em que o valor do sequencial máximo for diferente do número de cotações?"
+                , Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
+            
+            var objCotacao = new ServicoDeCotacao(objConexao);
+
+            Cursor = Cursors.WaitCursor;
+
+            bool blnRetorno = objCotacao.SequencialPreencher();
+
+            Cursor = Cursors.Default;
+
+
+            if (blnRetorno)
             {
-                var objCotacao = new ServicoDeCotacao(objConexao);
-
-                bool blnRetorno = false;
-
-                Cursor = Cursors.WaitCursor;
-
-                blnRetorno = objCotacao.SequencialPreencher();
-
-                Cursor = Cursors.Default;
-
-
-                if (blnRetorno)
-                {
-                    Interaction.MsgBox("Operação realizada com sucesso.", MsgBoxStyle.Information, Text);
-                }
-                else
-                {
-                    Interaction.MsgBox("Ocorreu algum erro ao executar a operação.", MsgBoxStyle.Exclamation, Text);
-                }
+                MessageBox.Show("Operação realizada com sucesso.", Text, MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show("Ocorreu algum erro ao executar a operação.", Text, MessageBoxButtons.OK,
+                    MessageBoxIcon.Exclamation);
             }
         }
 

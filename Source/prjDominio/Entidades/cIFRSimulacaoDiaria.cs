@@ -12,7 +12,7 @@ namespace prjDominio.Entidades
 	{
 
 		public System.DateTime? DataCruzamentoMedia = null;
-		public cAtivo Ativo { get; set; }
+		public Ativo Ativo { get; set; }
 
 		public Setup Setup { get; set; }
 		public cClassifMedia ClassificacaoMedia { get; set; }
@@ -47,8 +47,8 @@ namespace prjDominio.Entidades
 		}
 
 
-		public cIFRSimulacaoDiaria(cAtivo pobjAtivo, Setup pobjSetup, cCotacaoDiaria pobjCotacaoDeAcionamentoDoSetup, 
-            cCotacaoDiaria pobjCotacaoDeEntrada, cCotacaoDiaria pobjCotacaoDoValorMaximo, cCotacaoDiaria pobjCotacaoDeSaida, 
+		public cIFRSimulacaoDiaria(Ativo pobjAtivo, Setup pobjSetup, CotacaoDiaria pobjCotacaoDeAcionamentoDoSetup, 
+            CotacaoDiaria pobjCotacaoDeEntrada, CotacaoDiaria pobjCotacaoDoValorMaximo, CotacaoDiaria pobjCotacaoDeSaida, 
             InformacoesDoTradeDTO pobjInformacoesDoTradeDTO)
 		{
 			//objConexao = pobjConexao;
@@ -161,7 +161,7 @@ namespace prjDominio.Entidades
 	    /// FALSE - A simulação recebida por parâmetro é melhor entrada do que esta simulação
 	    /// </returns>
 	    /// <remarks>Para fazer a comparação sao considerados os desdobramentos</remarks>
-	    public bool EhMelhorEntrada(cIFRSimulacaoDiaria pobjOutraSimulacao, cCotacaoAbstract cotacao)
+	    public bool EhMelhorEntrada(cIFRSimulacaoDiaria pobjOutraSimulacao, CotacaoAbstract cotacao)
 		{
 
 			//o setup calcula qual seria o valor de entrada com os valores convertidos

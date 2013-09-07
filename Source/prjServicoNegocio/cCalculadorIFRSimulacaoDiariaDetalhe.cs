@@ -7,6 +7,7 @@ using prjDominio.Entidades;
 using prjModelo.Entidades;
 using prjModelo.Regras;
 using prjModelo.VOBuilders;
+using Services;
 
 namespace prjServicoNegocio
 {

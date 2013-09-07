@@ -72,7 +72,7 @@ namespace TestProject1
 		{
 			cCarregadorCotacaoDiaria objCarregadorCotacaoDiaria = new cCarregadorCotacaoDiaria(objConexao);
 
-			var lstCotacoes = objCarregadorCotacaoDiaria.CarregarPorPeriodo(new cAtivo("CSNA3", string.Empty), new System.DateTime(2011, 1, 8), new System.DateTime(2011, 1, 13), "DATA ASC", new List<cMediaDTO>(), false);
+			var lstCotacoes = objCarregadorCotacaoDiaria.CarregarPorPeriodo(new Ativo("CSNA3", string.Empty), new System.DateTime(2011, 1, 8), new System.DateTime(2011, 1, 13), "DATA ASC", new List<cMediaDTO>(), false);
 
 			Assert.AreEqual(4, lstCotacoes.Count);
 

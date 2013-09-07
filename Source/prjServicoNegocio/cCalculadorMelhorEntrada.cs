@@ -4,6 +4,7 @@ using DataBase;
 using prjDominio.Entidades;
 using prjModelo.Carregadores;
 using prjModelo.Entidades;
+using Services;
 
 namespace prjServicoNegocio
 {
@@ -53,7 +54,7 @@ namespace prjServicoNegocio
 
 				if ((objSimulacaoComMelhorEntradaPorAgrupadorDeTentativas != null)) {
 
-                    cCotacaoAbstract objCotacaoParaConverter = ConverterCotacao(pobjSimulacaoDiariaDetalhe.IFRSimulacaoDiaria, objSimulacaoComMelhorEntradaPorAgrupadorDeTentativas);
+                    CotacaoAbstract objCotacaoParaConverter = ConverterCotacao(pobjSimulacaoDiariaDetalhe.IFRSimulacaoDiaria, objSimulacaoComMelhorEntradaPorAgrupadorDeTentativas);
 
 					//verificar qual das duas entradas é a melhor
 					if (pobjSimulacaoDiariaDetalhe.IFRSimulacaoDiaria.EhMelhorEntrada(objSimulacaoComMelhorEntradaPorAgrupadorDeTentativas, objCotacaoParaConverter)) {
@@ -87,7 +88,7 @@ namespace prjServicoNegocio
 
 
 			if ((objSimulacaoComMelhorEntradaNaMesmaDataDeSaida != null) && !objSimulacaoComMelhorEntradaNaMesmaDataDeSaida.Equals(objSimulacaoComMelhorEntradaPorAgrupadorDeTentativas)) {
-                cCotacaoAbstract objCotacaoParaConverter = ConverterCotacao(pobjSimulacaoDiariaDetalhe.IFRSimulacaoDiaria, objSimulacaoComMelhorEntradaNaMesmaDataDeSaida);
+                CotacaoAbstract objCotacaoParaConverter = ConverterCotacao(pobjSimulacaoDiariaDetalhe.IFRSimulacaoDiaria, objSimulacaoComMelhorEntradaNaMesmaDataDeSaida);
 
 				if (pobjSimulacaoDiariaDetalhe.IFRSimulacaoDiaria.EhMelhorEntrada(objSimulacaoComMelhorEntradaNaMesmaDataDeSaida,objCotacaoParaConverter)) {
 					objDetalheAlterado = objSimulacaoComMelhorEntradaNaMesmaDataDeSaida.Detalhes.First(x => x.IFRSobreVendido.Equals(pobjSimulacaoDiariaDetalhe.IFRSobreVendido));
@@ -107,7 +108,7 @@ namespace prjServicoNegocio
 
 		}
 
-	    private cCotacaoAbstract ConverterCotacao(cIFRSimulacaoDiaria simulacaoDiariaOrigem, cIFRSimulacaoDiaria simulacaoDiariaDestino)
+	    private CotacaoAbstract ConverterCotacao(cIFRSimulacaoDiaria simulacaoDiariaOrigem, cIFRSimulacaoDiaria simulacaoDiariaDestino)
 	    {
 
             var objAjustarCotacao = new cAjustarCotacao(_servicoDeCotacaoDeAtivo);
@@ -115,11 +116,11 @@ namespace prjServicoNegocio
             //obtém a cotação na data de entrada da simulação recebida por parâmetro
             var servicoDeCotacaoDeAtivo = new ServicoDeCotacaoDeAtivo(simulacaoDiariaOrigem.Ativo, _conexao);
 
-            cCotacaoAbstract objCotacaoParaConverter = servicoDeCotacaoDeAtivo.ObterCotacaoNaData(simulacaoDiariaOrigem.DataEntradaEfetiva);
+            CotacaoAbstract objCotacaoParaConverter = servicoDeCotacaoDeAtivo.ObterCotacaoNaData(simulacaoDiariaOrigem.DataEntradaEfetiva);
 
             //converte a cotação para a data de entrada desta simulação. OBS: se houver splits a função de conversão clona o objeto de cotação 
             //e o que está na lista de cotações do ativo permanece inalterado para não intervir no resultado de outras simulações.
-            objAjustarCotacao.ConverterCotacaoParaData((cCotacaoDiaria)objCotacaoParaConverter, simulacaoDiariaDestino.DataEntradaEfetiva);
+            objAjustarCotacao.ConverterCotacaoParaData((CotacaoDiaria)objCotacaoParaConverter, simulacaoDiariaDestino.DataEntradaEfetiva);
 
             return objCotacaoParaConverter;
    

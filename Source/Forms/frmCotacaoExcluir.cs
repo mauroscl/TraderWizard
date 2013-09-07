@@ -1,10 +1,5 @@
-using Microsoft.VisualBasic;
+using System.Collections.ObjectModel;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Drawing;
-using System.Diagnostics;
 using System.Windows.Forms;
 using DataBase;
 using prmCotacao;
@@ -79,38 +74,28 @@ namespace TraderWizard
 
 		private void btnAdicionar_Click(System.Object sender, System.EventArgs e)
 		{
-			int intI = 0;
-
-			Collection colItem = new Collection();
-
-			object objItem = null;
+			var colItem = new Collection<object>();
 
 
-			for (intI = 0; intI <= lstDataNaoEscolhida.SelectedItems.Count - 1; intI++) {
+		    for (var intI = 0; intI <= lstDataNaoEscolhida.SelectedItems.Count - 1; intI++) {
 				lstDataEscolhida.Items.Add(lstDataNaoEscolhida.SelectedItems[intI]);
 
 				colItem.Add(lstDataNaoEscolhida.SelectedItems[intI]);
 
 			}
 
-
-			foreach (object objItem_loopVariable in colItem) {
-				objItem = objItem_loopVariable;
-				lstDataNaoEscolhida.Items.Remove(objItem);
-
+			foreach (object item in colItem)
+			{
+			    lstDataNaoEscolhida.Items.Remove(item);
 			}
-
-
 		}
 
 
 		private void btnRemoverTodos_Click(System.Object sender, System.EventArgs e)
 		{
-			int intI = 0;
-
 			//percorre a lista de ativos 
 
-			for (intI = 0; intI <= lstDataEscolhida.Items.Count - 1; intI++) {
+			for (var intI = 0; intI <= lstDataEscolhida.Items.Count - 1; intI++) {
 				//adiciona o item na lista de ativos não escolhidos
 				lstDataNaoEscolhida.Items.Add(lstDataEscolhida.Items[intI]);
 
@@ -124,14 +109,11 @@ namespace TraderWizard
 
 		private void btnRemover_Click(System.Object sender, System.EventArgs e)
 		{
-			int intI = 0;
-
-			Collection colItem = new Collection();
-
-			object objItem = null;
+			var colItem = new Collection<object>();
 
 
-			for (intI = 0; intI <= lstDataEscolhida.SelectedItems.Count - 1; intI++) {
+
+		    for (var intI = 0; intI <= lstDataEscolhida.SelectedItems.Count - 1; intI++) {
 				lstDataNaoEscolhida.Items.Add(lstDataEscolhida.SelectedItems[intI]);
 
 				colItem.Add(lstDataEscolhida.SelectedItems[intI]);
@@ -139,12 +121,9 @@ namespace TraderWizard
 			}
 
 
-			foreach (object objItem_loopVariable in colItem) {
-				objItem = objItem_loopVariable;
-				lstDataEscolhida.Items.Remove(objItem);
-
-			}
-
+			foreach (object item in colItem)
+			{
+			    lstDataEscolhida.Items.Remove(item);}
 		}
 
 		private void btnCancelar_Click(System.Object sender, System.EventArgs e)
@@ -157,8 +136,7 @@ namespace TraderWizard
 		{
 
 			if (lstDataEscolhida.Items.Count == 0) {
-				Interaction.MsgBox("É necessário escolher pelo menos uma data.", MsgBoxStyle.Information, this.Text);
-
+                MessageBox.Show("É necessário escolher pelo menos uma data.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return;
 
 			}
@@ -175,38 +153,34 @@ namespace TraderWizard
 
 			Array.Resize(ref arrData, lstDataEscolhida.Items.Count);
 
-			int intI = 0;
 
-
-			for (intI = 0; intI <= lstDataEscolhida.Items.Count - 1; intI++) {
+			for (var intI = 0; intI <= lstDataEscolhida.Items.Count - 1; intI++) {
 				arrData[intI] = Convert.ToDateTime(lstDataEscolhida.Items[intI]);
 
 			}
 
 			Array.Sort(arrData);
 
-			cEnum.enumRetorno intRetorno = default(cEnum.enumRetorno);
 
+		    var objCotacao = new ServicoDeCotacao(objConexao);
 
-			ServicoDeCotacao objCotacao = new ServicoDeCotacao(objConexao);
-
-			intRetorno = objCotacao.CotacaoExcluir(arrData, true);
+			cEnum.enumRetorno intRetorno = objCotacao.CotacaoExcluir(arrData, true);
 
 			switch (intRetorno) {
 
 				case cEnum.enumRetorno.RetornoOK:
 
-					Interaction.MsgBox("Operação executada com sucesso.", MsgBoxStyle.Information, this.Text);
+                    MessageBox.Show("Operação executada com sucesso.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 					break;
 				case cEnum.enumRetorno.RetornoErroInesperado:
 
-					Interaction.MsgBox("Ocorreram erros ao executar a operação.", MsgBoxStyle.Exclamation, this.Text);
+                    MessageBox.Show("Ocorreram erros ao executar a operação.", Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
 					break;
 				case cEnum.enumRetorno.RetornoErro2:
 
-					Interaction.MsgBox("Existem cotações posteriores às datas escolhidas para serem excluídas.", MsgBoxStyle.Exclamation, this.Text);
+                    MessageBox.Show("Existem cotações posteriores às datas escolhidas para serem excluídas.", Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
 					break;
 			}

@@ -15,7 +15,7 @@ namespace TraderWizard.Infra.Repositorio
             _conexao = conexao;
         }
 
-        public IList<cAtivo> Validos()
+        public IList<Ativo> Validos()
         {
             cRS rs = new cRS(_conexao);
 
@@ -24,11 +24,11 @@ namespace TraderWizard.Infra.Repositorio
                             " FROM ATIVOS_DESCONSIDERADOS " + " WHERE ATIVO.CODIGO = ATIVOS_DESCONSIDERADOS.CODIGO " +
                             ")" + " order by Codigo");
 
-            var ativos = new List<cAtivo>();
+            var ativos = new List<Ativo>();
 
             while (! rs.EOF)
             {
-                ativos.Add(new cAtivo(Convert.ToString(rs.Field("Codigo")), Convert.ToString(rs.Field("Descricao"))));
+                ativos.Add(new Ativo(Convert.ToString(rs.Field("Codigo")), Convert.ToString(rs.Field("Descricao"))));
                 rs.MoveNext();
             }
 

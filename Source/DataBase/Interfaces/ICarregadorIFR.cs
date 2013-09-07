@@ -1,3 +1,4 @@
+using prjDominio.Entidades;
 using prjModelo.Entidades;
 
 namespace DataBase.Interfaces
@@ -6,7 +7,7 @@ namespace DataBase.Interfaces
 	public interface ICarregadorIFR
 	{
 
-		cIFR CarregarPorData(cCotacaoDiaria pobjCotacaoDiaria, int pintNumPeriodos1);
+		cIFR CarregarPorData(CotacaoDiaria pobjCotacaoDiaria, int pintNumPeriodos1);
 
 	}
 

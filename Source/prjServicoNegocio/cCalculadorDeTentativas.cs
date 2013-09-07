@@ -4,6 +4,7 @@ using System.Linq;
 using prjDominio.Entidades;
 using prjModelo.Entidades;
 using prjModelo.ValueObjects;
+using Services;
 
 namespace prjServicoNegocio
 {
@@ -36,14 +37,14 @@ namespace prjServicoNegocio
 
 				var lngSequencialInicial = objSimulacaoAnterior.Sequencial;
 
-				IList<cCotacaoDiaria> lstCotacoesEntreSimulacoes = null;
+				IList<CotacaoDiaria> lstCotacoesEntreSimulacoes = null;
 
 				//Busca as cotações entre a data efetiva da simulação anterior e a data efetiva da simulação atual (inclusive)
 				lstCotacoesEntreSimulacoes = _servicoDeCotacaoDeAtivo.CotacoesDiarias.Where(c => c.IFR.Valor <= pobjIFRSobreVendido.ValorMaximo 
                     && c.Data > objDetalheAnterior.IFRSimulacaoDiaria.DataEntradaEfetiva && c.Data <= pobjSimulacaoParaCalcular.DataEntradaEfetiva).ToList();
 
 
-				foreach (cCotacaoDiaria objCotacao in lstCotacoesEntreSimulacoes) {
+				foreach (CotacaoDiaria objCotacao in lstCotacoesEntreSimulacoes) {
 					if (objCotacao.Sequencial - lngSequencialInicial <= 2) {
 						//Se o sequencial tem no máximo dois períodos de diferença continua sendo do mesmo sequencial
 						//intAgrupadorDeTentativas = objDetalheAnterior.AgrupadorDeTentativas

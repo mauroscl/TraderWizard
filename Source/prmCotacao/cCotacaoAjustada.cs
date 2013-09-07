@@ -45,7 +45,7 @@ namespace prmCotacao
 				var objCarregadorSplit = new cCarregadorSplit(objConexao);
 
 				//busca os splits em ordem descrescente
-				objCarregadorSplit.SplitConsultar(strCodigoAtivo, new DateTime(2007, 1, 1), "D", ref objRSSplit,cConst.DataInvalida);
+				objCarregadorSplit.SplitConsultar(strCodigoAtivo, new DateTime(2007, 1, 1), "D", ref objRSSplit,Constantes.DataInvalida);
 
                 FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
 

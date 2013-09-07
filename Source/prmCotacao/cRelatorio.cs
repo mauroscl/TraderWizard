@@ -12,6 +12,7 @@ using prjDTO;
 using prjModelo.Regras;
 using prjModelo.ValueObjects;
 using prjServicoNegocio;
+using Services;
 using TraderWizard.Enumeracoes;
 
 namespace prmCotacao
@@ -1203,15 +1204,15 @@ namespace prmCotacao
 
 				string strValorRealizacaoFinal = string.Empty;
 
-				cAtivo objAtivo = new cAtivo((string) objRS.Field("Codigo"), string.Empty);
+				Ativo objAtivo = new Ativo((string) objRS.Field("Codigo"), string.Empty);
 
 			    var servicoDeCotacaoDeAtivo = new ServicoDeCotacaoDeAtivo(objAtivo, objConexao);
 
-				cCotacaoDiaria objCotacaoDiaria = new cCotacaoDiaria(objAtivo, pdtmDataAtual);
+				CotacaoDiaria objCotacaoDiaria = new CotacaoDiaria(objAtivo, pdtmDataAtual);
 				objCotacaoDiaria.ValorFechamento = Convert.ToDecimal(objRS.Field("ValorFechamento"));
 
-				objCotacaoDiaria.Medias.Add(new cMediaDiaria(objCotacaoDiaria, "MME", 49, Convert.ToDouble(objRS.Field("MME49"))));
-				objCotacaoDiaria.Medias.Add(new cMediaDiaria(objCotacaoDiaria, "MME", 200, Convert.ToDouble(objRS.Field("MME200"))));
+				objCotacaoDiaria.Medias.Add(new MediaDiaria(objCotacaoDiaria, "MME", 49, Convert.ToDouble(objRS.Field("MME49"))));
+				objCotacaoDiaria.Medias.Add(new MediaDiaria(objCotacaoDiaria, "MME", 200, Convert.ToDouble(objRS.Field("MME200"))));
 
                 servicoDeCotacaoDeAtivo.CotacoesDiarias.Add(objCotacaoDiaria);
 
@@ -1692,7 +1693,7 @@ namespace prmCotacao
 
 			//se a data de stop final é uma data válida coloca o filtro no where
 
-			if (pdtmDataFinal != cConst.DataInvalida) {
+			if (pdtmDataFinal != Constantes.DataInvalida) {
 				strQuery = strQuery + " And C.DATA <= " + FuncoesBd.CampoDateFormatar(pdtmDataFinal);
 
 			}
@@ -1702,7 +1703,7 @@ namespace prmCotacao
 
 			//se a data de stop final é uma data válida coloca o filtro no where
 
-			if (pdtmDataFinal != cConst.DataInvalida) {
+			if (pdtmDataFinal != Constantes.DataInvalida) {
 				strQuery = strQuery + " And C.DATA <= " + FuncoesBd.CampoDateFormatar(pdtmDataFinal);
 
 			}
@@ -1776,7 +1777,7 @@ namespace prmCotacao
 						//caso tenha encontrado o cruzamento, marca variável para em seguida sair do loop.
 						blnCruzamentoEncontrado = true;
 
-						pdtmDataStopRet = Convert.ToDateTime(objRS.Field("DATA", cConst.DataInvalida));
+						pdtmDataStopRet = Convert.ToDateTime(objRS.Field("DATA", Constantes.DataInvalida));
 
 						pdecValorStopRet = Convert.ToDecimal(objRS.Field("STOP_LOSS", 0));
 
@@ -1808,7 +1809,7 @@ namespace prmCotacao
 
 					objRS.ExecuteQuery(strQuery);
 
-					pdtmDataStopRet = Convert.ToDateTime(objRS.Field("DATA", cConst.DataInvalida));
+					pdtmDataStopRet = Convert.ToDateTime(objRS.Field("DATA", Constantes.DataInvalida));
 
 					pdecValorStopRet = Convert.ToDecimal(objRS.Field("STOP_LOSS", 0));
 
@@ -1826,7 +1827,7 @@ namespace prmCotacao
 
 				objRS.ExecuteQuery(strQuery);
 
-				pdtmDataStopRet = Convert.ToDateTime(objRS.Field("DATA", cConst.DataInvalida));
+				pdtmDataStopRet = Convert.ToDateTime(objRS.Field("DATA", Constantes.DataInvalida));
 
 				pdecValorStopRet = Convert.ToDecimal(objRS.Field("STOP_LOSS", 0));
 
@@ -1981,7 +1982,7 @@ namespace prmCotacao
 			string strQuery = " SELECT MIN(Data) as Data " + " FROM Cotacao " + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " AND Data >= " + FuncoesBd.CampoDateFormatar(pdtmDataInicial) + " AND ValorMinimo <= " + FuncoesBd.CampoDecimalFormatar(pdecValorStop);
 
 
-			if (pdtmDataFinal != cConst.DataInvalida) {
+			if (pdtmDataFinal != Constantes.DataInvalida) {
 				strQuery = strQuery + " AND Data <= " + FuncoesBd.CampoDateFormatar(pdtmDataFinal);
 
 			}
@@ -2016,7 +2017,7 @@ namespace prmCotacao
 			cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(this.objConexao);
 
 			//consulta os splits 
-			bool blnSplitExistir = objCarregadorSplit.SplitConsultar(pstrCodigo, pdtmDataInicial, "A", ref objRSSplit, cConst.DataInvalida);
+			bool blnSplitExistir = objCarregadorSplit.SplitConsultar(pstrCodigo, pdtmDataInicial, "A", ref objRSSplit, Constantes.DataInvalida);
 
 
 			if (blnSplitExistir) {
@@ -2040,7 +2041,7 @@ namespace prmCotacao
 					//If objRS.DadosExistir Then
 
 
-					if (Convert.ToDateTime(objRS.Field("Data", cConst.DataInvalida)) != cConst.DataInvalida) {
+					if (Convert.ToDateTime(objRS.Field("Data", Constantes.DataInvalida)) != Constantes.DataInvalida) {
 						//caso tenha encontrado o acionamento, marca variável para em seguida sair do loop.
 						blnAcionamentoEncontrado = true;
 
@@ -2066,7 +2067,7 @@ namespace prmCotacao
 				//o final das cotações
 
 				if (!blnAcionamentoEncontrado) {
-					strQuery = StopAcionamentoQueryGerar(pstrCodigo, pdecValorStop * (decimal) dblSplitFatorAcumulado, dtmDataInicial,cConst.DataInvalida);
+					strQuery = StopAcionamentoQueryGerar(pstrCodigo, pdecValorStop * (decimal) dblSplitFatorAcumulado, dtmDataInicial,Constantes.DataInvalida);
 
 					objRS.ExecuteQuery(strQuery);
 
@@ -2082,7 +2083,7 @@ namespace prmCotacao
 
 
 			} else {
-				strQuery = StopAcionamentoQueryGerar(pstrCodigo, pdecValorStop, pdtmDataInicial,cConst.DataInvalida);
+				strQuery = StopAcionamentoQueryGerar(pstrCodigo, pdecValorStop, pdtmDataInicial,Constantes.DataInvalida);
 
 				objRS.ExecuteQuery(strQuery);
 
@@ -2143,7 +2144,7 @@ namespace prmCotacao
 				}
 
 
-				if (pdtmDataFinal != cConst.DataInvalida) {
+				if (pdtmDataFinal != Constantes.DataInvalida) {
 					strQuery = strQuery + " AND Data <= " + FuncoesBd.CampoDateFormatar(pdtmDataFinal);
 
 				}
@@ -2185,7 +2186,7 @@ namespace prmCotacao
 					strQuery = strQuery + " AND " + (pstrPeriodicidade == "DIARIO" ? "Data" : "DataFinal") + " > " + FuncoesBd.CampoDateFormatar(pdtmDataInicial);
 
 
-					if (pdtmDataFinal != cConst.DataInvalida) {
+					if (pdtmDataFinal != Constantes.DataInvalida) {
 						//busca as datas de realização sempre anteriores à data do stop, 
 						//pois se ocorrerem depois não adianta, pois a operação será estopada antes.
 						//essa restrição de datas também vai melhorar o tempo de resposta da query,
@@ -2273,7 +2274,7 @@ namespace prmCotacao
 			decimal decSaldo = default(decimal);
 
 			//data em que ocorre a realização parcial
-			System.DateTime dtmDataRealizacaoParcial = cConst.DataInvalida;
+			System.DateTime dtmDataRealizacaoParcial = Constantes.DataInvalida;
 
 			//valor da realização parcial
 
@@ -2307,7 +2308,7 @@ namespace prmCotacao
 
 			//DATA EM QUE REALMENTE OCORRERÁ O STOP. PODE SER TANTO PELO STOP INICIAL
 			//COMO PELA VIRADA DA MÉDIA
-			System.DateTime dtmDataStopReal = cConst.DataInvalida;
+			System.DateTime dtmDataStopReal = Constantes.DataInvalida;
 
 		    //variável de controle que indica se o stop foi ou não acionado.
 			bool blnStopCalculado = false;
@@ -2407,7 +2408,7 @@ namespace prmCotacao
 				    DateTime dtmPeriodoDataFinal;
 				    if (objRSSplit.EOF) {
 
-						if (dtmDataAcionamentoStopInicial != cConst.DataInvalida) {
+						if (dtmDataAcionamentoStopInicial != Constantes.DataInvalida) {
 							//Se encontrou uma data para o acionamento do stop inicial.
 
 							//se já percorreu todo o RS de splits, então a data final é a data de acionamento do stop inicial
@@ -2438,7 +2439,7 @@ namespace prmCotacao
 					} else {
 						//Se ainda não percorreu todos os RS dos splits...
 
-						if (dtmDataAcionamentoStopInicial != cConst.DataInvalida) {
+						if (dtmDataAcionamentoStopInicial != Constantes.DataInvalida) {
 
 							if (dtmDataAcionamentoStopInicial < Convert.ToDateTime(objRSSplit.Field("Data")).AddDays(-1)) {
 								//se a data de acionamento do stop inicial é anterior ao split,
@@ -2512,7 +2513,7 @@ namespace prmCotacao
 							DateTime dtmDataStopViradaMedia = StopAcionamentoDataCalcular(pstrCodigo, decValorStopViradaMedia, dtmViradaMediaDataInicial);
 
 
-							if (dtmDataStopViradaMedia != cConst.DataInvalida) {
+							if (dtmDataStopViradaMedia != Constantes.DataInvalida) {
 								//se encontrou a data de acionamento do stop, então atribui na variável.
 								//Esta data será sempre anterior a data de stop real anterior.
 								dtmDataStopReal = dtmDataStopViradaMedia;
@@ -2544,7 +2545,7 @@ namespace prmCotacao
 						dtmDataStopReal = dtmDataAcionamentoStopInicial;
 
 
-						if (dtmDataAcionamentoStopInicial != cConst.DataInvalida) {
+						if (dtmDataAcionamentoStopInicial != Constantes.DataInvalida) {
 
 							if (dtmDataAcionamentoStopInicial <= dtmPeriodoDataFinal) {
 								//se a data de acionamento do stop inicial for anterior ou igual à data final do período.
@@ -2569,7 +2570,7 @@ namespace prmCotacao
 						//esta é a data limite para buscar a realização parcial. Caso esta data ainda não tenha sido
 						//conhecida a data máxima para buscar a realização parcial está na variável dtmPeriodoDataFinal.
 
-						if (dtmDataStopReal != cConst.DataInvalida) {
+						if (dtmDataStopReal != Constantes.DataInvalida) {
 							dtmRealizacaoParcialDataFinalBusca = dtmDataStopReal.AddDays(-1);
 
 						}
@@ -2583,17 +2584,17 @@ namespace prmCotacao
 
 
 						if (pintRealizacaoParcialTipo == cEnum.enumRealizacaoParcialTipo.PrimeiroLucro) {
-							dtmDataPrimeiroDiaAux = Convert.ToDateTime(objRS.Field("Data", cConst.DataInvalida));
+							dtmDataPrimeiroDiaAux = Convert.ToDateTime(objRS.Field("Data", Constantes.DataInvalida));
 
 							if (pstrPeriodicidade == "DIARIO") {
-								dtmDataRealizacaoParcial = Convert.ToDateTime(objRS.Field("Data", cConst.DataInvalida));
+								dtmDataRealizacaoParcial = Convert.ToDateTime(objRS.Field("Data", Constantes.DataInvalida));
 							} else if (pstrPeriodicidade == "SEMANAL") {
-								dtmDataRealizacaoParcial = Convert.ToDateTime(objRS.Field("DataFinal", cConst.DataInvalida));
+								dtmDataRealizacaoParcial = Convert.ToDateTime(objRS.Field("DataFinal", Constantes.DataInvalida));
 							}
 
 
 						} else {
-							dtmDataRealizacaoParcial = Convert.ToDateTime(objRS.Field("Data", cConst.DataInvalida));
+							dtmDataRealizacaoParcial = Convert.ToDateTime(objRS.Field("Data", Constantes.DataInvalida));
 
 						}
 
@@ -2603,7 +2604,7 @@ namespace prmCotacao
 						//caso contrário não faz nada porque a operação será estopada antes mesmo da realização parcial.
 
 
-						if (dtmDataRealizacaoParcial != cConst.DataInvalida) {
+						if (dtmDataRealizacaoParcial != Constantes.DataInvalida) {
 							//******************ENTRA NESTE TRECHO DO CÓDIGO QUANDO EFETIVAMENTE OCORRER REALIZAÇÃO PARCIAL
 
 							//MARCA VARIÁVEL QUE INDICA QUE REALMENTE HOUVE REALIZAÇÃO PARCIAL
@@ -2732,7 +2733,7 @@ namespace prmCotacao
 				//faz os tratamentos necessários caso a operação tenha terminado, ou seja,
 				//tenha encontrado uma data de saída da operação.
 
-				if (dtmDataStopReal != cConst.DataInvalida) {
+				if (dtmDataStopReal != Constantes.DataInvalida) {
                     
 					//consulta o valor de abertura no dia do stop, ou seja, no dia da saída total da operação.
 				    decimal pdecValorFechamentoRet = -1;
@@ -2783,14 +2784,14 @@ namespace prmCotacao
 
 
 
-				if (dtmDataRealizacaoParcial != cConst.DataInvalida) {
+				if (dtmDataRealizacaoParcial != Constantes.DataInvalida) {
 					//SE TEM REALIZAÇÃO PARCIAL, ADICIONA OS CAMPOS NA QUERY
 					strQuery = strQuery + ", DATA_REALIZACAO_PARCIAL, QUANTIDADE_REALIZACAO_PARCIAL " + ", VALOR_REALIZACAO_PARCIAL, PERCENTUAL_REALIZACAO_PARCIAL";
 
 				}
 
 
-				if (dtmDataStopReal != cConst.DataInvalida) {
+				if (dtmDataStopReal != Constantes.DataInvalida) {
 					//SE ENCONTROU UMA DATA DE SAÍDA DA OPERAÇÃO ENTÃO INCLUI OS RESPECTIVOS CAMPOS NO INSERT
 					strQuery = strQuery + ", DATA_SAIDA, VALOR_SAIDA, PERCENTUAL_SAIDA, VALOR_FINAL_OPERACAO " + ", PERCENTUAL_FINAL_OPERACAO";
 
@@ -2801,14 +2802,14 @@ namespace prmCotacao
 				strQuery = strQuery + ") VALUES " + "(" + plngCodigoRelatorio + ", " + lngOrdem + ", " + FuncoesBd.CampoDateFormatar(pdtmDataEntrada) + ", " + intQuantidadeEntrada + ", " + FuncoesBd.CampoDecimalFormatar(pdecValorEntrada) + ", " + FuncoesBd.CampoDecimalFormatar(pdecValorStopInicial) + ", " + FuncoesBd.CampoDecimalFormatar((pdecValorStopInicial / pdecValorEntrada - 1) * 100) + ", " + intNumAcoesEMCARTEIRA;
 
 
-				if (dtmDataRealizacaoParcial != cConst.DataInvalida) {
+				if (dtmDataRealizacaoParcial != Constantes.DataInvalida) {
 					//SE TEM REALIZAÇÃO PARCIAL, ADICIONA OS CAMPOS NA QUERY
 					strQuery = strQuery + ", " + FuncoesBd.CampoDateFormatar(dtmDataRealizacaoParcial) + ", " + intQuantidadeRealizacaoParcial + ", " + FuncoesBd.CampoDecimalFormatar(decValorRealizacaoParcial) + ", " + FuncoesBd.CampoDecimalFormatar(decPercentualRealizacaoParcial);
 
 				}
 
 
-				if (dtmDataStopReal != cConst.DataInvalida) {
+				if (dtmDataStopReal != Constantes.DataInvalida) {
 					//SE ENCONTROU UMA DATA DE SAÍDA DA OPERAÇÃO ENTÃO INCLUI OS RESPECTIVOS CAMPOS NO INSERT
 					strQuery = strQuery + ", " + FuncoesBd.CampoDateFormatar(dtmDataStopReal) + ", " + FuncoesBd.CampoDecimalFormatar(pdecValorStopInicial) + ", " + FuncoesBd.CampoDecimalFormatar(decPercentualSaida) + ", " + FuncoesBd.CampoDecimalFormatar(decValorFinalOperacao) + ", " + FuncoesBd.CampoDecimalFormatar(decPercentualFinalOperacao);
 
@@ -2886,7 +2887,7 @@ namespace prmCotacao
 
 			//Calcula a data inicial da operação
 
-			if (pdtmDataInicial == cConst.DataInvalida) {
+			if (pdtmDataInicial == Constantes.DataInvalida) {
 				//se não há uma data inicial busca a data da primeira cotação
 				objRSOperacao.ExecuteQuery("SELECT Data " + " FROM Cotacao " + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " AND Sequencial = 1");
 

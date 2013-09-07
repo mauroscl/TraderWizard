@@ -1,5 +1,6 @@
 ﻿using prjDominio.Entidades;
 using prjModelo.Entidades;
+using Services;
 
 namespace prjServicoNegocio
 {
@@ -14,17 +15,17 @@ namespace prjServicoNegocio
 	        _servicoDeCotacaoDeAtivo = servicoDeCotacaoDeAtivo;
 	    }
 
-	    public cCotacaoAbstract Buscar(cCotacaoAbstract pobjCotacao)
+	    public CotacaoAbstract Buscar(CotacaoAbstract pobjCotacao)
 		{
 
             var objAjustarCotacao = new cAjustarCotacao(_servicoDeCotacaoDeAtivo);
 
-            cCotacaoAbstract objCotacaoDoValorMinimoAnterior = objAjustarCotacao.ConverterCotacaoParaData((cCotacaoDiaria)_servicoDeCotacaoDeAtivo.CotacaoAnterior(pobjCotacao), pobjCotacao.Data);
+            CotacaoAbstract objCotacaoDoValorMinimoAnterior = objAjustarCotacao.ConverterCotacaoParaData((CotacaoDiaria)_servicoDeCotacaoDeAtivo.CotacaoAnterior(pobjCotacao), pobjCotacao.Data);
 
 			//Procura uma cotação com valor anterior com valor mínimo menor que o da cotação atual.
 
 			while (objCotacaoDoValorMinimoAnterior.ValorMinimo >= pobjCotacao.ValorMinimo) {
-				objCotacaoDoValorMinimoAnterior = objAjustarCotacao.ConverterCotacaoParaData((cCotacaoDiaria) _servicoDeCotacaoDeAtivo.CotacaoAnterior(objCotacaoDoValorMinimoAnterior), pobjCotacao.Data);
+				objCotacaoDoValorMinimoAnterior = objAjustarCotacao.ConverterCotacaoParaData((CotacaoDiaria) _servicoDeCotacaoDeAtivo.CotacaoAnterior(objCotacaoDoValorMinimoAnterior), pobjCotacao.Data);
 			}
 
 			return objCotacaoDoValorMinimoAnterior;

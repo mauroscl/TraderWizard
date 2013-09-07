@@ -1,17 +1,12 @@
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using System.Drawing;
-using System.Diagnostics;
+using System.Collections.ObjectModel;
 using System.Windows.Forms;
 using DataBase;
-using prjDTO;
-using prjModelo.Regras;
 using prjServicoNegocio;
 using prmCotacao;
 using TraderWizard.Enumeracoes;
+using TraderWizard.Extensoes;
 
 namespace TraderWizard
 {
@@ -46,16 +41,16 @@ namespace TraderWizard
 			//se não tem ativos selecionados
 
 			if (lstAtivosEscolhidos.Items.Count == 0) {
-				Interaction.MsgBox("Nenhum ativo foi escolhido.", MsgBoxStyle.Exclamation, this.Text);
-
+			    MessageBox.Show("Nenhum ativo foi escolhido.", Text, MessageBoxButtons.OK,MessageBoxIcon.Exclamation);
 				return false;
 
 			}
 
 
-			if (!Information.IsNumeric(txtPeriodo.Text)) {
-				Interaction.MsgBox("Período não preenchido ou inválido.", MsgBoxStyle.Exclamation, this.Text);
+            if (txtPeriodo.Text.IsNumeric())
+            {
 
+                MessageBox.Show("Período não preenchido ou inválido.", Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				return false;
 
 			}
@@ -73,18 +68,15 @@ namespace TraderWizard
 
 			Cursor = Cursors.WaitCursor;
 
-			string strCodigoAtivo = null;
+		    string lstAtivos = string.Empty;
 
-			string lstAtivos = string.Empty;
-
-			bool blnOK = false;
-
-			ServicoDeCotacao objCotacao = new ServicoDeCotacao(objConexao);
+		    var objCotacao = new ServicoDeCotacao(objConexao);
 
 
 			foreach (object item in lstAtivosEscolhidos.Items) {
 				string strItem = Convert.ToString(item);
-				strCodigoAtivo = Strings.Trim(Strings.Mid(strItem, 1, Strings.InStr(strItem, "-", CompareMethod.Text) - 1));
+				//strCodigoAtivo = Strings.Trim(Strings.Mid(strItem, 1, Strings.InStr(strItem, "-", CompareMethod.Text) - 1));
+				string strCodigoAtivo = strItem.Substring(0,strItem.IndexOf('-')).Trim();
 
 				lstAtivos += "#" + strCodigoAtivo;
 			}
@@ -94,31 +86,21 @@ namespace TraderWizard
 			IList<int> colPeriodos = new List<int>();
 			colPeriodos.Add(Convert.ToInt32(txtPeriodo.Text));
 
-			blnOK = objCotacao.IFRGeralCalcular(colPeriodos, cEnum.Periodicidade.Semanal,cConst.DataInvalida , lstAtivos);
+			bool blnOK = objCotacao.IFRGeralCalcular(colPeriodos, cEnum.Periodicidade.Semanal,Constantes.DataInvalida , lstAtivos);
 
+		    MessageBox.Show(blnOK ? "Operação realizada com sucesso." : "Ocorreram erros ao executar a operação.", Text,
+		        MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-
-			if (blnOK) {
-				Interaction.MsgBox("Operação realizada com sucesso.", MsgBoxStyle.Information, Text);
-
-
-			} else {
-				Interaction.MsgBox("Ocorreram erros ao executar a operação.", MsgBoxStyle.Information, Text);
-
-			}
-
-			Cursor = Cursors.Default;
+		    Cursor = Cursors.Default;
 
 		}
 
 
 		private void btnAdicionarTodos_Click(System.Object sender, System.EventArgs e)
 		{
-			int intI = 0;
-
 			//percorre a lista de ativos não escolhidos
 
-			for (intI = 0; intI <= lstAtivosNaoEscolhidos.Items.Count - 1; intI++) {
+			for (var intI = 0; intI <= lstAtivosNaoEscolhidos.Items.Count - 1; intI++) {
 				//adiciona o item na lista de ativos escolhidos
 				lstAtivosEscolhidos.Items.Add(lstAtivosNaoEscolhidos.Items[intI]);
 
@@ -150,14 +132,9 @@ namespace TraderWizard
 
 		private void btnAdicionar_Click(System.Object sender, System.EventArgs e)
 		{
-			int intI = 0;
+			var colItem = new Collection<object>();
 
-			Collection colItem = new Collection();
-
-			object objItem = null;
-
-
-			for (intI = 0; intI <= lstAtivosNaoEscolhidos.SelectedItems.Count - 1; intI++) {
+			for (var intI = 0; intI <= lstAtivosNaoEscolhidos.SelectedItems.Count - 1; intI++) {
 				lstAtivosEscolhidos.Items.Add(lstAtivosNaoEscolhidos.SelectedItems[intI]);
 
 				colItem.Add(lstAtivosNaoEscolhidos.SelectedItems[intI]);
@@ -165,9 +142,8 @@ namespace TraderWizard
 			}
 
 
-			foreach (object objItem_loopVariable in colItem) {
-				objItem = objItem_loopVariable;
-				lstAtivosNaoEscolhidos.Items.Remove(objItem);
+			foreach (object item in colItem) {
+				lstAtivosNaoEscolhidos.Items.Remove(item);
 
 			}
 
@@ -176,14 +152,9 @@ namespace TraderWizard
 
 		private void btnRemover_Click(System.Object sender, System.EventArgs e)
 		{
-			int intI = 0;
+			var colItem = new Collection<object>();
 
-			Collection colItem = new Collection();
-
-			object objItem = null;
-
-
-			for (intI = 0; intI <= lstAtivosEscolhidos.SelectedItems.Count - 1; intI++) {
+			for (var intI = 0; intI <= lstAtivosEscolhidos.SelectedItems.Count - 1; intI++) {
 				lstAtivosNaoEscolhidos.Items.Add(lstAtivosEscolhidos.SelectedItems[intI]);
 
 				colItem.Add(lstAtivosEscolhidos.SelectedItems[intI]);
@@ -191,10 +162,8 @@ namespace TraderWizard
 			}
 
 
-			foreach (object objItem_loopVariable in colItem) {
-				objItem = objItem_loopVariable;
-				lstAtivosEscolhidos.Items.Remove(objItem);
-
+			foreach (object item in colItem) {
+				lstAtivosEscolhidos.Items.Remove(item);
 			}
 
 		}
@@ -202,15 +171,13 @@ namespace TraderWizard
 
 		private void ListAtivosPreencher()
 		{
-			cCalculadorData objCalculadorData = new cCalculadorData(objConexao);
+			var objCalculadorData = new cCalculadorData(objConexao);
 
-			dynamic dtmDataUltimaCotacao = objCalculadorData.ObtemDataDaUltimaCotacao();
+			DateTime dtmDataUltimaCotacao = objCalculadorData.ObtemDataDaUltimaCotacao();
 
-			cRelatorio objRelatorio = new cRelatorio(objConexao);
+			var objRelatorio = new cRelatorio(objConexao);
 
             FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
-
-
 
 			//busca os ativos da tabela ativo
 		    string strSQL = " select Codigo, Codigo & ' - ' & Descricao as Descr " + Environment.NewLine;

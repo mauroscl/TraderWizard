@@ -21,7 +21,7 @@ namespace prjServicoNegocio
 		private readonly cConexao objConexao;
 		private readonly Setup objSetup;
 
-		private readonly cAtivo objAtivo;
+		private readonly Ativo objAtivo;
 
 		private const double intTolerancia = 0.05;
 		/// <summary>
@@ -30,7 +30,7 @@ namespace prjServicoNegocio
 		/// <param name="pobjAtivo"></param>
 		/// <param name="pobjSetup"></param>
 		/// <remarks></remarks>
-		public cCalculadorFaixasIFRDiario(cConexao pobjConexao, cAtivo pobjAtivo, Setup pobjSetup)
+		public cCalculadorFaixasIFRDiario(cConexao pobjConexao, Ativo pobjAtivo, Setup pobjSetup)
 		{
 			objConexao = pobjConexao;
 			objSetup = pobjSetup;

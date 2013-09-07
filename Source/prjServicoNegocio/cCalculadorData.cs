@@ -135,7 +135,7 @@ namespace prjServicoNegocio
 
 			objRS.ExecuteQuery(strSQL);
 
-			DateTime functionReturnValue = Convert.ToDateTime(objRS.Field("Data", cConst.DataInvalida));
+			DateTime functionReturnValue = Convert.ToDateTime(objRS.Field("Data", Constantes.DataInvalida));
 
 			objRS.Fechar();
 			return functionReturnValue;

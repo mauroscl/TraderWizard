@@ -89,7 +89,7 @@ namespace TraderWizard
 
 
 				if (!txtDataInicial.Text.IsDate()) {
-                    MessageBox.Show("Campo " + Strings.Chr(34) + "Data Inicial" + Strings.Chr(34) + " não preenchido ou com valor inválido.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Campo \"Data Inicial\" não preenchido ou com valor inválido.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 					return;
 
@@ -97,7 +97,7 @@ namespace TraderWizard
 
 
 				if (!txtDataFinal.Text.IsDate()) {
-                    MessageBox.Show("Campo " + Strings.Chr(34) + "Data Final" + Strings.Chr(34) + " não preenchido ou com valor inválido.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Campo \"Data Final\" não preenchido ou com valor inválido.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 					return;
 
@@ -109,7 +109,7 @@ namespace TraderWizard
 
 
 				if (dtmDataInicial > dtmDataFinal) {
-					MessageBox.Show("Campo " + Strings.Chr(34) + "Data Inicial" + Strings.Chr(34) + " não pode ter uma data superior ao campo " + Strings.Chr(34) + "Data Final" + Strings.Chr(34) + ".",
+					MessageBox.Show("Campo \"Data Inicial\" não pode ter uma data superior ao campo \"Data Final\".",
                         Text,MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 					return;
@@ -169,8 +169,8 @@ namespace TraderWizard
 			} else {
 				//verificação dos campos obrigatórios para a atualização anual
 
-				if (!Information.IsNumeric(txtAno.Text)) {
-                    MessageBox.Show("Campo " + Strings.Chr(34) + "Ano" + Strings.Chr(34) + " não preenchido ou com valor inválido.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+				if (txtAno.Text.IsNumeric()) {
+                    MessageBox.Show("Campo \"Ano\" não preenchido ou com valor inválido.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 					return;
 
@@ -266,7 +266,7 @@ namespace TraderWizard
 
 		private void btnCalendarioInicial_Click(System.Object sender, EventArgs e)
 		{
-			if (Information.IsDate(txtDataInicial.Text)) {
+			if (txtDataInicial.Text.IsDate()) {
 				CalendarioInicial.SetDate(Convert.ToDateTime(txtDataInicial.Text));
 			}
 
@@ -290,7 +290,7 @@ namespace TraderWizard
 
 		private void btnCalendarioFinal_Click(System.Object sender, EventArgs e)
 		{
-			if (Information.IsDate(txtDataFinal.Text)) {
+			if (txtDataFinal.Text.IsDate()) {
 				CalendarioFinal.SetDate(Convert.ToDateTime(txtDataFinal.Text));
 			}
 

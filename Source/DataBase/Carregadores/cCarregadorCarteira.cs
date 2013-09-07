@@ -41,7 +41,7 @@ namespace prjModelo.Carregadores
 
 
 				while (!objRS.EOF) {
-					var objAtivo = new cAtivo(Convert.ToString(objRS.Field("Codigo")), string.Empty);
+					var objAtivo = new Ativo(Convert.ToString(objRS.Field("Codigo")), string.Empty);
 
 					objRetorno.AdicionaAtivo(objAtivo);
 

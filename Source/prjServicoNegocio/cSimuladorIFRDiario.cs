@@ -11,6 +11,7 @@ using prjModelo.Carregadores;
 using DataBase;
 using prjDTO;
 using prjModelo.ValueObjects;
+using Services;
 using TraderWizard.Enumeracoes;
 
 namespace prjServicoNegocio
@@ -27,7 +28,7 @@ namespace prjServicoNegocio
 
 		private readonly cSetupIFR2SimularCodigoDTO objSetupIFR2SimularCodigoDTO;
 
-		private readonly cAtivo objAtivo;
+		private readonly Ativo objAtivo;
 
 		private Setup objSetup;
 
@@ -55,7 +56,7 @@ namespace prjServicoNegocio
 
 			objConexao = new cConexao();
 
-			objAtivo = new cAtivo(objSetupIFR2SimularCodigoDTO.Codigo);
+			objAtivo = new Ativo(objSetupIFR2SimularCodigoDTO.Codigo);
 
             _servicoDeCotacaoDeAtivo = new ServicoDeCotacaoDeAtivo(objAtivo, objConexao);
 
@@ -107,7 +108,7 @@ namespace prjServicoNegocio
 
 				objRSAux.ExecuteQuery(strQuery);
 
-				DateTime dtmDataInicial = Convert.ToDateTime(objRSAux.Field("Data", cConst.DataInvalida));
+				DateTime dtmDataInicial = Convert.ToDateTime(objRSAux.Field("Data", Constantes.DataInvalida));
 
 				objRSAux.Fechar();
 
@@ -147,7 +148,7 @@ namespace prjServicoNegocio
 
 			SimuladorDeTrade objSimuladorDeTrade = new SimuladorDeTrade(objConexao, objSetup, objAtivo, lstIFRSobrevendido);
 
-			foreach (cCotacaoDiaria objCotacaoDeInicioDaSimulacao in lstCotacoesComIfrSobrevendido) {
+			foreach (CotacaoDiaria objCotacaoDeInicioDaSimulacao in lstCotacoesComIfrSobrevendido) {
 
 				if (objSetup.RealizarCalculosAdicionais)
 				{

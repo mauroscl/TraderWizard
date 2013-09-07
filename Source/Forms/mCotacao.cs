@@ -50,7 +50,7 @@ namespace Forms
 		public static void ComboAtivoPreencher(ComboBox pcmbAtivo, cConexao pobjConexao, string codigoDoAtivoParaSelecionar, bool pblnSelecionarItem)
 		{
 		    var ativos = new Ativos(pobjConexao);
-		    IList<cAtivo> ativosValidos = ativos.Validos();
+		    IList<Ativo> ativosValidos = ativos.Validos();
 
 			pcmbAtivo.Items.Clear();
 
@@ -83,7 +83,7 @@ namespace Forms
 		    if (pcmbAtivo.Text == string.Empty) {
 				return string.Empty;
 			}
-		    var objAtivo = (cAtivo)pcmbAtivo.SelectedItem;
+		    var objAtivo = (Ativo)pcmbAtivo.SelectedItem;
 		    return objAtivo.Codigo;
 		}
 

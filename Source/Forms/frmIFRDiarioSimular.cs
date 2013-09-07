@@ -1,14 +1,9 @@
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using System.Drawing;
-using System.Diagnostics;
+using System.Collections.ObjectModel;
 using System.Windows.Forms;
 using DataBase;
 using prjDTO;
-using prjModelo.Regras;
 using prjServicoNegocio;
 using prmCotacao;
 using TraderWizard.Enumeracoes;
@@ -46,7 +41,7 @@ namespace TraderWizard
 			//se não tem ativos selecionados
 
 			if (lstAtivosEscolhidos.Items.Count == 0) {
-				Interaction.MsgBox("Nenhum ativo foi escolhido.", MsgBoxStyle.Exclamation, this.Text);
+                MessageBox.Show("Nenhum ativo foi escolhido.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 				return false;
 
@@ -81,12 +76,11 @@ namespace TraderWizard
 
 			Cursor = Cursors.WaitCursor;
 
-			cSetupIFR2SimularDTO objSetupIFR2SimularDTO = new cSetupIFR2SimularDTO();
+			var objSetupIFR2SimularDTO = new cSetupIFR2SimularDTO();
 
-			int intI = 0;
-			string strCodigoAtivo = null;
+			int intI;
 
-			List<string> lstAtivos = new List<string>();
+		    List<string> lstAtivos = new List<string>();
 
 			objSetupIFR2SimularDTO.IFRTipo = intIFRTipo;
 			objSetupIFR2SimularDTO.MediaTipo = intMediaTipo;
@@ -94,8 +88,8 @@ namespace TraderWizard
 			//objSetupIFR2SimularDTO.ValorMaximoIFRSobrevendido = dblValorIFRMaximoSobrevendido
 			objSetupIFR2SimularDTO.ExcluirSimulacoesAnteriores = chkExcluirSimulacoesAnteriores.Checked;
 
-			cRelatorio objRelatorio = new cRelatorio(objConexao);
-			bool blnOK = false;
+			var objRelatorio = new cRelatorio(objConexao);
+			bool blnOK;
 
 
 			for (intI = 0; intI <= lstAtivosEscolhidos.Items.Count - 1; intI += 4) {
@@ -103,13 +97,12 @@ namespace TraderWizard
 
 				for (int intJ = intI; intJ <= intI + 3; intJ++) {
 
-					if (intJ <= lstAtivosEscolhidos.Items.Count - 1) {
-						strCodigoAtivo = mdlGeral.ObtemCodigoDoAtivoSelecionadoNoCombo((string) lstAtivosEscolhidos.Items[intJ]);
+					if (intJ <= lstAtivosEscolhidos.Items.Count - 1)
+					{
+					    string strCodigoAtivo = mdlGeral.ObtemCodigoDoAtivoSelecionadoNoCombo((string) lstAtivosEscolhidos.Items[intJ]);
 
-						lstAtivos.Add(strCodigoAtivo);
-
+					    lstAtivos.Add(strCodigoAtivo);
 					}
-
 				}
 
 				blnOK = objRelatorio.SimularIFRDiarioParaListaDeAtivos(lstAtivos, objSetupIFR2SimularDTO);
@@ -126,11 +119,11 @@ namespace TraderWizard
 
 
 			if (blnOK) {
-				Interaction.MsgBox("Operação realizada com sucesso.", MsgBoxStyle.Information, Text);
+                MessageBox.Show("Operação realizada com sucesso.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 
 			} else {
-				Interaction.MsgBox("Ocorreram erros ao executar a operação.", MsgBoxStyle.Information, Text);
+                MessageBox.Show("Ocorreram erros ao executar a operação.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 			}
 
@@ -176,14 +169,10 @@ namespace TraderWizard
 
 		private void btnAdicionar_Click(System.Object sender, System.EventArgs e)
 		{
-			int intI = 0;
-
-			Collection colItem = new Collection();
-
-			object objItem = null;
+			var colItem = new Collection<object>();
 
 
-			for (intI = 0; intI <= lstAtivosNaoEscolhidos.SelectedItems.Count - 1; intI++) {
+		    for (var intI = 0; intI <= lstAtivosNaoEscolhidos.SelectedItems.Count - 1; intI++) {
 				lstAtivosEscolhidos.Items.Add(lstAtivosNaoEscolhidos.SelectedItems[intI]);
 
 				colItem.Add(lstAtivosNaoEscolhidos.SelectedItems[intI]);
@@ -191,25 +180,21 @@ namespace TraderWizard
 			}
 
 
-			foreach (object objItem_loopVariable in colItem) {
-				objItem = objItem_loopVariable;
-				lstAtivosNaoEscolhidos.Items.Remove(objItem);
-
+			foreach (object item in colItem)
+			{
+			    lstAtivosNaoEscolhidos.Items.Remove(item);
 			}
-
 		}
 
 
 		private void btnRemover_Click(System.Object sender, System.EventArgs e)
 		{
-			int intI = 0;
+			int intI;
 
-			Collection colItem = new Collection();
-
-			object objItem = null;
+			var colItem = new Collection<object>();
 
 
-			for (intI = 0; intI <= lstAtivosEscolhidos.SelectedItems.Count - 1; intI++) {
+		    for (intI = 0; intI <= lstAtivosEscolhidos.SelectedItems.Count - 1; intI++) {
 				lstAtivosNaoEscolhidos.Items.Add(lstAtivosEscolhidos.SelectedItems[intI]);
 
 				colItem.Add(lstAtivosEscolhidos.SelectedItems[intI]);
@@ -217,12 +202,10 @@ namespace TraderWizard
 			}
 
 
-			foreach (object objItem_loopVariable in colItem) {
-				objItem = objItem_loopVariable;
-				lstAtivosEscolhidos.Items.Remove(objItem);
-
+			foreach (object item in colItem)
+			{
+			    lstAtivosEscolhidos.Items.Remove(item);
 			}
-
 		}
 
 

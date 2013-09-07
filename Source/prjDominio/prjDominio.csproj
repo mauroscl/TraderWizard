@@ -44,10 +44,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entidades\cAtivo.cs" />
+    <Compile Include="Entidades\Ativo.cs" />
     <Compile Include="Entidades\cCarteira.cs" />
     <Compile Include="Entidades\cClassifMedia.cs" />
-    <Compile Include="Entidades\cCotacaoAbstract.cs" />
+    <Compile Include="Entidades\CotacaoAbstract.cs" />
     <Compile Include="Entidades\cCriterioClassifMedia.cs" />
     <Compile Include="Entidades\cDesdobramento.cs" />
     <Compile Include="Entidades\cIFR.cs" />
@@ -56,7 +56,7 @@
     <Compile Include="Entidades\cIFRSimulacaoDiariaFaixa.cs" />
     <Compile Include="Entidades\cIFRSimulacaoDiariaFaixaResumo.cs" />
     <Compile Include="Entidades\cIFRSobrevendido.cs" />
-    <Compile Include="Entidades\cMediaAbstract.cs" />
+    <Compile Include="Entidades\MediaAbstract.cs" />
     <Compile Include="Entidades\cModelo.cs" />
     <Compile Include="Entidades\cProventoTipo.cs" />
     <Compile Include="Entidades\Setup.cs" />

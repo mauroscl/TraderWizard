@@ -1,4 +1,5 @@
 
+using prjDominio.Entidades;
 using prjModelo.Entidades;
 
 namespace prjModelo.Carregadores

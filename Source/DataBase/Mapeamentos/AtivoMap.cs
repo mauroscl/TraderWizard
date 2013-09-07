@@ -3,7 +3,7 @@ using prjDominio.Entidades;
 
 namespace DataBase.Mapeamentos
 {
-    public class AtivoMap: ClassMap<cAtivo>
+    public class AtivoMap: ClassMap<Ativo>
     {
         public AtivoMap()
         {

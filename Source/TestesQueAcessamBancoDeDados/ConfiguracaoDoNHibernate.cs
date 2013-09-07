@@ -31,7 +31,7 @@ namespace TestProject1
             Assert.IsTrue(session.IsConnected);
             Assert.IsTrue(session.IsOpen);
 
-            var ativo = session.Query<cAtivo>().SingleOrDefault(x => x.Codigo == "PETR4");
+            var ativo = session.Query<Ativo>().SingleOrDefault(x => x.Codigo == "PETR4");
 
             Assert.IsNotNull(ativo);
             Assert.AreEqual("PETR4", ativo.Codigo);
@@ -42,7 +42,7 @@ namespace TestProject1
         [TestMethod]
         public void ConsigoAdicionarUmAtivoSemIniciarUmaTransacao()
         {
-            var ativo = new cAtivo("TEST4", "TESTE PN");
+            var ativo = new Ativo("TEST4", "TESTE PN");
 
             var session = ObjectFactory.GetInstance<ISession>();
 

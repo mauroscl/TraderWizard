@@ -14,7 +14,7 @@ namespace prjModelo.ValueObjects
 	public class SimulacaoDiariaVO
 	{
 
-		public cAtivo Ativo { get; set; }
+		public Ativo Ativo { get; set; }
 		public DateTime DataEntradaEfetiva { get; set; }
 		public Setup Setup { get; set; }
 		public cClassifMedia ClassificacaoMedia { get; set; }

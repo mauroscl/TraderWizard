@@ -114,7 +114,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="cConst.cs">
+    <Compile Include="Constantes.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="cEnum.cs">

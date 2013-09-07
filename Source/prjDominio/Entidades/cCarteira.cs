@@ -1,13 +1,9 @@
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Xml.Linq;
-using prjDominio.Entidades;
+using prjModelo.Entidades;
 
-namespace prjModelo.Entidades
+namespace prjDominio.Entidades
 {
 	public class cCarteira
 	{
@@ -68,13 +64,13 @@ namespace prjModelo.Entidades
 			get { return lstCarteiraAtivos; }
 		}
 
-		public void AdicionaAtivo(cAtivo pobjAtivo)
+		public void AdicionaAtivo(Ativo pobjAtivo)
 		{
 			var objCarteiraAtivo = new cCarteiraAtivo(this, pobjAtivo);
 			lstCarteiraAtivos.Add(objCarteiraAtivo);
 		}
 
-		public bool AtivoEstaNaCarteira(cAtivo pobjAtivo)
+		public bool AtivoEstaNaCarteira(Ativo pobjAtivo)
 		{
 
 			return lstCarteiraAtivos.Where(a => a.Ativo.Equals(pobjAtivo)).Count() > 0;
@@ -88,14 +84,14 @@ namespace prjModelo.Entidades
 
 		private readonly cCarteira objCarteira;
 
-		private readonly cAtivo objAtivo;
-		public cCarteiraAtivo(cCarteira pobjCarteira, cAtivo pobjAtivo)
+		private readonly Ativo objAtivo;
+		public cCarteiraAtivo(cCarteira pobjCarteira, Ativo pobjAtivo)
 		{
 			objCarteira = pobjCarteira;
 			objAtivo = pobjAtivo;
 		}
 
-		public cAtivo Ativo {
+		public Ativo Ativo {
 			get { return objAtivo; }
 		}
 

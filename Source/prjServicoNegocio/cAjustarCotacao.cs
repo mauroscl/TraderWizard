@@ -1,6 +1,7 @@
 ﻿using System;
 using prjDominio.Entidades;
 using prjModelo.Entidades;
+using Services;
 
 namespace prjServicoNegocio
 {
@@ -15,7 +16,7 @@ namespace prjServicoNegocio
 	        _servicoDeCotacaoDeAtivo = servicoDeCotacaoDeAtivo;
 	    }
 
-	    public cCotacaoDiaria ConverterCotacaoParaData(cCotacaoDiaria pobjCotacao, DateTime pdtmDataDestino)
+	    public CotacaoDiaria ConverterCotacaoParaData(CotacaoDiaria pobjCotacao, DateTime pdtmDataDestino)
 		{
 
 			DateTime dtmDataInicial = default(DateTime);

@@ -104,7 +104,7 @@ namespace DataBase
 			strQuery = strQuery + "(" + Environment.NewLine + '\t' + "SELECT C.data, valorfechamento, SEQUENCIAL " + Environment.NewLine + '\t' + "FROM ((" + strTabelaCotacao + " C INNER JOIN " + strTabelaMedia + " M " + Environment.NewLine + '\t' + "On C.CODIGO = M.CODIGO " + Environment.NewLine + '\t' + "And C.DATA = M.DATA) " + Environment.NewLine + '\t' + "INNER JOIN " + strTabelaIFR + " I " + Environment.NewLine + '\t' + "On C.CODIGO = I.CODIGO " + Environment.NewLine + '\t' + "And C.DATA = I.DATA) " + Environment.NewLine + '\t' + "WHERE C.Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + Environment.NewLine + '\t' + " And M.TIPO = " + FuncoesBd.CampoStringFormatar("IFR2") + Environment.NewLine + '\t' + " And M.NUMPERIODOS = 13 " + Environment.NewLine + '\t' + " And I.NUMPERIODOS = 2 " + Environment.NewLine + '\t' + " And I.VALOR < M.VALOR " + Environment.NewLine;
 
 
-			if (pdtmDataInicial != cConst.DataInvalida) {
+			if (pdtmDataInicial != Constantes.DataInvalida) {
 				strQuery = strQuery + '\t' + " AND C.Data >= " + FuncoesBd.CampoDateFormatar(pdtmDataInicial) + Environment.NewLine;
 
 			}
@@ -197,7 +197,7 @@ namespace DataBase
 			}
 
 
-			if (pdtmDataInicial != cConst.DataInvalida) {
+			if (pdtmDataInicial != Constantes.DataInvalida) {
 				strQuery = strQuery + '\t' + " AND C.Data >= " + FuncoesBd.CampoDateFormatar(pdtmDataInicial) + Environment.NewLine;
 
 			}
@@ -238,7 +238,7 @@ namespace DataBase
 				strQuery = strQuery + '\t' + " WHERE " + strTabelaCotacao + ".CODIGO = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + Environment.NewLine;
 
 
-				if (pdtmDataInicial != cConst.DataInvalida) {
+				if (pdtmDataInicial != Constantes.DataInvalida) {
 					strQuery = strQuery + '\t' + " AND " + strTabelaCotacao + ".Data >= " + FuncoesBd.CampoDateFormatar(pdtmDataInicial) + Environment.NewLine;
 
 				}

@@ -1,5 +1,5 @@
+using System.Collections.ObjectModel;
 using System.Linq;
-using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -8,7 +8,6 @@ using prjDominio.Entidades;
 using prjModelo.Carregadores;
 using DataBase;
 using prjCandle;
-using prjModelo.Entidades;
 using prmCotacao;
 using prjDTO;
 using TraderWizard.Enumeracoes;
@@ -41,7 +40,7 @@ namespace TraderWizard
 
 		private bool blnPontosAtualizar = true;
 			//collection contendos os labels
-		private Collection colLabelVertical = new Collection();
+		private readonly Collection<Control> _labelsVerticais = new Collection<Control>();
 
 			//código do ativo que está impresso na tela
 		private string strCodigoAtivo;
@@ -334,7 +333,7 @@ namespace TraderWizard
 
 		    var ativos = new Ativos(objConexao);
 
-		    IList<cAtivo> ativosValidos = ativos.Validos();
+		    IList<Ativo> ativosValidos = ativos.Validos();
 
 		    foreach (var ativoValido in ativosValidos)
 		    {
@@ -700,11 +699,11 @@ namespace TraderWizard
 			if (Convert.ToInt32(objRS.Field("Contador")) > 0) {
 
 				if (Convert.ToInt32(objRS.Field("Contador")) == 1) {
-					Interaction.MsgBox("Existe 1 cotação com Valor Mínimo zerado. " + Environment.NewLine + "Verifique a cotação.", MsgBoxStyle.Information, this.Text);
+                    MessageBox.Show("Existe 1 cotação com Valor Mínimo zerado. " + Environment.NewLine + "Verifique a cotação.", this.Text, MessageBoxButtons.OK,MessageBoxIcon.Information);
 
 
 				} else {
-					Interaction.MsgBox("Existem " + objRS.Field("Contador") + " cotações com Valor Mínimo zerado. " + Environment.NewLine + "Verifique as cotações.", MsgBoxStyle.Information, this.Text);
+                    MessageBox.Show("Existem " + objRS.Field("Contador") + " cotações com Valor Mínimo zerado. " + Environment.NewLine + "Verifique as cotações.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 				}
 
@@ -721,7 +720,7 @@ namespace TraderWizard
 			if (blnCotacaoBuscar || blnVolumeBuscar) {
 
 				try {
-					objRSList = objCotacao.ConsultaExecutar(strCodigoAtivo, dtmDataMinimaBusca, dtmDataMaximaBusca, strPeriodoDuracao, "COTACAO",cConst.DataInvalida , blnCotacaoBuscar, blnVolumeBuscar);
+					objRSList = objCotacao.ConsultaExecutar(strCodigoAtivo, dtmDataMinimaBusca, dtmDataMaximaBusca, strPeriodoDuracao, "COTACAO",Constantes.DataInvalida , blnCotacaoBuscar, blnVolumeBuscar);
 
 
 					while (!objRSList.EOF) {
@@ -810,7 +809,7 @@ namespace TraderWizard
 					try {
 						arrCandle[intArrayCandleIndice].IFR14 = Convert.ToDouble(objRS.Field("Valor"));
 					} catch (Exception ex) {
-						Interaction.MsgBox("Erro ao atribuir o IFR no índice: " + intArrayCandleIndice + " - Tamanho total do array: " + arrCandle.Length, MsgBoxStyle.Critical, this.Text);
+                        MessageBox.Show("Erro ao atribuir o IFR no índice: " + intArrayCandleIndice + " - Tamanho total do array: " + arrCandle.Length, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 					}
 
 					intArrayCandleIndice = intArrayCandleIndice - 1;
@@ -891,7 +890,7 @@ namespace TraderWizard
 
 
 			if (blnVolumeBuscar) {
-				objRSList = objCotacao.ConsultaExecutar(strCodigoAtivo, dtmDataMinimaBusca, dtmDataMaximaBusca, strPeriodoDuracao, "MEDIA",cConst.DataInvalida , false, false, String.Empty, 21,
+				objRSList = objCotacao.ConsultaExecutar(strCodigoAtivo, dtmDataMinimaBusca, dtmDataMaximaBusca, strPeriodoDuracao, "MEDIA",Constantes.DataInvalida , false, false, String.Empty, 21,
 				"VOLUME");
 
 				//intArrayCandleIndice = arrCandle.Length - 1
@@ -1050,7 +1049,7 @@ namespace TraderWizard
 						//que foram buscadas as cotações nesta execução.
 
 						//gera a tabela considerando os splits
-						objRSList = objCotacao.ConsultaExecutar(strCodigoAtivo, dtmDataMinimaBusca, dtmDataMaximaBusca, strPeriodoDuracao, "MEDIA", cConst.DataInvalida ,false ,false , objMediaDTO.Tipo, objMediaDTO.NumPeriodos,
+						objRSList = objCotacao.ConsultaExecutar(strCodigoAtivo, dtmDataMinimaBusca, dtmDataMaximaBusca, strPeriodoDuracao, "MEDIA", Constantes.DataInvalida ,false ,false , objMediaDTO.Tipo, objMediaDTO.NumPeriodos,
 						"VALOR");
 
 						intArrayCandleIndice = intIndiceFinal;
@@ -1061,7 +1060,7 @@ namespace TraderWizard
 
 						//gera a tabela considerando os splits
 						objRSList = objCotacao.ConsultaExecutar(strCodigoAtivo, dtmDataMinimaAreaDados, dtmDataMaximaAreaDados , strPeriodoDuracao
-                            , "MEDIA", cConst.DataInvalida, false,false , objMediaDTO.Tipo, objMediaDTO.NumPeriodos, "VALOR");
+                            , "MEDIA", Constantes.DataInvalida, false,false , objMediaDTO.Tipo, objMediaDTO.NumPeriodos, "VALOR");
 
 						//neste caso tem que começar desde o final do array a atualizar as médias e tem que colocar
 						//o índice para a última posição do array
@@ -1173,7 +1172,7 @@ namespace TraderWizard
 
 
 				if (pdecValorInicialRet <= 0) {
-					Interaction.MsgBox("intRazaoInteira: " + intRazaoInteira + " pdecIntervaloRet" + pdecIntervaloRet + " pdecValorMaximo: " + pdecValorMaximo + " pintNumPontos: " + pintNumPontos, MsgBoxStyle.Critical, this.Text);
+					MessageBox.Show("intRazaoInteira: " + intRazaoInteira + " pdecIntervaloRet" + pdecIntervaloRet + " pdecValorMaximo: " + pdecValorMaximo + " pintNumPontos: " + pintNumPontos,  this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 
 				}
 
@@ -1185,7 +1184,7 @@ namespace TraderWizard
 
 
 				if (pdecValorInicialRet <= 0) {
-					Interaction.MsgBox("pdecValorMinimo: " + pdecValorMinimo, MsgBoxStyle.Critical, this.Text);
+                    MessageBox.Show("pdecValorMinimo: " + pdecValorMinimo, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 
 				}
 
@@ -1262,13 +1261,13 @@ namespace TraderWizard
 		{
 		    //percorre collection de índices
 
-			foreach (Control control in colLabelVertical)
+			foreach (Control control in _labelsVerticais)
 			{
 			    //remove o componente do índice específico.
 				this.Controls.Remove(control);
 			}
 
-		    colLabelVertical.Clear();
+		    _labelsVerticais.Clear();
 
 		}
 
@@ -1288,7 +1287,7 @@ namespace TraderWizard
 			this.Controls.Add(objLabel);
 
 			//adiciona na collection de componentes
-			colLabelVertical.Add(objLabel);
+			_labelsVerticais.Add(objLabel);
 
 		}
 
@@ -1321,7 +1320,7 @@ namespace TraderWizard
 
 			//adiciona na collection de componentes
 			//colLabelVertical.Add(objLabel, objLabel.Text)
-			colLabelVertical.Add(objLabel);
+			_labelsVerticais.Add(objLabel);
 
 		}
 
@@ -1458,7 +1457,7 @@ namespace TraderWizard
 
 
 				} catch (Exception ex) {
-					Interaction.MsgBox("Erro ************** decValorMaximoPeriodo: " + decValorMaximoPeriodo + " dblValorReferencia: " + dblValorReferencia + " decValorInicialReferenciaAux: " + decValorInicialReferenciaAux + " dblpixelporreal: " + dblPixelPorReal, MsgBoxStyle.Critical, this.Text);
+                    MessageBox.Show("Erro ************** decValorMaximoPeriodo: " + decValorMaximoPeriodo + " dblValorReferencia: " + dblValorReferencia + " decValorInicialReferenciaAux: " + decValorInicialReferenciaAux + " dblpixelporreal: " + dblPixelPorReal, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 
 				}
 
@@ -1470,7 +1469,8 @@ namespace TraderWizard
 
 				if (blnPontosAtualizar) {
 					//imprime o label informando o valor da reta
-					LabelVerticalAdicionar(Strings.FormatNumber(Convert.ToString(decValorInicialReferenciaAux), 2), intAreaRight, intReferenciaY);
+					//LabelVerticalAdicionar(Strings.FormatNumber(Convert.ToString(decValorInicialReferenciaAux), 2), intAreaRight, intReferenciaY);
+                    LabelVerticalAdicionar(decValorInicialReferenciaAux.ToString(Constantes.FormatoComDuasCasasDecimais), intAreaRight, intReferenciaY);
 
 				}
 
@@ -1652,7 +1652,7 @@ namespace TraderWizard
 
 					if (blnPontosAtualizar) {
 						//imprime o label referente à linha
-						LabelHorizontalAdicionar(Strings.Format(dtmData, "dd/MM/yyyy"), intAreaBottom, intAreaLeft, intCaudaX, Color.Black);
+						LabelHorizontalAdicionar(dtmData.ToShortDateString(), intAreaBottom, intAreaLeft, intCaudaX, Color.Black);
 
 					}
 
@@ -1930,15 +1930,12 @@ namespace TraderWizard
 			    if (objCandle.RectAreaTotal.Contains(intX, intY)) {
 					StatusStrip.Items.Clear();
 
-					StatusStrip.Items.Add("DATA: " + Strings.Format(objCandle.Data, "dd/MM/yyyy") + "  ABE: " + Strings.FormatNumber(objCandle.ValorAbertura, 2) + "  MIN: " + Strings.FormatNumber(objCandle.ValorMinimo, 2) + "  MAX: " + Strings.FormatNumber(objCandle.ValorMaximo, 2) + "  FECH: " + Strings.FormatNumber(objCandle.ValorFechamento, 2) + "  OSC: " + Strings.FormatNumber(objCandle.Oscilacao));
-
+                    StatusStrip.Items.Add("DATA: " + objCandle.Data.ToShortDateString() + "  ABE: " + objCandle.ValorAbertura.ToString(Constantes.FormatoComDuasCasasDecimais) +
+                        "  MIN: " + objCandle.ValorMinimo.ToString(Constantes.FormatoComDuasCasasDecimais) + "  MAX: " + objCandle.ValorMaximo.ToString(Constantes.FormatoComDuasCasasDecimais) +
+                        "  FECH: " + objCandle.ValorFechamento.ToString(Constantes.FormatoComDuasCasasDecimais) + "  OSC: " + objCandle.Oscilacao.ToString(Constantes.FormatoComDuasCasasDecimais));
 
 					if (blnMMExpDesenhar) {
 						string strTexto = String.Empty;
-
-						//Dim objstructMMExp As structIndicadorEscolha
-
-						//For Each objstructMMExp In colStructIndicadorMMExp
 
 						foreach (cMediaDTO objMediaDTO in lstMediasSelecionadas)
 						{
@@ -1950,7 +1947,7 @@ namespace TraderWizard
 									strTexto = strTexto + "  ";
 								}
 
-								strTexto = strTexto + "[" + objMediaDTO.NumPeriodos + objMediaDTO.Tipo + "] " + Strings.FormatNumber(dblMedia, 2);
+                                strTexto = strTexto + "[" + objMediaDTO.NumPeriodos + objMediaDTO.Tipo + "] " + dblMedia.ToString(Constantes.FormatoComDuasCasasDecimais);
 
 							}
 						}
@@ -1969,13 +1966,13 @@ namespace TraderWizard
 
 
 					if (blnIFRDesenhar) {
-						StatusStrip.Items[0].Text = StatusStrip.Items[0].Text + "  IFR " + intIFRNumPeriodos + ": " + Strings.FormatNumber(objCandle.IFR14, 2);
+                        StatusStrip.Items[0].Text = StatusStrip.Items[0].Text + "  IFR " + intIFRNumPeriodos + ": " + objCandle.IFR14.ToString(Constantes.FormatoComDuasCasasDecimais);
 
 
 						if (intIFRNumPeriodos == 2) {
 
 							if (objCandle.IFRMedio != -1) {
-								StatusStrip.Items[0].Text = StatusStrip.Items[0].Text + "  IFR MM13A: " + Strings.FormatNumber(objCandle.IFRMedio, 2);
+                                StatusStrip.Items[0].Text = StatusStrip.Items[0].Text + "  IFR MM13A: " + objCandle.IFRMedio.ToString(Constantes.FormatoComDuasCasasDecimais);
 
 							}
 
@@ -2054,7 +2051,7 @@ namespace TraderWizard
 			//se não foi escolhido um valor válido no combo,emite mensagem e sai da função
 
 			if (ToolStripcmbAtivo.SelectedIndex < 0) {
-				Interaction.MsgBox("Escolha um ativo válido.", MsgBoxStyle.Information, this.Text);
+                MessageBox.Show("Escolha um ativo válido.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 				return;
 
@@ -2079,9 +2076,9 @@ namespace TraderWizard
 			string functionReturnValue;
 
 			if (pdblValor >= 1000000) {
-				functionReturnValue = Strings.FormatNumber((pdblValor / 1000000), 2) + " M";
+                functionReturnValue = (pdblValor / 1000000).ToString(Constantes.FormatoComDuasCasasDecimais) + " M";
 			} else if (pdblValor >= 1000) {
-				functionReturnValue = Strings.FormatNumber((pdblValor / 1000), 2) + " K";
+                functionReturnValue = (pdblValor / 1000).ToString(Constantes.FormatoComDuasCasasDecimais) + " K";
 			} else {
 				functionReturnValue = pdblValor.ToString();
 			}
@@ -2092,7 +2089,7 @@ namespace TraderWizard
 		private void ParametroConsultar(string pstrParametro, out string pstrValorRet)
 		{
 
-			cDadosDB objDadosDB = new cDadosDB(objConexao, "Configuracao");
+			var objDadosDB = new cDadosDB(objConexao, "Configuracao");
 
 			objDadosDB.CampoAdicionar("Parametro", true, pstrParametro);
 
@@ -2917,7 +2914,7 @@ namespace TraderWizard
 			if (ToolStripbtnIFR14.Checked) {
 				ToolStripcmbIFRNumPeriodos.Enabled = true;
 
-				if (!Information.IsNumeric(ToolStripcmbIFRNumPeriodos.Text)) {
+				if (ToolStripcmbIFRNumPeriodos.Text.IsNumeric()) {
 					ToolStripcmbIFRNumPeriodos.Text = "2";
 				}
 			} else {

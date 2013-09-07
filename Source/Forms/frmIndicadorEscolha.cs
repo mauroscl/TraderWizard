@@ -7,6 +7,8 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Windows.Forms;
 using prjDTO;
+using TraderWizard.Extensoes;
+
 namespace TraderWizard
 {
 
@@ -112,8 +114,9 @@ namespace TraderWizard
 		{
 
 
-			if (!Information.IsNumeric(txtPeriodo.Text)) {
-				Interaction.MsgBox("Campo " + Strings.Chr(34) + "Período" + Strings.Chr(34) + " não preenchido ou com valor inválido.", MsgBoxStyle.Exclamation, this.Text);
+            if (txtPeriodo.Text.IsNumeric())
+            {
+                MessageBox.Show("Campo \"Período\"  não preenchido ou com valor inválido.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				return false;
 
 			}
@@ -123,7 +126,7 @@ namespace TraderWizard
 			int intI = 0;
 
 
-			string strNovoPeriodo = Strings.Trim(txtPeriodo.Text);
+			string strNovoPeriodo = txtPeriodo.Text.Trim();
 			string strNovoTipo = ObtemTipoDaMedia();
 
 
@@ -133,9 +136,8 @@ namespace TraderWizard
 				}
 
 
-				if (strNovoPeriodo == Strings.Trim(lstPeriodoSelecionado.Items[intI].Text) && strNovoTipo == Strings.Trim(lstPeriodoSelecionado.Items[intI].SubItems[1].Text)) {
-					Interaction.MsgBox("A Média Móvel " + strNovoTipo + " de " + strNovoPeriodo + " já foi inserida.", MsgBoxStyle.Exclamation, this.Text);
-
+				if (strNovoPeriodo == lstPeriodoSelecionado.Items[intI].Text.Trim() && strNovoTipo == lstPeriodoSelecionado.Items[intI].SubItems[1].Text.Trim()) {
+				    MessageBox.Show("A Média Móvel " + strNovoTipo + " de " + strNovoPeriodo + " já foi inserida.",Text,MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 					return false;
 
 				}

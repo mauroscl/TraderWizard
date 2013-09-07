@@ -74,12 +74,13 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FuncoesGerais.cs" />
+    <Compile Include="Extensoes\ExtensoesDeString.cs" />
+    <Compile Include="Geral\FuncoesGerais.cs" />
     <Compile Include="My Project\AssemblyInfo.cs" />
-    <Compile Include="MyNamespaceSupportForCSharp.cs" />
-    <Compile Include="testes_de_carteira_de_ativos.cs" />
-    <Compile Include="testes_de_collection.cs" />
-    <Compile Include="testes_de_media_alinhada.cs" />
+    <Compile Include="Geral\MyNamespaceSupportForCSharp.cs" />
+    <Compile Include="Geral\testes_de_carteira_de_ativos.cs" />
+    <Compile Include="Geral\testes_de_collection.cs" />
+    <Compile Include="Geral\testes_de_media_alinhada.cs" />
     <Compile Include="UI\FerramentaDeDesenho\TestesLinhaHorizontal.cs" />
     <Compile Include="UI\FerramentaDeDesenho\TestesCanal.cs" />
   </ItemGroup>
@@ -116,9 +117,6 @@
       <Project>{9DAFFBC6-2218-40FF-BDF9-86774B91DA7A}</Project>
       <Name>prjDominio</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />

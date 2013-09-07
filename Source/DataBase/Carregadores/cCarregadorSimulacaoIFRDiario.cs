@@ -20,7 +20,7 @@ namespace prjModelo.Carregadores
 		{
 		}
 
-		private string GerarQuery(cAtivo pobjAtivo, Setup pobjSetup, string pstrWhereAdicional, int? pintTop, string pstrOrderBy)
+		private string GerarQuery(Ativo pobjAtivo, Setup pobjSetup, string pstrWhereAdicional, int? pintTop, string pstrOrderBy)
 		{
             FuncoesBd FuncoesBd = Conexao.ObterFormatadorDeCampo();
 
@@ -41,7 +41,7 @@ namespace prjModelo.Carregadores
 
 		}
 
-		private cIFRSimulacaoDiaria ConstruirObjetoDaSimulacao(cAtivo pobjAtivo, Setup pobjSetup, Dictionary<string, object> pcolLinha)
+		private cIFRSimulacaoDiaria ConstruirObjetoDaSimulacao(Ativo pobjAtivo, Setup pobjSetup, Dictionary<string, object> pcolLinha)
 		{
 
 			var objRetorno = new cIFRSimulacaoDiaria();
@@ -70,7 +70,7 @@ namespace prjModelo.Carregadores
 
 		}
 
-		private cIFRSimulacaoDiaria Carregar(cAtivo pobjAtivo, Setup pobjSetup, string pstrSQL)
+		private cIFRSimulacaoDiaria Carregar(Ativo pobjAtivo, Setup pobjSetup, string pstrSQL)
 		{
 			cIFRSimulacaoDiaria functionReturnValue;
 
@@ -99,7 +99,7 @@ namespace prjModelo.Carregadores
 		}
 
 
-		private IList<cIFRSimulacaoDiaria> CarregarLista(cAtivo pobjAtivo, Setup pobjSetup, string pstrSQL)
+		private IList<cIFRSimulacaoDiaria> CarregarLista(Ativo pobjAtivo, Setup pobjSetup, string pstrSQL)
 		{
 
 			cRSList objRS = new cRSList(Conexao);
@@ -129,7 +129,7 @@ namespace prjModelo.Carregadores
 
 		}
 
-		public cIFRSimulacaoDiaria CarregarMelhorEntradaPorAgrupadorDeTentativas(cAtivo pobjAtivo, Setup pobjSetup, cIFRSobrevendido pobjIFRSobrevendido, UInt32 pintAgrupadorDeTentativas)
+		public cIFRSimulacaoDiaria CarregarMelhorEntradaPorAgrupadorDeTentativas(Ativo pobjAtivo, Setup pobjSetup, cIFRSobrevendido pobjIFRSobrevendido, UInt32 pintAgrupadorDeTentativas)
 		{
 		    string strWhereAdicional = " AND EXISTS ( " + Environment.NewLine;
 			strWhereAdicional += '\t' + " SELECT 1 " + Environment.NewLine;
@@ -147,7 +147,7 @@ namespace prjModelo.Carregadores
 
 		}
 
-		public cIFRSimulacaoDiaria CarregarMelhorEntradaPorDataDeSaida(cAtivo pobjAtivo, Setup pobjSetup, cIFRSobrevendido pobjIFRSobrevendido, DateTime pdtmDataSaida)
+		public cIFRSimulacaoDiaria CarregarMelhorEntradaPorDataDeSaida(Ativo pobjAtivo, Setup pobjSetup, cIFRSobrevendido pobjIFRSobrevendido, DateTime pdtmDataSaida)
 		{
             FuncoesBd FuncoesBd = Conexao.ObterFormatadorDeCampo();
 
@@ -176,7 +176,7 @@ namespace prjModelo.Carregadores
 		/// <param name="pdtmDataReferencia"></param>
 		/// <returns></returns>
 		/// <remarks></remarks>
-		public IList<cIFRSimulacaoDiaria> CarregarUltimasSimulacoesPorIFRSobrevendido(cAtivo pobjAtivo, Setup pobjSetup, cIFRSobrevendido pobjIFRSobrevendido, DateTime pdtmDataReferencia)
+		public IList<cIFRSimulacaoDiaria> CarregarUltimasSimulacoesPorIFRSobrevendido(Ativo pobjAtivo, Setup pobjSetup, cIFRSobrevendido pobjIFRSobrevendido, DateTime pdtmDataReferencia)
 		{
             FuncoesBd FuncoesBd = Conexao.ObterFormatadorDeCampo();
 
@@ -204,7 +204,7 @@ namespace prjModelo.Carregadores
 
 		}
 
-		public cIFRSimulacaoDiaria CarregaPorDataEntradaEfetiva(cAtivo pobjAtivo, Setup pobjSetup, DateTime pdtmDataEntradaEfetiva)
+		public cIFRSimulacaoDiaria CarregaPorDataEntradaEfetiva(Ativo pobjAtivo, Setup pobjSetup, DateTime pdtmDataEntradaEfetiva)
 		{
             FuncoesBd FuncoesBd = Conexao.ObterFormatadorDeCampo();
 

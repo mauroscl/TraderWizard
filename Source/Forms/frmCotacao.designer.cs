@@ -1,4 +1,3 @@
-using Microsoft.VisualBasic;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,8 +7,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 namespace TraderWizard
 {
-	[Microsoft.VisualBasic.CompilerServices.DesignerGenerated()]
-	partial class frmCotacao : System.Windows.Forms.Form
+partial class frmCotacao : System.Windows.Forms.Form
 	{
 
 		//Form overrides dispose to clean up the component list.

@@ -1,6 +1,7 @@
 using DataBase.Interfaces;
 using System;
 using DataBase;
+using prjDominio.Entidades;
 using prjModelo.Entidades;
 
 namespace prjModelo.Carregadores
@@ -18,7 +19,7 @@ namespace prjModelo.Carregadores
 		}
 
 
-		public cIFR CarregarPorData(cCotacaoDiaria pobjCotacaoDiaria, int pintNumPeriodos)
+		public cIFR CarregarPorData(CotacaoDiaria pobjCotacaoDiaria, int pintNumPeriodos)
 		{
 		    cRS objRS = new cRS(Conexao);
 

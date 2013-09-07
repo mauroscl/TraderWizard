@@ -1,5 +1,6 @@
 using System;
 using DataBase.Interfaces;
+using prjDominio.Entidades;
 using prjDTO;
 using prjModelo.Carregadores;
 using prjModelo.Entidades;
@@ -18,7 +19,7 @@ namespace DataBase.Carregadores
 		{
 		}
 
-		public cMediaAbstract CarregarPorData(cCotacaoDiaria pobjCotacaoDiaria, cMediaDTO pobjMediaDTO)
+		public MediaAbstract CarregarPorData(CotacaoDiaria pobjCotacaoDiaria, cMediaDTO pobjMediaDTO)
 		{
 		    cRS objRS = new cRS(Conexao);
 
@@ -33,7 +34,7 @@ namespace DataBase.Carregadores
 
 			objRS.ExecuteQuery(strSQL);
 
-			cMediaAbstract functionReturnValue = new cMediaDiaria(pobjCotacaoDiaria, pobjMediaDTO.Tipo, pobjMediaDTO.NumPeriodos, Convert.ToDouble(objRS.Field("Valor")));
+			MediaAbstract functionReturnValue = new MediaDiaria(pobjCotacaoDiaria, pobjMediaDTO.Tipo, pobjMediaDTO.NumPeriodos, Convert.ToDouble(objRS.Field("Valor")));
 
 			objRS.Fechar();
 

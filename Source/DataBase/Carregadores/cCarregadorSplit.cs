@@ -52,7 +52,7 @@ namespace prjModelo.Carregadores
 			        " and Data >= " + FuncoesBd.CampoDateFormatar(pdtmDataInicial) + Environment.NewLine;
 
 
-				if (pdtmDataFinal != cConst.DataInvalida) {
+				if (pdtmDataFinal != Constantes.DataInvalida) {
 					strQuery = strQuery + " and Data <=  " + FuncoesBd.CampoDateFormatar(pdtmDataFinal) + Environment.NewLine;
 
 				}
@@ -103,7 +103,7 @@ namespace prjModelo.Carregadores
 			               Environment.NewLine;
 
 
-				if (pdtmDataFinal != cConst.DataInvalida) {
+				if (pdtmDataFinal != Constantes.DataInvalida) {
 					strQuery = strQuery + " and Data <=  " + FuncoesBd.CampoDateFormatar(pdtmDataFinal) + Environment.NewLine;
 
 				}
@@ -143,7 +143,7 @@ namespace prjModelo.Carregadores
 
 		}
 
-		public IList<cDesdobramento> CarregarTodos(cAtivo pobjAtivo)
+		public IList<cDesdobramento> CarregarTodos(Ativo pobjAtivo)
 		{
 
             FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();

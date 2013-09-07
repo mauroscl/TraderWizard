@@ -12,6 +12,7 @@ using frwTela;
 using prmCotacao;
 using ServicosDeInterface;
 using TraderWizard.Enumeracoes;
+using TraderWizard.Extensoes;
 
 namespace TraderWizard
 {
@@ -331,8 +332,8 @@ namespace TraderWizard
 		{
 
 
-			if (!Information.IsDate(txtData.Text)) {
-				Interaction.MsgBox("Campo " + Strings.Chr(39) + "Data" + Strings.Chr(39) + " não preenchido ou com valor inválido.", MsgBoxStyle.Exclamation, this.Text);
+			if (!txtData.Text.IsDate()) {
+                MessageBox.Show("Campo \"Data\"  não preenchido ou com valor inválido.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
 				txtData.Focus();
 
@@ -345,8 +346,9 @@ namespace TraderWizard
 
 			if (intSetup == cEnum.enumSetup.IFRSemFiltro || intSetup == cEnum.enumSetup.IFRSemFiltroRP) {
 
-				if (!Information.IsNumeric(txtIFR2Maximo.Text)) {
-					Interaction.MsgBox("Campo " + Strings.Chr(39) + "IFR 2 abaixo de" + Strings.Chr(39) + " não preenchido ou com valor inválido.", MsgBoxStyle.Exclamation, this.Text);
+                if (!txtIFR2Maximo.Text.IsNumeric())
+                {
+					MessageBox.Show("Campo \"IFR 2 abaixo de\"  não preenchido ou com valor inválido.", this.Text,MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
 					txtIFR2Maximo.Focus();
 
@@ -359,8 +361,8 @@ namespace TraderWizard
 
 			if (rdbStopGainPercentual.Checked) {
 
-				if (!Information.IsNumeric(txtStopGainPercentual.Text)) {
-					Interaction.MsgBox("Campo " + Strings.Chr(39) + "Percentual" + Strings.Chr(39) + " do Stop Gain não preenchido ou com valor inválido.", MsgBoxStyle.Exclamation, this.Text);
+				if (txtStopGainPercentual.Text.IsNumeric()) {
+                    MessageBox.Show("Campo \"Percentual\" do Stop Gain não preenchido ou com valor inválido.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
 					txtStopGainPercentual.Focus();
 
@@ -371,8 +373,9 @@ namespace TraderWizard
 			}
 
 
-			if (!Information.IsNumeric(txtValorCapital.Text)) {
-				Interaction.MsgBox("Campo " + Strings.Chr(39) + "Valor do Capital" + Strings.Chr(39) + " não preenchido ou com valor inválido.", MsgBoxStyle.Exclamation, this.Text);
+            if (!txtValorCapital.Text.IsNumeric())
+            {
+                MessageBox.Show("Campo \"Valor do Capital\" não preenchido ou com valor inválido.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
 				txtValorCapital.Focus();
 
@@ -381,8 +384,9 @@ namespace TraderWizard
 			}
 
 
-			if (!Information.IsNumeric(txtPercentualManejo.Text)) {
-				Interaction.MsgBox("Campo " + Strings.Chr(39) + "% Manejo" + Strings.Chr(39) + " não preenchido ou com valor inválido.", MsgBoxStyle.Exclamation, this.Text);
+            if (!txtPercentualManejo.Text.IsNumeric())
+            {
+                MessageBox.Show("Campo \"% Manejo\"  não preenchido ou com valor inválido.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
 				txtPercentualManejo.Focus();
 
@@ -439,11 +443,11 @@ namespace TraderWizard
 
 			dtmDataDeGeracaoDoRelatorio = Convert.ToDateTime(txtData.Text);
 
-		    int intNegociosTotal = Information.IsNumeric(txtNegociosTotal.Text) ? Convert.ToInt32(txtNegociosTotal.Text) : -1;
+		    int intNegociosTotal = txtNegociosTotal.Text.IsNumeric() ? Convert.ToInt32(txtNegociosTotal.Text) : -1;
 
-		    double dblTitulosTotal = Information.IsNumeric(txtTitulosTotal.Text) ? Convert.ToDouble(txtTitulosTotal.Text) : -1;
+		    double dblTitulosTotal = txtTitulosTotal.Text.IsNumeric() ? Convert.ToDouble(txtTitulosTotal.Text) : -1;
 
-		    decimal decValorTotal = Information.IsNumeric(txtValorTotal.Text) ? Convert.ToDecimal(txtValorTotal.Text) : -1;
+		    decimal decValorTotal = txtValorTotal.Text.IsNumeric() ? Convert.ToDecimal(txtValorTotal.Text) : -1;
 
             string strPeriodo = String.Empty;
 
@@ -594,7 +598,7 @@ namespace TraderWizard
 
 		private void btnCalendario_Click(System.Object sender, System.EventArgs e)
 		{
-			if (Information.IsDate(txtData.Text)) {
+			if (txtData.Text.IsDate()) {
 				Calendario.SetDate(Convert.ToDateTime(txtData.Text));
 			}
 

@@ -27,9 +27,9 @@ namespace TestProject1
 
 		}
 
-		public static cAtivo RetornaAtivo(string pstrCodigo)
+		public static Ativo RetornaAtivo(string pstrCodigo)
 		{
-			return new cAtivo(pstrCodigo, string.Empty);
+			return new Ativo(pstrCodigo, string.Empty);
 		}
 
 		public static cIFRSobrevendido CarregaIFRSobrevendido(cConexao pobjConexao, int pintId)

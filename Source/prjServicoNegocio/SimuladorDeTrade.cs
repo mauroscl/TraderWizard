@@ -7,6 +7,7 @@ using prjModelo;
 using prjModelo.Carregadores;
 using prjModelo.Entidades;
 using DataBase;
+using Services;
 
 namespace prjServicoNegocio
 {
@@ -16,10 +17,10 @@ namespace prjServicoNegocio
 
 		private readonly cConexao objConexao;
 		private readonly Setup objSetup;
-		private readonly cAtivo objAtivo;
+		private readonly Ativo objAtivo;
 
 		private readonly IList<cIFRSobrevendido> lstIFRSobrevendido;
-		public SimuladorDeTrade(cConexao pobjConexao, Setup pobjSetup, cAtivo pobjAtivo, IList<cIFRSobrevendido> plstIFRSobrevendido)
+		public SimuladorDeTrade(cConexao pobjConexao, Setup pobjSetup, Ativo pobjAtivo, IList<cIFRSobrevendido> plstIFRSobrevendido)
 		{
 			objConexao = pobjConexao;
 
@@ -162,7 +163,7 @@ namespace prjServicoNegocio
 		}
 
 
-		public cIFRSimulacaoDiaria Simular(cCotacaoDiaria pobjCotacaoDeInicioDaSimulacao)
+		public cIFRSimulacaoDiaria Simular(CotacaoDiaria pobjCotacaoDeInicioDaSimulacao)
 		{
 		    //Indica se houve entrada efetiva na operação. Somente utilizada nas operações com filtro.
 			//Nas operações sem filtro a entrada sempre ocorre, pois não há necessidade de confirmação
@@ -181,9 +182,9 @@ namespace prjServicoNegocio
 			double? dblMME49Minima = 0;
 
 
-		    cCotacaoDiaria objCotacaoDeEntrada = null;
-			cCotacaoDiaria objCotacaoDoValorMaximo = null;
-			cCotacaoDiaria objCotacaoDeSaida = null;
+		    CotacaoDiaria objCotacaoDeEntrada = null;
+			CotacaoDiaria objCotacaoDoValorMaximo = null;
+			CotacaoDiaria objCotacaoDeSaida = null;
 
 			string strTabelaCotacao = String.Empty;
 			string strTabelaMedia = String.Empty;
@@ -200,7 +201,7 @@ namespace prjServicoNegocio
 
 		    var objCalculadorData = new cCalculadorData(objConexao);
 
-			cCotacaoDiaria objCotacaoDeAcionamentoDoSetup = pobjCotacaoDeInicioDaSimulacao.Clonar();
+			CotacaoDiaria objCotacaoDeAcionamentoDoSetup = pobjCotacaoDeInicioDaSimulacao.Clonar();
 
 			if (objSetup.GeraEntradaNaCotacaoDoAcionamento) {
 				objCotacaoDeEntrada = pobjCotacaoDeInicioDaSimulacao.Clonar();
@@ -273,7 +274,7 @@ namespace prjServicoNegocio
 
 				servicoDeCotacaoDeAtivo.CarregarCotacoes(dtmDataInicial, dtmDataFinal, lstMediasParaCarregar, true);
 
-				IList<cCotacaoDiaria> lstCotacoes = servicoDeCotacaoDeAtivo.CotacoesDiarias.Where(x => x.Data >= dtmDataInicial && x.Data <= dtmDataFinal).ToList();
+				IList<CotacaoDiaria> lstCotacoes = servicoDeCotacaoDeAtivo.CotacoesDiarias.Where(x => x.Data >= dtmDataInicial && x.Data <= dtmDataFinal).ToList();
 
 				if (!lstCotacoes.Any()) {
 					return null;
@@ -283,7 +284,7 @@ namespace prjServicoNegocio
 				//objCarregadorSplit.SplitConsultar(objAtivo.Codigo, dtmDataInicial, "A", objRSSplit, dtmDataFinal)
 
 
-			    foreach (cCotacaoDiaria objCotacaoDoFluxoDaSimulacao in lstCotacoes) {
+			    foreach (CotacaoDiaria objCotacaoDoFluxoDaSimulacao in lstCotacoes) {
 
 					//********INICIO DO TRATAMENTO DOS DESDOBRAMENTOS
 
@@ -318,7 +319,7 @@ namespace prjServicoNegocio
 
 					//********FIM DO TRATAMENTO DOS DESDOBRAMENTOS
 
-					var objMediaDoIFR = (cMediaDiaria) objCotacaoDoFluxoDaSimulacao.Medias.Single(x => x.Tipo == "IFR2" && x.NumPeriodos == 13);
+					var objMediaDoIFR = (MediaDiaria) objCotacaoDoFluxoDaSimulacao.Medias.Single(x => x.Tipo == "IFR2" && x.NumPeriodos == 13);
 
 					if (objCotacaoDeEntrada == null) {
 						//entrada efetiva ainda não ocorreu

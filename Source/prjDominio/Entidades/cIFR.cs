@@ -1,14 +1,16 @@
+using prjDominio.Entidades;
+
 namespace prjModelo.Entidades
 {
 
 	public abstract class cIFR
 	{
 
-		public cCotacaoAbstract Cotacao;
+		public CotacaoAbstract Cotacao;
 		public int NumPeriodos;
 
 		public double Valor;
-		public cIFR(cCotacaoAbstract pobjCotacao, int pintNumPeriodos, double pdecValor)
+		public cIFR(CotacaoAbstract pobjCotacao, int pintNumPeriodos, double pdecValor)
 		{
 			Cotacao = pobjCotacao;
 			Valor = pdecValor;
@@ -33,7 +35,7 @@ namespace prjModelo.Entidades
 	public class cIFRDiario : cIFR
 	{
 
-		public cIFRDiario(cCotacaoAbstract pobjCotacao, int pintNumPeriodos, double pdecValor) : base(pobjCotacao, pintNumPeriodos, pdecValor)
+		public cIFRDiario(CotacaoAbstract pobjCotacao, int pintNumPeriodos, double pdecValor) : base(pobjCotacao, pintNumPeriodos, pdecValor)
 		{
 		}
 

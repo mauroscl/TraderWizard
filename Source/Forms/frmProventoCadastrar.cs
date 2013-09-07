@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using DataBase;
 using prmCotacao;
 using TraderWizard.Enumeracoes;
+using TraderWizard.Extensoes;
 
 namespace TraderWizard
 {
@@ -44,8 +45,9 @@ namespace TraderWizard
 		{
 
 
-			if (Strings.Trim(cmbAtivo.Text) == String.Empty) {
-				Interaction.MsgBox("É necessário escolher um ativo.", MsgBoxStyle.Information, this.Text);
+            if (string.IsNullOrEmpty(cmbAtivo.Text.Trim()))
+            {
+                MessageBox.Show("É necessário escolher um ativo.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 				cmbAtivo.Focus();
 
@@ -54,8 +56,8 @@ namespace TraderWizard
 			}
 
 
-			if (!Information.IsDate(txtDataAprovacao.Text)) {
-				Interaction.MsgBox("Campo " + Strings.Chr(39) + "Data de Aprovação" + Strings.Chr(39) + " não preenchido ou com valor inválido.", MsgBoxStyle.Exclamation, this.Text);
+			if (!txtDataAprovacao.Text.IsDate()) {
+                MessageBox.Show("Campo \"Data de Aprovação\" não preenchido ou com valor inválido.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
 				txtDataAprovacao.Focus();
 
@@ -64,8 +66,8 @@ namespace TraderWizard
 			}
 
 
-			if (!Information.IsDate(txtDataEx.Text)) {
-				Interaction.MsgBox("Campo " + Strings.Chr(39) + "Data de Aprovação" + Strings.Chr(39) + " não preenchido ou com valor inválido.", MsgBoxStyle.Exclamation, this.Text);
+			if (!txtDataEx.Text.IsDate()) {
+                MessageBox.Show("Campo \"Data Ex\" não preenchido ou com valor inválido.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
 				txtDataEx.Focus();
 
@@ -74,8 +76,9 @@ namespace TraderWizard
 			}
 
 
-			if (!Information.IsNumeric(txtValorPorAcao.Text)) {
-				Interaction.MsgBox("Campo " + Strings.Chr(39) + "Valor por Ação" + Strings.Chr(39) + " não preenchido ou com valor inválido.", MsgBoxStyle.Exclamation, this.Text);
+            if (txtValorPorAcao.Text.IsNumeric())
+            {
+                MessageBox.Show("Campo \"Valor por Ação\" não preenchido ou com valor inválido.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
 				txtValorPorAcao.Focus();
 
@@ -96,14 +99,14 @@ namespace TraderWizard
 
 			}
 
-			ServicoDeCotacao objCotacao = new ServicoDeCotacao(objConexao);
+			var objCotacao = new ServicoDeCotacao(objConexao);
 
-			cEnum.enumRetorno intRetorno = default(cEnum.enumRetorno);
-
-			this.Cursor = Cursors.WaitCursor;
+		    this.Cursor = Cursors.WaitCursor;
 
 
-			intRetorno = objCotacao.ProventoCadastrar(mCotacao.ObterCodigoDoAtivoSelecionado(cmbAtivo),  mdlGeral.ComboProventoTipoCodigoRetornar(cmbProventoTipo), Convert.ToDateTime(txtDataAprovacao.Text), Convert.ToDateTime(txtDataEx.Text), Convert.ToDecimal(txtValorPorAcao.Text));
+			cEnum.enumRetorno intRetorno = objCotacao.ProventoCadastrar(mCotacao.ObterCodigoDoAtivoSelecionado(cmbAtivo),  
+                mdlGeral.ComboProventoTipoCodigoRetornar(cmbProventoTipo), Convert.ToDateTime(txtDataAprovacao.Text), 
+                Convert.ToDateTime(txtDataEx.Text), Convert.ToDecimal(txtValorPorAcao.Text));
 
 			this.Cursor = Cursors.Default;
 
@@ -111,17 +114,17 @@ namespace TraderWizard
 
 				case cEnum.enumRetorno.RetornoOK:
 
-					Interaction.MsgBox("Operação executada com sucesso.", MsgBoxStyle.Exclamation, this.Text);
+                    MessageBox.Show("Operação executada com sucesso.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
 					break;
 				case cEnum.enumRetorno.RetornoErroInesperado:
 
-					Interaction.MsgBox("Ocorreram erros ao executar a operação.", MsgBoxStyle.Exclamation, this.Text);
+                    MessageBox.Show("Ocorreram erros ao executar a operação.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
 					break;
 				case cEnum.enumRetorno.RetornoErro2:
 
-					Interaction.MsgBox("Não foi encontrada cotação na data ex do provento. Operação não pode ser executada.", MsgBoxStyle.Exclamation, this.Text);
+                    MessageBox.Show("Não foi encontrada cotação na data ex do provento. Operação não pode ser executada.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
 					break;
 			}
@@ -131,7 +134,8 @@ namespace TraderWizard
 
 		private void btnCalendarioAprovacao_Click(System.Object sender, System.EventArgs e)
 		{
-			if (Information.IsDate(txtDataAprovacao.Text)) {
+            if (txtDataAprovacao.Text.IsDate())
+            {
 				CalendarioAprovacao.SetDate( Convert.ToDateTime(txtDataAprovacao.Text));
 			}
 
@@ -141,7 +145,8 @@ namespace TraderWizard
 
 		private void btnCalendarioEx_Click(System.Object sender, System.EventArgs e)
 		{
-			if (Information.IsDate(txtDataEx.Text)) {
+            if (txtDataEx.Text.IsDate())
+            {
 				CalendarioEx.SetDate(Convert.ToDateTime(txtDataEx.Text));
 			}
 

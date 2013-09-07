@@ -15,10 +15,10 @@ namespace prjServicoNegocio
 	{
 
 		private readonly cConexao objConexao;
-		private readonly cAtivo objAtivo;
+		private readonly Ativo objAtivo;
 
 		private readonly Setup objSetup;
-		public cCalculadorResumoIFRDiario(cConexao pobjConexao, Setup pobjSetup, cAtivo pobjAtivo)
+		public cCalculadorResumoIFRDiario(cConexao pobjConexao, Setup pobjSetup, Ativo pobjAtivo)
 		{
 			objConexao = pobjConexao;
 			objAtivo = pobjAtivo;

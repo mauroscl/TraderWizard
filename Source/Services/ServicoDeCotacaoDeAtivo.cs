@@ -3,31 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using DataBase;
 using DataBase.Carregadores;
+using prjDominio.Entidades;
 using prjDTO;
 using prjModelo.Carregadores;
 using prjModelo.DomainServices;
 using prjModelo.Entidades;
 using TraderWizard.Enumeracoes;
 
-namespace prjDominio.Entidades
+namespace Services
 {
 
 	public class ServicoDeCotacaoDeAtivo
 	{
 
 		private readonly cConexao _conexao;
-	    private readonly cAtivo _ativo;
+	    private readonly Ativo _ativo;
 
-	    public ServicoDeCotacaoDeAtivo(cAtivo ativo, cConexao pobjConexao)
+	    public ServicoDeCotacaoDeAtivo(Ativo ativo, cConexao pobjConexao)
 	    {
 	        _ativo = ativo;
 			_conexao = pobjConexao;
-			CotacoesDiarias = new List<cCotacaoDiaria>();
+			CotacoesDiarias = new List<CotacaoDiaria>();
 			lstSimulacoes = new SortedList<DateTime, cIFRSimulacaoDiaria>();
 			Desdobramentos = new List<cDesdobramento>();
 		}
 
-		public IList<cCotacaoDiaria> CotacoesDiarias { get; set; }
+		public IList<CotacaoDiaria> CotacoesDiarias { get; set; }
 		private SortedList<DateTime, cIFRSimulacaoDiaria> lstSimulacoes { get; set; }
 
 		public SortedList<DateTime, cIFRSimulacaoDiaria> Simulacoes {
@@ -36,9 +37,9 @@ namespace prjDominio.Entidades
 
 	    public IList<cDesdobramento> Desdobramentos { get; private set; }
 
-		private void AtualizarListaDeCotacoes(IList<cCotacaoDiaria> plstNovasCotacoes)
+		private void AtualizarListaDeCotacoes(IList<CotacaoDiaria> plstNovasCotacoes)
 		{
-			foreach (cCotacaoDiaria objCotacaoDiaria in plstNovasCotacoes) {
+			foreach (CotacaoDiaria objCotacaoDiaria in plstNovasCotacoes) {
 				if (!CotacoesDiarias.Contains(objCotacaoDiaria)) {
 					CotacoesDiarias.Add(objCotacaoDiaria);
 				}
@@ -79,7 +80,7 @@ namespace prjDominio.Entidades
 
 			var objCarregadorCotacoes = new cCarregadorCotacaoDiaria();
 
-			IList<cCotacaoDiaria> lstCotacoesDoCarregador = objCarregadorCotacoes.CarregarPorPeriodo(_ativo, pdtmDataInicial, pdtmDataFinal, string.Empty, plstMedias, pblnCarregarIFR);
+			IList<CotacaoDiaria> lstCotacoesDoCarregador = objCarregadorCotacoes.CarregarPorPeriodo(_ativo, pdtmDataInicial, pdtmDataFinal, string.Empty, plstMedias, pblnCarregarIFR);
 
 			if (lstCotacoesDoCarregador.Count() > 0) {
 				AtualizarListaDeCotacoes(lstCotacoesDoCarregador);
@@ -90,7 +91,7 @@ namespace prjDominio.Entidades
 
 		}
 
-		public cCotacaoAbstract ObterCotacaoNaData(DateTime pdtmData)
+		public CotacaoAbstract ObterCotacaoNaData(DateTime pdtmData)
 		{
 
 			var objRetorno = CotacoesDiarias.SingleOrDefault(x => x.Data == pdtmData);
@@ -118,12 +119,12 @@ namespace prjDominio.Entidades
 		    if (intContadorDeRegistros == 0) {
 				var objCarregadorMedias = new cCarregadorMediaDiaria();
 
-		        cCotacaoAbstract objCotacao = CotacoesDiarias.First(c => c.Data == pdtmData);
+		        CotacaoAbstract objCotacao = CotacoesDiarias.First(c => c.Data == pdtmData);
 
 
 				foreach (cMediaDTO objMediaDTO in plstMedias)
 				{
-				    cMediaAbstract objMedia = objCarregadorMedias.CarregarPorData((cCotacaoDiaria) objCotacao, objMediaDTO);
+				    MediaAbstract objMedia = objCarregadorMedias.CarregarPorData((CotacaoDiaria) objCotacao, objMediaDTO);
 
 				    objCotacao.Medias.Add(objMedia);
 				}
@@ -141,9 +142,9 @@ namespace prjDominio.Entidades
 			if (intContadorDeRegistros == 0) {
 				var objCarregadorIFR = new cCarregadorIFRDiario();
 
-				cCotacaoAbstract objCotacao = CotacoesDiarias.First(c => c.Data == pdtmData);
+				CotacaoAbstract objCotacao = CotacoesDiarias.First(c => c.Data == pdtmData);
 
-				objCotacao.IFR = objCarregadorIFR.CarregarPorData((cCotacaoDiaria) objCotacao, pintNumPeriodos);
+				objCotacao.IFR = objCarregadorIFR.CarregarPorData((CotacaoDiaria) objCotacao, pintNumPeriodos);
 
 			}
 
@@ -236,7 +237,7 @@ namespace prjDominio.Entidades
 
         }
 
-        private void CarregarCotacoesAnteriores(cCotacaoAbstract cotacao)
+        private void CarregarCotacoesAnteriores(CotacaoAbstract cotacao)
         {
             //obtem o último dia anterior a este em que há cotações para o ativo
             //Dim dtmDataDaUltimaCotacaoAnterior As DateTime? = Ativo.CotacoesDiarias.Where(Function(x) x.Data < Data).Max(Of DateTime)(Function(y) y.Data)
@@ -272,9 +273,9 @@ namespace prjDominio.Entidades
 
         }
 
-        public cCotacaoAbstract CotacaoAnterior(cCotacaoAbstract cotacao)
+        public CotacaoAbstract CotacaoAnterior(CotacaoAbstract cotacao)
         {
-            cCotacaoAbstract objCotacaoAnterior = CotacoesDiarias.SingleOrDefault(x => x.Sequencial == cotacao.Sequencial - 1);
+            CotacaoAbstract objCotacaoAnterior = CotacoesDiarias.SingleOrDefault(x => x.Sequencial == cotacao.Sequencial - 1);
 
             if ((objCotacaoAnterior == null) && cotacao.Sequencial > 1)
             {

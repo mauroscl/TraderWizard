@@ -1,7 +1,9 @@
+using System.Windows.Forms;
 using Forms;
 using Microsoft.VisualBasic;
 using System;
 using TraderWizard.Enumeracoes;
+using TraderWizard.Extensoes;
 
 namespace TraderWizard
 {
@@ -118,19 +120,14 @@ namespace TraderWizard
 		{
 			//verifica qual o setup foi selecionado
 
-			if (Strings.Mid(cmbSetup.Text, 1, 5) == "IFR 2") {
-				grbIFR2.Enabled = true;
+			if (cmbSetup.Text.Substring(0,4) == "IFR 2")
+			{
+			    grbIFR2.Enabled = true;
 
 				//agora testa o setup específico para saber se é o IFR 2 sobrevendido
-				if (cmbSetup.Text == "IFR 2 Sobrevendido") {
-					txtIFR2Maximo.Enabled = true;
-
-				} else {
-					txtIFR2Maximo.Enabled = false;
-				}
-
-
-			} else {
+			    txtIFR2Maximo.Enabled = cmbSetup.Text == "IFR 2 Sobrevendido";
+			}
+			else {
 				//se não é setup de IFR 2 desabilita os campos relativos somente a estes setups
 				grbIFR2.Enabled = false;
 
@@ -181,8 +178,9 @@ namespace TraderWizard
 			if (cmbSetup.Text == "IFR 2 Sobrevendido") {
 				//verifica se o campo que indica o valor máximo do IFR está preenchido
 
-				if (!Information.IsNumeric(txtIFR2Maximo.Text)) {
-					Interaction.MsgBox("Campo " + Strings.Chr(39) + "IFR 2 abaixo de" + Strings.Chr(39) + " não preenchido ou com valor inválido.", MsgBoxStyle.Critical, this.Text);
+                if (!txtIFR2Maximo.Text.IsNumeric())
+                {
+                    MessageBox.Show("Campo \"IFR 2 abaixo de\" não preenchido ou com valor inválido.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 					return false;
 
@@ -193,8 +191,8 @@ namespace TraderWizard
 
 			if (rdbPercentualFixo.Checked) {
 
-				if (!Information.IsNumeric(txtPercentualFixo.Text)) {
-					Interaction.MsgBox("Campo " + Strings.Chr(39) + "Percentual Fixo" + Strings.Chr(39) + " não preenchido ou com valor inválido.", MsgBoxStyle.Critical, this.Text);
+				if (txtPercentualFixo.Text.IsNumeric()) {
+                    MessageBox.Show("Campo \"Percentual Fixo\" não preenchido ou com valor inválido.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 					return false;
 
@@ -205,8 +203,9 @@ namespace TraderWizard
 
 			if (rdbPrimeiroFechamentoPercentualMinimo.Checked) {
 
-				if (!Information.IsNumeric(txtPrimeiroFechamentoPercentualMinimo.Text)) {
-					Interaction.MsgBox("Campo " + Strings.Chr(39) + "Fechamento c/ Perc. Mínimo de" + Strings.Chr(39) + " não preenchido ou com valor inválido.", MsgBoxStyle.Critical, this.Text);
+                if (!txtPrimeiroFechamentoPercentualMinimo.Text.IsNumeric())
+                {
+                    MessageBox.Show("Campo \"Fechamento c/ Perc. Mínimo de\" não preenchido ou com valor inválido.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 					return false;
 

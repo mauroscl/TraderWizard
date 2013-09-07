@@ -9,16 +9,32 @@ namespace prjDominio.Entidades
 {
 
 	public abstract class Setup
-	{
-	    public int Id { get; protected set; }
+    {
+
+        #region Equality Members
+        protected bool Equals(Setup other)
+	    {
+	        return Id == other.Id;
+	    }
+
+	    public override int GetHashCode()
+	    {
+	        return Id;
+	    }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Setup)obj);
+        }
+        #endregion
+
+        public int Id { get; protected set; }
 
 	    public string Descricao { get; protected set; }
 
-	    public override bool Equals(object obj)
-		{
-			var objSetup = (Setup)obj;
-			return (Id == objSetup.Id);
-		}
 
 		protected decimal CalcularValorMargem(decimal pdecValor)
 		{
@@ -37,9 +53,9 @@ namespace prjDominio.Entidades
 		public abstract bool TemFiltro { get; }
 		public abstract bool SubirStopApenasAposRealizacaoParcial { get; }
 		public abstract bool RealizarCalculosAdicionais { get; }
-		public abstract decimal CalculaValorEntrada(cCotacaoAbstract pobjCotacao);
-		public abstract decimal CalculaValorStopLossInicial(cCotacaoAbstract pobjCotacao);
-		public abstract decimal CalculaValorRealizacaoParcial(cCotacaoAbstract pobjCotacao);
+		public abstract decimal CalculaValorEntrada(CotacaoAbstract pobjCotacao);
+		public abstract decimal CalculaValorStopLossInicial(CotacaoAbstract pobjCotacao);
+		public abstract decimal CalculaValorRealizacaoParcial(CotacaoAbstract pobjCotacao);
 
 		protected decimal VerificaQualValorDeStopDeveSerUtilizado(decimal pdecNovoValor, decimal pdecValorAtual)
 		{
@@ -53,7 +69,7 @@ namespace prjDominio.Entidades
 
 		}
 
-        public virtual decimal CalculaValorStopLossDeSaida(cCotacaoAbstract pobjCotacao, InformacoesDoTradeDTO pobjInformacoesDoTradeDTO, cCotacaoAbstract cotacaoDoValorMinimoAnterior)
+        public virtual decimal CalculaValorStopLossDeSaida(CotacaoAbstract pobjCotacao, InformacoesDoTradeDTO pobjInformacoesDoTradeDTO, CotacaoAbstract cotacaoDoValorMinimoAnterior)
         {
             decimal decNovoValorDeStop = pobjCotacao.ValorMinimo - CalcularValorMargem(pobjCotacao.ValorMinimo);
 
@@ -86,12 +102,12 @@ namespace prjDominio.Entidades
 			get { return false; }
 		}
 
-		public override decimal CalculaValorEntrada(cCotacaoAbstract pobjCotacao)
+		public override decimal CalculaValorEntrada(CotacaoAbstract pobjCotacao)
 		{
 			return pobjCotacao.ValorFechamento;
 		}
 
-		public override decimal CalculaValorStopLossInicial(cCotacaoAbstract pobjCotacao)
+		public override decimal CalculaValorStopLossInicial(CotacaoAbstract pobjCotacao)
 		{
 
 			decimal decValor = Math.Round(pobjCotacao.ValorMinimo - (pobjCotacao.ValorMaximo - pobjCotacao.ValorMinimo) * 1.3M, 2);
@@ -104,7 +120,7 @@ namespace prjDominio.Entidades
 
 		}
 
-		public override decimal CalculaValorRealizacaoParcial(cCotacaoAbstract pobjCotacao)
+		public override decimal CalculaValorRealizacaoParcial(CotacaoAbstract pobjCotacao)
 		{
 			return pobjCotacao.ValorFechamento * 1.05M;
 		}
@@ -137,12 +153,12 @@ namespace prjDominio.Entidades
 		}
 
 
-		public override decimal CalculaValorEntrada(cCotacaoAbstract pobjCotacao)
+		public override decimal CalculaValorEntrada(CotacaoAbstract pobjCotacao)
 		{
 			return pobjCotacao.ValorFechamento;
 		}
 
-		public override decimal CalculaValorStopLossInicial(cCotacaoAbstract pobjCotacao)
+		public override decimal CalculaValorStopLossInicial(CotacaoAbstract pobjCotacao)
 		{
 
 			decimal decValor = Math.Round(pobjCotacao.ValorMinimo - (pobjCotacao.ValorMaximo - pobjCotacao.ValorMinimo) * 1.3M, 2);
@@ -155,12 +171,12 @@ namespace prjDominio.Entidades
 
 		}
 
-		public override decimal CalculaValorRealizacaoParcial(cCotacaoAbstract pobjCotacao)
+		public override decimal CalculaValorRealizacaoParcial(CotacaoAbstract pobjCotacao)
 		{
 			return pobjCotacao.ValorFechamento * 1.05M;
 		}
 
-		public decimal CalculaValorStopLossDeSaida(cCotacaoAbstract pobjCotacao, InformacoesDoTradeDTO pobjInformacoesDoTradeDTO, cCotacaoAbstract cotacaoDoValorMinimoAnterior)
+		public decimal CalculaValorStopLossDeSaida(CotacaoAbstract pobjCotacao, InformacoesDoTradeDTO pobjInformacoesDoTradeDTO, CotacaoAbstract cotacaoDoValorMinimoAnterior)
 		{
 
 			if (!pobjInformacoesDoTradeDTO.IFRCruzouMediaParaCima || !pobjInformacoesDoTradeDTO.PermitiuRealizarParcial) {
@@ -168,7 +184,7 @@ namespace prjDominio.Entidades
 				return pobjInformacoesDoTradeDTO.ValorDoStopLoss;
 			}
 
-			IList<cMediaAbstract> lstMedias = pobjCotacao.Medias.Where(x => (x.NumPeriodos == 21 || x.NumPeriodos == 49 || x.NumPeriodos == 200) && x.Tipo == "MME").ToList();
+			IList<MediaAbstract> lstMedias = pobjCotacao.Medias.Where(x => (x.NumPeriodos == 21 || x.NumPeriodos == 49 || x.NumPeriodos == 200) && x.Tipo == "MME").ToList();
 
 			decimal decMaiorMedia = (decimal) lstMedias.Max(x => x.Valor);
 
@@ -215,17 +231,17 @@ namespace prjDominio.Entidades
 		}
 
 
-		public override decimal CalculaValorEntrada(cCotacaoAbstract pobjCotacao)
+		public override decimal CalculaValorEntrada(CotacaoAbstract pobjCotacao)
 		{
 			return pobjCotacao.ValorMaximo + CalcularValorMargem(pobjCotacao.ValorMaximo);
 		}
 
-		public override decimal CalculaValorStopLossInicial(cCotacaoAbstract pobjCotacao)
+		public override decimal CalculaValorStopLossInicial(CotacaoAbstract pobjCotacao)
 		{
 			return pobjCotacao.ValorMinimo - CalcularValorMargem(pobjCotacao.ValorMinimo);
 		}
 
-		public override decimal CalculaValorRealizacaoParcial(cCotacaoAbstract pobjCotacao)
+		public override decimal CalculaValorRealizacaoParcial(CotacaoAbstract pobjCotacao)
 		{
 		    decimal decValorEntrada = CalculaValorEntrada(pobjCotacao);
 

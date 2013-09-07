@@ -13,7 +13,7 @@ namespace prjModelo.Entidades
 	public abstract class cDesdobramento
 	{
 
-		private readonly cAtivo objAtivo;
+		private readonly Ativo objAtivo;
 		private readonly DateTime dtmData;
 		private readonly double dblNumeradorDaConversao;
 
@@ -23,7 +23,7 @@ namespace prjModelo.Entidades
 		protected abstract bool AplicarNoVolume { get; }
 
 
-		public cDesdobramento(cAtivo pobjAtivo, DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao)
+		public cDesdobramento(Ativo pobjAtivo, DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao)
 		{
 			objAtivo = pobjAtivo;
 			dtmData = pdtmData;
@@ -49,7 +49,7 @@ namespace prjModelo.Entidades
 		}
 
 
-		public void ConverterCotacao(cCotacaoDiaria pobjCotacaoOriginal)
+		public void ConverterCotacao(CotacaoDiaria pobjCotacaoOriginal)
 		{
 			if (pobjCotacaoOriginal.Data < dtmData) {
 				//se a data do valor original é anterior à data do split tem que multiplica pela razão
@@ -68,7 +68,7 @@ namespace prjModelo.Entidades
 	public class cSplit_Grupammento : cDesdobramento
 	{
 
-		public cSplit_Grupammento(cAtivo pobjAtivo, DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao) : base(pobjAtivo, pdtmData, pdblNumeradorDaConversao, pdblDenominadorDaConversao)
+		public cSplit_Grupammento(Ativo pobjAtivo, DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao) : base(pobjAtivo, pdtmData, pdblNumeradorDaConversao, pdblDenominadorDaConversao)
 		{
 		}
 
@@ -80,7 +80,7 @@ namespace prjModelo.Entidades
 	public class cJurosSobreCapitalProprio : cDesdobramento
 	{
 
-		public cJurosSobreCapitalProprio(cAtivo pobjAtivo, DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao) : base(pobjAtivo, pdtmData, pdblNumeradorDaConversao, pdblDenominadorDaConversao)
+		public cJurosSobreCapitalProprio(Ativo pobjAtivo, DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao) : base(pobjAtivo, pdtmData, pdblNumeradorDaConversao, pdblDenominadorDaConversao)
 		{
 		}
 
@@ -92,7 +92,7 @@ namespace prjModelo.Entidades
 	public class cDividendo : cDesdobramento
 	{
 
-		public cDividendo(cAtivo pobjAtivo, DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao) : base(pobjAtivo, pdtmData, pdblNumeradorDaConversao, pdblDenominadorDaConversao)
+		public cDividendo(Ativo pobjAtivo, DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao) : base(pobjAtivo, pdtmData, pdblNumeradorDaConversao, pdblDenominadorDaConversao)
 		{
 		}
 
@@ -104,7 +104,7 @@ namespace prjModelo.Entidades
 	public class cCisao : cDesdobramento
 	{
 
-		public cCisao(cAtivo pobjAtivo, DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao) : base(pobjAtivo, pdtmData, pdblNumeradorDaConversao, pdblDenominadorDaConversao)
+		public cCisao(Ativo pobjAtivo, DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao) : base(pobjAtivo, pdtmData, pdblNumeradorDaConversao, pdblDenominadorDaConversao)
 		{
 		}
 
@@ -116,7 +116,7 @@ namespace prjModelo.Entidades
 	public class cRendimento : cDesdobramento
 	{
 
-		public cRendimento(cAtivo pobjAtivo, DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao) : base(pobjAtivo, pdtmData, pdblNumeradorDaConversao, pdblDenominadorDaConversao)
+		public cRendimento(Ativo pobjAtivo, DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao) : base(pobjAtivo, pdtmData, pdblNumeradorDaConversao, pdblDenominadorDaConversao)
 		{
 		}
 
@@ -128,7 +128,7 @@ namespace prjModelo.Entidades
 	public class cRCDIN : cDesdobramento
 	{
 
-		public cRCDIN(cAtivo pobjAtivo, DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao) : base(pobjAtivo, pdtmData, pdblNumeradorDaConversao, pdblDenominadorDaConversao)
+		public cRCDIN(Ativo pobjAtivo, DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao) : base(pobjAtivo, pdtmData, pdblNumeradorDaConversao, pdblDenominadorDaConversao)
 		{
 		}
 

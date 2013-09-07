@@ -1,15 +1,11 @@
+using System.Collections.ObjectModel;
 using Forms;
-using Microsoft.VisualBasic;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Drawing;
-using System.Diagnostics;
 using System.Windows.Forms;
 using DataBase;
 using prmCotacao;
 using TraderWizard.Enumeracoes;
+using TraderWizard.Extensoes;
 
 namespace TraderWizard
 {
@@ -39,7 +35,7 @@ namespace TraderWizard
 		{
 
 			if (lstSetup.SelectedItems.Count == 0) {
-				Interaction.MsgBox("Selecione uma linha antes de excluir.", MsgBoxStyle.Information, this.Text);
+                MessageBox.Show("Selecione uma linha antes de excluir.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 
 			} else {
@@ -47,15 +43,11 @@ namespace TraderWizard
 				//apenas uma linha, pois não é permitido selecionar mais do que uma
 				//linha no grid. Pode ocorrer de não haver nenhuma linha selecionada.
 
-				ListViewItem objItem = null;
 
-
-				foreach (ListViewItem objItem_loopVariable in lstSetup.SelectedItems) {
-					objItem = objItem_loopVariable;
-					lstSetup.Items.Remove(objItem);
-
+			    foreach (ListViewItem item in lstSetup.SelectedItems)
+				{
+				    lstSetup.Items.Remove(item);
 				}
-
 			}
 
 		}
@@ -74,7 +66,7 @@ namespace TraderWizard
 				if (intI != intLinhaSelecionada) {
 
 					if (lstSetup.Items[intI].Text == psrCodigoSetup) {
-						Interaction.MsgBox("Este setup já foi adicionado.", MsgBoxStyle.Information, this.Text);
+                        MessageBox.Show("Este setup já foi adicionado.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 						return false;
 
@@ -127,11 +119,7 @@ namespace TraderWizard
 		/// <remarks></remarks>
 		public bool GridAtualizar(string pstrOperacao, cEstrutura.structBackTestSetup pstructBackTestSetup)
 		{
-
-			Collection colSubItems = null;
-			string strCamposAux = String.Empty;
-
-			ListViewItem objListViewItem = null;
+		    ListViewItem objListViewItem;
 
 
 			if (pstrOperacao == "ADICIONAR") {
@@ -147,10 +135,10 @@ namespace TraderWizard
 
 				objListViewItem.SubItems.Add(mCotacao.SetupDescricaoGerar(pstructBackTestSetup.strCodigoSetup));
 
-				colSubItems = new Collection();
+				var colSubItems = new Collection<string>();
 
 
-				if (Strings.Mid(pstructBackTestSetup.strCodigoSetup, 1, 4) == "IFR2") {
+				if (pstructBackTestSetup.strCodigoSetup.Substring(0,4) == "IFR2") {
 					//COLUNA "FILTRAR MME 49"
 
 					if (pstructBackTestSetup.blnMME49Filtrar) {
@@ -165,7 +153,7 @@ namespace TraderWizard
 					//COLUNA "Valor Máximo IFR Sobrevendido"
 
 					if (pstructBackTestSetup.strCodigoSetup == "IFR2SOBREVEND") {
-						colSubItems.Add(pstructBackTestSetup.dblIFR2SobrevendidoValorMaximo.ToString());
+                        colSubItems.Add(Convert.ToString(pstructBackTestSetup.dblIFR2SobrevendidoValorMaximo));
 
 
 					} else {
@@ -212,10 +200,9 @@ namespace TraderWizard
 
 				//percorre collection adicionando todos os campos no grid
 
-				foreach (string strCamposAux_loopVariable in colSubItems) {
-					strCamposAux = strCamposAux_loopVariable;
-					objListViewItem.SubItems.Add(strCamposAux);
-
+				foreach (string item in colSubItems)
+				{
+				    objListViewItem.SubItems.Add(item);
 				}
 			} else if (pstrOperacao == "EDITAR") {
 
@@ -235,7 +222,7 @@ namespace TraderWizard
 				intIndice = intIndice + 1;
 
 
-				if (Strings.Mid(pstructBackTestSetup.strCodigoSetup, 1, 4) == "IFR2") {
+				if (pstructBackTestSetup.strCodigoSetup.Substring(0,4) == "IFR2") {
 					objListViewItem.SubItems[intIndice].Text = (pstructBackTestSetup.blnMME49Filtrar ? "SIM" : "NÃO");
 
 					intIndice = intIndice + 1;
@@ -314,18 +301,18 @@ namespace TraderWizard
 		{
 
 
-			if (!Information.IsNumeric(txtNumAcoesLote.Text)) {
-				Interaction.MsgBox("Campo " + Strings.Chr(39) + "Ações por Lote" + Strings.Chr(39) + " não preenchido ou com valor inválido");
+            if ((txtNumAcoesLote.Text.IsNumeric()))
+            {
+				MessageBox.Show("Campo \"Ações por Lote\" não preenchido ou com valor inválido", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 				return false;
 
 			}
 
+			if (txtDataInicio.Text.Trim() != String.Empty) {
 
-			if (Strings.Trim(txtDataInicio.Text) != String.Empty) {
-
-				if (!Information.IsDate(txtDataInicio.Text)) {
-					Interaction.MsgBox("Campo " + Strings.Chr(39) + "Data de Início" + Strings.Chr(39) + " com valor inválido.", MsgBoxStyle.Information, this.Text);
+				if (!txtDataInicio.Text.IsDate()) {
+					MessageBox.Show("Campo \"Data de Início\" com valor inválido.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 					return false;
 
@@ -334,16 +321,17 @@ namespace TraderWizard
 			}
 
 
-			if (!Information.IsNumeric(txtCapitalIncial.Text)) {
-				Interaction.MsgBox("Campo " + Strings.Chr(39) + "Capital Inicial" + Strings.Chr(39) + " não preenchido ou com valor inválido");
+            if (txtCapitalIncial.Text.IsNumeric())
+            {
+				MessageBox.Show("Campo \"Capital Inicial\"  não preenchido ou com valor inválido", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 				return false;
 
 			}
 
 
-			if (Strings.Trim(txtDescricao.Text) == String.Empty) {
-				Interaction.MsgBox("Campo " + Strings.Chr(39) + "Descrição" + " não preenchido.", MsgBoxStyle.Information, this.Text);
+			if (txtDescricao.Text.Trim() == String.Empty) {
+				MessageBox.Show("Campo \"Descrição\" não preenchido.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 				return false;
 
@@ -374,7 +362,7 @@ namespace TraderWizard
 
 					}
 
-					cRelatorio objRelatorio = new cRelatorio(objConexao);
+					var objRelatorio = new cRelatorio(objConexao);
 
 					string strPeriodicidade = String.Empty;
 
@@ -405,7 +393,7 @@ namespace TraderWizard
 					if (objRelatorio.RelatBackTestOperacoesExecutar(mCotacao.ObterCodigoDoAtivoSelecionado(cmbAtivo), arrSetup, strPeriodicidade
                         , Convert.ToDecimal(txtCapitalIncial.Text), chkRealizacaoParcialPermitirDayTrade.Checked, txtDescricao.Text.Trim()
                         , intMediaTipo, Convert.ToInt32(txtNumAcoesLote.Text)
-                        , DateTime.TryParse(txtDataInicio.Text, out dataInicio) ? dataInicio : cConst.DataInvalida, ref lngCodRelatorio)) {
+                        , DateTime.TryParse(txtDataInicio.Text, out dataInicio) ? dataInicio : Constantes.DataInvalida, ref lngCodRelatorio)) {
 						
                         MessageBox.Show("Relatório gerado com sucesso.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
@@ -429,7 +417,7 @@ namespace TraderWizard
 
 		private void btnAdicionar_Click(System.Object sender, System.EventArgs e)
 		{
-			frmRelatBackTestDetalhe objForm = new frmRelatBackTestDetalhe(this);
+			var objForm = new frmRelatBackTestDetalhe(this);
 
 			//seta a variável para -1 para quando for salvar o item no grid 
 			//não desconsiderar nenhuma linha na consistência que verifica se 
@@ -462,7 +450,7 @@ namespace TraderWizard
 
 
 				} else {
-					Interaction.MsgBox("Item já está na posição superior máxima.", MsgBoxStyle.Information, this.Text);
+                    MessageBox.Show("Item já está na posição superior máxima.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 					lstSetup.Focus();
 					lstSetup.Items[intIndex].Selected = true;
@@ -471,7 +459,7 @@ namespace TraderWizard
 
 
 			} else {
-				Interaction.MsgBox("É necessário selecionar um item.", MsgBoxStyle.Information, this.Text);
+                MessageBox.Show("É necessário selecionar um item.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 			}
 
@@ -501,7 +489,7 @@ namespace TraderWizard
 
 
 				} else {
-					Interaction.MsgBox("Item já está na posição superior máxima.", MsgBoxStyle.Information, this.Text);
+                    MessageBox.Show("Item já está na posição superior máxima.", Text,MessageBoxButtons.OK, MessageBoxIcon.Information);
 					lstSetup.Focus();
 					lstSetup.Items[intIndex].Selected = true;
 
@@ -509,7 +497,7 @@ namespace TraderWizard
 
 
 			} else {
-				Interaction.MsgBox("É necessário selecionar um item.", MsgBoxStyle.Information, this.Text);
+                MessageBox.Show("É necessário selecionar um item.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 			}
 
@@ -532,8 +520,8 @@ namespace TraderWizard
 			int intIndice = 2;
 
 
-			if (Strings.Mid(objBackTestSetup.strCodigoSetup, 1, 4) == "IFR2") {
-				objBackTestSetup.blnMME49Filtrar = (objListViewItem.SubItems[intIndice].Text == "SIM" ? true : false);
+			if (objBackTestSetup.strCodigoSetup.Substring(0,4) == "IFR2") {
+				objBackTestSetup.blnMME49Filtrar = (objListViewItem.SubItems[intIndice].Text == "SIM");
 
 				intIndice = intIndice + 1;
 
@@ -585,7 +573,7 @@ namespace TraderWizard
 
 				intLinhaSelecionada = lstSetup.SelectedItems[0].Index;
 
-				frmRelatBackTestDetalhe objForm = new frmRelatBackTestDetalhe(objBackTestSetup, this);
+				var objForm = new frmRelatBackTestDetalhe(objBackTestSetup, this);
 
 				objForm.ShowDialog();
 
@@ -593,8 +581,7 @@ namespace TraderWizard
 
 
 			} else {
-				Interaction.MsgBox("É necessário selecionar um item.", MsgBoxStyle.Information, this.Text);
-
+			    MessageBox.Show("É necessário selecionar um item.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 
 

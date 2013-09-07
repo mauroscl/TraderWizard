@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using prmCotacao;
 using DataBase;
 using TraderWizard.Enumeracoes;
+using TraderWizard.Extensoes;
 
 namespace TraderWizard
 {
@@ -15,9 +16,8 @@ namespace TraderWizard
 		{
 			if (String.IsNullOrEmpty(txtDataFinal.Text.Trim())) {
 
-				if (!Information.IsDate(txtDataFinal.Text)) {
-					Interaction.MsgBox("Campo " + Strings.Chr(34) + "Data Final" + " não preenchido ou com valor inválido.", MsgBoxStyle.Information, this.Text);
-
+				if (!txtDataFinal.Text.IsDate()) {
+                    MessageBox.Show("Campo \"Data Final\" não preenchido ou com valor inválido.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 					return false;
 
 				}
@@ -46,7 +46,7 @@ namespace TraderWizard
 
 		    DateTime dtmDataFinal;
 		    if (!DateTime.TryParse(txtDataFinal.Text, out dtmDataFinal) ) {
-		        dtmDataFinal = cConst.DataInvalida;
+		        dtmDataFinal = Constantes.DataInvalida;
 		    }
 
 		    this.Cursor = Cursors.WaitCursor;

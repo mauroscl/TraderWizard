@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using prjDominio.Entidades;
 using prjModelo.Entidades;
 
 namespace prjModelo.DomainServices
@@ -14,7 +15,7 @@ namespace prjModelo.DomainServices
 		/// <param name="pobjCotacao">objeto que contem a cotação e as médias desta cotação</param>
 		/// <returns></returns>
 		/// <remarks></remarks>
-		public static cClassifMedia ClassifMediaCalcular(cCotacaoAbstract pobjCotacao)
+		public static cClassifMedia ClassifMediaCalcular(CotacaoAbstract pobjCotacao)
 		{
 
 			//Public Shared Function ClassifMediaCalcular(ByVal pdecValorMM200 As Decimal, ByVal pdecValorMM49 As Decimal _

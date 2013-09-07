@@ -1,10 +1,4 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Xml.Linq;
-using Microsoft.VisualBasic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using prjDominio.Entidades;
 using prjDTO;
@@ -98,7 +92,7 @@ namespace TestProject1
 			var lstMediasDTO = RetornaListaDeMediasUtilizadasNaClassificacao();
 			cCarregadorCotacaoDiaria objCarregadorCotacao = new cCarregadorCotacaoDiaria();
 
-			var objCotacao = objCarregadorCotacao.CarregarPorPeriodo(new cAtivo("CSNA3", string.Empty), new System.DateTime(2011, 5, 11), new System.DateTime(2011, 5, 11), string.Empty, lstMediasDTO, true);
+			var objCotacao = objCarregadorCotacao.CarregarPorPeriodo(new Ativo("CSNA3", string.Empty), new System.DateTime(2011, 5, 11), new System.DateTime(2011, 5, 11), string.Empty, lstMediasDTO, true);
 
 			cCarregadorSetup objCarregadorSetup = new cCarregadorSetup();
 			var objSetup = objCarregadorSetup.CarregaPorID(cEnum.enumSetup.IFRSemFiltroRP);
@@ -107,7 +101,7 @@ namespace TestProject1
 			objInformacoesDoTradeDTO.ValorDoStopLoss = 22.45M;
 			//TODO: verificar se o valor do stop loss anterior era mesmo 22.35
 
-			decimal decValorStop = objSetup.CalculaValorStopLossDeSaida((cCotacaoAbstract) objCotacao, objInformacoesDoTradeDTO,null);
+			decimal decValorStop = objSetup.CalculaValorStopLossDeSaida((CotacaoAbstract) objCotacao, objInformacoesDoTradeDTO,null);
 
 			Assert.AreEqual(new decimal(22.29), decValorStop);
 

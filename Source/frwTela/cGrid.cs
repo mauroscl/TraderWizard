@@ -137,7 +137,7 @@ namespace frwTela
 				return true;
 
 			} catch (Exception e) {
-				Interaction.MsgBox("Erro: " + e.Message, MsgBoxStyle.Exclamation, "Grid");
+                MessageBox.Show("Erro: " + e.Message, "Grid", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				return false;
 			}
 

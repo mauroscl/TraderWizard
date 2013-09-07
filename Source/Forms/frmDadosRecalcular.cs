@@ -1,10 +1,9 @@
-using Microsoft.VisualBasic;
+using System.Collections.ObjectModel;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using DataBase;
 using prjDominio.Entidades;
-using prjModelo.Entidades;
 using prmCotacao;
 using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;
@@ -66,7 +65,7 @@ namespace TraderWizard
 
 		    var ativos = new Ativos(_conexao);
 
-		    IList<cAtivo> ativosValidos = ativos.Validos();
+		    IList<Ativo> ativosValidos = ativos.Validos();
 
 			lstAtivosNaoEscolhidos.Items.Clear();
 
@@ -120,7 +119,7 @@ namespace TraderWizard
 
 		private void btnAdicionar_Click(System.Object sender, System.EventArgs e)
 		{
-            var colItem = new Collection();
+            var colItem = new Collection<object>();
 
             for (var intI = 0; intI <= lstAtivosNaoEscolhidos.SelectedItems.Count - 1; intI++)
             {
@@ -140,7 +139,7 @@ namespace TraderWizard
 
 		private void btnRemover_Click(System.Object sender, System.EventArgs e)
 		{
-			var colItem = new Collection();
+			var colItem = new Collection<object>();
 
 
 			for (var intI = 0; intI <= lstAtivosEscolhidos.SelectedItems.Count - 1; intI++) {
@@ -202,7 +201,7 @@ namespace TraderWizard
 		    {
 
                 MessageBox.Show(
-		            "Campo " + Strings.Chr(34) + "Data Inicial" + Strings.Chr(34) + " não preenchido ou com valor inválido.", this.Text,
+		            "Campo \"Data Inicial\" não preenchido ou com valor inválido.", this.Text,
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 		        return false;
@@ -251,7 +250,7 @@ namespace TraderWizard
 
 				}
 
-				DateTime dtmDataInicial = cConst.DataInvalida;
+				DateTime dtmDataInicial = Constantes.DataInvalida;
 
 
 				if (chkDataInicialUtilizar.Checked) {
@@ -323,7 +322,7 @@ namespace TraderWizard
 
         private void btnCalendario_Click(object sender, EventArgs e)
         {
-            if (Information.IsDate(txtDataInicial.Text))
+            if (txtDataInicial.Text.IsDate())
             {
                 Calendario.SetDate(Convert.ToDateTime(txtDataInicial.Text));
             }

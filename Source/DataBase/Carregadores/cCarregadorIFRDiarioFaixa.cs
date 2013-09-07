@@ -57,7 +57,7 @@ namespace prjModelo.Carregadores
 
 			objRS.ExecuteQuery(strSQL);
 
-			dtmUltimaData = Convert.ToDateTime(objRS.Field("Data", cConst.DataInvalida));
+			dtmUltimaData = Convert.ToDateTime(objRS.Field("Data", Constantes.DataInvalida));
 
 			objRS.Fechar();
 
