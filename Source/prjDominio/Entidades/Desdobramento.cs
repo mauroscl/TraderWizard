@@ -3,7 +3,7 @@ using System;
 namespace prjDominio.Entidades
 {
 
-	public abstract class cDesdobramento
+	public abstract class Desdobramento
 	{
 	    private readonly DateTime dtmData;
 		private readonly double dblNumeradorDaConversao;
@@ -14,7 +14,7 @@ namespace prjDominio.Entidades
 		protected abstract bool AplicarNoVolume { get; }
 
 
-		public cDesdobramento(Ativo pobjAtivo, DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao)
+	    protected Desdobramento(DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao)
 		{
 		    dtmData = pdtmData;
 			dblNumeradorDaConversao = pdblNumeradorDaConversao;
@@ -55,10 +55,10 @@ namespace prjDominio.Entidades
 
 	}
 
-	public class cSplit_Grupammento : cDesdobramento
+	public class cSplit_Grupammento : Desdobramento
 	{
 
-		public cSplit_Grupammento(Ativo pobjAtivo, DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao) : base(pobjAtivo, pdtmData, pdblNumeradorDaConversao, pdblDenominadorDaConversao)
+		public cSplit_Grupammento(Ativo pobjAtivo, DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao) : base(pdtmData, pdblNumeradorDaConversao, pdblDenominadorDaConversao)
 		{
 		}
 
@@ -67,10 +67,10 @@ namespace prjDominio.Entidades
 		}
 	}
 
-	public class cJurosSobreCapitalProprio : cDesdobramento
+	public class cJurosSobreCapitalProprio : Desdobramento
 	{
 
-		public cJurosSobreCapitalProprio(Ativo pobjAtivo, DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao) : base(pobjAtivo, pdtmData, pdblNumeradorDaConversao, pdblDenominadorDaConversao)
+		public cJurosSobreCapitalProprio(DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao) : base(pdtmData, pdblNumeradorDaConversao, pdblDenominadorDaConversao)
 		{
 		}
 
@@ -79,10 +79,10 @@ namespace prjDominio.Entidades
 		}
 	}
 
-	public class cDividendo : cDesdobramento
+	public class cDividendo : Desdobramento
 	{
 
-		public cDividendo(Ativo pobjAtivo, DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao) : base(pobjAtivo, pdtmData, pdblNumeradorDaConversao, pdblDenominadorDaConversao)
+		public cDividendo(DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao) : base(pdtmData, pdblNumeradorDaConversao, pdblDenominadorDaConversao)
 		{
 		}
 
@@ -91,10 +91,10 @@ namespace prjDominio.Entidades
 		}
 	}
 
-	public class cCisao : cDesdobramento
+	public class cCisao : Desdobramento
 	{
 
-		public cCisao(Ativo pobjAtivo, DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao) : base(pobjAtivo, pdtmData, pdblNumeradorDaConversao, pdblDenominadorDaConversao)
+		public cCisao(DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao) : base(pdtmData, pdblNumeradorDaConversao, pdblDenominadorDaConversao)
 		{
 		}
 
@@ -103,10 +103,10 @@ namespace prjDominio.Entidades
 		}
 	}
 
-	public class cRendimento : cDesdobramento
+	public class cRendimento : Desdobramento
 	{
 
-		public cRendimento(Ativo pobjAtivo, DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao) : base(pobjAtivo, pdtmData, pdblNumeradorDaConversao, pdblDenominadorDaConversao)
+		public cRendimento(DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao) : base(pdtmData, pdblNumeradorDaConversao, pdblDenominadorDaConversao)
 		{
 		}
 
@@ -115,10 +115,10 @@ namespace prjDominio.Entidades
 		}
 	}
 
-	public class cRCDIN : cDesdobramento
+	public class cRCDIN : Desdobramento
 	{
 
-		public cRCDIN(Ativo pobjAtivo, DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao) : base(pobjAtivo, pdtmData, pdblNumeradorDaConversao, pdblDenominadorDaConversao)
+		public cRCDIN(DateTime pdtmData, double pdblNumeradorDaConversao, double pdblDenominadorDaConversao) : base(pdtmData, pdblNumeradorDaConversao, pdblDenominadorDaConversao)
 		{
 		}
 
