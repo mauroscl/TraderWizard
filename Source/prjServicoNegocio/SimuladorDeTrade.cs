@@ -290,10 +290,10 @@ namespace prjServicoNegocio
 
 					//********INICIO DO TRATAMENTO DOS DESDOBRAMENTOS
 
-					IList<cDesdobramento> lstDesdobramentos = servicoDeCotacaoDeAtivo.RetornaDesdobramentosDeUmaData(objCotacaoDoFluxoDaSimulacao.Data);
+					IList<Desdobramento> lstDesdobramentos = servicoDeCotacaoDeAtivo.RetornaDesdobramentosDeUmaData(objCotacaoDoFluxoDaSimulacao.Data);
 
 
-					foreach (cDesdobramento objDesdobramento in lstDesdobramentos) {
+					foreach (Desdobramento objDesdobramento in lstDesdobramentos) {
 						if ((objCotacaoDeEntrada != null)) {
 							objCotacaoDeEntrada.Converter(objDesdobramento.Razao);
 						}

@@ -165,19 +165,19 @@ namespace DataBase.Carregadores
 						lstRetorno.Add(new cSplit_Grupammento(pobjAtivo, dtmData, dblQuantidadeAnterior, dblQuantidadePosterior));
 						break;
 					case "DIV":
-						lstRetorno.Add(new cDividendo(pobjAtivo, dtmData, dblQuantidadeAnterior, dblQuantidadePosterior));
+						lstRetorno.Add(new cDividendo(dtmData, dblQuantidadeAnterior, dblQuantidadePosterior));
 						break;
 					case "JCP":
-						lstRetorno.Add(new cJurosSobreCapitalProprio(pobjAtivo, dtmData, dblQuantidadeAnterior, dblQuantidadePosterior));
+						lstRetorno.Add(new cJurosSobreCapitalProprio(dtmData, dblQuantidadeAnterior, dblQuantidadePosterior));
 						break;
 					case "CISAO":
-						lstRetorno.Add(new cCisao(pobjAtivo, dtmData, dblQuantidadeAnterior, dblQuantidadePosterior));
+						lstRetorno.Add(new cCisao(dtmData, dblQuantidadeAnterior, dblQuantidadePosterior));
 						break;
 					case "RCDIN":
-						lstRetorno.Add(new cRCDIN(pobjAtivo, dtmData, dblQuantidadeAnterior, dblQuantidadePosterior));
+						lstRetorno.Add(new cRCDIN(dtmData, dblQuantidadeAnterior, dblQuantidadePosterior));
 						break;
 					case "REND":
-						lstRetorno.Add(new cRendimento(pobjAtivo, dtmData, dblQuantidadeAnterior, dblQuantidadePosterior));
+						lstRetorno.Add(new cRendimento(dtmData, dblQuantidadeAnterior, dblQuantidadePosterior));
 						break;
 					default:
 

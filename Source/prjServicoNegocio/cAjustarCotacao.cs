@@ -44,7 +44,7 @@ namespace prjServicoNegocio
 				return pobjCotacao;
 			} else {
 				var objCotacaoConvertida = pobjCotacao.Clonar();
-				foreach (cDesdobramento objDesdobramento in lstDesdobramentos) {
+				foreach (Desdobramento objDesdobramento in lstDesdobramentos) {
 					objDesdobramento.ConverterCotacao(objCotacaoConvertida);
 				}
 

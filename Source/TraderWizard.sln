@@ -60,6 +60,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensoes", "Extensoes", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TraderWizard.Extensoes", "TraderWizard.Extensoes\TraderWizard.Extensoes.csproj", "{D6DB2ACC-0F07-406A-B105-8E509FCA45F6}"
 EndProject
+Project("{F088123C-0E9E-452A-89E6-6BA2F21D5CAC}") = "TraderWizard.Modelagem", "TraderWizard.Modelagem\TraderWizard.Modelagem.modelproj", "{FED3F48B-4F0D-4999-802F-5A60D71739A2}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Cotacao.vsmdi
@@ -261,6 +263,16 @@ Global
 		{D6DB2ACC-0F07-406A-B105-8E509FCA45F6}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{D6DB2ACC-0F07-406A-B105-8E509FCA45F6}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{D6DB2ACC-0F07-406A-B105-8E509FCA45F6}.Release|x86.ActiveCfg = Release|Any CPU
+		{FED3F48B-4F0D-4999-802F-5A60D71739A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FED3F48B-4F0D-4999-802F-5A60D71739A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FED3F48B-4F0D-4999-802F-5A60D71739A2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{FED3F48B-4F0D-4999-802F-5A60D71739A2}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{FED3F48B-4F0D-4999-802F-5A60D71739A2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FED3F48B-4F0D-4999-802F-5A60D71739A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FED3F48B-4F0D-4999-802F-5A60D71739A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FED3F48B-4F0D-4999-802F-5A60D71739A2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FED3F48B-4F0D-4999-802F-5A60D71739A2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{FED3F48B-4F0D-4999-802F-5A60D71739A2}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

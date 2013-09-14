@@ -1,1 +1,160 @@
-﻿ 
+﻿<?xml version="1.0" encoding="utf-8"?>
+<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" dslVersion="1.0.0.0" Id="5bd980c5-99a8-484d-b4cc-5e458022fea7" name="Proventos" linkedPackageId="09452aa1-5ae9-498e-8833-80692128e27c" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
+  <ownedCommentsInternal>
+    <comment Id="33fc3076-d246-4c47-b59f-a13a18a69b90">
+      <elementDefinition Id="7850933b-5bdb-4881-ae4d-a74fa134ac73" />
+      <body>Tipos de proventos em dinheiro: dividendo e juros sobre capital próprio</body>
+    </comment>
+    <comment Id="0a06aac6-15af-4443-91f7-bed588e75c79">
+      <elementDefinition Id="d095c096-25b7-432e-99a4-986c3e24af17" />
+      <body>Tipo de proventos em ações:
+- split
+- grupamento
+- bonificação
+- subscrição</body>
+    </comment>
+  </ownedCommentsInternal>
+  <profileInstances>
+    <packageHasProfileInstances Id="40c6615b-95d5-44c1-9e64-ed058c9ab381">
+      <profileInstance Id="d0d06fcd-9b3e-4587-b7d9-d0be184e0252" name="StandardProfileL2">
+        <elementDefinition Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791" />
+      </profileInstance>
+      <elementDefinition Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b" />
+    </packageHasProfileInstances>
+    <packageHasProfileInstances Id="67624ce1-87b3-487d-a76f-baab42248d03">
+      <profileInstance Id="8d2cab7f-21c2-4682-9b7c-52423943059f" name="StandardProfileL3">
+        <elementDefinition Id="532ea607-fb19-44b8-8502-3351b05452be" />
+      </profileInstance>
+      <elementDefinition Id="29349502-908c-4fda-9054-c48619c59ed0" />
+    </packageHasProfileInstances>
+  </profileInstances>
+  <packagedElements>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="5e1b98b9-052b-4144-a6e9-36243e09a3d4" name="Provento" isAbstract="true" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="09421012-95b7-4341-b719-b56714280c76" />
+        <targetEnds>
+          <association Id="153cbd31-e7f5-445c-ae06-0bf8cff55859" isDerived="false" sourceEndRoleName="ProventoEmAcao" targetEndRoleName="Proporcao" isLeaf="false" isAbstract="false">
+            <classMoniker Id="4137b70f-58e8-49a2-ae17-a5f86e03b5d8" LastKnownName="Proporcao" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="5dd1a8d0-8592-46f2-9c2d-34c16bd3bcec" name="ProventoEmAcao" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="6613d30a-2ba0-4e08-9873-3396d4a62511" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="f25f69d3-1b02-49d3-9202-ebc10a5569a8" name="Proporcao" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="829eb2ab-2ffd-4c6e-9bf5-52122428b955" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="ed8d90f5-c7e7-4927-8d4b-fd918facbd8c" />
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property Id="039d097c-959f-41d5-91dc-6e36dc8a82a2" name="DataEx" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="f277babc-b17e-4976-81b4-94263363b692" />
+          </property>
+          <property Id="8a119433-914b-49dd-a3b2-3f5a6221c5ee" name="DataDeAprovacao" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="5284baad-4b1b-489a-ae1c-8f152ac43fce" />
+          </property>
+          <property Id="2470289c-f956-47e6-9300-01e75dc4be38" name="Descricao" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="7ddd3e67-de91-4060-8483-bea51fe656f1" />
+          </property>
+        </ownedAttributesInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="01f97267-dde8-4a4f-973f-cb204ac09e98" name="ProventoEmDinheiro" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="a09afdbc-2be9-4112-a298-6567cdb76781" />
+        <targetEnds>
+          <association Id="5f982204-e271-4542-9560-f5dc796a22db" isDerived="false" sourceEndRoleName="ProventoEmDinheiro" targetEndRoleName="TipoDeProventoEmDinheiro" isLeaf="false" isAbstract="false">
+            <enumerationMoniker Id="4b4a961b-137e-498d-8bb1-49616e86c488" LastKnownName="TipoDeProventoEmDinheiro" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="dd0e759d-f5d2-4c6e-90e9-74b325f7a1ac" name="ProventoEmDinheiro" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <lowerValueInternal>
+                    <literalString Id="e06aa067-459f-431a-8eed-89714a2b60b7" name="Lower" value="*">
+                      <elementDefinition Id="a357a572-cee4-40af-b670-26121c5a0976" />
+                    </literalString>
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString Id="52fa9421-13f5-492b-941b-d6fb839c26e1" name="Upper" value="*">
+                      <elementDefinition Id="431c0199-670c-4658-9050-7f4c3d8c5aa9" />
+                    </literalString>
+                  </upperValueInternal>
+                  <elementDefinition Id="dfea9ac9-5c9a-4b3c-ba1e-21169b8852c0" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="63368538-51bf-4378-9498-c7d22887b2f9" name="TipoDeProventoEmDinheiro" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="2840f5d8-b314-4b09-81b8-47e02ddfb84e" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="c21428bf-2f17-48e5-8abb-b04ade79b40b" />
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property Id="c15974dc-b5ae-4525-bebf-e8751a12f57b" name="Valor" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="266377a9-856c-40f7-a1af-55d84bf93ae0" />
+          </property>
+        </ownedAttributesInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="50c764b2-4cc6-4bf1-83e1-5a99c6b2bb7c" name="Bonificacao" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="5c390867-1e2f-4e6d-b9c1-eba689376ae8" />
+        <ownedAttributesInternal>
+          <property Id="66e5a690-b4e4-412c-b67b-4148d1277e48" name="Percentual" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="f7fb17dc-0387-43d7-80cd-b531d32e6b6c" />
+          </property>
+        </ownedAttributesInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <enumeration Id="4b4a961b-137e-498d-8bb1-49616e86c488" name="TipoDeProventoEmDinheiro" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="5c51b23b-be87-4ede-8374-e09ab749d0f0" />
+        <ownedLiterals>
+          <enumerationLiteral Id="41876760-9bdb-4cf2-9ebb-fc7f1dda3b2c" name="Dividendo">
+            <elementDefinition Id="9110cf0b-e570-4435-a275-034649612efb" />
+          </enumerationLiteral>
+          <enumerationLiteral Id="aa7b2e27-cf82-4f5d-badd-1fdc708eaf01" name="JuroSobreCapitalProprio">
+            <elementDefinition Id="d2574b2a-9cd2-4429-937c-6de75f5f14b5" />
+          </enumerationLiteral>
+        </ownedLiterals>
+      </enumeration>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="4137b70f-58e8-49a2-ae17-a5f86e03b5d8" name="Proporcao" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="7d79e800-520f-4054-8715-4a8f845f155f" />
+        <ownedAttributesInternal>
+          <property Id="48b029b2-eedd-4687-9196-385a721e8253" name="Numerador" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="f436fdb8-2652-45c6-b287-e2136b7e8aa1" />
+            <type_NamedElement>
+              <referencedTypeMoniker Id="8ed56d47-d8f6-4759-819a-bd6704d54bae" LastKnownName="Integer" />
+            </type_NamedElement>
+          </property>
+          <property Id="85c60297-4e85-4610-afe2-dd22068b72f8" name="Denominador" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="7dda6e41-1259-4754-987d-1b9e6a0c42e2" />
+            <type_NamedElement>
+              <referencedTypeMoniker Id="1b9690af-6096-43da-94fb-eeb299faf4a8" LastKnownName="Integer" />
+            </type_NamedElement>
+          </property>
+        </ownedAttributesInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <packageHasNamedElement>
+      <referencedType Id="1b9690af-6096-43da-94fb-eeb299faf4a8" name="Integer" isAbstract="false" isLeaf="false" cachedFullName="Integer">
+        <elementDefinition Id="220a3521-e091-4221-bae9-3ef9018e845c" />
+      </referencedType>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <referencedType Id="8ed56d47-d8f6-4759-819a-bd6704d54bae" name="Integer" isAbstract="false" isLeaf="false" cachedFullName="Integer">
+        <elementDefinition Id="220a3521-e091-4221-bae9-3ef9018e845c" />
+      </referencedType>
+    </packageHasNamedElement>
+  </packagedElements>
+  <package Id="09452aa1-5ae9-498e-8833-80692128e27c" name="TraderWizard.Modelagem">
+    <elementDefinition Id="133195d0-f1d8-4689-a24a-ff3091632863" />
+  </package>
+</logicalClassDesignerModel>

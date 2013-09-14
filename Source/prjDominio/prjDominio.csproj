@@ -49,7 +49,7 @@
     <Compile Include="Entidades\cClassifMedia.cs" />
     <Compile Include="Entidades\CotacaoAbstract.cs" />
     <Compile Include="Entidades\cCriterioClassifMedia.cs" />
-    <Compile Include="Entidades\cDesdobramento.cs" />
+    <Compile Include="Entidades\Desdobramento.cs" />
     <Compile Include="Entidades\cIFR.cs" />
     <Compile Include="Entidades\cIFRSimulacaoDiaria.cs" />
     <Compile Include="Entidades\cIFRSimulacaoDiariaDetalhe.cs" />
