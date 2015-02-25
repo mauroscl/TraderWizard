@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using DataBase.Carregadores;
+using Forms.Properties;
 using prjDominio.Entidades;
 using prjModelo.Carregadores;
 using DataBase;
@@ -2150,11 +2151,11 @@ namespace TraderWizard
 
 
 				} else if (ToolStripbtnZoomAumentar.Checked) {
-					this.Cursor = new Cursor(this.GetType(), "zoom_in.cur");
+					this.Cursor = new Cursor(Resources.zoom_in.GetHicon());
 
 
 				} else if (ToolStripbtnZoomDiminuir.Checked) {
-					this.Cursor = new Cursor(this.GetType(), "zoom_out.cur");
+					this.Cursor = new Cursor(Resources.zoom_out.GetHicon());
 
 
 				} else {

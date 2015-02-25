@@ -109,7 +109,7 @@ namespace TraderWizard
 		{
 
 
-            if (txtPeriodo.Text.IsNumeric())
+            if (!txtPeriodo.Text.IsNumeric())
             {
                 MessageBox.Show("Campo \"Período\"  não preenchido ou com valor inválido.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				return false;
@@ -132,7 +132,7 @@ namespace TraderWizard
 
 
 				if (strNovoPeriodo == lstPeriodoSelecionado.Items[intI].Text.Trim() && strNovoTipo == lstPeriodoSelecionado.Items[intI].SubItems[1].Text.Trim()) {
-				    MessageBox.Show("A Média Móvel " + strNovoTipo + " de " + strNovoPeriodo + " já foi inserida.",Text,MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBox.Show(string.Format("A Média Móvel {0} de {1} já foi inserida.", strNovoTipo, strNovoPeriodo), Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 					return false;
 
 				}

@@ -137,21 +137,21 @@ namespace DataBase.Carregadores
 
 		}
 
-		public IList<cDesdobramento> CarregarTodos(Ativo pobjAtivo)
+		public IList<Desdobramento> CarregarTodos(Ativo pobjAtivo)
 		{
 
             FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
 
-		    string strSQL = "SELECT Data, Tipo, QuantidadeAnterior, QuantidadePosterior " + Environment.NewLine;
-			strSQL += "FROM Split " + Environment.NewLine;
-			strSQL += "WHERE Codigo = " + FuncoesBd.CampoFormatar(pobjAtivo.Codigo);
-			strSQL += "ORDER BY Data ";
+		    string strSql = "SELECT Data, Tipo, QuantidadeAnterior, QuantidadePosterior " + Environment.NewLine;
+			strSql += "FROM Split " + Environment.NewLine;
+			strSql += "WHERE Codigo = " + FuncoesBd.CampoFormatar(pobjAtivo.Codigo);
+			strSql += "ORDER BY Data ";
 
 			cRS objRS = new cRS(_conexao);
 
-			objRS.ExecuteQuery(strSQL);
+			objRS.ExecuteQuery(strSql);
 
-			List<cDesdobramento> lstRetorno = new List<cDesdobramento>();
+			var lstRetorno = new List<Desdobramento>();
 
 		    while (!objRS.EOF) {
 				DateTime dtmData = Convert.ToDateTime(objRS.Field("Data"));

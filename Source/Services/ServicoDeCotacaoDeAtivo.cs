@@ -25,7 +25,7 @@ namespace Services
 			_conexao = pobjConexao;
 			CotacoesDiarias = new List<CotacaoDiaria>();
 			lstSimulacoes = new SortedList<DateTime, cIFRSimulacaoDiaria>();
-			Desdobramentos = new List<cDesdobramento>();
+			Desdobramentos = new List<Desdobramento>();
 		}
 
 		public IList<CotacaoDiaria> CotacoesDiarias { get; set; }
@@ -35,7 +35,7 @@ namespace Services
 			get { return lstSimulacoes; }
 		}
 
-	    public IList<cDesdobramento> Desdobramentos { get; private set; }
+	    public IList<Desdobramento> Desdobramentos { get; private set; }
 
 		private void AtualizarListaDeCotacoes(IList<CotacaoDiaria> plstNovasCotacoes)
 		{
@@ -217,12 +217,12 @@ namespace Services
 			Desdobramentos = objCarregadorSplit.CarregarTodos(_ativo);
 		}
 
-		public IList<cDesdobramento> RetornaListaParcialDeDesdobramentos(DateTime pdtmDataInicial, DateTime pdtmDataFinal)
+		public IList<Desdobramento> RetornaListaParcialDeDesdobramentos(DateTime pdtmDataInicial, DateTime pdtmDataFinal)
 		{
 			return Desdobramentos.Where(x => x.Data >= pdtmDataInicial && x.Data <= pdtmDataFinal).ToList();
 		}
 
-		public IList<cDesdobramento> RetornaDesdobramentosDeUmaData(DateTime pdtmData)
+		public IList<Desdobramento> RetornaDesdobramentosDeUmaData(DateTime pdtmData)
 		{
 			return Desdobramentos.Where(x => x.Data == pdtmData).ToList();
 		}
