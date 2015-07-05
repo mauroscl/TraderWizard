@@ -6,6 +6,7 @@ _ReSharper.TraderWizard
 *.tlog
 *.trx
 *.suo
+*.vsmdi
 bin
 obj
 /Source/Forms

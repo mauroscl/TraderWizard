@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using DataBase.Carregadores;
 using Forms.Properties;
 using prjDominio.Entidades;
+using prjModelo.Carregadores;
 using DataBase;
 using prjCandle;
 using prmCotacao;
@@ -206,14 +207,14 @@ namespace TraderWizard
 		Point objMouseDownPonto;
 		//contém o tamanho máximo dos arrays de dados.
 
-		int _tamanhoMaximoDaAreaDeDados;
+		int intAreaDadosTamanhoMaximo;
 		//contém os sequeciais inicial que estão carregados nos array de dados: arrCandle, arrVolume, etc.
 		//inicializa estas variáveis com "-1" porque neste caso é utilizado um controle 
 		//que calcula estas variáveis na primeira vez em que são buscados dados para um
 		//determinado ativo em uma determinada periodicidade.
-		long _sequencialInicialDaAreaDeDados = -1;
+		long lngAreaDadosSequencialInicial = -1;
 
-		long _sequencialFinalDaAreaDeDados = -1;
+		long lngAreaDadosSequencialFinal = -1;
 		//valor máximo do Sequencial do ativo na tabela de Cotacao. Isto indica o número de registros
 		//que existe na tabela de cotações, pois o Sequencial começa em 1.
 
@@ -315,7 +316,7 @@ namespace TraderWizard
 			//calcula o tamanho máximo do array de dados. O tamanho é sempre 4 vezes o
 			//número de candles que pode ser desenhado em uma janela de dados porque 
 			//o zoom mínimo é 4 vezes o tamanho da área de dados.
-			_tamanhoMaximoDaAreaDeDados = Convert.ToInt32((intAreaWidth - intMargemSuperior * 3) / intLarguraTotal) * 4;
+			intAreaDadosTamanhoMaximo = Convert.ToInt32((intAreaWidth - intMargemSuperior * 3) / intLarguraTotal) * 4;
 
 		}
 
@@ -432,16 +433,15 @@ namespace TraderWizard
 
             FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
 
-			var objRS = new cRS(objConexao);
+			cRS objRS = new cRS(objConexao);
 
-			var servicoDeCotacao = new ServicoDeCotacao(objConexao);
+			ServicoDeCotacao objCotacao = new ServicoDeCotacao(objConexao);
 
 			//código do ativo atual.
 
 		    string strCodigoAtivoAux = mdlGeral.ObtemCodigoDoAtivoSelecionadoNoCombo((string) ToolStripcmbAtivo.SelectedItem);
 
-			if (strCodigoAtivo != strCodigoAtivoAux || strPeriodoDuracao != strPeriodoDuracaoAux) 
-            {
+			if (strCodigoAtivo != strCodigoAtivoAux || strPeriodoDuracao != strPeriodoDuracaoAux) {
 				//se trocou o período do gráfico ou o ativo, tem que buscar as cotações
 				blnCotacaoBuscar = true;
                 _areaDeDesenho = null;
@@ -459,26 +459,26 @@ namespace TraderWizard
 				objRS.Fechar();
 
 				//2º) sempre começamos mostrando os dados mais recentes, por isso o sequencial final é o sequencial máximo
-				_sequencialFinalDaAreaDeDados = lngSequencialMaximo;
+				lngAreaDadosSequencialFinal = lngSequencialMaximo;
 
 
-				if (_sequencialFinalDaAreaDeDados > _tamanhoMaximoDaAreaDeDados) {
+				if (lngAreaDadosSequencialFinal > intAreaDadosTamanhoMaximo) {
 					//se tem mais candles do que a capacidade da área de dados, a posição inicial
 					//é o sequencial máximo subtraído da área de dados e somado 1.
-					_sequencialInicialDaAreaDeDados = _sequencialFinalDaAreaDeDados - _tamanhoMaximoDaAreaDeDados + 1;
+					lngAreaDadosSequencialInicial = lngAreaDadosSequencialFinal - intAreaDadosTamanhoMaximo + 1;
 
 
 				} else {
 					//se tem menos candles que o número máximo permitido pela janela de dados, então começa
 					//em 1 e mostra todos os candles existentes.
-					_sequencialInicialDaAreaDeDados = 1;
+					lngAreaDadosSequencialInicial = 1;
 
 				}
 
 				//nestes casos tem que buscar toda a área de dados, então tem que atualizar as variáveis de 
 				//controle que indicarão efetivamente o range de busca de dados igual ao tamanho da ára de dados
-				lngSequencialBuscaInicial = _sequencialInicialDaAreaDeDados;
-				lngSequencialBuscaFinal = _sequencialFinalDaAreaDeDados;
+				lngSequencialBuscaInicial = lngAreaDadosSequencialInicial;
+				lngSequencialBuscaFinal = lngAreaDadosSequencialFinal;
 
 				//calcula o sequencial inicial e final da área de desenho.
 				int intNumCandlesDesenhar = AreaDesenhoNumCandlesCalcular();
@@ -498,10 +498,10 @@ namespace TraderWizard
 
 				//redimensiona o array de candles conforme o tamanho necessário para armazenar os dados
 
-				if (lngSequencialMaximo >= _tamanhoMaximoDaAreaDeDados) {
+				if (lngSequencialMaximo >= intAreaDadosTamanhoMaximo) {
 					//caso o número de candles de toda a base seja maior do que a área de dados
 					//o tamanho do array fica restringido ao tamanho máximo da área de dados.
-					Array.Resize(ref arrCandle, _tamanhoMaximoDaAreaDeDados);
+					Array.Resize(ref arrCandle, intAreaDadosTamanhoMaximo);
 
 
 				} else {
@@ -513,46 +513,44 @@ namespace TraderWizard
 
 
 
-			} 
-            else 
-            {
+			} else {
 				//Entra neste trecho de código caso não tenha trocado de ativo ou de periodicidade.
 
 				//verifica se a área de impressão está fora da área de dados.
 
-				if (lngAreaDesenhoSequencialInicial < _sequencialInicialDaAreaDeDados) {
+				if (lngAreaDesenhoSequencialInicial < lngAreaDadosSequencialInicial) {
 					//caso a área de desenho necessite de dados mais para a esquerda da área de dados
 
 					//os dados que devem ser buscados por esta função começam no sequencial inicial da área de desenho
 					//e terminam uma posição antes do sequencial inicial da área de dados.
 					lngSequencialBuscaInicial = lngAreaDesenhoSequencialInicial;
-					lngSequencialBuscaFinal = _sequencialInicialDaAreaDeDados - 1;
+					lngSequencialBuscaFinal = lngAreaDadosSequencialInicial - 1;
 
 					//move os dados do array da direita para a esquerda para poder colocar os novos dados que serão buscados.
 					Array.ConstrainedCopy(arrCandle, 0, arrCandle, (int) (lngSequencialBuscaFinal - lngSequencialBuscaInicial + 1), (int) (arrCandle.Length - lngSequencialBuscaFinal + lngSequencialBuscaInicial - 1));
 
 					//ajusta a área de dados
-					_sequencialInicialDaAreaDeDados = lngAreaDesenhoSequencialInicial;
-					_sequencialFinalDaAreaDeDados = _sequencialInicialDaAreaDeDados + _tamanhoMaximoDaAreaDeDados - 1;
+					lngAreaDadosSequencialInicial = lngAreaDesenhoSequencialInicial;
+					lngAreaDadosSequencialFinal = lngAreaDadosSequencialInicial + intAreaDadosTamanhoMaximo - 1;
 
 					blnCotacaoBuscar = true;
 
 
-				} else if (lngAreaDesenhoSequencialFinal > _sequencialFinalDaAreaDeDados) {
+				} else if (lngAreaDesenhoSequencialFinal > lngAreaDadosSequencialFinal) {
 					//caso a área de desenho necessite de dados mais para a direita da área de dados
 
 					//os dados que devem ser buscados por esta função começam uma posição 
 					//após o sequencial final da área de dados
 					//e terminam no sequencial final da área de desenho.
-					lngSequencialBuscaInicial = _sequencialFinalDaAreaDeDados + 1;
+					lngSequencialBuscaInicial = lngAreaDadosSequencialFinal + 1;
 					lngSequencialBuscaFinal = lngAreaDesenhoSequencialFinal;
 
 					//move os dados do array da direita para a esquerda para poder colocar os novos dados que serão buscados.
 					Array.ConstrainedCopy(arrCandle, (int) (lngSequencialBuscaFinal - lngSequencialBuscaInicial + 1), arrCandle, 0, (int) (arrCandle.Length - lngSequencialBuscaFinal + lngSequencialBuscaInicial - 1));
 
 					//ajusta a área de dados
-					_sequencialFinalDaAreaDeDados = lngAreaDesenhoSequencialFinal;
-					_sequencialInicialDaAreaDeDados = lngAreaDesenhoSequencialFinal - _tamanhoMaximoDaAreaDeDados + 1;
+					lngAreaDadosSequencialFinal = lngAreaDesenhoSequencialFinal;
+					lngAreaDadosSequencialInicial = lngAreaDesenhoSequencialFinal - intAreaDadosTamanhoMaximo + 1;
 
 					blnCotacaoBuscar = true;
 
@@ -661,7 +659,8 @@ namespace TraderWizard
 
             strCodigoAtivo = mdlGeral.ObtemCodigoDoAtivoSelecionadoNoCombo((string)ToolStripcmbAtivo.SelectedItem);
 
-			this.Text = String.Format("Gráfico {0} - {1}",ToolStripcmbPeriodoDuracao.SelectedItem, ToolStripcmbAtivo.SelectedItem);
+			this.Text = "Gráfico " + ToolStripcmbPeriodoDuracao.SelectedItem + " - " + ToolStripcmbAtivo.SelectedItem;
+
 
 		    //inicializa a variável com o indice final dos dados que devem ser buscados,
 			//pois a atualização do array é feita do final para o início.
@@ -671,10 +670,10 @@ namespace TraderWizard
 			//Dim strTabelaQuery As String
 
 			//busca a data equivalente ao sequencial mínimo
-			dtmDataMinimaAreaDados = servicoDeCotacao.AtivoSequencialDataBuscar(strCodigoAtivo, _sequencialInicialDaAreaDeDados, strTabelaCotacao);
+			dtmDataMinimaAreaDados = objCotacao.AtivoSequencialDataBuscar(strCodigoAtivo, lngAreaDadosSequencialInicial, strTabelaCotacao);
 
 			//busca a data equivalente ao sequencial máximo
-			dtmDataMaximaAreaDados = servicoDeCotacao.AtivoSequencialDataBuscar(strCodigoAtivo, _sequencialFinalDaAreaDeDados, strTabelaCotacao);
+			dtmDataMaximaAreaDados = objCotacao.AtivoSequencialDataBuscar(strCodigoAtivo, lngAreaDadosSequencialFinal, strTabelaCotacao);
 
 			//conterá a data mínima e data máxima dos dados que serão buscados
 			System.DateTime dtmDataMinimaBusca = default(System.DateTime);
@@ -685,11 +684,11 @@ namespace TraderWizard
 			{
 			    //data minima
 
-			    dtmDataMinimaBusca = lngSequencialBuscaInicial == _sequencialInicialDaAreaDeDados ? dtmDataMinimaAreaDados : servicoDeCotacao.AtivoSequencialDataBuscar(strCodigoAtivo, lngSequencialBuscaInicial, strTabelaCotacao);
+			    dtmDataMinimaBusca = lngSequencialBuscaInicial == lngAreaDadosSequencialInicial ? dtmDataMinimaAreaDados : objCotacao.AtivoSequencialDataBuscar(strCodigoAtivo, lngSequencialBuscaInicial, strTabelaCotacao);
 
 			    //data máxima de busca
 
-			    dtmDataMaximaBusca = lngSequencialBuscaFinal == _sequencialFinalDaAreaDeDados ? dtmDataMaximaAreaDados : servicoDeCotacao.AtivoSequencialDataBuscar(strCodigoAtivo, lngSequencialBuscaFinal, strTabelaCotacao);
+			    dtmDataMaximaBusca = lngSequencialBuscaFinal == lngAreaDadosSequencialFinal ? dtmDataMaximaAreaDados : objCotacao.AtivoSequencialDataBuscar(strCodigoAtivo, lngSequencialBuscaFinal, strTabelaCotacao);
 			}
 
 		    //verifica se existem cotações com valor mínimo zerado. Se existir não permite gerar o gráfico para evitar erros.
@@ -699,13 +698,9 @@ namespace TraderWizard
 		                       FuncoesBd.CampoDateFormatar(dtmDataMinimaAreaDados) + " AND " +
 		                       FuncoesBd.CampoDateFormatar(dtmDataMaximaAreaDados) + " AND ValorMinimo = 0 ");
 
-		    int quantidadeDeCotacoesSemValorMinimo = Convert.ToInt32(objRS.Field("Contador"));
+			if (Convert.ToInt32(objRS.Field("Contador")) > 0) {
 
-            objRS.Fechar();
-
-		    if (quantidadeDeCotacoesSemValorMinimo > 0) {
-
-				if (quantidadeDeCotacoesSemValorMinimo == 1) {
+				if (Convert.ToInt32(objRS.Field("Contador")) == 1) {
                     MessageBox.Show("Existe 1 cotação com Valor Mínimo zerado. " + Environment.NewLine + "Verifique a cotação.", this.Text, MessageBoxButtons.OK,MessageBoxIcon.Information);
 
 
@@ -726,75 +721,64 @@ namespace TraderWizard
 
 			if (blnCotacaoBuscar || blnVolumeBuscar) {
 
-			    try
-			    {
-			        objRSList = servicoDeCotacao.ConsultaExecutar(strCodigoAtivo, dtmDataMinimaBusca, dtmDataMaximaBusca,
-			            strPeriodoDuracao, "COTACAO", Constantes.DataInvalida, blnCotacaoBuscar, blnVolumeBuscar);
+				try {
+					objRSList = objCotacao.ConsultaExecutar(strCodigoAtivo, dtmDataMinimaBusca, dtmDataMaximaBusca, strPeriodoDuracao, "COTACAO",Constantes.DataInvalida , blnCotacaoBuscar, blnVolumeBuscar);
 
 
-			        while (!objRSList.EOF)
-			        {
+					while (!objRSList.EOF) {
 
-			            if (blnCotacaoBuscar)
-			            {
-			                //LEITURA DOS VALORES DO RECORDSET
-			                //If objRSList.Field("ValorMinimo") <> 0 Then
+						if (blnCotacaoBuscar) {
+							//LEITURA DOS VALORES DO RECORDSET
+							//If objRSList.Field("ValorMinimo") <> 0 Then
 
-			                //valores em R$
-			                decimal decValorMaximo = Convert.ToDecimal(objRSList.Field("ValorMaximo"));
-			                decimal decValorMinimo = Convert.ToDecimal(objRSList.Field("ValorMinimo"));
-			                decimal decValorAbertura = Convert.ToDecimal(objRSList.Field("ValorAbertura"));
-			                decimal decValorFechamento = Convert.ToDecimal(objRSList.Field("ValorFechamento"));
+							//valores em R$
+							decimal decValorMaximo = Convert.ToDecimal(objRSList.Field("ValorMaximo"));
+							decimal decValorMinimo = Convert.ToDecimal(objRSList.Field("ValorMinimo"));
+							decimal decValorAbertura = Convert.ToDecimal(objRSList.Field("ValorAbertura"));
+							decimal decValorFechamento = Convert.ToDecimal(objRSList.Field("ValorFechamento"));
 
-			                //instância o candle com as propriedades em escala decimal, antes de passar para a escala logarítmica,
-			                //caso o gráfico seja impresso em escala logarítmica.
+							//instância o candle com as propriedades em escala decimal, antes de passar para a escala logarítmica,
+							//caso o gráfico seja impresso em escala logarítmica.
 
-			                var candle = new cCandle(Convert.ToDateTime(objRSList.Field("Data")), decValorAbertura,
-			                    decValorFechamento, decValorMaximo, decValorMinimo,
-			                    Convert.ToDecimal(objRSList.Field("Oscilacao")), blnMMExpDesenhar);
+							cCandle objCandle = new cCandle(Convert.ToDateTime(objRSList.Field("Data")), decValorAbertura, decValorFechamento, decValorMaximo, decValorMinimo, Convert.ToDecimal(objRSList.Field("Oscilacao")), blnMMExpDesenhar);
 
 
-			                if (strPeriodoDuracao == "SEMANAL")
-			                {
-			                    candle.DataFinal = Convert.ToDateTime(objRSList.Field("DataFinal"));
+							if (strPeriodoDuracao == "SEMANAL") {
+								objCandle.DataFinal = Convert.ToDateTime(objRSList.Field("DataFinal"));
 
-			                }
+							}
 
-			                arrCandle.SetValue(candle, intArrayCandleIndice);
-
-
-			                if (blnVolumeBuscar)
-			                {
-			                    //objCandle.Volume = dblVolume
-			                    arrCandle[intArrayCandleIndice].Volume = Convert.ToDouble(objRSList.Field("Titulos_Total"));
-
-			                }
-
-			            }
-
-			            intArrayCandleIndice = intArrayCandleIndice - 1;
-
-			            objRSList.MoveNext();
-
-			        }
+							arrCandle.SetValue(objCandle, intArrayCandleIndice);
 
 
-			    }
-			    catch (Exception ex)
-			    {
-			        //mostra mensagem de erro.
-			        var objfrmInformacao =
-			            new frmInformacao("Erro: " + ex.Message + Environment.NewLine + " - Detalhes: " + ex.StackTrace);
+							if (blnVolumeBuscar) {
+								//objCandle.Volume = dblVolume
+								arrCandle[intArrayCandleIndice].Volume = Convert.ToDouble(objRSList.Field("Titulos_Total"));
 
-			        objfrmInformacao.ShowDialog();
+							}
 
-			        //marca que está encerrando a função.
-			        blnAtualizandoDados = false;
+						}
 
-			        //retorna com erro
-			        return false;
+						intArrayCandleIndice = intArrayCandleIndice - 1;
 
-			    }
+						objRSList.MoveNext();
+
+					}
+
+
+				} catch (Exception ex) {
+					//mostra mensagem de erro.
+					frmInformacao objfrmInformacao = new frmInformacao("Erro: " + ex.Message + Environment.NewLine + " - Detalhes: " + ex.StackTrace);
+
+					objfrmInformacao.ShowDialog();
+
+					//marca que está encerrando a função.
+					blnAtualizandoDados = false;
+
+					//retorna com erro
+					return false;
+
+				}
 
 
 			}
@@ -849,7 +833,7 @@ namespace TraderWizard
 
 
 
-				if (lngSequencialBuscaInicial == _sequencialInicialDaAreaDeDados) {
+				if (lngSequencialBuscaInicial == lngAreaDadosSequencialInicial) {
 					for (intI = 0; intI <= intArrayCandleIndice; intI++) {
 						//PERCORRE DA POSIÇÃO INICIAL DO ARRAY ATÉ A POSIÇÃO ANTERIOR 
 						//À QUE FOI ATRIBUIDA A ULTIMA INFORMAÇÃO DE IFR.
@@ -892,7 +876,7 @@ namespace TraderWizard
 					//PORQUE SÃO JUSTAMENTE AS COTAÇÕES MAIS ANTIGAS QUE PODEM NÃO TER DADOS DO IFR.
 
 
-					if (lngSequencialBuscaInicial == _sequencialInicialDaAreaDeDados) {
+					if (lngSequencialBuscaInicial == lngAreaDadosSequencialInicial) {
 						for (intI = 0; intI <= intArrayCandleIndice; intI++) {
 							arrCandle[intI].IFRMedio = -1;
 						}
@@ -908,7 +892,7 @@ namespace TraderWizard
 
 
 			if (blnVolumeBuscar) {
-				objRSList = servicoDeCotacao.ConsultaExecutar(strCodigoAtivo, dtmDataMinimaBusca, dtmDataMaximaBusca, strPeriodoDuracao, "MEDIA",Constantes.DataInvalida , false, false, String.Empty, 21,
+				objRSList = objCotacao.ConsultaExecutar(strCodigoAtivo, dtmDataMinimaBusca, dtmDataMaximaBusca, strPeriodoDuracao, "MEDIA",Constantes.DataInvalida , false, false, String.Empty, 21,
 				"VOLUME");
 
 				//intArrayCandleIndice = arrCandle.Length - 1
@@ -1003,7 +987,7 @@ namespace TraderWizard
 				//collection de objetos da estrutura structIndicadorEscolha que conterá
 				//todas as médias que precisam ser calculadas.
 				//Dim colMediaEscolhaAux As Collection = New Collection
-				var lstMediasSelecionadasAux = new List<cMediaDTO>();
+				List<cMediaDTO> lstMediasSelecionadasAux = new List<cMediaDTO>();
 
 
 				if (blnCotacaoBuscar) {
@@ -1054,7 +1038,7 @@ namespace TraderWizard
 				//se o cálculo é necessário é feito internamente.
 
 				//objCotacao.MediaAtualizar(strCodigoAtivo, colMediaEscolhaAux, strPeriodoDuracao)
-				servicoDeCotacao.MediaAtualizar(strCodigoAtivo, lstMediasSelecionadasAux, strPeriodoDuracao);
+				objCotacao.MediaAtualizar(strCodigoAtivo, lstMediasSelecionadasAux, strPeriodoDuracao);
 
 				//Percorre a collection de médias que devem ser calculadas 
 				//For Each objstructMediaEscolha In colMediaEscolhaAux
@@ -1067,7 +1051,7 @@ namespace TraderWizard
 						//que foram buscadas as cotações nesta execução.
 
 						//gera a tabela considerando os splits
-						objRSList = servicoDeCotacao.ConsultaExecutar(strCodigoAtivo, dtmDataMinimaBusca, dtmDataMaximaBusca, strPeriodoDuracao, "MEDIA", Constantes.DataInvalida ,false ,false , objMediaDTO.Tipo, objMediaDTO.NumPeriodos,
+						objRSList = objCotacao.ConsultaExecutar(strCodigoAtivo, dtmDataMinimaBusca, dtmDataMaximaBusca, strPeriodoDuracao, "MEDIA", Constantes.DataInvalida ,false ,false , objMediaDTO.Tipo, objMediaDTO.NumPeriodos,
 						"VALOR");
 
 						intArrayCandleIndice = intIndiceFinal;
@@ -1077,7 +1061,7 @@ namespace TraderWizard
 						//Se o último candle não contém a média, tem que calcular a média para toda a área de dados.
 
 						//gera a tabela considerando os splits
-						objRSList = servicoDeCotacao.ConsultaExecutar(strCodigoAtivo, dtmDataMinimaAreaDados, dtmDataMaximaAreaDados , strPeriodoDuracao
+						objRSList = objCotacao.ConsultaExecutar(strCodigoAtivo, dtmDataMinimaAreaDados, dtmDataMaximaAreaDados , strPeriodoDuracao
                             , "MEDIA", Constantes.DataInvalida, false,false , objMediaDTO.Tipo, objMediaDTO.NumPeriodos, "VALOR");
 
 						//neste caso tem que começar desde o final do array a atualizar as médias e tem que colocar
@@ -1292,9 +1276,13 @@ namespace TraderWizard
 
 		private void LabelVerticalAdicionar(string pstrText, int pintAreaRight, int pintPosicaoY)
 		{
-			var objLabel = new Label {AutoSize = true, Text = pstrText};
+			Label objLabel = new Label();
 
-		    pintPosicaoY = pintPosicaoY - objLabel.Height / 3;
+			objLabel.AutoSize = true;
+
+			objLabel.Text = pstrText;
+
+			pintPosicaoY = pintPosicaoY - objLabel.Height / 3;
 
 			objLabel.Location = new Point(pintAreaRight + 3, pintPosicaoY);
 
@@ -1307,9 +1295,15 @@ namespace TraderWizard
 
 		private void LabelHorizontalAdicionar(string pstrText, int pintAreaBottom, int pintAreaLeft, int pintPosicaoX, Color pobjColor)
 		{
-			var objLabel = new Label {AutoSize = true, ForeColor = pobjColor, Text = pstrText};
+			Label objLabel = new Label();
 
-		    pintPosicaoX = pintPosicaoX - objLabel.Width / 3;
+			objLabel.AutoSize = true;
+
+			objLabel.ForeColor = pobjColor;
+
+			objLabel.Text = pstrText;
+
+			pintPosicaoX = pintPosicaoX - objLabel.Width / 3;
 
 
 			if (pintPosicaoX < pintAreaLeft) {
@@ -1349,25 +1343,25 @@ namespace TraderWizard
 
 			blnGraficoGerando = true;
 
-			bool blnOk = true;
+			bool blnOK = true;
 
 
 			if (blnDadosAtualizar) {
-				blnOk = DadosAtualizar();
+				blnOK = DadosAtualizar();
 			    IniciarFerramentaDeDesenho();
 			}
 
-			if (blnPontosAtualizar && blnOk) {
+			if (blnPontosAtualizar && blnOK) {
 				PontosAtualizar();
 
 			}
 
-			if (blnOk) {
+			if (blnOK) {
 				//Debug.Print("Chamando GraficoDesenhar")
 				GraficoDesenhar(e);
 			}
 
-		    if (blnOk) {
+		    if (blnOK) {
 				//Só
 				blnGraficoGerando = false;
 			}
@@ -1698,8 +1692,8 @@ namespace TraderWizard
 				e.Graphics.DrawRectangle(Pens.Black, objRectAreaLegenda);
 
 
-			    foreach (cIndicador indicador in colMedia) {
-					cIndicador objMedia = indicador;
+			    foreach (cIndicador objMedia_loopVariable in colMedia) {
+					cIndicador objMedia = objMedia_loopVariable;
 					//desenha todas as médias móveis.
 
 					if (objMedia.IndicadorPonto.Length > 1) {
@@ -2426,9 +2420,13 @@ namespace TraderWizard
 						if (objMediaDTONumRegistros.Equals(objMediaDTO)) {
 
 							if (objMediaDTONumRegistros.NumRegistros > 0) {
-								objMedia = new cIndicador {NumPeriodos = objMediaDTO.NumPeriodos, Tipo = objMediaDTO.Tipo};
+								objMedia = new cIndicador();
 
-							    objMedia.ArrayPontoRedimensionar(objMediaDTONumRegistros.NumRegistros);
+								objMedia.NumPeriodos = objMediaDTO.NumPeriodos;
+
+								objMedia.Tipo = objMediaDTO.Tipo;
+
+								objMedia.ArrayPontoRedimensionar(objMediaDTONumRegistros.NumRegistros);
 
 								//    'objstructMedia.intPeriodos = objStructIndicadorMMExp.intPeriodo 'período da média
 								objMedia.Cor = objMediaDTO.Cor;
@@ -2510,7 +2508,7 @@ namespace TraderWizard
 				colSplit.Clear();
 			}
 
-			var objCarregadorSplit = new cCarregadorSplit(this.objConexao);
+			cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(this.objConexao);
 
 			//busca os splits do papel em ordem decrescente
 			objCarregadorSplit.SplitConsultar(strCodigoAtivo, dtmDataMinima, "D", ref objRsSplit, dtmDataMaximaSplit, "DESD");
@@ -2580,24 +2578,24 @@ namespace TraderWizard
 			    PointF objPonto;
 			    if (blnMMExpDesenhar) {
 
-					foreach (cIndicador indicador in colMedia) {
-						objMedia = indicador;
+					foreach (cIndicador objMedia_loopVariable in colMedia) {
+						objMedia = objMedia_loopVariable;
 
 						if (objMedia.ArrayIndicadorPontoIndice >= 0)
 						{
 						    //busca a média do candle
-						    double mediaMovelExponencial = arrCandle[intI].MediaBuscar(objMedia.NumPeriodos, objMedia.Tipo);
+						    double dblMMExp = arrCandle[intI].MediaBuscar(objMedia.NumPeriodos, objMedia.Tipo);
 
 
-						    if (mediaMovelExponencial > 0) {
+						    if (dblMMExp > 0) {
 
 								if (ToolStripbtnEscalaLogaritmica.Checked) {
-									mediaMovelExponencial = Math.Log(mediaMovelExponencial);
+									dblMMExp = Math.Log(dblMMExp);
 
 								}
 
 								//CALCULA O PONTO PARA IMPRIMIR A MÉDIA MÓVEL EXPONENCIAL
-								objPonto = new Point(intCaudaX, intAreaTop + intMargemSuperior + (int) (((double) decValorMaximoPeriodo - mediaMovelExponencial) * dblPixelPorReal));
+								objPonto = new Point(intCaudaX, intAreaTop + intMargemSuperior + (int) (((double) decValorMaximoPeriodo - dblMMExp) * dblPixelPorReal));
 								objMedia.ArrayIndicadorPontoSetar(objPonto);
 								objMedia.ArrayIndicadorPontoIndiceDecrementar();
 
@@ -2620,7 +2618,7 @@ namespace TraderWizard
 					//tem que descontar a margem inferior
 					int intVolumeHeight = intAreaBottom - intIndicadoresMargem - intVolumeTop;
 
-					var objVolumeRect = new Rectangle(intCorpoX, intVolumeTop, intCandleWidth, intVolumeHeight);
+					Rectangle objVolumeRect = new Rectangle(intCorpoX, intVolumeTop, intCandleWidth, intVolumeHeight);
 
 					arrVolumeRectangle[intArrayVolumeIndice] = objVolumeRect;
 
@@ -2859,7 +2857,7 @@ namespace TraderWizard
 
 						} else {
 							//move para a direita
-							if ((_sequencialFinalDaAreaDeDados + intNumCandlesMover) > lngSequencialMaximo) {
+							if ((lngAreaDadosSequencialFinal + intNumCandlesMover) > lngSequencialMaximo) {
 								lngAreaDesenhoSequencialInicial = lngSequencialMaximo - lngAreaDesenhoSequencialFinal + lngAreaDesenhoSequencialInicial;
 								lngAreaDesenhoSequencialFinal = lngSequencialMaximo;
 
@@ -2930,12 +2928,12 @@ namespace TraderWizard
 
 		private void TSmnuMMConfigurar_Click(System.Object sender, System.EventArgs e)
 		{
-			var frmForm = new frmIndicadorEscolha("Escolha as Médias Móveis", lstMediasSelecionadas);
+			frmIndicadorEscolha frmForm = new frmIndicadorEscolha("Escolha as Médias Móveis", lstMediasSelecionadas);
 
 			frmForm.ShowDialog();
 
 
-			if (frmForm.DialogResult == DialogResult.OK) {
+			if (frmForm.DialogResult == System.Windows.Forms.DialogResult.OK) {
 				//se retornou OK tem que atualizar a collection
 				lstMediasSelecionadas = frmForm.MediasSelecionadas;
 
@@ -2957,9 +2955,9 @@ namespace TraderWizard
 
 		private void ArrayDadosSequencialIndicesCalcular(long plngArray2SequencialInicial, long plngArray2SequencialFinal, ref int pintIndiceInicialRet, ref int pintIndiceFinalRet)
 		{
-			pintIndiceInicialRet = (int) (plngArray2SequencialInicial - _sequencialInicialDaAreaDeDados);
+			pintIndiceInicialRet = (int) (plngArray2SequencialInicial - lngAreaDadosSequencialInicial);
 
-			pintIndiceFinalRet = (int) (plngArray2SequencialFinal - _sequencialInicialDaAreaDeDados);
+			pintIndiceFinalRet = (int) (plngArray2SequencialFinal - lngAreaDadosSequencialInicial);
 
 		}
 

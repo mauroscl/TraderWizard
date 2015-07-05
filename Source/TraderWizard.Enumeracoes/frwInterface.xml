@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>TranderWizard.Enumeracoes</name>
+        <name>frwInterface</name>
     </assembly>
     <members>
-        <member name="T:TraderWizard.Enumeracoes.cEstrutura.structMediaValor">
+        <member name="T:frwInterface.cEstrutura.structMediaValor">
             <summary>
             Estrutura utilizada para armazenar as principais propriedades do indicador MEDIA
             </summary>
