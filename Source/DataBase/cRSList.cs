@@ -50,7 +50,7 @@ namespace DataBase
 
 					while (!objRS.EOF) {
 
-                        Dictionary<string, object> colunas = new Dictionary<string, object>();
+                        var colunas = new Dictionary<string, object>();
 
 						for (int intI = 0; intI <= objRS.GetFieldCount() - 1; intI++) {
 							//Adiciona cada uma das colunas na collection e coloca como chave do item o nome da coluna
