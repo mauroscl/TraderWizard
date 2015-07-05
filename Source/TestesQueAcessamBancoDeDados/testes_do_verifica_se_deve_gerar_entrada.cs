@@ -66,7 +66,7 @@ namespace TestProject1
 
 		public void QuandoDeveGerarEntradaTemQueRetornarSomatorioDeCriteriosIgualAZero()
 		{
-			cCarregadorSimulacaoIFRDiario objCarregadorSimulacaoDiaria = new cCarregadorSimulacaoIFRDiario(objConexao);
+			CarregadorSimulacaoIFRDiario objCarregadorSimulacaoDiaria = new CarregadorSimulacaoIFRDiario(objConexao);
 			cIFRSimulacaoDiaria objSimulacao = objCarregadorSimulacaoDiaria.CarregaPorDataEntradaEfetiva(FuncoesGerais.RetornaAtivo("RENT3"), FuncoesGerais.CarregarSetup(cEnum.enumSetup.IFRSemFiltroRP), new DateTime(2011, 5, 23));
 
 			var objIFRSobrevendido = FuncoesGerais.CarregaIFRSobrevendido(objConexao, 1);

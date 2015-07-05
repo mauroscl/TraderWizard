@@ -64,7 +64,7 @@ namespace TestProject1
 		public void QuandoCarregarMelhorEntradaPorAgrupadorDeTentativasTemQueRetornarNothingSeNaoExisteMelhorEntradaParaEsseAgrupador()
 		{
 			var objAtivo = FuncoesGerais.RetornaAtivo("BBAS3");
-			cCarregadorSimulacaoIFRDiario objCarregadorSimulacaoDiaria = new cCarregadorSimulacaoIFRDiario(objConexao);
+			CarregadorSimulacaoIFRDiario objCarregadorSimulacaoDiaria = new CarregadorSimulacaoIFRDiario(objConexao);
 
 			var objIFRSobrevendido = FuncoesGerais.CarregaIFRSobrevendido(objConexao, 1);
 			var objSetup = FuncoesGerais.CarregarSetup(cEnum.enumSetup.IFRSemFiltroRP);
@@ -81,7 +81,7 @@ namespace TestProject1
 		public void QuandoCarregarMelhorEntradaPorDataDeSaidaTemQueRetornarNothingSeNaoExisteMelhorEntradaParaEsseData()
 		{
 			var objAtivo = FuncoesGerais.RetornaAtivo("BBAS3");
-			var objCarregadorSimulacaoDiaria = new cCarregadorSimulacaoIFRDiario(objConexao);
+			var objCarregadorSimulacaoDiaria = new CarregadorSimulacaoIFRDiario(objConexao);
 
 			var objIFRSobrevendido = FuncoesGerais.CarregaIFRSobrevendido(objConexao, 1);
 			var objSetup = FuncoesGerais.CarregarSetup(cEnum.enumSetup.IFRSemFiltroRP);
@@ -98,7 +98,7 @@ namespace TestProject1
 		public void QuandoCarregarUltimaSimulacaoEOAtivoNaoPossuirSimulacoesTemQueRetornarNothing()
 		{
 			var objAtivo = FuncoesGerais.RetornaAtivo("BBAS3");
-			cCarregadorSimulacaoIFRDiario objCarregadorSimulacaoDiaria = new cCarregadorSimulacaoIFRDiario(objConexao);
+			CarregadorSimulacaoIFRDiario objCarregadorSimulacaoDiaria = new CarregadorSimulacaoIFRDiario(objConexao);
 
 			var objIFRSobrevendido = FuncoesGerais.CarregaIFRSobrevendido(objConexao, 1);
 			var objSetup = FuncoesGerais.CarregarSetup(cEnum.enumSetup.IFRSemFiltroRP);

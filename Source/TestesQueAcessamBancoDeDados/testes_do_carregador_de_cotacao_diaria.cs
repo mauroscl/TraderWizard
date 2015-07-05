@@ -63,7 +63,7 @@ namespace TestProject1
 
 		public void QuandoCarregarCotacoesPorPeriodoTemQueRetornarListaComAsCotacoesDeCadaUmDosDiasDoPeriodo()
 		{
-			cCarregadorCotacaoDiaria objCarregadorCotacaoDiaria = new cCarregadorCotacaoDiaria(objConexao);
+			CarregadorCotacaoDiaria objCarregadorCotacaoDiaria = new CarregadorCotacaoDiaria(objConexao);
 
 			var lstCotacoes = objCarregadorCotacaoDiaria.CarregarPorPeriodo(new Ativo("CSNA3", string.Empty), new System.DateTime(2011, 1, 8), new System.DateTime(2011, 1, 13), "DATA ASC", new List<cMediaDTO>(), false);
 
@@ -78,7 +78,7 @@ namespace TestProject1
 			var objSetup = FuncoesGerais.CarregarSetup(cEnum.enumSetup.IFRSemFiltroRP);
 			var objAtivo = FuncoesGerais.RetornaAtivo("BBAS3");
 
-			cCarregadorCotacaoDiaria objCarregadorCotacao = new cCarregadorCotacaoDiaria(objConexao);
+			CarregadorCotacaoDiaria objCarregadorCotacao = new CarregadorCotacaoDiaria(objConexao);
 
 			var lstCotacoes = objCarregadorCotacao.CarregaComIFRSobrevendidoSemSimulacao(objAtivo, objSetup, 10, cEnum.enumMediaTipo.Exponencial);
 
@@ -97,7 +97,7 @@ namespace TestProject1
 			lstMediasParaCarregar.Add(new cMediaDTO("E", 200, "VALOR"));
 			lstMediasParaCarregar.Add(new cMediaDTO("A", 13, "IFR2"));
 
-			cCarregadorCotacaoDiaria objCarregadorDeCotacoes = new cCarregadorCotacaoDiaria(objConexao);
+			CarregadorCotacaoDiaria objCarregadorDeCotacoes = new CarregadorCotacaoDiaria(objConexao);
 
 			var objAtivo = FuncoesGerais.RetornaAtivo("BBAS3");
 			var objCotacao = objCarregadorDeCotacoes.CarregarPorPeriodo(objAtivo, new System.DateTime(2011, 8, 3), new System.DateTime(2011, 8, 3), string.Empty, lstMediasParaCarregar, false).Single();

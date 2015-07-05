@@ -1,11 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Drawing;
-using System.Diagnostics;
-using System.Windows.Forms;
-namespace TraderWizard
+namespace Forms
 {
 	partial class frmIFRCalcular : System.Windows.Forms.Form
 	{
@@ -44,8 +37,12 @@ namespace TraderWizard
             this.lstAtivosNaoEscolhidos = new System.Windows.Forms.ListBox();
             this.txtPeriodo = new System.Windows.Forms.TextBox();
             this.Label2 = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.periodicidadeSemanal = new System.Windows.Forms.CheckBox();
+            this.periodicidadeDiaria = new System.Windows.Forms.CheckBox();
             this.Panel1.SuspendLayout();
             this.pnlAtivosEscolher.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // Panel1
@@ -54,7 +51,7 @@ namespace TraderWizard
             this.Panel1.Controls.Add(this.btnCancelar);
             this.Panel1.Controls.Add(this.btnOK);
             this.Panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.Panel1.Location = new System.Drawing.Point(0, 434);
+            this.Panel1.Location = new System.Drawing.Point(0, 476);
             this.Panel1.Name = "Panel1";
             this.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.Panel1.Size = new System.Drawing.Size(527, 40);
@@ -89,9 +86,9 @@ namespace TraderWizard
             this.pnlAtivosEscolher.Controls.Add(this.btnAdicionarTodos);
             this.pnlAtivosEscolher.Controls.Add(this.lstAtivosEscolhidos);
             this.pnlAtivosEscolher.Controls.Add(this.lstAtivosNaoEscolhidos);
-            this.pnlAtivosEscolher.Location = new System.Drawing.Point(12, 32);
+            this.pnlAtivosEscolher.Location = new System.Drawing.Point(12, 77);
             this.pnlAtivosEscolher.Name = "pnlAtivosEscolher";
-            this.pnlAtivosEscolher.Size = new System.Drawing.Size(524, 399);
+            this.pnlAtivosEscolher.Size = new System.Drawing.Size(524, 398);
             this.pnlAtivosEscolher.TabIndex = 16;
             // 
             // btnRemover
@@ -137,6 +134,7 @@ namespace TraderWizard
             // 
             // lstAtivosEscolhidos
             // 
+            this.lstAtivosEscolhidos.DisplayMember = "Descricao";
             this.lstAtivosEscolhidos.FormattingEnabled = true;
             this.lstAtivosEscolhidos.Location = new System.Drawing.Point(309, 0);
             this.lstAtivosEscolhidos.Name = "lstAtivosEscolhidos";
@@ -144,9 +142,11 @@ namespace TraderWizard
             this.lstAtivosEscolhidos.Size = new System.Drawing.Size(198, 394);
             this.lstAtivosEscolhidos.Sorted = true;
             this.lstAtivosEscolhidos.TabIndex = 5;
+            this.lstAtivosEscolhidos.ValueMember = "Codigo";
             // 
             // lstAtivosNaoEscolhidos
             // 
+            this.lstAtivosNaoEscolhidos.DisplayMember = "Descricao";
             this.lstAtivosNaoEscolhidos.FormattingEnabled = true;
             this.lstAtivosNaoEscolhidos.Location = new System.Drawing.Point(3, 0);
             this.lstAtivosNaoEscolhidos.Name = "lstAtivosNaoEscolhidos";
@@ -154,6 +154,7 @@ namespace TraderWizard
             this.lstAtivosNaoEscolhidos.Size = new System.Drawing.Size(198, 394);
             this.lstAtivosNaoEscolhidos.Sorted = true;
             this.lstAtivosNaoEscolhidos.TabIndex = 0;
+            this.lstAtivosNaoEscolhidos.ValueMember = "Codigo";
             // 
             // txtPeriodo
             // 
@@ -171,11 +172,43 @@ namespace TraderWizard
             this.Label2.TabIndex = 18;
             this.Label2.Text = "Período:";
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.periodicidadeSemanal);
+            this.groupBox1.Controls.Add(this.periodicidadeDiaria);
+            this.groupBox1.Location = new System.Drawing.Point(12, 32);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(504, 39);
+            this.groupBox1.TabIndex = 20;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Periodicidade";
+            // 
+            // periodicidadeSemanal
+            // 
+            this.periodicidadeSemanal.AutoSize = true;
+            this.periodicidadeSemanal.Location = new System.Drawing.Point(306, 19);
+            this.periodicidadeSemanal.Name = "periodicidadeSemanal";
+            this.periodicidadeSemanal.Size = new System.Drawing.Size(67, 17);
+            this.periodicidadeSemanal.TabIndex = 1;
+            this.periodicidadeSemanal.Text = "Semanal";
+            this.periodicidadeSemanal.UseVisualStyleBackColor = true;
+            // 
+            // periodicidadeDiaria
+            // 
+            this.periodicidadeDiaria.AutoSize = true;
+            this.periodicidadeDiaria.Location = new System.Drawing.Point(100, 19);
+            this.periodicidadeDiaria.Name = "periodicidadeDiaria";
+            this.periodicidadeDiaria.Size = new System.Drawing.Size(53, 17);
+            this.periodicidadeDiaria.TabIndex = 0;
+            this.periodicidadeDiaria.Text = "Diário";
+            this.periodicidadeDiaria.UseVisualStyleBackColor = true;
+            // 
             // frmIFRCalcular
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(527, 474);
+            this.ClientSize = new System.Drawing.Size(527, 516);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.txtPeriodo);
             this.Controls.Add(this.Label2);
             this.Controls.Add(this.pnlAtivosEscolher);
@@ -187,6 +220,8 @@ namespace TraderWizard
             this.Load += new System.EventHandler(this.frmIDiarioCalcular_Load);
             this.Panel1.ResumeLayout(false);
             this.pnlAtivosEscolher.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -204,5 +239,8 @@ namespace TraderWizard
 		private System.Windows.Forms.ListBox lstAtivosNaoEscolhidos;
 		private System.Windows.Forms.TextBox txtPeriodo;
 		private System.Windows.Forms.Label Label2;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.CheckBox periodicidadeSemanal;
+        private System.Windows.Forms.CheckBox periodicidadeDiaria;
 	}
 }

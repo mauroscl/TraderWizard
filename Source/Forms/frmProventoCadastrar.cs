@@ -13,9 +13,9 @@ namespace TraderWizard
 	{
 
 
-		private cConexao objConexao;
+		private Conexao objConexao;
 
-		public frmProventoCadastrar(cConexao pobjConexao)
+		public frmProventoCadastrar(Conexao pobjConexao)
 		{
 			Load += frmProventoCadastrar_Load;
 			InitializeComponent();

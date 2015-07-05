@@ -11,11 +11,11 @@ namespace TraderWizard
 	public partial class frmRelatorioSpool
 	{
 
-		private cConexao objConexao;
+		private Conexao objConexao;
 
 		private cGrid objGrid;
 
-		public frmRelatorioSpool(cConexao pobjConexao)
+		public frmRelatorioSpool(Conexao pobjConexao)
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();

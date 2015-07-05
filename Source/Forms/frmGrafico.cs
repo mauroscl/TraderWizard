@@ -146,7 +146,7 @@ namespace TraderWizard
 		int intVolumePosicaoSelecionada = -1;
 
 
-		private cConexao objConexao;
+		private Conexao objConexao;
 		//*************collection de indicadores: média e IFR
 		//Dim colStructIndicadorMMExp As Collection
 
@@ -225,7 +225,7 @@ namespace TraderWizard
 		long lngAreaDesenhoSequencialFinal;
 
 
-	    public frmGrafico(cConexao pobjConexao)
+	    public frmGrafico(Conexao pobjConexao)
 		{
 			/*MouseLeave += frmGrafico_MouseLeave;
 			MouseUp += frmGrafico_MouseUp;

@@ -18,7 +18,7 @@ namespace prjServicoNegocio
 	public class cCalculadorFaixasIFRDiario
 	{
 
-		private readonly cConexao objConexao;
+		private readonly Conexao objConexao;
 		private readonly Setup objSetup;
 
 		private readonly Ativo objAtivo;
@@ -30,7 +30,7 @@ namespace prjServicoNegocio
 		/// <param name="pobjAtivo"></param>
 		/// <param name="pobjSetup"></param>
 		/// <remarks></remarks>
-		public cCalculadorFaixasIFRDiario(cConexao pobjConexao, Ativo pobjAtivo, Setup pobjSetup)
+		public cCalculadorFaixasIFRDiario(Conexao pobjConexao, Ativo pobjAtivo, Setup pobjSetup)
 		{
 			objConexao = pobjConexao;
 			objSetup = pobjSetup;

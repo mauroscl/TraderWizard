@@ -8,14 +8,14 @@ using prjModelo.Entidades;
 namespace DataBase.Carregadores
 {
 
-	public class cCarregadorMediaDiaria : cCarregadorGenerico, ICarregadorMedia
+	public class CarregadorMediaDiaria : CarregadorGenerico, ICarregadorMedia
 	{
 
-		public cCarregadorMediaDiaria(cConexao pobjConexao) : base(pobjConexao)
+		public CarregadorMediaDiaria(Conexao pobjConexao) : base(pobjConexao)
 		{
 		}
 
-		public cCarregadorMediaDiaria()
+		public CarregadorMediaDiaria()
 		{
 		}
 

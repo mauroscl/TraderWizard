@@ -7,9 +7,9 @@ namespace TraderWizard.Infra.Repositorio
 {
     public class RepositorioDeIfrSimulacaoDiariaFaixa
     {
-        private readonly cConexao _conexao;
+        private readonly Conexao _conexao;
 
-        public RepositorioDeIfrSimulacaoDiariaFaixa(cConexao conexao)
+        public RepositorioDeIfrSimulacaoDiariaFaixa(Conexao conexao)
         {
             _conexao = conexao;
         }

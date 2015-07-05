@@ -9,10 +9,10 @@ namespace prjServicoNegocio
 	public class cVerificaSeAtingiuPercentualMinimo
 	{
 
-		private readonly cConexao objConexao;
+		private readonly Conexao objConexao;
 
 		private const double PercentualMinimo = 80.0;
-		public cVerificaSeAtingiuPercentualMinimo(cConexao pobjConexao)
+		public cVerificaSeAtingiuPercentualMinimo(Conexao pobjConexao)
 		{
 			objConexao = pobjConexao;
 		}

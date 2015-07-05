@@ -39,7 +39,7 @@ namespace TraderWizard
 		    if (MessageBox.Show("Confirma a execução da operação de atualização de Proventos?", this.Text
                 , MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
 
-            cConexao objConexao = new cConexao();
+            Conexao objConexao = new Conexao();
 
 		    ServicoDeCotacao objCotacao = new ServicoDeCotacao(objConexao);
 

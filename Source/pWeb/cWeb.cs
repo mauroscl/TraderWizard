@@ -14,7 +14,7 @@ namespace pWeb
 		private cWebConfiguracao objWebConfiguracao;
 	    private readonly IFileService _fileService;
 
-		public cWeb(cConexao pobjConexao)
+		public cWeb(Conexao pobjConexao)
 		{
 			//intancia a classe de configuração.
 			//durante a instanciação já são buscadas as configurações cadastradas

@@ -11,8 +11,8 @@ namespace DataBase.Carregadores
 	{
 
 
-		private readonly cConexao _conexao;
-		public cCarregadorSplit(cConexao pobjConexao)
+		private readonly Conexao _conexao;
+		public cCarregadorSplit(Conexao pobjConexao)
 		{
 			_conexao = pobjConexao;
 		}

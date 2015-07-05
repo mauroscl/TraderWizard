@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using DataBase.Carregadores;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using prjModelo.Carregadores;
 using TesteBase;
@@ -27,7 +28,7 @@ namespace TestProject1
 
 		public void CarregadorDeCarteirasTemQueCarregarUmaUnicaCarteiraAtivaPorIFRSobrevendido()
 		{
-			var objCarregadorCarteira = new cCarregadorCarteira(objConexao);
+			var objCarregadorCarteira = new CarregadorCarteira(objConexao);
 
 			var objIFRSobrevendido = FuncoesGerais.CarregaIFRSobrevendido(objConexao, 1);
 

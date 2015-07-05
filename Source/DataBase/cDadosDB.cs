@@ -10,7 +10,7 @@ namespace DataBase
 	{
 
 
-		private cConexao objConexao;
+		private Conexao objConexao;
 		//tabela em que os dados serão salvos ou consultados
 
 		private string strTabela;
@@ -23,7 +23,7 @@ namespace DataBase
 
 		private Dictionary<string, cCampoDB> colCampo;
 
-		public cDadosDB(cConexao pobjConexao, string pstrTabela)
+		public cDadosDB(Conexao pobjConexao, string pstrTabela)
 		{
 			objConexao = pobjConexao;
 

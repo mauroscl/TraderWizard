@@ -16,10 +16,10 @@ namespace Services
 	public class ServicoDeCotacaoDeAtivo
 	{
 
-		private readonly cConexao _conexao;
+		private readonly Conexao _conexao;
 	    private readonly Ativo _ativo;
 
-	    public ServicoDeCotacaoDeAtivo(Ativo ativo, cConexao pobjConexao)
+	    public ServicoDeCotacaoDeAtivo(Ativo ativo, Conexao pobjConexao)
 	    {
 	        _ativo = ativo;
 			_conexao = pobjConexao;
@@ -78,7 +78,7 @@ namespace Services
 	    public bool CarregarCotacoes(DateTime pdtmDataInicial, DateTime pdtmDataFinal, IList<cMediaDTO> plstMedias, bool pblnCarregarIFR)
 		{
 
-			var objCarregadorCotacoes = new cCarregadorCotacaoDiaria();
+			var objCarregadorCotacoes = new CarregadorCotacaoDiaria();
 
 			IList<CotacaoDiaria> lstCotacoesDoCarregador = objCarregadorCotacoes.CarregarPorPeriodo(_ativo, pdtmDataInicial, pdtmDataFinal, string.Empty, plstMedias, pblnCarregarIFR);
 
@@ -117,7 +117,7 @@ namespace Services
 		    int intContadorDeRegistros = (from c in CotacoesDiarias from m in c.Medias where m.Cotacao.Data == pdtmData select m.Cotacao.Data).Count();
 
 		    if (intContadorDeRegistros == 0) {
-				var objCarregadorMedias = new cCarregadorMediaDiaria();
+				var objCarregadorMedias = new CarregadorMediaDiaria();
 
 		        CotacaoAbstract objCotacao = CotacoesDiarias.First(c => c.Data == pdtmData);
 
@@ -140,7 +140,7 @@ namespace Services
 
 
 			if (intContadorDeRegistros == 0) {
-				var objCarregadorIFR = new cCarregadorIFRDiario();
+				var objCarregadorIFR = new CarregadorIFRDiario();
 
 				CotacaoAbstract objCotacao = CotacoesDiarias.First(c => c.Data == pdtmData);
 
@@ -162,7 +162,7 @@ namespace Services
 
 		public void CarregarCotacoesIFRSobrevendidoSemSimulacao(Setup pobjSetup, double pdblValorMaximoIFRSobrevendido, cEnum.enumMediaTipo pintMediaTipo)
 		{
-			var objCarregador = new cCarregadorCotacaoDiaria(_conexao);
+			var objCarregador = new CarregadorCotacaoDiaria(_conexao);
 
 			var lstCotacoesDoCarregador = objCarregador.CarregaComIFRSobrevendidoSemSimulacao(_ativo, pobjSetup, pdblValorMaximoIFRSobrevendido, pintMediaTipo);
 
@@ -173,7 +173,7 @@ namespace Services
 
 		public void CarregarCotacoesParaIFRComFiltro(Setup pobjSetup, cEnum.enumMediaTipo pintMediaTipo, DateTime pdtmDataInicial)
 		{
-			var objCarregador = new cCarregadorCotacaoDiaria(_conexao);
+			var objCarregador = new CarregadorCotacaoDiaria(_conexao);
 
 			var lstCotacoesDoCarregador = objCarregador.CarregarParaIFRComFiltro(_ativo, pobjSetup, pintMediaTipo, pdtmDataInicial);
 
@@ -184,7 +184,7 @@ namespace Services
 
 		public void CarregarUltimasSimulacoes(Setup pobjSetup, IList<cIFRSobrevendido> plstIFRSobrevendido, DateTime pdtmDataReferencia)
 		{
-			var objCarregador = new cCarregadorSimulacaoIFRDiario(_conexao);
+			var objCarregador = new CarregadorSimulacaoIFRDiario(_conexao);
 
 			//Ordena a lista de IFR Sobrevendido pela ordem do maior valor máximo para carregar corretamente as últimas simulações no for each a seguir.
 			//Carregando primeiro os que tem valor mais alto vai garantir que sejam carregados sempre o último de cada ifr.

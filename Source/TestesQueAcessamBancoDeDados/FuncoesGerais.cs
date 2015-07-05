@@ -25,7 +25,7 @@ namespace TestProject1
 			return new Ativo(pstrCodigo, string.Empty);
 		}
 
-		public static cIFRSobrevendido CarregaIFRSobrevendido(cConexao pobjConexao, int pintId)
+		public static cIFRSobrevendido CarregaIFRSobrevendido(Conexao pobjConexao, int pintId)
 		{
 
 			cCarregadorIFRSobrevendido objCarregadorIFRSobrevendido = new cCarregadorIFRSobrevendido(pobjConexao);

@@ -16,7 +16,7 @@ namespace TraderWizard
 	{
 
 
-		private readonly cConexao objConexao;
+		private readonly Conexao objConexao;
 
 		/// <summary>
 		/// 
@@ -27,7 +27,7 @@ namespace TraderWizard
 		/// <remarks></remarks>
 		/// 
 
-		public frmCotacaoAtualizarPeriodo(cConexao pobjConexao)
+		public frmCotacaoAtualizarPeriodo(Conexao pobjConexao)
 		{
 			Load += frmCotacaoAtualizarPeriodo_Load;
 			// This call is required by the Windows Form Designer.

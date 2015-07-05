@@ -8,9 +8,9 @@ namespace TraderWizard.Infra.Repositorio
 {
     public class Ativos
     {
-        private readonly cConexao _conexao;
+        private readonly Conexao _conexao;
 
-        public Ativos(cConexao conexao)
+        public Ativos(Conexao conexao)
         {
             _conexao = conexao;
         }

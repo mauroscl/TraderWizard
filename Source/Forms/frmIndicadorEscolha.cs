@@ -92,16 +92,13 @@ namespace TraderWizard
 
 		private void btnRemover_Click(System.Object sender, System.EventArgs e)
 		{
-			ListViewItem objItem = null;
-
-
-			foreach (ListViewItem objItem_loopVariable in lstPeriodoSelecionado.SelectedItems) {
-				objItem = objItem_loopVariable;
-				lstPeriodoSelecionado.Items.Remove(objItem);
-
+		    foreach (ListViewItem periodoSelecionado in lstPeriodoSelecionado.SelectedItems)
+			{
+			    ListViewItem objItem = periodoSelecionado;
+			    lstPeriodoSelecionado.Items.Remove(objItem);
 			}
 
-			LimparItemSelecionado();
+		    LimparItemSelecionado();
 
 		}
 
@@ -146,34 +143,28 @@ namespace TraderWizard
 
 		private void btnAdicionar_Click(System.Object sender, System.EventArgs e)
 		{
-
-			if (Consistir()) {
-				string strNovoTipo = ObtemTipoDaMedia();
-
-
-				if (ItemSelecionado == null) {
-					ListViewItem objListViewItem = lstPeriodoSelecionado.Items.Add(txtPeriodo.Text);
-
-					objListViewItem.SubItems.Add(strNovoTipo);
-
-					//seta esta propriedade para false para permitir que apenas uma coluna tenha
-					//a propriedade backcolor alterada.
-					//Se a propriedade for true, não permite alterar a propriedade BACKCOLOR e outras
-					//propriedades dos subitems.
-					objListViewItem.UseItemStyleForSubItems = false;
-
-					objListViewItem.SubItems.Add("").BackColor = pnlCor.BackColor;
-
-				} else {
-					ItemSelecionado.SubItems[0].Text = txtPeriodo.Text;
-					ItemSelecionado.SubItems[1].Text = strNovoTipo;
-					ItemSelecionado.SubItems[2].BackColor = pnlCor.BackColor;
-				}
+		    if (!Consistir()) return;
+		    string strNovoTipo = ObtemTipoDaMedia();
 
 
+		    if (ItemSelecionado == null) {
+		        ListViewItem objListViewItem = lstPeriodoSelecionado.Items.Add(txtPeriodo.Text);
 
-			}
+		        objListViewItem.SubItems.Add(strNovoTipo);
 
+		        //seta esta propriedade para false para permitir que apenas uma coluna tenha
+		        //a propriedade backcolor alterada.
+		        //Se a propriedade for true, não permite alterar a propriedade BACKCOLOR e outras
+		        //propriedades dos subitems.
+		        objListViewItem.UseItemStyleForSubItems = false;
+
+		        objListViewItem.SubItems.Add("").BackColor = pnlCor.BackColor;
+
+		    } else {
+		        ItemSelecionado.SubItems[0].Text = txtPeriodo.Text;
+		        ItemSelecionado.SubItems[1].Text = strNovoTipo;
+		        ItemSelecionado.SubItems[2].BackColor = pnlCor.BackColor;
+		    }
 		}
 
 

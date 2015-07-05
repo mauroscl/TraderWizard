@@ -47,7 +47,7 @@ namespace Forms
 		}
 
 
-		public static void ComboAtivoPreencher(ComboBox pcmbAtivo, cConexao pobjConexao, string codigoDoAtivoParaSelecionar, bool pblnSelecionarItem)
+		public static void ComboAtivoPreencher(ComboBox pcmbAtivo, Conexao pobjConexao, string codigoDoAtivoParaSelecionar, bool pblnSelecionarItem)
 		{
 		    var ativos = new Ativos(pobjConexao);
 		    IList<Ativo> ativosValidos = ativos.Validos();

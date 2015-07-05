@@ -1,3 +1,4 @@
+using DataBase.Carregadores;
 using DataBase.Interfaces;
 using System;
 using DataBase;
@@ -7,14 +8,14 @@ using prjModelo.Entidades;
 namespace prjModelo.Carregadores
 {
 
-	public class cCarregadorIFRDiario : cCarregadorGenerico, ICarregadorIFR
+	public class CarregadorIFRDiario : CarregadorGenerico, ICarregadorIFR
 	{
 
-		public cCarregadorIFRDiario(cConexao pobjConexao) : base(pobjConexao)
+		public CarregadorIFRDiario(Conexao pobjConexao) : base(pobjConexao)
 		{
 		}
 
-		public cCarregadorIFRDiario() : base()
+		public CarregadorIFRDiario() : base()
 		{
 		}
 

@@ -9,14 +9,14 @@ namespace DataBase
 	{
 
 
-		private readonly cConexao objConexao;
+		private readonly Conexao objConexao;
 		//Lista de queries que devem ser executadas
 
 	    //Posição atual no lstDados.
 		private int lngPosicaoAtual;
 		//Lista dos resultados consultados no banco de dados
 
-	    public cRSList(cConexao pobjConexao)
+	    public cRSList(Conexao pobjConexao)
 		{
 			objConexao = pobjConexao;
 

@@ -1,17 +1,15 @@
-
 using prjDominio.Entidades;
-using prjModelo.Entidades;
 
-namespace prjModelo.Carregadores
+namespace DataBase.Carregadores
 {
-	public class cOperacaoBD
+	public class OperacaoDeBancoDeDados
 	{
 
 		public string Comando { get; set; }
 
 		public cModelo Modelo { get; set; }
 
-		public cOperacaoBD(cModelo pobjModelo, string pstrComando)
+		public OperacaoDeBancoDeDados(cModelo pobjModelo, string pstrComando)
 		{
 			Modelo = pobjModelo;
 			Comando = pstrComando;

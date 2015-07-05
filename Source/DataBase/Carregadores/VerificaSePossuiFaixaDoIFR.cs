@@ -8,10 +8,10 @@ namespace DataBase.Carregadores
 	public class VerificaSePossuiFaixaDoIFR
 	{
 
-		private cConexao Conexao { get; set; }
+		private Conexao Conexao { get; set; }
 
 
-		public VerificaSePossuiFaixaDoIFR(cConexao pobjConexao)
+		public VerificaSePossuiFaixaDoIFR(Conexao pobjConexao)
 		{
 			Conexao = pobjConexao;
 

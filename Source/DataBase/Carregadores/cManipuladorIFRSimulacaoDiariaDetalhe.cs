@@ -8,7 +8,7 @@ namespace DataBase.Carregadores
 	public class cManipuladorIFRSimulacaoDiariaDetalhe : cGeradorOperacaoBDPadrao
 	{
 
-		public cManipuladorIFRSimulacaoDiariaDetalhe(cConexao pobjConexao) : base(pobjConexao)
+		public cManipuladorIFRSimulacaoDiariaDetalhe(Conexao pobjConexao) : base(pobjConexao)
 		{
 		}
 

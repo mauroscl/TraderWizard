@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Forms;
 using DataBase;
+using Forms;
 using Forms.Properties;
 using prmCotacao;
 
@@ -10,7 +11,7 @@ namespace TraderWizard
     {
         public static string strBancoTipo;
         private int m_ChildFormNumber;
-        private cConexao objConexao;
+        private Conexao objConexao;
 
         public frmPrincipal()
         {
@@ -159,9 +160,8 @@ namespace TraderWizard
         private void mniConfiguracoes_Click(Object sender, EventArgs e)
         {
             // Create a new instance of the child form.
-            var frmChildForm = new frmConfiguracao();
+            var frmChildForm = new frmConfiguracao {MdiParent = this};
             // Make it a child of this MDI form before showing it.
-            frmChildForm.MdiParent = this;
 
             m_ChildFormNumber += 1;
 
@@ -171,6 +171,9 @@ namespace TraderWizard
 
         private void CalcularMédiaMóvelExponencialToolStripMenuItem_Click(Object sender, EventArgs e)
         {
+            var formMediaCalcular = new FormMediaCalcular {MdiParent = this};
+            m_ChildFormNumber += 1;
+            formMediaCalcular.Show();
         }
 
 
@@ -363,7 +366,7 @@ namespace TraderWizard
 
         private void mniIFRCalcular_Click(Object sender, EventArgs e)
         {
-            var frmChildForm = new frmIFRCalcular(objConexao);
+            var frmChildForm = new frmIFRCalcular();
             // Make it a child of this MDI form before showing it.
             frmChildForm.MdiParent = this;
 
@@ -381,7 +384,7 @@ namespace TraderWizard
         {
             try
             {
-                objConexao = new cConexao();
+                objConexao = new Conexao();
 
             }
             catch (Exception ex)

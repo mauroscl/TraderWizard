@@ -6,7 +6,7 @@ namespace pWeb
 	public class cWebConfiguracao
 	{
 	    //conexão com o banco de dados
-		private readonly cConexao objConexao;
+		private readonly Conexao objConexao;
 
         public string ProxyTipo { get; private set; }
 
@@ -23,7 +23,7 @@ namespace pWeb
 	    public string Senha { get; private set; }
 
 
-	    public cWebConfiguracao(bool pblnConfiguracaoBuscar, cConexao pobjConexao)
+	    public cWebConfiguracao(bool pblnConfiguracaoBuscar, Conexao pobjConexao)
 		{
 			objConexao = pobjConexao;
 

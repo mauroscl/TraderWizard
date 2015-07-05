@@ -10,11 +10,11 @@ namespace prmCotacao
 	public class cCotacaoAjustada
 	{
 
-		private readonly cConexao objConexao;
+		private readonly Conexao objConexao;
 
 		private readonly string strCodigoAtivo;
 
-		public cCotacaoAjustada(cConexao pobjConexao, string pstrCodigoAtivo)
+		public cCotacaoAjustada(Conexao pobjConexao, string pstrCodigoAtivo)
 		{
 			objConexao = pobjConexao;
 			strCodigoAtivo = pstrCodigoAtivo;

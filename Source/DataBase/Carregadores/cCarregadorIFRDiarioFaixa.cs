@@ -10,11 +10,11 @@ namespace prjModelo.Carregadores
 	public class cCarregadorIFRDiarioFaixa
 	{
 
-		private readonly cConexao objConexao;
+		private readonly Conexao objConexao;
 		private DateTime dtmDataSolicitacao;
 
 		private DateTime dtmUltimaData;
-		public cCarregadorIFRDiarioFaixa(cConexao pobjConexao)
+		public cCarregadorIFRDiarioFaixa(Conexao pobjConexao)
 		{
 			objConexao = pobjConexao;
 		}

@@ -13,8 +13,8 @@ namespace prjServicoNegocio
 	{
 
 
-		private readonly cConexao Conexao;
-		public cVerificaSeValorEstaDentroDaFaixa(cConexao pobjConexao)
+		private readonly Conexao Conexao;
+		public cVerificaSeValorEstaDentroDaFaixa(Conexao pobjConexao)
 		{
 			Conexao = pobjConexao;
 		}

@@ -63,7 +63,7 @@ namespace TestProject1
 
 		public void QuandoPassarLinkValidoFuncaoTemQueRetornarQueOLinkEhValido()
 		{
-			cConexao pobjConexao = objConexao;
+			Conexao pobjConexao = objConexao;
 			cWeb target = new cWeb(pobjConexao);
 			string pstrURL = "http://www.bmfbovespa.com.br/fechamento-pregao/bdi/bdi0325.zip";
 			bool expected = false;
@@ -75,7 +75,7 @@ namespace TestProject1
 
 		public void QuandoPassarLinkInvalidoFuncaoTemQueRetornarQueOLinkEhInvalido()
 		{
-			cConexao pobjConexao = objConexao;
+			Conexao pobjConexao = objConexao;
 			cWeb target = new cWeb(pobjConexao);
 			string pstrURL = "http://www.bmfbovespa.com.br/fechamento-pregao/bdi/bdi0326.zip";
 			bool expected = false;

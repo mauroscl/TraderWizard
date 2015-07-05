@@ -16,7 +16,7 @@ namespace ServicosDeInterface
             cEnum.enumClassifMedia pintIdClassificaoMedia, cEnum.enumCriterioClassificacaoMedia pintIdCriterioClassificacaoMedia, DateTime pdtmData)
 		{
 
-			cConexao objConexao = new cConexao();
+			Conexao objConexao = new Conexao();
 
 			cCarregadorSetup objCarregadorSetup = new cCarregadorSetup();
 			cCarregadorClassificacaoMedia objCarregadorCM = new cCarregadorClassificacaoMedia();

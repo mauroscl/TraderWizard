@@ -7,9 +7,9 @@ namespace prmCotacao
 	{
 
 
-		private cConexao objConexao;
+		private Conexao objConexao;
 
-		public cFuncUtil(cConexao pobjConexao)
+		public cFuncUtil(Conexao pobjConexao)
 		{
 			objConexao = pobjConexao;
 

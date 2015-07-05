@@ -8,10 +8,10 @@ using TraderWizard.Enumeracoes;
 namespace DataBase.Carregadores
 {
 
-	public class cCarregadorSimulacaoIFRDiario : cCarregadorGenerico
+	public class CarregadorSimulacaoIFRDiario : CarregadorGenerico
 	{
 
-		public cCarregadorSimulacaoIFRDiario(cConexao pobjConexao) : base(pobjConexao)
+		public CarregadorSimulacaoIFRDiario(Conexao pobjConexao) : base(pobjConexao)
 		{
 		}
 

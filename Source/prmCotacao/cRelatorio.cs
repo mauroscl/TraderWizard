@@ -23,9 +23,9 @@ namespace prmCotacao
 	{
 
 
-		private readonly cConexao objConexao;
+		private readonly Conexao objConexao;
 
-		public cRelatorio(cConexao pobjConexao)
+		public cRelatorio(Conexao pobjConexao)
 		{
 			objConexao = pobjConexao;
 
@@ -1193,7 +1193,7 @@ namespace prmCotacao
 
 		    cValorCriterioClassifMediaVO objValorCriterioCMVO = new cValorCriterioClassifMediaVO();
 
-		    dynamic objCarregadorCarteira = new cCarregadorCarteira(objConexao);
+		    dynamic objCarregadorCarteira = new CarregadorCarteira(objConexao);
 			dynamic objCarteiraAtiva = objCarregadorCarteira.CarregaAtiva(pobjIFRSobrevendido);
 
 		    //Para cada um dos itens que está com IFR sobrevendido.

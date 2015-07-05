@@ -13,8 +13,8 @@ namespace prmCotacao
 
 		private DataTable dtbCotacao;
 
-		private readonly cConexao _conexao;
-		public cInvestimento(cConexao pobjConexao)
+		private readonly Conexao _conexao;
+		public cInvestimento(Conexao pobjConexao)
 		{
 			_conexao = pobjConexao;
 		}

@@ -65,7 +65,7 @@ namespace TestProject1
 
 		public void QuandoNaoTiverSplitEntreOsCandlesTemQueRetornarValorMinimoDoPrimeiroCandleAnteriorComValorMinimoMenorDoQueOValorMinimoDaDataPassadaPorParametro()
 		{
-			var objCarregadorCotacao = new cCarregadorCotacaoDiaria(objConexao);
+			var objCarregadorCotacao = new CarregadorCotacaoDiaria(objConexao);
 
 		    var ativo = new Ativo("CSNA3", "");
 			var objCotacao = objCarregadorCotacao.CarregarPorPeriodo(ativo, new System.DateTime(2011, 5, 13), new System.DateTime(2011, 5, 13), string.Empty, new List<cMediaDTO>(), false).Single();
@@ -83,7 +83,7 @@ namespace TestProject1
 
 		public void QuandoTiverSplitEntreOsCandlesTemQueRetornarValorMinimoDoPrimeiroCandleAnteriorComValorMinimoMenorDoQueOValorMinimoDaDataPassadaPorParametroConvertidoParaOSplitQueFoiGerado()
 		{
-			var objCarregadorCotacao = new cCarregadorCotacaoDiaria(objConexao);
+			var objCarregadorCotacao = new CarregadorCotacaoDiaria(objConexao);
 
 		    var ativo = new Ativo("CSNA3", "");
 			var objCotacao = objCarregadorCotacao.CarregarPorPeriodo(ativo, new DateTime(2010, 3, 26), new DateTime(2010, 3, 26), string.Empty, new List<cMediaDTO>(), false).Single();
@@ -102,7 +102,7 @@ namespace TestProject1
 
 		public void QuandoTiverMaisDeUmSplitNoMesmoDiaEntreOsCandlesTemQueRetornarValorMinimoDoPrimeiroCandleAnteriorComValorMinimoMenorDoQueOValorMinimoDaDataPassadaPorParametroConvertidoParaOSplitQueFoiGerado()
 		{
-			var objCarregadorCotacao = new cCarregadorCotacaoDiaria(objConexao);
+			var objCarregadorCotacao = new CarregadorCotacaoDiaria(objConexao);
 
 		    var ativo = new Ativo("ETER3", "");
 		    var objCotacao = objCarregadorCotacao.CarregarPorPeriodo(ativo, new DateTime(2011, 5, 10), new DateTime(2011, 5, 10), string.Empty, new List<cMediaDTO>(), false).Single();

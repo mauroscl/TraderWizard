@@ -28,7 +28,7 @@ namespace prmCotacao
 		/// </summary>
 		/// <remarks></remarks>
 
-		private readonly cConexao objConexao;
+		private readonly Conexao objConexao;
 		/// <summary>
 		/// contém o objeto que faz downloads na internet.
 		/// </summary>
@@ -47,12 +47,17 @@ namespace prmCotacao
 		/// por parâmetro</param>
 		/// <remarks></remarks>
 
-		public ServicoDeCotacao(cConexao pobjConexao)
+		public ServicoDeCotacao(Conexao pobjConexao)
 		{
 			objConexao = pobjConexao;
 			objWeb = new cWeb(pobjConexao);
 
 		}
+
+	    public ServicoDeCotacao()
+	    {
+	        
+	    }
 
 		/// <summary>
 		/// Atualiza as cotações em todas as datas em que há pregão em um determinado período.
@@ -842,7 +847,7 @@ namespace prmCotacao
 		/// <param name="pobjConexao"></param>
 		/// <returns></returns>
 		/// <remarks></remarks>
-		public bool CotacaoConsultar(string pstrCodigo, DateTime pdtmData, string pstrTabela, ref decimal pdecValorFechamentoRet, ref decimal pdecValorAberturaRet, cConexao pobjConexao = null)
+		public bool CotacaoConsultar(string pstrCodigo, DateTime pdtmData, string pstrTabela, ref decimal pdecValorFechamentoRet, ref decimal pdecValorAberturaRet, Conexao pobjConexao = null)
 		{
 
 		    cRS objRS = pobjConexao == null ? new cRS(objConexao) : new cRS(pobjConexao);
@@ -971,7 +976,7 @@ namespace prmCotacao
 		/// </param>
 		/// <returns></returns>
 		/// <remarks></remarks>
-		private DateTime AtivoCotacaoAnteriorDataConsultar(string pstrCodigo, DateTime pdtmDataBase, string pstrTabela, cConexao pobjConexao = null)
+		private DateTime AtivoCotacaoAnteriorDataConsultar(string pstrCodigo, DateTime pdtmDataBase, string pstrTabela, Conexao pobjConexao = null)
 		{
 			DateTime functionReturnValue;
 
@@ -1071,7 +1076,7 @@ namespace prmCotacao
 		/// </param>
 		/// <returns></returns>
 		/// <remarks></remarks>
-		public DateTime CotacaoAnteriorDataConsultar(DateTime pdtmDataBase, string pstrTabela, cConexao pobjConexao = null)
+		public DateTime CotacaoAnteriorDataConsultar(DateTime pdtmDataBase, string pstrTabela, Conexao pobjConexao = null)
 		{
 		    cRS objRsData = pobjConexao == null ? new cRS(objConexao) : new cRS(pobjConexao);
 
@@ -1127,7 +1132,7 @@ namespace prmCotacao
 
 			//Dim blnSplitExistir As Boolean
 
-			cConexao objConnAux = new cConexao();
+			Conexao objConnAux = new Conexao();
 
 
 		    decimal decOscilacao = default(decimal);
@@ -1349,7 +1354,7 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		private bool OscilacaoUnitCalcularApenasSplit(string pstrCodigo, DateTime pdtmDataInicial)
 		{
-		    cConexao objConnAux = new cConexao();
+		    Conexao objConnAux = new Conexao();
 
 			cCommand objCommand = new cCommand(objConnAux);
 
@@ -1440,7 +1445,7 @@ namespace prmCotacao
 		/// FALSE - O número de cotações é diferente do número esperado.
 		/// </returns>
 		/// <remarks></remarks>
-		private bool IntervaloNumPeriodosVerificar(string pstrCodigo, DateTime pdtmDataInicial, DateTime pdtmDataFinal, int pintNumPeriodos, string pstrTabela, int pintNumPeriodosTabelaDados = -1, cConexao pobjConexao = null)
+		private bool IntervaloNumPeriodosVerificar(string pstrCodigo, DateTime pdtmDataInicial, DateTime pdtmDataFinal, int pintNumPeriodos, string pstrTabela, int pintNumPeriodosTabelaDados = -1, Conexao pobjConexao = null)
 		{
 		    cRS objRs = pobjConexao == null ? new cRS(objConexao) : new cRS(pobjConexao);
 
@@ -1488,7 +1493,7 @@ namespace prmCotacao
 		/// para calcular a média.
 		/// </returns>
 		/// <remarks></remarks>
-		private bool NumPeriodosDataInicialCalcular(string pstrCodigo, int pintNumPeriodos, bool pblnPrimeiraDataConsiderar, ref DateTime pdtmDataInicialRet, ref DateTime pdtmDataFinalRet, string pstrTabela, int pintNumPeriodosTabelaDados = -1, cConexao pobjConexao = null)
+		private bool NumPeriodosDataInicialCalcular(string pstrCodigo, int pintNumPeriodos, bool pblnPrimeiraDataConsiderar, ref DateTime pdtmDataInicialRet, ref DateTime pdtmDataFinalRet, string pstrTabela, int pintNumPeriodosTabelaDados = -1, Conexao pobjConexao = null)
 		{
 		    string strQuery;
 
@@ -1585,7 +1590,7 @@ namespace prmCotacao
 		}
 
 		public decimal IFRCalcular(string pstrCodigo, DateTime pdtmDataInicial, DateTime pdtmDataFinal, int pintNumPeriodos, string pstrTabela, 
-            out double pdblMediaAltaAnteriorRet, out double pdblMediaBaixaAnteriorRet, cConexao pobjConexao = null)
+            out double pdblMediaAltaAnteriorRet, out double pdblMediaBaixaAnteriorRet, Conexao pobjConexao = null)
 		{
 		    cRS objRS = pobjConexao == null ? new cRS(objConexao) : new cRS(pobjConexao);
 
@@ -1785,7 +1790,7 @@ namespace prmCotacao
 	    /// <remarks></remarks>
 	    public cEnum.enumRetorno IFRRetroativoUnitCalcular(string pstrCodigo, DateTime pdtmDataBase, int pintNumPeriodos, string pstrTabela, DateTime pdtmCotacaoAnteriorData)
 		{
-	        cConexao objConnAux = new cConexao();
+	        Conexao objConnAux = new Conexao();
 
 			cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(objConnAux);
 
@@ -2258,7 +2263,7 @@ namespace prmCotacao
 		/// Retorna a média calculada.
 		/// </returns>
 		/// <remarks></remarks>
-		private double MMAritmeticaCalcular(string pstrCodigo, DateTime pdtmDataInicial, DateTime pdtmDataFinal, int pintNumPeriodos, string pstrTabela, string pstrDado, cConexao pobjConexao = null)
+		private double MMAritmeticaCalcular(string pstrCodigo, DateTime pdtmDataInicial, DateTime pdtmDataFinal, int pintNumPeriodos, string pstrTabela, string pstrDado, Conexao pobjConexao = null)
 		{
 			double functionReturnValue;
 
@@ -2433,7 +2438,7 @@ namespace prmCotacao
 	    /// <param name="pobjConexao"></param>
 	    /// <returns></returns>
 	    /// <remarks></remarks>
-	    private void MMAtualizar(string pstrCodigo, DateTime pdtmData, int pintNumPeriodos, string pstrTabela, double pdblMedia, string pstrMediaTipo, cConexao pobjConexao = null)
+	    private void MMAtualizar(string pstrCodigo, DateTime pdtmData, int pintNumPeriodos, string pstrTabela, double pdblMedia, string pstrMediaTipo, Conexao pobjConexao = null)
 		{
 		    cCommand objCommand = pobjConexao == null ? new cCommand(objConexao) : new cCommand(pobjConexao);
 
@@ -2459,7 +2464,7 @@ namespace prmCotacao
 	    /// <param name="pobjConexao"></param>
 	    /// <returns></returns>
 	    /// <remarks></remarks>
-	    private void IFRAtualizar(string pstrCodigo, DateTime pdtmData, int pintPeriodo, string pstrTabela, double pdblIFR, double pdblMediaAlta, double pdblMediaBaixa, cConexao pobjConexao = null)
+	    private void IFRAtualizar(string pstrCodigo, DateTime pdtmData, int pintPeriodo, string pstrTabela, double pdblIFR, double pdblMediaAlta, double pdblMediaBaixa, Conexao pobjConexao = null)
 		{
 	        cCommand objCommand = pobjConexao == null ? new cCommand(objConexao) : new cCommand(pobjConexao);
 
@@ -2484,15 +2489,9 @@ namespace prmCotacao
 		/// Cotacao
 		/// Cotacao_Semanal
 		/// </param>
-		/// <param name="pstrArmazenamentoLocal">
 		/// DATABASE = SALVA OS VALORES CALCULADOS NO DATABASE
 		/// MEMORIA = SALVA OS VALORES CALCULADOS EM UMA ESTRUTURA DE MEMÓRIA
 		/// </param>
-		/// <param name="parrMediaRet">
-		/// Quando o local de armazenamento for a memória retorna um array com uma estrutura contendo a data e a média.
-		/// </param>
-		/// <param name="pdblValorMaximoRet">Valor máximo da média móvel no período. Considera apenas as médias maiores do que zero</param>
-		/// <param name="pdblValorMinimoRet">Valor mínimo da média móvel no período. Considera apenas as médias maiores do que zero</param>
 		/// <param name="pdtmCotacaoAnteriorData">Data da cotação anterior. Só é passado um valor válido para este parâmetro
 		///  quando o parâmetro pdtmDataBase não é uma DATAINVALIDA. Este parâmetro é utilizado para otimizar o código,
 		/// já que a função CotacaoAnteriorDataConsultar pode ser utilizada várias vezes se a função de cálculo de média 
@@ -2504,10 +2503,10 @@ namespace prmCotacao
 		/// RetornoErro3 = Não existe o número de cotações suficientes para fazer o cálculo.
 		/// </returns>
 		/// <remarks></remarks>
-		public cEnum.enumRetorno MediaMovelMExponencialRetroativaUnitCalcular(string pstrCodigo, DateTime pdtmDataBase, int pintNumPeriodos, string pstrTabela, string pstrArmazenamentoLocal
-            , double[] parrMediaRet, ref double pdblValorMinimoRet , ref double pdblValorMaximoRet, DateTime pdtmCotacaoAnteriorData)
+		public cEnum.enumRetorno MediaMovelMExponencialRetroativaUnitCalcular(string pstrCodigo, DateTime pdtmDataBase, int pintNumPeriodos, string pstrTabela
+            , DateTime pdtmCotacaoAnteriorData)
 		{
-			cConexao objConnAux = new cConexao();
+			Conexao objConnAux = new Conexao();
 
 			cCommand objCommand = new cCommand(objConnAux);
 
@@ -2609,32 +2608,6 @@ namespace prmCotacao
 
 
 			if (pdtmDataBase != Constantes.DataInvalida) {
-
-				if (pstrArmazenamentoLocal == "MEMORIA") {
-					//SE É PARA RETORNAR UM ARRAY COM OS RESULTADOS CALCULADOS, CALCULA O NÚMERO DE REGISTROS 
-					//QUE SERÃO INSERIDOS PARA DIMENSIONAR O ARRAY
-					int intNumRegistros = NumCotacoesCalcular(pstrCodigo, pdtmDataBase, pstrTabela, objConnAux);
-
-					if (dblMmExpAnterior > 0) {
-						intNumRegistros = intNumRegistros + 1;
-					}
-
-					//redimensiona o array
-					Array.Resize(ref parrMediaRet, intNumRegistros);
-
-
-					if (dblMmExpAnterior > 0) {
-						//se teve que calcular um período adiciona na collection o primeiro dia calculado, que foi calculado a 
-						//partir de uma média móvel simples.
-
-						parrMediaRet[intArrayIndice] = dblMmExpAnterior;
-
-						intArrayIndice = intArrayIndice + 1;
-
-					}
-
-				}
-
 
 				if (!blnPeriodoCalcular) {
 					//EXCLUI OS DADOS A PARTIR DA DATA BASE DO CÁLCULO, POIS ESTES DADOS SERÃO RECALCULADOS.
@@ -2752,20 +2725,7 @@ namespace prmCotacao
 					//calcula a média 
 					double dblMediaMovelMExponencial = MMExponencialCalcular(cotacaoFechamentoDto.ValorDeFechamento, pintNumPeriodos, (decimal) dblMmExpAnterior);
 
-					// = "DATABASE" Then
-					if (pstrArmazenamentoLocal == "DATABASE") {
-
-						//atualiza na tabela a média.
-						MMAtualizar(pstrCodigo, cotacaoFechamentoDto.DataInicial, pintNumPeriodos, strTabelaMedia, dblMediaMovelMExponencial, "MME", objConnAux);
-
-
-					} else if (pstrArmazenamentoLocal == "MEMORIA") {
-
-						parrMediaRet[intArrayIndice] = dblMediaMovelMExponencial;
-
-						intArrayIndice = intArrayIndice + 1;
-
-					}
+                    MMAtualizar(pstrCodigo, cotacaoFechamentoDto.DataInicial, pintNumPeriodos, strTabelaMedia, dblMediaMovelMExponencial, "MME", objConnAux);
 
 					//atribui a média calculada como média anterior para a próxima iteração;
 					dblMmExpAnterior = dblMediaMovelMExponencial;
@@ -2781,32 +2741,27 @@ namespace prmCotacao
 
 		}
 
-		/// <summary>
-		/// Calcula a médida móvel exponencial de todos os papéis.
-		/// </summary>
-		/// <param name="pdtmDataInicial">DAta inicial para fazer o cálculo. 
-		/// Se não for passsada uma data inicial calcula desde a primeira cotação</param>
-		/// <param name="pdblValorMaximoRet">Valor máximo da média móvel no período. Considera apenas as médias maiores do que zero. 
-		/// Quando o cálculo for executado para mais de um ativo, retorna os valores do último ativo calculado.</param>
-		/// <param name="pdblValorMinimoRet">Valor mínimo da média móvel no período. Considera apenas as médias maiores do que zero. 
-		/// Quando o cálculo for executado para mais de um ativo, retorna os valores do último ativo calculado.</param>
-		///<param name="pstrPeriodoDuracao">
-		/// Período utilizado no cálculo: "DIARIO" ou "SEMANAL"
-		/// </param>
-		/// <param name="plstMedias">lista contendo as médias que devem ser calculadas</param>
-		/// <param name="pstrArmazenamentoLocal">
-		/// * DATABASE = SALVA OS VALORES CALCULADOS NO DATABASE
-		/// * MEMORIA = SALVA OS VALORES CALCULADOS EM UMA ESTRUTURA DE MEMÓRIA
-		/// </param>
-		/// <param name="pstrAtivos">
-		/// Código dos ativos separados pelo caracter "#"    
-		/// </param>    
-		/// <returns>
-		/// TRUE - A MÉDIA MÓVEL EXPONENCIAL FOI CALCULADA PARA TODOS OS ATIVOS SEM NENHUM ERRO.
-		/// FALSE - OCORREU ERRO NA EXECUÇÃO DA MÉDIA MÓVEL PARA PELO MENOS UM DOS ATIVOS.
-		/// </returns>
-		/// <remarks></remarks>
-		public bool MediaMovelGeralCalcular(string pstrPeriodoDuracao, string pstrArmazenamentoLocal, List<cMediaDTO> plstMedias, DateTime pdtmDataInicial, string pstrAtivos, double[] parrMediaRet, ref double pdblValorMinimoRet, ref double pdblValorMaximoRet)
+	    ///  <summary>
+	    ///  Calcula a médida móvel exponencial de todos os papéis.
+	    ///  </summary>
+	    ///  <param name="pdtmDataInicial">DAta inicial para fazer o cálculo. 
+	    ///  Se não for passsada uma data inicial calcula desde a primeira cotação</param>
+	    /// <param name="pstrPeriodoDuracao">
+	    ///  Período utilizado no cálculo: "DIARIO" ou "SEMANAL"
+	    ///  </param>
+	    ///  <param name="plstMedias">lista contendo as médias que devem ser calculadas</param>
+	    ///  * DATABASE = SALVA OS VALORES CALCULADOS NO DATABASE
+	    ///  * MEMORIA = SALVA OS VALORES CALCULADOS EM UMA ESTRUTURA DE MEMÓRIA
+	    ///  </param>
+	    ///  <param name="pstrAtivos">
+	    ///  Código dos ativos separados pelo caracter "#"    
+	    ///  </param>    
+	    ///  <returns>
+	    ///  TRUE - A MÉDIA MÓVEL EXPONENCIAL FOI CALCULADA PARA TODOS OS ATIVOS SEM NENHUM ERRO.
+	    ///  FALSE - OCORREU ERRO NA EXECUÇÃO DA MÉDIA MÓVEL PARA PELO MENOS UM DOS ATIVOS.
+	    ///  </returns>
+	    ///  <remarks></remarks>
+	    public bool MediaMovelGeralCalcular(string pstrPeriodoDuracao, List<cMediaDTO> plstMedias, DateTime pdtmDataInicial, string pstrAtivos)
 		{
 			bool functionReturnValue = false;
 
@@ -2940,7 +2895,7 @@ namespace prmCotacao
 				    //If objStructMedia.strTipo = "E" Then
 
 				    cEnum.enumRetorno intRetorno = objMediaDTO.Tipo == "E" ? 
-				        MediaMovelMExponencialRetroativaUnitCalcular(cotacaoDataDto.Codigo, dtmDataInicialAux, objMediaDTO.NumPeriodos, strTabela, pstrArmazenamentoLocal, parrMediaRet, ref pdblValorMinimoRet, ref pdblValorMaximoRet, dtmCotacaoAnteriorData) :
+				        MediaMovelMExponencialRetroativaUnitCalcular(cotacaoDataDto.Codigo, dtmDataInicialAux, objMediaDTO.NumPeriodos, strTabela, dtmCotacaoAnteriorData) :
                         MediaMovelAritmeticaRetroativoUnitCalcular(cotacaoDataDto.Codigo, objMediaDTO.Dado, pstrPeriodoDuracao, objMediaDTO.NumPeriodos, dtmDataInicialAux);
 
 
@@ -3021,7 +2976,7 @@ namespace prmCotacao
 	    /// <param name="pobjConexao"></param>
 	    /// <returns>a data da segunda-feira da primeira semana em que existe uma cotação completa</returns>
 	    /// <remarks></remarks>
-	    private DateTime PrimeiraSemanaDataCalcular(string pstrCodigo, cConexao pobjConexao = null)
+	    private DateTime PrimeiraSemanaDataCalcular(string pstrCodigo, Conexao pobjConexao = null)
 		{
 		    cRS objRs = pobjConexao == null ? new cRS(objConexao) : new cRS(pobjConexao);
 
@@ -3179,7 +3134,7 @@ namespace prmCotacao
 		}
 
 
-		private void CotacaoSemanalDadosGerar(string pstrCodigo, DateTime pdtmDataSegundaFeira, DateTime pdtmDataSextaFeira, string pstrOperacaoBD, cConexao pobjConnAux, ref decimal pdecCotacaoAnteriorRet)
+		private void CotacaoSemanalDadosGerar(string pstrCodigo, DateTime pdtmDataSegundaFeira, DateTime pdtmDataSextaFeira, string pstrOperacaoBD, Conexao pobjConnAux, ref decimal pdecCotacaoAnteriorRet)
 		{
 			cCommand objCommand = new cCommand(pobjConnAux);
 			cRS objRS = new cRS(pobjConnAux);
@@ -3335,7 +3290,7 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		private bool CotacaoSemanalUnitRetroativoCalcular(string pstrCodigo, DateTime pdtmDataBase)
 		{
-		    cConexao objConnAux = new cConexao();
+		    Conexao objConnAux = new Conexao();
 
 			cCommand objCommand = new cCommand(objConnAux);
 			cRS objRS = new cRS(objConnAux);
@@ -3424,7 +3379,7 @@ namespace prmCotacao
 		private bool CotacaoSemanalUnitRetroativoCalcularSplit(string pstrCodigo, DateTime pdtmDataBase)
 		{
 
-			cConexao objConnAux = new cConexao();
+			Conexao objConnAux = new Conexao();
 
 			cCommand objCommand = new cCommand(objConnAux);
 			cRSList objRSSplit = null;
@@ -3649,9 +3604,7 @@ namespace prmCotacao
 
 			if (pblnMMExpCalcular || pblnVolumeMedioCalcular || pblnIFRMedioCalcular)
 			{
-			    double pdblValorMaximoRet = 0.0;
-			    double pdblValorMinimoRet = 0.0;
-			    blnMMExpOK = MediaMovelGeralCalcular("DIARIO", "DATABASE", lstMediasSelecionadas, pdtmDataBase, pstrAtivos,null, ref pdblValorMinimoRet, ref pdblValorMaximoRet);
+			    blnMMExpOK = MediaMovelGeralCalcular("DIARIO", lstMediasSelecionadas, pdtmDataBase, pstrAtivos);
 
 			}
 
@@ -3766,9 +3719,7 @@ namespace prmCotacao
 
 				if (pblnMMExpCalcular || pblnVolumeMedioCalcular || pblnIFRMedioCalcular)
 				{
-				    double pdblValorMaximoRet = 0.0;
-				    double pdblValorMinimoRet = 0.0;
-				    if (!MediaMovelGeralCalcular("SEMANAL", "DATABASE", lstMediasSelecionadas, pdtmDataBase, pstrAtivos,null, ref pdblValorMinimoRet, ref pdblValorMaximoRet)) {
+				    if (!MediaMovelGeralCalcular("SEMANAL", lstMediasSelecionadas, pdtmDataBase, pstrAtivos)) {
 						blnOK = false;
 
 					}
@@ -3839,7 +3790,7 @@ namespace prmCotacao
 		/// <param name="pobjConexaoAux">conexão auxiliar de banco de dados, caso não deva utilizar a conexão principal</param>
 		/// <returns>O número de cotações existentes no período</returns>
 		/// <remarks></remarks>
-		private int NumCotacoesCalcular(string pstrCodigo, DateTime pdtmDataInicial, string pstrTabela, cConexao pobjConexaoAux = null)
+		private int NumCotacoesCalcular(string pstrCodigo, DateTime pdtmDataInicial, string pstrTabela, Conexao pobjConexaoAux = null)
 		{
 		    cRS objRs = pobjConexaoAux == null ? new cRS(objConexao) : new cRS(pobjConexaoAux);
 
@@ -3908,9 +3859,7 @@ namespace prmCotacao
 						//colMediaEscolhaAux.Add(objstructMediaEscolha)
 						lstMediasSelecionadasAux.Add(objMediaDTO);
 
-					    double pdblValorMinimoRet = 0.0;
-					    double pdblValorMaximoRet = 0.0;
-					    blnRetorno = MediaMovelGeralCalcular(pstrPeriodoDuracao, "DATABASE", lstMediasSelecionadasAux, Convert.ToDateTime(objRS.Field("Data")), "#" + pstrCodigo + "#",null,ref pdblValorMinimoRet,ref pdblValorMaximoRet);
+					    blnRetorno = MediaMovelGeralCalcular(pstrPeriodoDuracao, lstMediasSelecionadasAux, Convert.ToDateTime(objRS.Field("Data")), "#" + pstrCodigo + "#");
 
 					}
 
@@ -3925,9 +3874,7 @@ namespace prmCotacao
 					lstMediasSelecionadasAux.Add(objMediaDTO);
 
 					//se não tem média calculada, tem que calcular para todo o período calculado
-				    double pdblValorMaximoRet = 0.0;
-				    double pdblValorMinimoRet = 0.0;
-				    blnRetorno = MediaMovelGeralCalcular(pstrPeriodoDuracao, "DATABASE", lstMediasSelecionadasAux,Constantes.DataInvalida , "#" + pstrCodigo + "#", null, ref pdblValorMinimoRet, ref pdblValorMaximoRet);
+				    blnRetorno = MediaMovelGeralCalcular(pstrPeriodoDuracao, lstMediasSelecionadasAux,Constantes.DataInvalida , "#" + pstrCodigo + "#");
 
 				}
 
@@ -3956,7 +3903,7 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		private cEnum.enumRetorno MediaMovelAritmeticaRetroativoUnitCalcular(string pstrCodigo, string pstrDado, string pstrPeriodoDuracao, int pintNumPeriodos, DateTime pdtmDataFinal)
 		{
-		    cConexao objConnAux = new cConexao();
+		    Conexao objConnAux = new Conexao();
 
 			cCommand objCommand = new cCommand(objConnAux);
 
@@ -4548,7 +4495,7 @@ namespace prmCotacao
 		private bool CotacaoAnteriorInicializar(string pstrPeriodo, DateTime pdtmDataInicial, string pstrAtivos = "")
 		{
 
-			cConexao objConexaoAux = new cConexao();
+			Conexao objConexaoAux = new Conexao();
 
 			cCommand objCommand = new cCommand(objConexaoAux);
 
@@ -4786,7 +4733,7 @@ namespace prmCotacao
 		/// <param name="pobjConexao"></param>
 		/// <returns></returns>
 		/// <remarks></remarks>
-		public long AtivoSequencialMaximoBuscar(string pstrCodigo, string pstrTabela, cConexao pobjConexao = null)
+		public long AtivoSequencialMaximoBuscar(string pstrCodigo, string pstrTabela, Conexao pobjConexao = null)
 		{
 
 			cRS objRs = pobjConexao == null ? new cRS(objConexao) : new cRS(pobjConexao);
@@ -4814,7 +4761,7 @@ namespace prmCotacao
 		/// a mesma conexão</param>
 		/// <returns></returns>
 		/// <remarks></remarks>
-		private long SequencialCalcular(string pstrCodigo, string pstrTabela, cConexao pobjConexao)
+		private long SequencialCalcular(string pstrCodigo, string pstrTabela, Conexao pobjConexao)
 		{
 
 			//incrementa 1 no último sequencial utiliazado.

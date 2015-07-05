@@ -13,8 +13,8 @@ namespace prjServicoNegocio
 	{
 
 
-		private readonly cConexao objConexao;
-		public cVerificaSeDeveGerarEntrada(cConexao pobjConexao)
+		private readonly Conexao objConexao;
+		public cVerificaSeDeveGerarEntrada(Conexao pobjConexao)
 		{
 			objConexao = pobjConexao;
 		}

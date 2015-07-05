@@ -1,3 +1,4 @@
+using DataBase.Carregadores;
 using DataBase.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -10,14 +11,14 @@ using TraderWizard.Enumeracoes;
 namespace prjModelo.Carregadores
 {
 
-	public class cCarregadorCotacaoDiaria : cCarregadorGenerico, ICarregadorCotacao
+	public class CarregadorCotacaoDiaria : CarregadorGenerico, ICarregadorCotacao
 	{
 
-		public cCarregadorCotacaoDiaria(cConexao pobjConexao) : base(pobjConexao)
+		public CarregadorCotacaoDiaria(Conexao pobjConexao) : base(pobjConexao)
 		{
 		}
 
-		public cCarregadorCotacaoDiaria() : base()
+		public CarregadorCotacaoDiaria() : base()
 		{
 		}
 

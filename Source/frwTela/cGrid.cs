@@ -12,10 +12,10 @@ namespace frwTela
 
 		private string strTabela;
 
-	    private cConexao objConexao;
+	    private Conexao objConexao;
 	    private string _query;
 
-	    public cGrid(cConexao pobjConexao)
+	    public cGrid(Conexao pobjConexao)
 		{
 			objConexao = pobjConexao;
 		}

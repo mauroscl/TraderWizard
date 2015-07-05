@@ -17,9 +17,9 @@ namespace TraderWizard
 
 		private int intLinhaSelecionada;
 
-		private cConexao objConexao;
+		private Conexao objConexao;
 
-		public frmRelatBackTest(cConexao pobjConexao)
+		public frmRelatBackTest(Conexao pobjConexao)
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();

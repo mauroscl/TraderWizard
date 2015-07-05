@@ -13,9 +13,9 @@ namespace prjServicoNegocio
 	{
 
 
-		private readonly cConexao objConexao;
+		private readonly Conexao objConexao;
 
-		public cCalculadorData(cConexao pobjConexao)
+		public cCalculadorData(Conexao pobjConexao)
 		{
 			objConexao = pobjConexao;
 

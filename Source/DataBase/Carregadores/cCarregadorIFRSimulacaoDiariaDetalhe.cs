@@ -12,10 +12,10 @@ namespace DataBase.Carregadores
 	public class cCarregadorIFRSimulacaoDiariaDetalhe
 	{
 
-		private cConexao Conexao { get; set; }
+		private Conexao Conexao { get; set; }
 		//Private Property objRepIFRSimulacao As IRepIFRSimulacaoFaixa
 
-		public cCarregadorIFRSimulacaoDiariaDetalhe(cConexao pobjConexao)
+		public cCarregadorIFRSimulacaoDiariaDetalhe(Conexao pobjConexao)
 		{
 			Conexao = pobjConexao;
 			//objRepIFRSimulacao = New RepIFRSimulacaoFaixa(pobjConexao)

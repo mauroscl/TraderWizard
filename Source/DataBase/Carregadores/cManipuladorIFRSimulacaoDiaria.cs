@@ -9,14 +9,14 @@ namespace DataBase.Carregadores
 	public class cManipuladorIFRSimulacaoDiaria : cGeradorOperacaoBDPadrao
 	{
 
-		public cManipuladorIFRSimulacaoDiaria(cConexao pobjConexao) : base(pobjConexao)
+		public cManipuladorIFRSimulacaoDiaria(Conexao pobjConexao) : base(pobjConexao)
 		{
 		}
 
 
 		public override void Adicionar(cModelo pobjModelo, string pstrComando)
 		{
-			Operacoes.Add(new cOperacaoBD(pobjModelo, pstrComando));
+			Operacoes.Add(new OperacaoDeBancoDeDados(pobjModelo, pstrComando));
 
 			cManipuladorIFRSimulacaoDiariaDetalhe objManipuladorDetalhe = new cManipuladorIFRSimulacaoDiariaDetalhe(Conexao);
 

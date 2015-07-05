@@ -10,7 +10,7 @@ namespace DataBase
 
 		//objeto da conexao
 
-		private cConexao objConexao;
+		private Conexao objConexao;
 		//objeto da transação
 		//Private objTransacao As OracleTransaction
 
@@ -71,7 +71,7 @@ namespace DataBase
 		}
 
 		//propriedade muito importante. Retorna a conexao
-		public cConexao Conexao {
+		public Conexao Conexao {
 			get { return this.objConexao; }
 		}
 
@@ -108,7 +108,7 @@ namespace DataBase
 		{
 			//Me.ConnectionString = "user id=mscl;data source=ORCL;password=mscl"
 
-			this.objConexao = new cConexao();
+			this.objConexao = new Conexao();
 
 			//inicialização das propriedades
 			this.strUltimoComando = "";
@@ -121,7 +121,7 @@ namespace DataBase
 
 		}
 
-		public cCommand(cConexao pobjConexao)
+		public cCommand(Conexao pobjConexao)
 		{
 			this.objConexao = pobjConexao;
 			this.strUltimoComando = "";

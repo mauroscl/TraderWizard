@@ -10,7 +10,7 @@ namespace TraderWizard
 	public static class mdlGeral
 	{
 
-		public static bool ParametroConsultar(cConexao pobjConexao, string pstrParametro, out string pstrValorRet)
+		public static bool ParametroConsultar(Conexao pobjConexao, string pstrParametro, out string pstrValorRet)
 		{
 
 			cDadosDB objDadosDB = new cDadosDB(pobjConexao, "Configuracao");

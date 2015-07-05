@@ -17,12 +17,12 @@ namespace prjServicoNegocio
 	public class SimuladorDeTrade
 	{
 
-		private readonly cConexao objConexao;
+		private readonly Conexao objConexao;
 		private readonly Setup objSetup;
 		private readonly Ativo objAtivo;
 
 		private readonly IList<cIFRSobrevendido> lstIFRSobrevendido;
-		public SimuladorDeTrade(cConexao pobjConexao, Setup pobjSetup, Ativo pobjAtivo, IList<cIFRSobrevendido> plstIFRSobrevendido)
+		public SimuladorDeTrade(Conexao pobjConexao, Setup pobjSetup, Ativo pobjAtivo, IList<cIFRSobrevendido> plstIFRSobrevendido)
 		{
 			objConexao = pobjConexao;
 

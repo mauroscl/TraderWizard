@@ -66,12 +66,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Carregadores\CarregadorDeAtivo.cs" />
     <Compile Include="Carregadores\cCarregadorCarteira.cs" />
     <Compile Include="Carregadores\cCarregadorClassificacaoMedia.cs" />
     <Compile Include="Carregadores\cCarregadorCotacaoDiaria.cs" />
     <Compile Include="Carregadores\cCarregadorCriterioClassificacaoMedia.cs" />
     <Compile Include="Carregadores\cCarregadorDeResumoDoIFRDiario.cs" />
-    <Compile Include="Carregadores\cCarregadorGenerico.cs" />
+    <Compile Include="Carregadores\CarregadorGenerico.cs" />
     <Compile Include="Carregadores\cCarregadorIFRDiario.cs" />
     <Compile Include="Carregadores\cCarregadorIFRDiarioFaixa.cs" />
     <Compile Include="Carregadores\cCarregadorIFRSimulacaoDiariaDetalhe.cs" />
@@ -83,12 +84,12 @@
     <Compile Include="Carregadores\cGeradorOperacaoBDPadrao.cs" />
     <Compile Include="Carregadores\cManipuladorIFRSimulacaoDiaria.cs" />
     <Compile Include="Carregadores\cManipuladorIFRSimulacaoDiariaDetalhe.cs" />
-    <Compile Include="Carregadores\cOperacaoBD.cs" />
+    <Compile Include="Carregadores\OperacaoDeBancoDeDados.cs" />
     <Compile Include="Carregadores\cRemovedorSimulacaoIFRDiario.cs" />
     <Compile Include="Carregadores\VerificaSePossuiFaixaDoIFR.cs" />
     <Compile Include="cCampoDB.cs" />
     <Compile Include="cCommand.cs" />
-    <Compile Include="cConexao.cs" />
+    <Compile Include="Conexao.cs" />
     <Compile Include="cDadosDB.cs" />
     <Compile Include="cGeradorQuery.cs" />
     <Compile Include="cRS.cs" />
@@ -101,6 +102,7 @@
     </Compile>
     <Compile Include="FuncoesBd.cs" />
     <Compile Include="Interfaces\ICarregadorCotacao.cs" />
+    <Compile Include="Interfaces\ICarregadorDeAtivo.cs" />
     <Compile Include="Interfaces\ICarregadorIFR.cs" />
     <Compile Include="Interfaces\ICarregadorMedia.cs" />
     <Compile Include="Mapeamentos\AtivoMap.cs" />

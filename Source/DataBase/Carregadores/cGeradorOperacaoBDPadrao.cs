@@ -8,20 +8,20 @@ namespace DataBase.Carregadores
 	public abstract class cGeradorOperacaoBDPadrao
 	{
 
-		public cConexao Conexao { get; set; }
-		public IList<cOperacaoBD> Operacoes { get; set; }
+		public Conexao Conexao { get; set; }
+		public IList<OperacaoDeBancoDeDados> Operacoes { get; set; }
 		protected IList<cGeradorOperacaoBDPadrao> GeradoresFilhos { get; set; }
 
-		public cGeradorOperacaoBDPadrao(cConexao pobjConexao)
+		public cGeradorOperacaoBDPadrao(Conexao pobjConexao)
 		{
 			Conexao = pobjConexao;
-			Operacoes = new List<cOperacaoBD>();
+			Operacoes = new List<OperacaoDeBancoDeDados>();
 			GeradoresFilhos = new List<cGeradorOperacaoBDPadrao>();
 		}
 
 		public virtual void Adicionar(cModelo pobjModelo, string pstrComando)
 		{
-			Operacoes.Add(new cOperacaoBD(pobjModelo, pstrComando));
+			Operacoes.Add(new OperacaoDeBancoDeDados(pobjModelo, pstrComando));
 		}
 
 		public void AdicionarGeradorFilho(cGeradorOperacaoBDPadrao pobjItem)
@@ -40,7 +40,7 @@ namespace DataBase.Carregadores
 
 			cCommand objCommand = new cCommand(this.Conexao);
 
-			foreach (cOperacaoBD item in this.Operacoes) {
+			foreach (OperacaoDeBancoDeDados item in this.Operacoes) {
 				if (item.Comando.ToUpper() == "INSERT") {
 					strComando = GeraInsert(item.Modelo);
 				} else if (item.Comando.ToUpper() == "UPDATE") {

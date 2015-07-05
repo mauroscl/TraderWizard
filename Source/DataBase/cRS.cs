@@ -15,7 +15,7 @@ namespace DataBase
 
 	    public bool QueryStatus { get; private set; }
 
-	    public cConexao Conexao { get; private set; }
+	    public Conexao Conexao { get; private set; }
 
 	    public OleDbDataReader GetDataReader { get; private set; }
 
@@ -26,14 +26,14 @@ namespace DataBase
 
 		public cRS()
 		{
-			this.Conexao = new cConexao();
+			this.Conexao = new Conexao();
 
 			ValorPadraoInicializar();
 
 		}
 
 
-		public cRS(cConexao pobjConexao)
+		public cRS(Conexao pobjConexao)
 		{
 			this.Conexao = pobjConexao;
 

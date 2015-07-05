@@ -15,9 +15,9 @@ namespace TraderWizard
 	{
 
 
-		private readonly cConexao objConexao;
+		private readonly Conexao objConexao;
 
-		public frmIFRSimulacaoDiaria(cConexao pobjConexao)
+		public frmIFRSimulacaoDiaria(Conexao pobjConexao)
 		{
 			Load += frmIFRSimulacaoDiaria_Load;
 			// This call is required by the Windows Form Designer.

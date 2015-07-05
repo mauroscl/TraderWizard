@@ -385,9 +385,9 @@ namespace TraderWizard
             this.mniProventoAtualizar,
             this.mniProventoCadastrar,
             this.mniIFRCalcular,
+            this.CalcularMédiaMóvelExponencialToolStripMenuItem,
             this.mniIFRDiarioSimular,
             this.mnuSequencialCalcular,
-            this.CalcularMédiaMóvelExponencialToolStripMenuItem,
             this.AtualizarCotaçõesSemanaisToolStripMenuItem,
             this.mnuOutrasOperacoes,
             this.mnuitemCotacaoExcluir});
@@ -447,9 +447,8 @@ namespace TraderWizard
             // CalcularMédiaMóvelExponencialToolStripMenuItem
             // 
             this.CalcularMédiaMóvelExponencialToolStripMenuItem.Name = "CalcularMédiaMóvelExponencialToolStripMenuItem";
-            this.CalcularMédiaMóvelExponencialToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
-            this.CalcularMédiaMóvelExponencialToolStripMenuItem.Text = "Calcular Média Móvel &Exponencial";
-            this.CalcularMédiaMóvelExponencialToolStripMenuItem.Visible = false;
+            this.CalcularMédiaMóvelExponencialToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.CalcularMédiaMóvelExponencialToolStripMenuItem.Text = "Calcular &Média Móvel";
             this.CalcularMédiaMóvelExponencialToolStripMenuItem.Click += new System.EventHandler(this.CalcularMédiaMóvelExponencialToolStripMenuItem_Click);
             // 
             // AtualizarCotaçõesSemanaisToolStripMenuItem

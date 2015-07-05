@@ -9,7 +9,7 @@ namespace TraderWizard
 {
     public partial class frmConfiguracao
     {
-        private readonly cConexao objConexao;
+        private readonly Conexao objConexao;
 
         public frmConfiguracao()
         {
@@ -17,7 +17,7 @@ namespace TraderWizard
             InitializeComponent();
 
             // Add any initialization after the InitializeComponent() call.
-            objConexao = new cConexao();
+            objConexao = new Conexao();
 
             DadosCarregar();
         }

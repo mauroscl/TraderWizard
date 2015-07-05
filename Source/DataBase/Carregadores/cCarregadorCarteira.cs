@@ -1,15 +1,13 @@
 using System;
-using DataBase;
 using prjDominio.Entidades;
-using prjModelo.Entidades;
 
-namespace prjModelo.Carregadores
+namespace DataBase.Carregadores
 {
 
-	public class cCarregadorCarteira : cCarregadorGenerico
+	public class CarregadorCarteira : CarregadorGenerico
 	{
 
-		public cCarregadorCarteira(cConexao pobjConexao) : base(pobjConexao)
+		public CarregadorCarteira(Conexao pobjConexao) : base(pobjConexao)
 		{
 		}
 

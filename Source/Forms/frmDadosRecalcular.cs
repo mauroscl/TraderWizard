@@ -16,9 +16,9 @@ namespace TraderWizard
 	{
 
 
-		private readonly cConexao _conexao;
+		private readonly Conexao _conexao;
 
-		public frmDadosRecalcular(cConexao pobjConexao)
+		public frmDadosRecalcular(Conexao pobjConexao)
 		{
 			Load += frmDadosRecalcular_Load;
 			// This call is required by the Windows Form Designer.

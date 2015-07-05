@@ -12,9 +12,9 @@ namespace TraderWizard
 	{
 
 
-		private cConexao objConexao;
+		private Conexao objConexao;
 
-		public frmCotacaoExcluir(cConexao pobjConexao)
+		public frmCotacaoExcluir(Conexao pobjConexao)
 		{
 			Load += frmCotacaoExcluir_Load;
 			// This call is required by the Windows Form Designer.

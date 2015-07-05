@@ -10,8 +10,8 @@ namespace prjModelo.Carregadores
 	{
 
 
-		private readonly cConexao objConexao;
-		public cCarregadorDeResumoDoIFRDiario(cConexao pobjConexao)
+		private readonly Conexao objConexao;
+		public cCarregadorDeResumoDoIFRDiario(Conexao pobjConexao)
 		{
 			objConexao = pobjConexao;
 		}

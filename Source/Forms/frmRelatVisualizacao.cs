@@ -19,11 +19,11 @@ namespace TraderWizard
 	public partial class frmRelatVisualizacao
 	{
 
-		private readonly cConexao objConexao;
+		private readonly Conexao objConexao;
 
 		private DateTime dtmDataDeGeracaoDoRelatorio;
 
-		public frmRelatVisualizacao(cConexao pobjConexao)
+		public frmRelatVisualizacao(Conexao pobjConexao)
 		{
 			Shown += frmRelatVisualizacao_Shown;
 			Load += frmRelatVisualizacao_Load;

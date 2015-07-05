@@ -13,7 +13,7 @@ namespace TraderWizard
 	{
 
 
-		private readonly cConexao objConexao;
+		private readonly Conexao objConexao;
 
 		private void GridCorAjustar()
 		{
@@ -234,7 +234,7 @@ namespace TraderWizard
 			// Add any initialization after the InitializeComponent() call.
 
 			//inicializa conexão com banco de dados
-			objConexao = new cConexao();
+			objConexao = new Conexao();
 
 		}
 

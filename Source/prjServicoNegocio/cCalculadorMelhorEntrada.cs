@@ -13,9 +13,9 @@ namespace prjServicoNegocio
 	public class cCalculadorMelhorEntrada
 	{
 
-		private readonly cConexao _conexao;
+		private readonly Conexao _conexao;
 	    private readonly ServicoDeCotacaoDeAtivo _servicoDeCotacaoDeAtivo;
-		public cCalculadorMelhorEntrada(cConexao pobjConexao, ServicoDeCotacaoDeAtivo servicoDeCotacaoDeAtivo)
+		public cCalculadorMelhorEntrada(Conexao pobjConexao, ServicoDeCotacaoDeAtivo servicoDeCotacaoDeAtivo)
 		{
 		    _conexao = pobjConexao;
 		    _servicoDeCotacaoDeAtivo = servicoDeCotacaoDeAtivo;
@@ -44,7 +44,7 @@ namespace prjServicoNegocio
 			cIFRSimulacaoDiaria objSimulacaoComMelhorEntradaPorAgrupadorDeTentativas = null;
 
 			//carregar a melhor entrada para o mesmo agrupador de tentativas, caso necessário
-			var objCarregadorDeSimulacoes = new cCarregadorSimulacaoIFRDiario(_conexao);
+			var objCarregadorDeSimulacoes = new CarregadorSimulacaoIFRDiario(_conexao);
 
 			//Só é necessário verificar se já existe outra entrada marcada como melhor entrada se o agrupador de tentativas não foi gerado para esta entrada, 
 			//pois caso tenha sido gerado para essa entrada, esta é a única.

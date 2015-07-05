@@ -14,9 +14,9 @@ namespace prjServicoNegocio
 	public class cCalculadorIFRSimulacaoDiariaDetalhe
 	{
 
-		private readonly cConexao _conexao;
+		private readonly Conexao _conexao;
 	    private readonly ServicoDeCotacaoDeAtivo _servicoDeCotacaoDeAtivo;
-		public cCalculadorIFRSimulacaoDiariaDetalhe(cConexao pobjConexao, ServicoDeCotacaoDeAtivo servicoDeCotacaoDeAtivo)
+		public cCalculadorIFRSimulacaoDiariaDetalhe(Conexao pobjConexao, ServicoDeCotacaoDeAtivo servicoDeCotacaoDeAtivo)
 		{
 		    _conexao = pobjConexao;
 		    _servicoDeCotacaoDeAtivo = servicoDeCotacaoDeAtivo;

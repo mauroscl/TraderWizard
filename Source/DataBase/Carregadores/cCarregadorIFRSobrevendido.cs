@@ -10,8 +10,8 @@ namespace DataBase.Carregadores
 	{
 
 
-		private readonly cConexao objConexao;
-		public cCarregadorIFRSobrevendido(cConexao pobjConexao)
+		private readonly Conexao objConexao;
+		public cCarregadorIFRSobrevendido(Conexao pobjConexao)
 		{
 			objConexao = pobjConexao;
 		}

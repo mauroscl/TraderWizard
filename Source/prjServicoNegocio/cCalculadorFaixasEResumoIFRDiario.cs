@@ -10,12 +10,12 @@ namespace prjServicoNegocio
 	public class cCalculadorFaixasEResumoIFRDiario
 	{
 
-		private readonly cConexao objConexao;
+		private readonly Conexao objConexao;
 		private readonly Ativo objAtivo;
 
 		private readonly Setup objSetup;
 
-		public cCalculadorFaixasEResumoIFRDiario(cConexao pobjConexao, Ativo pobjAtivo, Setup pobjSetup)
+		public cCalculadorFaixasEResumoIFRDiario(Conexao pobjConexao, Ativo pobjAtivo, Setup pobjSetup)
 		{
 			objConexao = pobjConexao;
 			objAtivo = pobjAtivo;

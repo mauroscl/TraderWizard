@@ -7,9 +7,9 @@ namespace DataBase.Carregadores
 	public class cRemovedorSimulacaoIFRDiario
 	{
 
-		public cConexao objConexao { get; set; }
+		public Conexao objConexao { get; set; }
 
-		public cRemovedorSimulacaoIFRDiario(cConexao pobjConexao)
+		public cRemovedorSimulacaoIFRDiario(Conexao pobjConexao)
 		{
 			objConexao = pobjConexao;
 		}

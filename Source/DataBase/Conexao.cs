@@ -8,13 +8,12 @@ using TraderWizard.Enumeracoes;
 namespace DataBase
 {
 
-	public class 
-        cConexao
+	public class Conexao
 	{
 
 	    private readonly cEnum.BancoDeDados _bancoDeDados;
 
-	    public cConexao()
+	    public Conexao()
 	    {
 	        _bancoDeDados = cBuscarConfiguracao.ObterBancoDeDados();
 

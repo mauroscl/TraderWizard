@@ -5,10 +5,10 @@ namespace TesteBase
 	public abstract class Inicializacao
 	{
 
-		public static cConexao objConexao { get; set; }
+		public static Conexao objConexao { get; set; }
 		public static void Inicializa()
 		{
-			objConexao = new cConexao();
+			objConexao = new Conexao();
             SessionManager.ConfigureDataAccess();
 		}
 

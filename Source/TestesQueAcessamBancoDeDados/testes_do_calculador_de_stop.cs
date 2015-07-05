@@ -91,7 +91,7 @@ namespace TestProject1
 		public void QuandoMediaEstiveremDesalinhadasOValorDoStopTemQueFicarAbaixoDoValorMinimoDaUltimaCotacaoSeONovoValorDoStopForMaiorDoQueOValorDoStopAnterior()
 		{
 			var lstMediasDTO = RetornaListaDeMediasUtilizadasNaClassificacao();
-			cCarregadorCotacaoDiaria objCarregadorCotacao = new cCarregadorCotacaoDiaria();
+			CarregadorCotacaoDiaria objCarregadorCotacao = new CarregadorCotacaoDiaria();
 
 			var objCotacao = objCarregadorCotacao.CarregarPorPeriodo(new Ativo("CSNA3", string.Empty), new System.DateTime(2011, 5, 11), new System.DateTime(2011, 5, 11), string.Empty, lstMediasDTO, true);
 

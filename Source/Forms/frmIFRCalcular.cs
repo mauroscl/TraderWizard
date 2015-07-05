@@ -1,30 +1,29 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Forms;
 using DataBase;
-using prjServicoNegocio;
+using DataBase.Carregadores;
+using DataBase.Interfaces;
+using prjDTO;
 using prmCotacao;
 using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;
 
-namespace TraderWizard
+namespace Forms
 {
 
 	public partial class frmIFRCalcular
 	{
 
 
-		private readonly cConexao objConexao;
-
-		public frmIFRCalcular(cConexao pobjConexao)
+		public frmIFRCalcular()
 		{
-			Load += frmIDiarioCalcular_Load;
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 
 			// Add any initialization after the InitializeComponent() call.
-			objConexao = pobjConexao;
 
 		}
 
@@ -47,7 +46,7 @@ namespace TraderWizard
 			}
 
 
-            if (txtPeriodo.Text.IsNumeric())
+            if (!txtPeriodo.Text.IsNumeric())
             {
 
                 MessageBox.Show("Período não preenchido ou inválido.", Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -68,28 +67,56 @@ namespace TraderWizard
 
 			Cursor = Cursors.WaitCursor;
 
-		    string lstAtivos = string.Empty;
 
-		    var objCotacao = new ServicoDeCotacao(objConexao);
+		    var ativosSelecionados = "";
+            ativosSelecionados = lstAtivosEscolhidos.Items.Cast<AtivoSelecao>().Aggregate(ativosSelecionados, (current, ativoSelecionado) => current + ("#" + ativoSelecionado.Codigo));
 
-
-			foreach (object item in lstAtivosEscolhidos.Items) {
-				string strItem = Convert.ToString(item);
-				//strCodigoAtivo = Strings.Trim(Strings.Mid(strItem, 1, Strings.InStr(strItem, "-", CompareMethod.Text) - 1));
-				string strCodigoAtivo = strItem.Substring(0,strItem.IndexOf('-')).Trim();
-
-				lstAtivos += "#" + strCodigoAtivo;
-			}
-
-			lstAtivos += "#";
+            ativosSelecionados += "#";
 
 			IList<int> colPeriodos = new List<int>();
 			colPeriodos.Add(Convert.ToInt32(txtPeriodo.Text));
 
-			bool blnOK = objCotacao.IFRGeralCalcular(colPeriodos, cEnum.Periodicidade.Semanal,Constantes.DataInvalida , lstAtivos);
+		    bool blnOkDiario = true;
+		    bool blnOkSemanal = true;
 
-		    MessageBox.Show(blnOK ? "Operação realizada com sucesso." : "Ocorreram erros ao executar a operação.", Text,
-		        MessageBoxButtons.OK, MessageBoxIcon.Information);
+            var conexao = new Conexao();
+		    try
+		    {
+		        var objCotacao = new ServicoDeCotacao(conexao);
+
+		        if (periodicidadeDiaria.Checked)
+		        {
+		            blnOkDiario = objCotacao.IFRGeralCalcular(colPeriodos, cEnum.Periodicidade.Diario, Constantes.DataInvalida,
+		                ativosSelecionados);
+		        }
+
+		        if (periodicidadeDiaria.Checked)
+		        {
+		            blnOkSemanal = objCotacao.IFRGeralCalcular(colPeriodos, cEnum.Periodicidade.Semanal,
+		                Constantes.DataInvalida, ativosSelecionados);
+		        }
+		    }
+		    catch (Exception exception)
+		    {
+                MessageBox.Show(string.Format("Ocorreram erros ao calcular o IFR. Detalhes: {0}", exception.Message), Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+		    }
+		    finally
+		    {
+		        conexao.FecharConexao();
+		    }
+
+		    if (blnOkDiario && blnOkSemanal)
+		    {
+		        MessageBox.Show("Cálculo do IFR realizado com sucesso.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+		    }
+            else if (!blnOkDiario)
+            {
+                MessageBox.Show("Ocorreram erros ao calcular o IFR diário.", Text, MessageBoxButtons.OK,MessageBoxIcon.Error);
+            }
+            else
+            {
+                MessageBox.Show("Ocorreram erros ao calcular o IFR semanal.", Text, MessageBoxButtons.OK,MessageBoxIcon.Error);
+            }
 
 		    Cursor = Cursors.Default;
 
@@ -114,13 +141,11 @@ namespace TraderWizard
 
 		private void btnRemoverTodos_Click(System.Object sender, System.EventArgs e)
 		{
-			int intI = 0;
-
 			//percorre a lista de ativos 
 
-			for (intI = 0; intI <= lstAtivosEscolhidos.Items.Count - 1; intI++) {
+			for (int i = 0; i <= lstAtivosEscolhidos.Items.Count - 1; i++) {
 				//adiciona o item na lista de ativos não escolhidos
-				lstAtivosNaoEscolhidos.Items.Add(lstAtivosEscolhidos.Items[intI]);
+				lstAtivosNaoEscolhidos.Items.Add(lstAtivosEscolhidos.Items[i]);
 
 			}
 
@@ -171,68 +196,18 @@ namespace TraderWizard
 
 		private void ListAtivosPreencher()
 		{
-			var objCalculadorData = new cCalculadorData(objConexao);
+		    using (ICarregadorDeAtivo carregadorDeAtivo = new CarregadorDeAtivo())
+		    {
+		        
+		        IEnumerable<AtivoSelecao> ativos = carregadorDeAtivo.Carregar();
 
-			DateTime dtmDataUltimaCotacao = objCalculadorData.ObtemDataDaUltimaCotacao();
+		        foreach (var ativoSelecao in ativos)
+		        {
+		            lstAtivosNaoEscolhidos.Items.Add(ativoSelecao);
 
-			var objRelatorio = new cRelatorio(objConexao);
+		        }
 
-            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
-
-			//busca os ativos da tabela ativo
-		    string strSQL = " select Codigo, Codigo & ' - ' & Descricao as Descr " + Environment.NewLine;
-			strSQL += " from Ativo A " + Environment.NewLine;
-			strSQL += " WHERE EXISTS " + Environment.NewLine;
-			strSQL += "(";
-			strSQL += '\t' + " SELECT 1 " + Environment.NewLine;
-			strSQL += '\t' + " FROM Cotacao C " + Environment.NewLine;
-			strSQL += '\t' + " WHERE A.Codigo = C.Codigo " + Environment.NewLine;
-			strSQL += '\t' + " AND C.Data = " + FuncoesBd.CampoFormatar(dtmDataUltimaCotacao) + Environment.NewLine;
-			strSQL += '\t' + " AND C.Sequencial >= 200 " + Environment.NewLine;
-			strSQL += '\t' + " AND " + objRelatorio.FiltroVolumeFinanceiroGerar("C", "Cotacao", 1000000);
-			strSQL += '\t' + " AND " + objRelatorio.FiltroVolumeNegociosGerar("C", "Cotacao", 100);
-
-			strSQL += ")" + Environment.NewLine;
-			strSQL += " AND NOT EXISTS " + Environment.NewLine;
-			strSQL += "(" + Environment.NewLine;
-			strSQL += '\t' + " SELECT 1 " + Environment.NewLine;
-			strSQL += '\t' + " FROM ATIVOS_DESCONSIDERADOS " + Environment.NewLine;
-			strSQL += '\t' + " WHERE A.CODIGO = ATIVOS_DESCONSIDERADOS.CODIGO " + Environment.NewLine;
-			strSQL += ")" + Environment.NewLine;
-
-			strSQL += " AND EXISTS " + Environment.NewLine;
-			strSQL += "(" + Environment.NewLine;
-			strSQL += '\t' + " SELECT 1 " + Environment.NewLine;
-			strSQL += '\t' + " FROM Media_Diaria MVT " + Environment.NewLine;
-			strSQL += '\t' + " WHERE A.Codigo = MVT.Codigo " + Environment.NewLine;
-			strSQL += '\t' + " AND MVT.Data = " + FuncoesBd.CampoFormatar(dtmDataUltimaCotacao) + Environment.NewLine;
-			strSQL += '\t' + " AND MVT.NumPeriodos = 21 " + Environment.NewLine;
-			strSQL += '\t' + " AND MVT.Tipo = " + FuncoesBd.CampoFormatar("VMA");
-			strSQL += '\t' + " AND MVT.Valor >= 100000";
-			//volume maior ou igual a 100.000 (cem mil) titulos negociados
-			strSQL += ")" + Environment.NewLine;
-
-
-			strSQL += " order by Codigo";
-
-			lstAtivosNaoEscolhidos.Items.Clear();
-
-			cRS objRS = new cRS();
-
-			objRS.ExecuteQuery(strSQL);
-
-
-			while (!objRS.EOF) {
-				lstAtivosNaoEscolhidos.Items.Add(objRS.Field("Descr"));
-
-				objRS.MoveNext();
-
-			}
-
-			objRS.Fechar();
-
-			objRS.Conexao.FecharConexao();
-
+		    }
 		}
 
 		private void frmIDiarioCalcular_Load(object sender, System.EventArgs e)

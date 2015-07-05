@@ -16,7 +16,7 @@ namespace prjServicoNegocio
 	public class cSimuladorIFRDiario
 	{
 
-		private cConexao objConexao { get; set; }
+		private Conexao objConexao { get; set; }
 		/// DTO que contém todos os parâmetros necessários para gerar o relatório
 		/// - Codigo: Código do ativo
 		/// - MediaTipo: Indica o tipo de média utilizada nos cálculos (aritmética ou exponencial)
@@ -50,7 +50,7 @@ namespace prjServicoNegocio
 		{
 			objSetupIFR2SimularCodigoDTO = pobjSetupIFR2SimularCodigoDTO;
 
-			objConexao = new cConexao();
+			objConexao = new Conexao();
 
 			objAtivo = new Ativo(objSetupIFR2SimularCodigoDTO.Codigo);
 
