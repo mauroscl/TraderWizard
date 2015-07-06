@@ -13,7 +13,7 @@ namespace DataBase
 
 	    private readonly cEnum.BancoDeDados _bancoDeDados;
 
-	    public Conexao()
+        public Conexao()
 	    {
 	        _bancoDeDados = cBuscarConfiguracao.ObterBancoDeDados();
 
@@ -34,6 +34,11 @@ namespace DataBase
 			}
 
 		}
+
+	    public cEnum.BancoDeDados BancoDeDados
+	    {
+	        get { return _bancoDeDados; }
+	    }
 
         public string ConnectionString { get; set; }
 

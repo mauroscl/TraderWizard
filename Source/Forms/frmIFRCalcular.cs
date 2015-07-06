@@ -90,7 +90,7 @@ namespace Forms
 		                ativosSelecionados);
 		        }
 
-		        if (periodicidadeDiaria.Checked)
+		        if (periodicidadeSemanal.Checked)
 		        {
 		            blnOkSemanal = objCotacao.IFRGeralCalcular(colPeriodos, cEnum.Periodicidade.Semanal,
 		                Constantes.DataInvalida, ativosSelecionados);

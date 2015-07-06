@@ -251,7 +251,7 @@ namespace DataBase
         }
         public override string CampoDateFormatar(DateTime pdtmData)
         {
-            return "'" + pdtmData.ToString("yyyy-dd-MM") + "'";
+            return "'" + pdtmData.ToString("yyyy-MM-dd") + "'";
         }
 
         public override string ConvertParaString(string expressao)
