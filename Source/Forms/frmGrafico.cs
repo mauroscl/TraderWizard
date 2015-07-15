@@ -698,19 +698,25 @@ namespace TraderWizard
 		                       FuncoesBd.CampoDateFormatar(dtmDataMinimaAreaDados) + " AND " +
 		                       FuncoesBd.CampoDateFormatar(dtmDataMaximaAreaDados) + " AND ValorMinimo = 0 ");
 
-			if (Convert.ToInt32(objRS.Field("Contador")) > 0) {
+		    int quantidadeDeCotacaoComValorZerado = Convert.ToInt32(objRS.Field("Contador"));
 
-				if (Convert.ToInt32(objRS.Field("Contador")) == 1) {
+            objRS.Fechar();
+
+		    if (quantidadeDeCotacaoComValorZerado > 0) {
+
+				if (quantidadeDeCotacaoComValorZerado == 1) {
                     MessageBox.Show("Existe 1 cotação com Valor Mínimo zerado. " + Environment.NewLine + "Verifique a cotação.", this.Text, MessageBoxButtons.OK,MessageBoxIcon.Information);
 
 
 				} else {
-                    MessageBox.Show("Existem " + objRS.Field("Contador") + " cotações com Valor Mínimo zerado. " + Environment.NewLine + "Verifique as cotações.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Existem " + quantidadeDeCotacaoComValorZerado + " cotações com Valor Mínimo zerado. " + Environment.NewLine + "Verifique as cotações.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 				}
 
 				//marca que está encerrando a função.
 				blnAtualizandoDados = false;
+
+
 
 				return false;
 

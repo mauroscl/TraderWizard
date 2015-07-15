@@ -1,6 +1,10 @@
 using System;
+using System.Data.Common;
 using System.Data.OleDb;
+using System.Data.SqlClient;
 using System.Windows.Forms;
+using TraderWizard.Enumeracoes;
+
 namespace DataBase
 {
 
@@ -139,12 +143,24 @@ namespace DataBase
 			this.objConexao.FecharConexao();
 		}
 
-		private OleDbCommand CriarComando(string pstrComando)
+		private DbCommand CriarComando(string pstrComando)
 		{
 
 			VerificarConexao();
 
-			OleDbCommand cmd = new OleDbCommand(pstrComando, this.objConexao.Conn);
+		    DbCommand cmd;
+
+		    if (this.Conexao.BancoDeDados == cEnum.BancoDeDados.SqlServer)
+		    {
+                cmd = new  SqlCommand (pstrComando, (SqlConnection) this.objConexao.Conn);
+
+		    }
+		    else
+		    {
+                cmd = new OleDbCommand(pstrComando,(OleDbConnection)  this.objConexao.Conn);    
+		    }
+
+			
 
 			cmd.Transaction = objConexao.Transacao;
 
@@ -168,7 +184,7 @@ namespace DataBase
 
 		public void Execute(string pstrComando)
 		{
-			OleDbCommand cmd = null;
+			DbCommand cmd = null;
 
 		    if (!this.TransStatus) return;
 

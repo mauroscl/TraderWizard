@@ -55,11 +55,11 @@ namespace TraderWizard
 
 		private void CotacaoDiariaAtualizar(string pstrCodigo, System.DateTime pdtmDataInicial, System.DateTime pdtmDataFinal, bool pblnCalcularDados, EnumAtualizacaoDiariaTipo intTipo)
 		{
-			AlterCursorDoMouseCallback callBack = new AlterCursorDoMouseCallback(AlterCursorDoMouse);
+			var callBack = new AlterCursorDoMouseCallback(AlterCursorDoMouse);
 
 			BeginInvoke(callBack,  new object[]{Cursors.WaitCursor} );
 
-		    ServicoDeCotacao objCotacao = new ServicoDeCotacao(objConexao);
+		    var objCotacao = new ServicoDeCotacao(objConexao);
 
 			if (intTipo == EnumAtualizacaoDiariaTipo.Online) {
 				objCotacao.CotacaoPeriodoAtualizar(pdtmDataInicial, pdtmDataFinal, pstrCodigo, pblnCalcularDados);

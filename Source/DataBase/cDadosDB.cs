@@ -10,10 +10,10 @@ namespace DataBase
 	{
 
 
-		private Conexao objConexao;
+		private readonly Conexao _conexao;
 		//tabela em que os dados serão salvos ou consultados
 
-		private string strTabela;
+		private readonly string _tabela;
 		//collection que contém cada uma das operações que serão feitas no banco de dados.
 		//cada operação pode ter um ou mais itens para serem salvos
 		//Private colRegistro As Collection
@@ -21,17 +21,17 @@ namespace DataBase
 		//collection de item a serem salvos no banco de dados.
 		//cada item é uma estrutura do tipo frwInterface.structDadosDB
 
-		private Dictionary<string, cCampoDB> colCampo;
+		private Dictionary<string, cCampoDB> _campos;
 
 		public cDadosDB(Conexao pobjConexao, string pstrTabela)
 		{
-			objConexao = pobjConexao;
+			_conexao = pobjConexao;
 
-			strTabela = pstrTabela;
+			_tabela = pstrTabela;
 
 			//colRegistro = New Collection
 
-            colCampo = new Dictionary<string, cCampoDB>();
+            _campos = new Dictionary<string, cCampoDB>();
 
 		}
 
@@ -39,7 +39,7 @@ namespace DataBase
 		{
 
 			try {
-				colCampo.Clear();
+				_campos.Clear();
                 return true;
 			} catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Trader Wizard", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -50,26 +50,24 @@ namespace DataBase
 
 		public bool CampoAdicionar(string pstrCampo, bool pblnChave, string pstrValor)
 		{
-			bool functionReturnValue = false;
-
-			cCampoDB objCampoDB = null;
+			bool retorno;
 
 
-			try {
-				objCampoDB = new cCampoDB(pstrCampo, pblnChave, pstrValor);
+		    try {
+				var campoDb = new cCampoDB(pstrCampo, pblnChave, pstrValor);
 
-                colCampo.Add(pstrCampo, objCampoDB);
+                _campos.Add(pstrCampo, campoDb);
 
-				functionReturnValue = true;
+				retorno = true;
 
 
 			} catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Trader Wizard", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-				functionReturnValue = false;
+				retorno = false;
 
 			}
-			return functionReturnValue;
+			return retorno;
 
 		}
 
@@ -97,9 +95,9 @@ namespace DataBase
 		{
 			bool functionReturnValue = false;
 
-			cRS objRS = new cRS(objConexao);
+			cRS objRS = new cRS(_conexao);
 
-			objRS.ExecuteQuery(" SELECT 1 " + " FROM " + strTabela + " WHERE " + pstrWhere);
+			objRS.ExecuteQuery(" SELECT 1 " + " FROM " + _tabela + " WHERE " + pstrWhere);
 
 			functionReturnValue = objRS.DadosExistir;
 
@@ -112,7 +110,7 @@ namespace DataBase
 		{
 			bool functionReturnValue;
 
-			cCommand objCommand = new cCommand(objConexao);
+			cCommand objCommand = new cCommand(_conexao);
 
 			cCampoDB objCampoDB;
 
@@ -130,7 +128,7 @@ namespace DataBase
 
 			try {
 
-				foreach (cCampoDB objCampoDB_loopVariable in colCampo.Values) {
+				foreach (cCampoDB objCampoDB_loopVariable in _campos.Values) {
 					objCampoDB = objCampoDB_loopVariable;
 
 					if (strValoresINSERT != String.Empty) {
@@ -190,12 +188,12 @@ namespace DataBase
 				//monta o comando de acordo com a operação.
 
 				if (strOperacao == "INSERT") {
-					strQuery = " INSERT INTO " + strTabela + "(" + strCampos + ")" + " VALUES " + "(" + strValoresINSERT + ")";
+					strQuery = " INSERT INTO " + _tabela + "(" + strCampos + ")" + " VALUES " + "(" + strValoresINSERT + ")";
 
 
 				} else {
 					//se é um UPDATE
-					strQuery = " UPDATE " + strTabela + " SET " + strValoresUPDATE + " WHERE " + strWhere;
+					strQuery = " UPDATE " + _tabela + " SET " + strValoresUPDATE + " WHERE " + strWhere;
 
 				}
 
@@ -210,7 +208,7 @@ namespace DataBase
 
 			} finally {
 				//limpa a collection de campo, pois depois de salvar o campo pode ser usado novamente
-				colCampo = null;
+				_campos = null;
 
 			}
 			return functionReturnValue;
@@ -230,11 +228,11 @@ namespace DataBase
 
 			string strWhere = String.Empty;
 
-			cRS objRS = new cRS(objConexao);
+			cRS objRS = new cRS(_conexao);
 
 			try {
 
-				foreach (cCampoDB objCampoDB in colCampo.Values) {
+				foreach (cCampoDB objCampoDB in _campos.Values) {
 
 					if (objCampoDB.Chave) {
 						//campos chave vão para o WHERE
@@ -260,11 +258,11 @@ namespace DataBase
 				}
 
 				//consulta o valor do campo no banco de dados
-				objRS.ExecuteQuery(" SELECT " + strCampo + " FROM " + strTabela + " WHERE " + strWhere);
+				objRS.ExecuteQuery(" SELECT " + strCampo + " FROM " + _tabela + " WHERE " + strWhere);
 
 				//atualiza o valor do campo na collection de dados.
 
-                foreach (KeyValuePair<string, cCampoDB> objCampoDB in colCampo)
+                foreach (KeyValuePair<string, cCampoDB> objCampoDB in _campos)
                 {
 
 					if (!objCampoDB.Value.Chave) {
@@ -298,7 +296,7 @@ namespace DataBase
 		{
 			try 
             {
-				return colCampo.SingleOrDefault(x => x.Key == pstrCampo).Value.Valor;
+				return _campos.SingleOrDefault(x => x.Key == pstrCampo).Value.Valor;
 			} 
             catch (Exception) 
             {

@@ -20,7 +20,7 @@ namespace TraderWizard
 
 		public frmDadosRecalcular(Conexao pobjConexao)
 		{
-			Load += frmDadosRecalcular_Load;
+			//Load += frmDadosRecalcular_Load;
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 

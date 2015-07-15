@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using DataBase;
 using Forms;
 using pWeb;
+using TraderWizard.Extensoes;
 
 namespace TraderWizard
 {
@@ -27,12 +28,9 @@ namespace TraderWizard
         {
             var objComando = new cCommand(objConexao);
 
-            //sse não tem nenhum erro salva os parâmetros no banco de dados.
             string strProxyType = String.Empty;
-            string strProxyManualHTTP = String.Empty;
+            string strProxyManualHttp = String.Empty;
             string strProxyManualPorta = String.Empty;
-            //Dim strProxyConfigAutEndereco As String = vbNullString
-            string strProxyCredencialUtilizar = String.Empty;
 
             if (rdbSemProxy.Checked)
             {
@@ -45,11 +43,11 @@ namespace TraderWizard
             else if (rdbProxyManual.Checked)
             {
                 strProxyType = "PM";
-                strProxyManualHTTP = txtProxyManualHTTP.Text.Trim();
+                strProxyManualHttp = txtProxyManualHTTP.Text.Trim();
                 strProxyManualPorta = txtProxyManualPorta.Text.Trim();
             }
 
-            strProxyCredencialUtilizar = chkCredencialUtilizar.Checked ? "SIM" : "NAO";
+            string strProxyCredencialUtilizar = chkCredencialUtilizar.Checked ? "SIM" : "NAO";
 
             objComando.BeginTrans();
 
@@ -57,7 +55,7 @@ namespace TraderWizard
 
             if (strProxyType == "PM")
             {
-                ParametroSalvar("ProxyManualHTTP", strProxyManualHTTP);
+                ParametroSalvar("ProxyManualHTTP", strProxyManualHttp);
                 ParametroSalvar("ProxyManualPorta", strProxyManualPorta);
             }
 
@@ -74,7 +72,7 @@ namespace TraderWizard
 
                 ParametroSalvar("ProxyCredencialUsuario", txtUsuario.Text.Trim());
 
-                cCriptografia objCriptografia = new cCriptografia();
+                var objCriptografia = new cCriptografia();
 
                 ParametroSalvar("ProxyCredencialSenha", objCriptografia.Criptografar(txtSenha.Text.Trim()));
                 //ParametroSalvar("ProxyCredencialSenha", Trim(txtSenha.Text))
@@ -257,10 +255,9 @@ namespace TraderWizard
             pnlMMExp.Enabled = chkMMExpDesenhar.Checked;
         }
 
-        private bool Consistir()
+        private bool Consistir(string periodo, string tipo)
         {
-            int periodo;
-            if (!int.TryParse(txtPeriodo.Text, out periodo))
+            if (!periodo.IsNumeric())
             {
                 MessageBox.Show("Campo " + Convert.ToChar(34) + "Período" + Convert.ToChar(34) + " não preenchido ou com valor inválido.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
@@ -268,16 +265,13 @@ namespace TraderWizard
             }
 
 
-            //verifica se o período já foi inserido
-            string strNovoPeriodo = txtPeriodo.Text.Trim();
-
-
             for (int intI = 0; intI <= lstPeriodoSelecionado.Items.Count - 1; intI++)
             {
-                if (strNovoPeriodo == lstPeriodoSelecionado.Items[intI].Text.Trim())
+                ListViewItem listViewItem = lstPeriodoSelecionado.Items[intI];
+                if (periodo == listViewItem.Text.Trim() && tipo == listViewItem.SubItems[1].Text)
                 {
 
-                    MessageBox.Show("Período " + Convert.ToChar(34) + strNovoPeriodo + Convert.ToChar(34) + " já foi inserido.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Esta configuração já foi inserida.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     return false;
                 }
@@ -289,34 +283,40 @@ namespace TraderWizard
 
         private void btnAdicionar_Click(Object sender, EventArgs e)
         {
-            if (Consistir())
+
+            string strTipo = "";
+            if (rdbExponencial.Checked)
             {
-                ListViewItem objListViewItem = null;
-
-                objListViewItem = lstPeriodoSelecionado.Items.Add(txtPeriodo.Text);
-
-                //seta esta propriedade para false para permitir que apenas uma coluna tenha
-                //a propriedade backcolor alterada.
-                //Se a propriedade for true, não permite alterar a propriedade BACKCOLOR e outras
-                //propriedades dos subitems.
-                objListViewItem.UseItemStyleForSubItems = false;
-
-                objListViewItem.SubItems.Add("");
-
-                objListViewItem.SubItems[1].BackColor = pnlCor.BackColor;
+                strTipo = "MME";
             }
+            else if (rdbAritmetica.Checked)
+            {
+                strTipo = "MMA";
+            }
+
+            if (!Consistir(txtPeriodo.Text, strTipo)) return;
+            
+            ListViewItem objListViewItem = lstPeriodoSelecionado.Items.Add(txtPeriodo.Text);
+
+            objListViewItem.SubItems.Add(strTipo);
+
+            //seta esta propriedade para false para permitir que apenas uma coluna tenha
+            //a propriedade backcolor alterada.
+            //Se a propriedade for true, não permite alterar a propriedade BACKCOLOR e outras
+            //propriedades dos subitems.
+            objListViewItem.UseItemStyleForSubItems = false;
+
+            objListViewItem.SubItems.Add("");
+
+            objListViewItem.SubItems[2].BackColor = pnlCor.BackColor;
         }
 
 
         private void btnRemover_Click(Object sender, EventArgs e)
         {
-            ListViewItem objItem = null;
-
-
-            foreach (ListViewItem objItem_loopVariable in lstPeriodoSelecionado.SelectedItems)
+            foreach (ListViewItem listViewItem in lstPeriodoSelecionado.SelectedItems)
             {
-                objItem = objItem_loopVariable;
-                lstPeriodoSelecionado.Items.Remove(objItem);
+                lstPeriodoSelecionado.Items.Remove(listViewItem);
             }
         }
 
@@ -349,21 +349,25 @@ namespace TraderWizard
         {
             var objRS = new cRS(objConexao);
 
-            ListViewItem objListViewItem;
+            var funcoesBd = objConexao.ObterFormatadorDeCampo();
 
-            objRS.ExecuteQuery(" select NumPeriodos, Cor " + " from Configuracao_Indicador " + " where Tipo = " +
-                               FuncoesBd.CampoStringFormatar("MME"));
+            string query = " select Tipo, NumPeriodos, Cor " + " from Configuracao_Indicador " +
+                               " where (Tipo  = " + funcoesBd.CampoFormatar("MME") + " OR Tipo = " + funcoesBd.CampoFormatar("MMA") + ")";
+
+            objRS.ExecuteQuery(query);
 
 
             while (!objRS.EOF)
             {
-                objListViewItem = lstPeriodoSelecionado.Items.Add(Convert.ToString(objRS.Field("NumPeriodos")));
+                ListViewItem objListViewItem = lstPeriodoSelecionado.Items.Add(Convert.ToString(objRS.Field("NumPeriodos")));
+
+                objListViewItem.SubItems.Add(Convert.ToString(objRS.Field("Tipo")));
 
                 objListViewItem.UseItemStyleForSubItems = false;
 
                 objListViewItem.SubItems.Add("");
 
-                objListViewItem.SubItems[1].BackColor = Color.FromArgb(Convert.ToInt32(objRS.Field("Cor")));
+                objListViewItem.SubItems[2].BackColor = Color.FromArgb(Convert.ToInt32(objRS.Field("Cor")));
 
                 objRS.MoveNext();
             }
@@ -376,21 +380,20 @@ namespace TraderWizard
         {
             var objCommand = new cCommand(objConexao);
 
+            var funcoesBd = objConexao.ObterFormatadorDeCampo();
 
-            objCommand.Execute(" DELETE " + " FROM Configuracao_Indicador " + " WHERE Tipo = " +
-                               FuncoesBd.CampoStringFormatar("MME"));
-
-            int intI = 0;
+            objCommand.Execute(" DELETE " + " FROM Configuracao_Indicador " +
+                " WHERE (Tipo = " + funcoesBd.CampoFormatar("MME") + " OR Tipo = " + funcoesBd.CampoFormatar("MMA") + ")");
 
 
             if (chkMMExpDesenhar.Checked)
             {
-                for (intI = 0; intI <= lstPeriodoSelecionado.Items.Count - 1; intI++)
+                for (int i = 0; i <= lstPeriodoSelecionado.Items.Count - 1; i++)
                 {
                     objCommand.Execute(" INSERT INTO Configuracao_Indicador " + "(Tipo, NumPeriodos, Cor)" + " VALUES " +
-                                       "(" + FuncoesBd.CampoStringFormatar("MME") + ", " +
-                                       lstPeriodoSelecionado.Items[intI].Text + ", " +
-                                       lstPeriodoSelecionado.Items[intI].SubItems[1].BackColor.ToArgb().ToString() + ")");
+                                       "(" + funcoesBd.CampoFormatar(lstPeriodoSelecionado.Items[i].SubItems[1].Text) + ", " +
+                                       lstPeriodoSelecionado.Items[i].Text + ", " +
+                                       lstPeriodoSelecionado.Items[i].SubItems[2].BackColor.ToArgb() + ")");
                 }
             }
         }

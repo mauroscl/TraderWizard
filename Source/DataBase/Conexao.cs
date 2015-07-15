@@ -1,6 +1,8 @@
 using System;
 using System.Data;
+using System.Data.Common;
 using System.Data.OleDb;
+using System.Data.SqlClient;
 using System.Windows.Forms;
 using prjConfiguracao;
 using TraderWizard.Enumeracoes;
@@ -21,7 +23,15 @@ namespace DataBase
 
 				ConnectionString = cBuscarConfiguracao.ObterConnectionStringPadrao(_bancoDeDados);
 
-				Conn = new OleDbConnection(ConnectionString);
+			    if (_bancoDeDados == cEnum.BancoDeDados.SqlServer)
+			    {
+			        Conn = new SqlConnection(ConnectionString);
+			    }
+			    else
+			    {
+                    Conn = new OleDbConnection(ConnectionString);    
+			    }
+				
 
 				//inicialização das propriedades
 				TransAberta = false;
@@ -46,19 +56,27 @@ namespace DataBase
 
         public bool TransAberta { get; private set; }
 
-        public OleDbConnection Conn { get; private set; }
+        public DbConnection Conn { get; private set; }
 
-        public OleDbTransaction Transacao { get; private set; }
+        public DbTransaction Transacao { get; private set; }
 
 		public void VerificarConexao()
 		{
 			if (Conn == null) {
-				Conn = new OleDbConnection(this.ConnectionString);
+			    if (_bancoDeDados == cEnum.BancoDeDados.SqlServer)
+			    {
+			        Conn = new SqlConnection(this.ConnectionString);
+			    }
+			    else
+			    {
+                    Conn = new OleDbConnection(this.ConnectionString);    
+			    }
+				
 				Conn.Open();
 			} else {
 				//se a conexão não está aberta, só pode abrir se o TransStatus está OK.
 				if (TransStatus) {
-					if (Conn.State != ConnectionState.Open) {
+					if (Conn.State == ConnectionState.Closed) {
 						Conn.Open();
 					}
 				}

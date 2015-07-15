@@ -64,9 +64,6 @@ namespace TraderWizard
             this.Label8 = new System.Windows.Forms.Label();
             this.lblPeriodo = new System.Windows.Forms.Label();
             this.btnRemover = new System.Windows.Forms.Button();
-            this.lstPeriodoSelecionado = new System.Windows.Forms.ListView();
-            this.colPeriodo = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.colCor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chkVolumeDesenhar = new System.Windows.Forms.CheckBox();
             this.chkIFRDesenhar = new System.Windows.Forms.CheckBox();
             this.chkMMExpDesenhar = new System.Windows.Forms.CheckBox();
@@ -89,6 +86,13 @@ namespace TraderWizard
             this.Panel1 = new System.Windows.Forms.Panel();
             this.btnCancelar = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.rdbAritmetica = new System.Windows.Forms.RadioButton();
+            this.rdbExponencial = new System.Windows.Forms.RadioButton();
+            this.lstPeriodoSelecionado = new System.Windows.Forms.ListView();
+            this.colPeriodo = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colTipo = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colCor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.TabControl1.SuspendLayout();
             this.tabInternet.SuspendLayout();
             this.GroupBox1.SuspendLayout();
@@ -101,6 +105,7 @@ namespace TraderWizard
             this.GroupBox3.SuspendLayout();
             this.GroupBox2.SuspendLayout();
             this.Panel1.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // TabControl1
@@ -351,6 +356,8 @@ namespace TraderWizard
             // 
             // pnlMMExp
             // 
+            this.pnlMMExp.Controls.Add(this.lstPeriodoSelecionado);
+            this.pnlMMExp.Controls.Add(this.groupBox4);
             this.pnlMMExp.Controls.Add(this.pnlCor);
             this.pnlMMExp.Controls.Add(this.btnRemoverTodos);
             this.pnlMMExp.Controls.Add(this.btnAdicionar);
@@ -358,7 +365,6 @@ namespace TraderWizard
             this.pnlMMExp.Controls.Add(this.Label8);
             this.pnlMMExp.Controls.Add(this.lblPeriodo);
             this.pnlMMExp.Controls.Add(this.btnRemover);
-            this.pnlMMExp.Controls.Add(this.lstPeriodoSelecionado);
             this.pnlMMExp.Enabled = false;
             this.pnlMMExp.Location = new System.Drawing.Point(6, 60);
             this.pnlMMExp.Name = "pnlMMExp";
@@ -430,29 +436,6 @@ namespace TraderWizard
             this.btnRemover.UseVisualStyleBackColor = true;
             this.btnRemover.Click += new System.EventHandler(this.btnRemover_Click);
             // 
-            // lstPeriodoSelecionado
-            // 
-            this.lstPeriodoSelecionado.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.colPeriodo,
-            this.colCor});
-            this.lstPeriodoSelecionado.FullRowSelect = true;
-            this.lstPeriodoSelecionado.GridLines = true;
-            this.lstPeriodoSelecionado.Location = new System.Drawing.Point(6, 63);
-            this.lstPeriodoSelecionado.Name = "lstPeriodoSelecionado";
-            this.lstPeriodoSelecionado.Size = new System.Drawing.Size(224, 144);
-            this.lstPeriodoSelecionado.TabIndex = 10;
-            this.lstPeriodoSelecionado.UseCompatibleStateImageBehavior = false;
-            this.lstPeriodoSelecionado.View = System.Windows.Forms.View.Details;
-            // 
-            // colPeriodo
-            // 
-            this.colPeriodo.Text = "Períodos";
-            this.colPeriodo.Width = 140;
-            // 
-            // colCor
-            // 
-            this.colCor.Text = "Cor";
-            // 
             // chkVolumeDesenhar
             // 
             this.chkVolumeDesenhar.AutoSize = true;
@@ -478,9 +461,9 @@ namespace TraderWizard
             this.chkMMExpDesenhar.AutoSize = true;
             this.chkMMExpDesenhar.Location = new System.Drawing.Point(10, 37);
             this.chkMMExpDesenhar.Name = "chkMMExpDesenhar";
-            this.chkMMExpDesenhar.Size = new System.Drawing.Size(200, 17);
+            this.chkMMExpDesenhar.Size = new System.Drawing.Size(139, 17);
             this.chkMMExpDesenhar.TabIndex = 2;
-            this.chkMMExpDesenhar.Text = "Desenhar Média Móvel Exponencial:";
+            this.chkMMExpDesenhar.Text = "Desenhar Média Móvel:";
             this.chkMMExpDesenhar.UseVisualStyleBackColor = true;
             this.chkMMExpDesenhar.CheckedChanged += new System.EventHandler(this.chkMMExpDesenhar_CheckedChanged);
             // 
@@ -662,6 +645,67 @@ namespace TraderWizard
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.rdbAritmetica);
+            this.groupBox4.Controls.Add(this.rdbExponencial);
+            this.groupBox4.Location = new System.Drawing.Point(6, 33);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(223, 34);
+            this.groupBox4.TabIndex = 14;
+            this.groupBox4.TabStop = false;
+            // 
+            // rdbAritmetica
+            // 
+            this.rdbAritmetica.AutoSize = true;
+            this.rdbAritmetica.Location = new System.Drawing.Point(146, 11);
+            this.rdbAritmetica.Name = "rdbAritmetica";
+            this.rdbAritmetica.Size = new System.Drawing.Size(71, 17);
+            this.rdbAritmetica.TabIndex = 1;
+            this.rdbAritmetica.Text = "Aritmética";
+            this.rdbAritmetica.UseVisualStyleBackColor = true;
+            // 
+            // rdbExponencial
+            // 
+            this.rdbExponencial.AutoSize = true;
+            this.rdbExponencial.Checked = true;
+            this.rdbExponencial.Location = new System.Drawing.Point(6, 11);
+            this.rdbExponencial.Name = "rdbExponencial";
+            this.rdbExponencial.Size = new System.Drawing.Size(83, 17);
+            this.rdbExponencial.TabIndex = 0;
+            this.rdbExponencial.TabStop = true;
+            this.rdbExponencial.Text = "Exponencial";
+            this.rdbExponencial.UseVisualStyleBackColor = true;
+            // 
+            // lstPeriodoSelecionado
+            // 
+            this.lstPeriodoSelecionado.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.colPeriodo,
+            this.colTipo,
+            this.colCor});
+            this.lstPeriodoSelecionado.FullRowSelect = true;
+            this.lstPeriodoSelecionado.GridLines = true;
+            this.lstPeriodoSelecionado.Location = new System.Drawing.Point(5, 73);
+            this.lstPeriodoSelecionado.MultiSelect = false;
+            this.lstPeriodoSelecionado.Name = "lstPeriodoSelecionado";
+            this.lstPeriodoSelecionado.Size = new System.Drawing.Size(224, 140);
+            this.lstPeriodoSelecionado.TabIndex = 15;
+            this.lstPeriodoSelecionado.UseCompatibleStateImageBehavior = false;
+            this.lstPeriodoSelecionado.View = System.Windows.Forms.View.Details;
+            // 
+            // colPeriodo
+            // 
+            this.colPeriodo.Text = "Períodos";
+            this.colPeriodo.Width = 94;
+            // 
+            // colTipo
+            // 
+            this.colTipo.Text = "Tipo";
+            // 
+            // colCor
+            // 
+            this.colCor.Text = "Cor";
+            // 
             // frmConfiguracao
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -694,6 +738,8 @@ namespace TraderWizard
             this.GroupBox2.ResumeLayout(false);
             this.GroupBox2.PerformLayout();
             this.Panel1.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
 
 		}
@@ -733,10 +779,7 @@ namespace TraderWizard
 		private System.Windows.Forms.TextBox txtPeriodo;
 		private System.Windows.Forms.Label Label8;
 		private System.Windows.Forms.Label lblPeriodo;
-		private System.Windows.Forms.Button btnRemover;
-		private System.Windows.Forms.ListView lstPeriodoSelecionado;
-		private System.Windows.Forms.ColumnHeader colPeriodo;
-		private System.Windows.Forms.ColumnHeader colCor;
+        private System.Windows.Forms.Button btnRemover;
 		private System.Windows.Forms.ColorDialog objColorDialog;
 		private System.Windows.Forms.Panel Panel1;
 		private System.Windows.Forms.Button btnCancelar;
@@ -754,5 +797,12 @@ namespace TraderWizard
 		private System.Windows.Forms.Label Label10;
 		private System.Windows.Forms.TextBox txtHoraAberturaPregao;
 		private System.Windows.Forms.Label Label11;
+        private GroupBox groupBox4;
+        private RadioButton rdbAritmetica;
+        private RadioButton rdbExponencial;
+        private ListView lstPeriodoSelecionado;
+        private ColumnHeader colPeriodo;
+        private ColumnHeader colTipo;
+        private ColumnHeader colCor;
 	}
 }

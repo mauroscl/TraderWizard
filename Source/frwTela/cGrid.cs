@@ -45,14 +45,7 @@ namespace frwTela
 
 				objRS.ExecuteQuery(Query);
 
-				OleDbDataReader objOleDbDataReader = objRS.GetDataReader;
-
-				// percorre o resultado gerado pelo DataReader
-
-				//Do
-				//usa o método GetSchemaTable para retornar informações da tabela (metadados)
-				//Dim schemaTable As DataTable = dr.GetSchemaTable()
-				DataTable schemaTable = new DataTable(strTabela);
+				var dbDataReader = objRS.DataReader;
 
 				//If Not (schemaTable Is Nothing) Then
 				//cria um novo Datatable
@@ -83,15 +76,15 @@ namespace frwTela
 	            //For Each objColuna In pcolColuna
 
 
-				for (intI = 0; intI <= objOleDbDataReader.FieldCount - 1; intI++) {
+				for (intI = 0; intI <= dbDataReader.FieldCount - 1; intI++) {
 					var objDataColumn = new DataColumn();
 
 					//objDataColumn.DataType = objColuna.Tipo
 					//objDataColumn.ColumnName = objColuna.Nome
 					//objDataColumn.Caption = objColuna.Caption
 
-					objDataColumn.DataType = objOleDbDataReader.GetFieldType(intI);
-					objDataColumn.ColumnName = objOleDbDataReader.GetName(intI);
+					objDataColumn.DataType = dbDataReader.GetFieldType(intI);
+					objDataColumn.ColumnName = dbDataReader.GetName(intI);
 					//objDataColumn.Caption = pcolColuna(intI + 1)
 
 					objDataColumn.ReadOnly = true;

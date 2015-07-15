@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using prjDominio.Entidades;
-using prjModelo.Entidades;
 using TraderWizard.Enumeracoes;
 
 namespace DataBase.Carregadores

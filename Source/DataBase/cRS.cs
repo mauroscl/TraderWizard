@@ -1,6 +1,10 @@
 using System;
+using System.Data.Common;
 using System.Data.OleDb;
+using System.Data.SqlClient;
 using System.Windows.Forms;
+using TraderWizard.Enumeracoes;
+
 namespace DataBase
 {
 
@@ -17,10 +21,10 @@ namespace DataBase
 
 	    public Conexao Conexao { get; private set; }
 
-	    public OleDbDataReader GetDataReader { get; private set; }
+	    public DbDataReader DataReader { get; private set; }
 
 	    public string GetName(int pintIndice) {
-			return GetDataReader.GetName(pintIndice);
+			return DataReader.GetName(pintIndice);
 		}
 
 
@@ -52,12 +56,23 @@ namespace DataBase
 		}
 
 
-		private OleDbCommand CriarComando(string pstrComando)
+		private DbCommand CriarComando(string pstrComando)
 		{
 
 			VerificarConexao();
 
-			var cmd = new OleDbCommand(pstrComando, this.Conexao.Conn);
+		    DbCommand cmd;
+
+		    if (this.Conexao.BancoDeDados == cEnum.BancoDeDados.SqlServer)
+		    {
+                cmd = new SqlCommand(pstrComando, (SqlConnection) this.Conexao.Conn);
+		        
+		    }
+		    else
+		    {
+                cmd = new OleDbCommand(pstrComando, (OleDbConnection) this.Conexao.Conn);    
+		    }
+			
 
 			cmd.Transaction = Conexao.Transacao;
 
@@ -84,16 +99,16 @@ namespace DataBase
 				    if (blnExecutar) {
 						intNumeroDeExecucoes = intNumeroDeExecucoes + 1;
 
-						OleDbCommand objOleDbCommand = CriarComando(pstrQuery);
-						GetDataReader = objOleDbCommand.ExecuteReader();
+						DbCommand objOleDbCommand = CriarComando(pstrQuery);
+						DataReader = objOleDbCommand.ExecuteReader();
 						QueryStatus = true;
 
 						//Chama o método read para o primeiro registro ficar disponível
 						//Se consegue ler, é porque tem dados
 						//blnDadosExistir = objOleDbDR.Read()
-						GetDataReader.Read();
+						DataReader.Read();
 
-						DadosExistir = GetDataReader.HasRows;
+						DadosExistir = DataReader.HasRows;
 
 						//----fim do código alterado por mauro, 26/07/2009
 						//quando não conseguir mais ler nenhum registro chegou ao fim (EOF).
@@ -137,7 +152,7 @@ namespace DataBase
 
 		        if (blnExecutar)
 				{
-				    int intOrdinal = GetDataReader.GetOrdinal(pstrCampo);
+				    int intOrdinal = DataReader.GetOrdinal(pstrCampo);
 
 				    functionReturnValue = GetField(intOrdinal, pobjRetornoErro);
 				}
@@ -188,34 +203,34 @@ namespace DataBase
 		        return pobjRetornoErro;
 		    }
 
-		    Type tipo = GetDataReader.GetFieldType(pintOrdinal);
+		    Type tipo = DataReader.GetFieldType(pintOrdinal);
 
 		    try
 		    {
-		        if ( ! EOF && !GetDataReader.IsDBNull(pintOrdinal)) {
+		        if ( ! EOF && !DataReader.IsDBNull(pintOrdinal)) {
 		            if (tipo == Type.GetType("System.Boolean", true, true)) {
-		                return GetDataReader.GetBoolean(pintOrdinal);
+		                return DataReader.GetBoolean(pintOrdinal);
 		            }
 		            if (tipo == Type.GetType("System.Int16", true, true)) {
-		                return GetDataReader.GetInt16(pintOrdinal);
+		                return DataReader.GetInt16(pintOrdinal);
 		            }
 		            if (tipo == Type.GetType("System.Int32", true, true)) {
-		                return GetDataReader.GetInt32(pintOrdinal);
+		                return DataReader.GetInt32(pintOrdinal);
 		            }
 		            if (tipo == Type.GetType("System.String", true, true)) {
-		                return GetDataReader.GetString(pintOrdinal);
+		                return DataReader.GetString(pintOrdinal);
 		            }
 		            if (tipo == Type.GetType("System.Decimal", true, true)) {
-		                return GetDataReader.GetDecimal(pintOrdinal);
+		                return DataReader.GetDecimal(pintOrdinal);
 		            }
 		            if (tipo == Type.GetType("System.Double", true, true)) {
-		                return GetDataReader.GetDouble(pintOrdinal);
+		                return DataReader.GetDouble(pintOrdinal);
 		            }
 		            if (tipo == Type.GetType("System.DateTime", true, true)) {
-		                return GetDataReader.GetDateTime(pintOrdinal);
+		                return DataReader.GetDateTime(pintOrdinal);
 		            }
 
-		            return GetDataReader.GetString(pintOrdinal);
+		            return DataReader.GetString(pintOrdinal);
 
 		        }
 		        return pobjRetornoErro;
@@ -230,7 +245,7 @@ namespace DataBase
 
 		public int GetValues(object[] parrValues)
 		{
-			return GetDataReader.GetValues(parrValues);
+			return DataReader.GetValues(parrValues);
 		}
 
 
@@ -240,8 +255,8 @@ namespace DataBase
 			try {
 
 				if (Conexao.TransStatus) {
-					if ((GetDataReader != null)) {
-						EOF = !GetDataReader.Read();
+					if ((DataReader != null)) {
+						EOF = !DataReader.Read();
 					} else {
 						//se o RS não está preenchido, então considera como se tivesse chegado no fim deste
 						//para que a aplicação não fique em loop
@@ -320,9 +335,9 @@ namespace DataBase
 		public void Fechar()
 		{
 
-			if ((GetDataReader != null)) {
-				if (!GetDataReader.IsClosed) {
-					GetDataReader.Close();
+			if ((DataReader != null)) {
+				if (!DataReader.IsClosed) {
+					DataReader.Close();
 					//removido por mauro, 17/04/2010
 					//GUIDAtualizar()
 					//fim do código removido por mauro, 17/04/2010
@@ -336,7 +351,7 @@ namespace DataBase
 		public int GetFieldCount()
 		{
 
-			return GetDataReader.FieldCount;
+			return DataReader.FieldCount;
 
 		}
 
