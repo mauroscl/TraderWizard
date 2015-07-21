@@ -1,128 +1,123 @@
 using System;
 using System.Data;
-//Imports Oracle.DataAccess.Client
-//Imports System.Data.OracleClient
-using System.Data.OleDb;
+using System.Data.SqlClient;
 using DataBase;
 using System.Windows.Forms;
 namespace frwTela
 {
 	public class cGrid
 	{
-
-		private string strTabela;
-
-	    private Conexao objConexao;
-	    private string _query;
+	    private readonly Conexao _conexao;
 
 	    public cGrid(Conexao pobjConexao)
 		{
-			objConexao = pobjConexao;
+			_conexao = pobjConexao;
 		}
 
-		public string Tabela {
-			get { return this.strTabela; }
-			set { this.strTabela = value; }
-		}
+	    public string Tabela { get; set; }
 
-	    public string Query
-	    {
-	        get { return _query; }
-	        set { _query = value; }
-	    }
+	    public string Query { get; set; }
 
 	    public bool Atualizar(DataSet ds)
 		{
-
-			int intI = 0;
-
-			cRS objRS = new cRS(objConexao);
+	        cRS objRS = new cRS(_conexao);
 			cColuna objColuna = null;
 
 
-	        try {
-				//Executa a query
+	        try
+	        {
+	            //Executa a query
 
-				objRS.ExecuteQuery(Query);
+	            objRS.ExecuteQuery(Query);
 
-				var dbDataReader = objRS.DataReader;
+	            var dbDataReader = objRS.DataReader;
 
-				//If Not (schemaTable Is Nothing) Then
-				//cria um novo Datatable
-				DataTable dataTable = new DataTable();
-				dataTable.TableName = this.Tabela;
+	            //If Not (schemaTable Is Nothing) Then
+	            //cria um novo Datatable
+	            var dataTable = new DataTable {TableName = this.Tabela};
 
-				//'cria um DataRow
-				//Dim schemaRow As DataRow
+	            //'cria um DataRow
+	            //Dim schemaRow As DataRow
 
-				//intI = 1
-				//'percorre cada linha do DataTable(schemaTable)
-				//For Each schemaRow In schemaTable.Rows
-				//    Dim col As New DataColumn
-				//    col.ColumnName = pcolColumnName(intI)
-				//    col.DataType = CType(schemaRow("DataType"), Type)
-				//    ' define o tamanho do campo para strings
-				//    If schemaRow("DataType").ToString() = "System.String" Then
-				//        col.MaxLength = CType(schemaRow("ColumnSize"), Int32)
-				//    End If
-				//    'col.Unique = CBool(schemaRow("IsUnique"))
-				//    'col.AllowDBNull = CBool(schemaRow("AllowDBNull"))
+	            //intI = 1
+	            //'percorre cada linha do DataTable(schemaTable)
+	            //For Each schemaRow In schemaTable.Rows
+	            //    Dim col As New DataColumn
+	            //    col.ColumnName = pcolColumnName(intI)
+	            //    col.DataType = CType(schemaRow("DataType"), Type)
+	            //    ' define o tamanho do campo para strings
+	            //    If schemaRow("DataType").ToString() = "System.String" Then
+	            //        col.MaxLength = CType(schemaRow("ColumnSize"), Int32)
+	            //    End If
+	            //    'col.Unique = CBool(schemaRow("IsUnique"))
+	            //    'col.AllowDBNull = CBool(schemaRow("AllowDBNull"))
 
-				//    dataTable.Columns.Add(col)
+	            //    dataTable.Columns.Add(col)
 
-				//    intI = intI + 1
-				//Next schemaRow
+	            //    intI = intI + 1
+	            //Next schemaRow
 
 	            //For Each objColuna In pcolColuna
 
 
-				for (intI = 0; intI <= dbDataReader.FieldCount - 1; intI++) {
-					var objDataColumn = new DataColumn();
+	            int intI;
+	            for (intI = 0; intI <= dbDataReader.FieldCount - 1; intI++)
+	            {
+	                var objDataColumn = new DataColumn
+	                {
+	                    DataType = dbDataReader.GetFieldType(intI),
+	                    ColumnName = dbDataReader.GetName(intI),
+	                    ReadOnly = true,
+	                    Unique = false
+	                };
 
-					//objDataColumn.DataType = objColuna.Tipo
-					//objDataColumn.ColumnName = objColuna.Nome
-					//objDataColumn.Caption = objColuna.Caption
+	                dataTable.Columns.Add(objDataColumn);
 
-					objDataColumn.DataType = dbDataReader.GetFieldType(intI);
-					objDataColumn.ColumnName = dbDataReader.GetName(intI);
-					//objDataColumn.Caption = pcolColuna(intI + 1)
+	            }
 
-					objDataColumn.ReadOnly = true;
-					objDataColumn.Unique = false;
+	            // inclui a tabela no DataSet
+	            ds.Tables.Add(dataTable);
 
-					dataTable.Columns.Add(objDataColumn);
+	            var arrData = new object[dataTable.Columns.Count];
 
-				}
+                //var sqlDataReader = (SqlDataReader)objRS.DataReader;
 
-				// inclui a tabela no DataSet
-				ds.Tables.Add(dataTable);
 
-				object[] arrData = new object[dataTable.Columns.Count];
+	            // le todas as linhas do DataReader
+	            while (!objRS.EOF)
+	            {
+	                // le a linha do DataReader para um array
+	                objRS.GetValues(arrData);
 
-				// le todas as linhas do DataReader
-				while (!objRS.EOF) {
-					// le a linha do DataReader para um array
-					objRS.GetValues(arrData);
-					// inclui a linha do array para o DataTable
-					dataTable.Rows.Add(arrData);
 
-					objRS.MoveNext();
+	                //sqlDataReader.GetSqlValues(arrData);
 
-				}
-				//End If
-				//Loop While dr.NextResult()
+	                // inclui a linha do array para o DataTable
+	                dataTable.Rows.Add(arrData);
 
-				//conn.Close()
+	                objRS.MoveNext();
 
-				// nome das tabelas incluidas no DataSet
-				ds.Tables[0].TableName = this.Tabela;
+	            }
+	            //End If
+	            //Loop While dr.NextResult()
 
-				return true;
+	            //conn.Close()
 
-			} catch (Exception e) {
-                MessageBox.Show("Erro: " + e.Message, "Grid", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-				return false;
-			}
+	            // nome das tabelas incluidas no DataSet
+	            ds.Tables[0].TableName = this.Tabela;
+
+	            return true;
+
+	        }
+	        catch (Exception e)
+	        {
+	            MessageBox.Show("Erro: " + e.Message, "Grid", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+	            return false;
+	        }
+	        finally
+	        {
+	            objRS.Fechar();
+	        }
 
 		}
 

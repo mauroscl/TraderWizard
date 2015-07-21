@@ -213,6 +213,11 @@ namespace DataBase
 	    {
 	        throw new NotImplementedException();
 	    }
+
+        public virtual string Condicional(string condicao, string valorSeVerdadeiro, string valorSeFalso)
+	    {
+            throw new NotImplementedException();
+	    }
 	}
 
     public class FuncoesBdAccess : FuncoesBd
@@ -240,6 +245,11 @@ namespace DataBase
         public override string ConverterParaPontoFlutuante(string nomeDaColuna)
         {
             return "CDBL(" + nomeDaColuna + ")";
+        }
+
+        public override string Condicional(string condicao, string valorSeVerdadeiro, string valorSeFalso)
+        {
+            return string.Format("IIF ({0}, {1}, {2})", condicao,valorSeVerdadeiro, valorSeFalso);
         }
     }
 
@@ -272,6 +282,11 @@ namespace DataBase
         public override string ConverterParaPontoFlutuante(string nomeDaColuna)
         {
             return "CONVERT(FLOAT, " + nomeDaColuna + ")";
+        }
+
+        public override string Condicional(string condicao, string valorSeVerdadeiro, string valorSeFalso)
+        {
+            return string.Format("CASE WHEN {0} THEN {1} ELSE {2} END ", condicao, valorSeVerdadeiro, valorSeFalso);
         }
     }
 }

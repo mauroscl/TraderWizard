@@ -511,38 +511,56 @@ namespace prmCotacao
 		int pintNegociosTotal = -1, decimal pdecValorTotal = -1, decimal pdecPercentualStopGain = -1)
 		{
 
-            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
+            FuncoesBd funcoesBd = objConexao.ObterFormatadorDeCampo();
 
 
-		    string strQuery = " SELECT " + pstrTabelaCotacao + ".codigo, ValorFechamento " + ", ROUND(" + pstrTabelaIFR + ".Valor, 2) AS IFR2" + Environment.NewLine + ", MME49.Valor as Valor_MME49 " + ", ROUND((ValorFechamento / MME49.Valor - 1) * 100, 4) AS Perc_MME49 " + Environment.NewLine + ", ROUND(valorfechamento,2) As entrada " + Environment.NewLine + ", ROUND(valorminimo - (valormaximo - valorminimo) * 1.3, 2) As stop_loss " + Environment.NewLine + ", ROUND(((valorminimo - (valormaximo - valorminimo) * 1.3) / valorfechamento -1) * 100, 4) As perc_stop_loss " + Environment.NewLine;
+		    string strQuery = " SELECT " + pstrTabelaCotacao + ".codigo, ValorFechamento " + ", ROUND(" + pstrTabelaIFR + ".Valor, 2) AS IFR2" + Environment.NewLine  + ", ROUND(valorfechamento,2) As entrada " + Environment.NewLine + ", ROUND(valorminimo - (valormaximo - valorminimo) * 1.3, 2) As stop_loss " + Environment.NewLine + ", ROUND(((valorminimo - (valormaximo - valorminimo) * 1.3) / valorfechamento -1) * 100, 4) As perc_stop_loss " + Environment.NewLine;
 
 			if (pdecPercentualStopGain != -1) {
-				strQuery = strQuery + ", ROUND(VALORFECHAMENTO " + "* (1 + " + FuncoesBd.CampoDecimalFormatar(pdecPercentualStopGain) + " / 100), 4) AS STOP_GAIN " + Environment.NewLine;
+				strQuery += ", ROUND(VALORFECHAMENTO " + "* (1 + " + FuncoesBd.CampoDecimalFormatar(pdecPercentualStopGain) + " / 100), 4) AS STOP_GAIN " + Environment.NewLine;
 			}
 
 		    //****início cálculo da quantidade e valor total que pode ser comprada com todo o capital disponível.
 
-			//cálculo da quantidade
+			//cálculo da quantidade de lotes fechados
 
-			//1)divide o total do capital pelo valor de entrada e por 100, pois os lotes são de 100 ações.
-			//com isso teremos o nº de lotes em decimais, ou seja pode haver lotes quebrados
-			string strAux = "CSTR(" + FuncoesBd.CampoDecimalFormatar(pdecValorCapital) + " / ValorFechamento / 100)";
+		    string formulaDaQuantidadeDeCapital;
 
-			//2) transforma o número em uma string e retorna apenas os números à esquerda da vírgula.
-			//Com isso temos o número de lotes inteiros que podem ser comprados. Transformamos então
-			//esse número em inteiro novamente e multiplicamos por 100 obtendo assim o total de ações que podem ser compradas
+		    string valorDoCapitalFormatado = FuncoesBd.CampoDecimalFormatar(pdecValorCapital);
 
-			strAux = "CINT(LEFT(" + strAux + ", " + " IIF(INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") > 0 " + ", INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" + strAux + ")" + "))) * 100";
+		    if (objConexao.BancoDeDados == cEnum.BancoDeDados.Access)
+		    {
+		        //1)divide o total do capital pelo valor de entrada e por 100, pois os lotes são de 100 ações.
+		        //com isso teremos o nº de lotes em decimais, ou seja pode haver lotes quebrados
+		        formulaDaQuantidadeDeCapital = "CSTR(" + valorDoCapitalFormatado +
+		                                              " / ValorFechamento / 100)";
 
-			strQuery = strQuery + ", " + strAux + " AS Quantidade_Capital" + Environment.NewLine;
+		        //2) transforma o número em uma string e retorna apenas os números à esquerda da vírgula.
+		        //Com isso temos o número de lotes inteiros que podem ser comprados. Transformamos então
+		        //esse número em inteiro novamente e multiplicamos por 100 obtendo assim o total de ações que podem ser compradas
+
+		        formulaDaQuantidadeDeCapital = "CINT(LEFT(" + formulaDaQuantidadeDeCapital + ", " + " IIF(INSTR(" +
+		                                       formulaDaQuantidadeDeCapital + "," + FuncoesBd.CampoStringFormatar(",") +
+		                                       ") > 0 " + ", INSTR(" + formulaDaQuantidadeDeCapital + "," +
+		                                       FuncoesBd.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" +
+		                                       formulaDaQuantidadeDeCapital + ")" + "))) * 100";
+		    }
+		    else
+		    {
+                formulaDaQuantidadeDeCapital = string.Format("ROUND ({0} / ValorFechamento, -2, 1)", valorDoCapitalFormatado);
+		    }
+
+			strQuery += ", " + formulaDaQuantidadeDeCapital + " AS Quantidade_Capital" + Environment.NewLine;
 
 			//multiplica a quantidade de ações que podem ser compradas com todo o capital pelo valor de entrada
 			//para obter o valor total que pode será gasto. 
-			strQuery = strQuery + ", " + strAux + " * ValorFechamento AS Valor_Capital" + Environment.NewLine;
+			strQuery += ", " + formulaDaQuantidadeDeCapital + " * ValorFechamento AS Valor_Capital" + Environment.NewLine;
 
 			//obtem o percentual de risco em relação ao capital total se for aplicar tudo que for possível sem manejo de risco.
 			//Para isso multiplica a quantidade que pode ser comprada pela perda por ação (entrada - stop)
-			strQuery = strQuery + ", ROUND((" + strAux + " * (valorfechamento  - (valorminimo - (valormaximo - valorminimo) * 1.3)) " + "/ " + FuncoesBd.CampoDecimalFormatar(pdecValorCapital) + ") * 100, 4)  AS Perc_Risco_Capital " + Environment.NewLine;
+		    const string perdaPorAcao = " (valorfechamento  - (valorminimo - (valormaximo - valorminimo) * 1.3)) ";
+
+		    strQuery += ", ROUND((" + formulaDaQuantidadeDeCapital + " * " + perdaPorAcao + "/ " + valorDoCapitalFormatado + ") * 100, 4)  AS Perc_Risco_Capital " + Environment.NewLine;
 
 
 			//****Fim dos cálculos com todo o capital.
@@ -551,28 +569,55 @@ namespace prmCotacao
 
 			//cálculo da quantidade
 
-			//1)divide o total do capital que pode ser perdido pelo valor de perda por ação e por 100, 
-			//pois os lotes são de 100 ações. com isso teremos o nº de lotes em decimais, ou seja pode haver lotes quebrados
-			//OBS: EXISTE UM IIF TESTANDO SE O VALOR MÁXIMO É DIFERENTE DO VALOR MÍNIMO PARA EVITAR ERROS
-			//DE DIVISÃO POR ZERO. ESTA CONDIÇÃO SÓ VAI ACONTECER EM AÇÕES MUITO POUCO LÍQUIDAS
-			strAux = "CSTR(IIF(ValorMaximo <> ValorMinimo " + ", " + FuncoesBd.CampoDecimalFormatar(pdecValorPerdaManejo) + " / " + "(ValorFechamento  - (ValorMinimo - (ValorMaximo - ValorMinimo) * 1.3)) " + ", " + FuncoesBd.CampoDecimalFormatar(pdecValorPerdaManejo) + ") / 100)";
+		    string valorPerdaManejoFormatado = FuncoesBd.CampoDecimalFormatar(pdecValorPerdaManejo);
+		    string formulaValorMaximoDiferenteValorMinimo = valorPerdaManejoFormatado + " / " + perdaPorAcao;
 
-			//2) transforma o número em uma string e retorna apenas os números à esquerda da vírgula.
-			//Com isso temos o número de lotes inteiros que podem ser comprados. Transformamos então
-			//esse número em inteiro novamente e multiplicamos por 100 obtendo assim o total de ações que podem ser compradas
+            string projecaoCondicional = funcoesBd.Condicional("ValorMaximo <> ValorMinimo", formulaValorMaximoDiferenteValorMinimo, valorPerdaManejoFormatado);
 
-			strAux = "CINT(LEFT(" + strAux + ", " + " IIF(INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") > 0 " + ", INSTR(" + strAux + "," + FuncoesBd.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" + strAux + ")" + "))) * 100";
+		    string formulaDaQuantidadeComManejo;
 
-			strQuery = strQuery + ", " + strAux + " AS Quantidade_Manejo" + Environment.NewLine;
+		    if (objConexao.BancoDeDados == cEnum.BancoDeDados.Access)
+		    {
+		        //1)divide o total do capital que pode ser perdido pelo valor de perda por ação e por 100, 
+		        //pois os lotes são de 100 ações. com isso teremos o nº de lotes em decimais, ou seja pode haver lotes quebrados
+		        //OBS: EXISTE UM IIF TESTANDO SE O VALOR MÁXIMO É DIFERENTE DO VALOR MÍNIMO PARA EVITAR ERROS
+		        //DE DIVISÃO POR ZERO. ESTA CONDIÇÃO SÓ VAI ACONTECER EM AÇÕES MUITO POUCO LÍQUIDAS
+		        formulaDaQuantidadeComManejo = string.Format("CSTR({0} / 100)", projecaoCondicional);
+		        //2) transforma o número em uma string e retorna apenas os números à esquerda da vírgula.
+		        //Com isso temos o número de lotes inteiros que podem ser comprados. Transformamos então
+		        //esse número em inteiro novamente e multiplicamos por 100 obtendo assim o total de ações que podem ser compradas
+
+		        formulaDaQuantidadeComManejo = "CINT(LEFT(" + formulaDaQuantidadeComManejo + ", " + " IIF(INSTR(" +
+		                                       formulaDaQuantidadeComManejo + "," + FuncoesBd.CampoStringFormatar(",") +
+		                                       ") > 0 " + ", INSTR(" + formulaDaQuantidadeComManejo + "," +
+		                                       FuncoesBd.CampoStringFormatar(",") + ") - 1" + "," + "LEN(" +
+		                                       formulaDaQuantidadeComManejo + ")" + "))) * 100";
+
+                strQuery += ", " + formulaDaQuantidadeComManejo + " AS Quantidade_Manejo" + Environment.NewLine;
+		    }
+		    else
+		    {
+                formulaDaQuantidadeComManejo = string.Format("ROUND ({0}, -2, 1)  ", projecaoCondicional);
+                strQuery += ", CONVERT(decimal, " + formulaDaQuantidadeComManejo + ") AS Quantidade_Manejo" + Environment.NewLine;    
+		    }
+            
 
 			//multiplica a quantidade de ações que podem ser compradas com todo o capital pelo valor de entrada
 			//para obter o valor total que pode será gasto. 
-			strQuery = strQuery + ", " + strAux + " * ValorFechamento AS Valor_Manejo" + Environment.NewLine;
+            strQuery = strQuery + ", " + formulaDaQuantidadeComManejo + " * ValorFechamento AS Valor_Manejo" + Environment.NewLine;
 
-			//obtem o percentual de risco em relação ao capital total se for aplicar o que o manejo de risco permitir.
-			//Para isso multiplica a quantidade que pode ser comprada pela perda por ação (entrada - stop)
-			strQuery = strQuery + ", ROUND((" + strAux + " * (valorfechamento  - (valorminimo - (valormaximo - valorminimo) * 1.3)) " + "/ " + FuncoesBd.CampoDecimalFormatar(pdecValorCapital) + ") * 100, 2)  AS Perc_Risco_Manejo " + Environment.NewLine;
-
+		    string formulaDoPercentualDeRiscoQuandoPuderComprarPeloMenosUmLote = string.Format("ROUND({0} * {1} / {2} * 100, 2)", formulaDaQuantidadeComManejo, perdaPorAcao, valorDoCapitalFormatado);
+            
+		    if (objConexao.BancoDeDados == cEnum.BancoDeDados.SqlServer)
+		    {
+                strQuery += string.Format(", {0}  AS Perc_Risco_Manejo ", funcoesBd.Condicional(string.Format("{0} = 0", formulaDaQuantidadeDeCapital), "0", formulaDoPercentualDeRiscoQuandoPuderComprarPeloMenosUmLote));
+		    }
+		    else
+		    {
+                //obtem o percentual de risco em relação ao capital total se for aplicar o que o manejo de risco permitir.
+                //Para isso multiplica a quantidade que pode ser comprada pela perda por ação (entrada - stop)
+                strQuery += string.Format(", {0}  AS Perc_Risco_Manejo ", formulaDoPercentualDeRiscoQuandoPuderComprarPeloMenosUmLote) + Environment.NewLine;
+		    }
 
 			//****Fim dos cálculos com manejo de risco.
 
@@ -586,7 +631,7 @@ namespace prmCotacao
 
 			string strTabela = "(" + pstrTabelaCotacao + " INNER JOIN " + pstrTabelaIFR + Environment.NewLine + " On " + pstrTabelaCotacao + ".Codigo = " + pstrTabelaIFR + ".Codigo " + Environment.NewLine + " And " + pstrTabelaCotacao + ".Data = " + pstrTabelaIFR + ".Data) " + Environment.NewLine;
 
-			if (pdblTitulosTotal != -1) {
+			if (pdblTitulosTotal != -1.0) {
 				//O filtro por quantidade de ações negociadas utilizada a média de 21 períodos do volume
 
 				strTabela = "(" + strTabela + " INNER JOIN " + pstrTabelaMedia + " AS MV " + Environment.NewLine + " ON " + pstrTabelaCotacao + ".Codigo = MV.Codigo " + Environment.NewLine + " AND " + pstrTabelaCotacao + ".Data = MV.Data) " + Environment.NewLine;
@@ -598,17 +643,9 @@ namespace prmCotacao
 			//PORQUE O WHERE PELO TIPO = 'MME' AND NUMPERIODOS = 21 FAZ COM QUE OS REGISTROS
 			//QUE AINDA NÃO TENHAM A MÉDIA DE 21 NÃO SEJAM CONSIDERADOS.
 			//POR ISSO TEMOS QUE CRIAR UM SELECT INTERNO QUE FORMA A TABELA MME21
-			strTabela = "(" + strTabela + " LEFT JOIN " + Environment.NewLine + "(" + Environment.NewLine + '\t' + "SELECT Codigo, Data, Valor " + Environment.NewLine + '\t' + "FROM " + pstrTabelaMedia + Environment.NewLine + '\t' + " WHERE Data = " + FuncoesBd.CampoDateFormatar(pdtmDataAtual) + Environment.NewLine + '\t' + " AND Tipo = " + FuncoesBd.CampoStringFormatar("MME") + Environment.NewLine + '\t' + " And NumPeriodos = 21 " + Environment.NewLine + ") AS MME21 " + Environment.NewLine + " On " + pstrTabelaCotacao + ".Codigo = MME21.Codigo " + Environment.NewLine + " And " + pstrTabelaCotacao + ".Data = MME21.Data) " + Environment.NewLine;
+			strTabela = "(" + strTabela + " LEFT JOIN " + Environment.NewLine + "(" + Environment.NewLine + '\t' + "SELECT Codigo, Data, Valor " + Environment.NewLine + '\t' + "FROM " + pstrTabelaMedia + Environment.NewLine + '\t' + " WHERE Data = " + funcoesBd.CampoDateFormatar(pdtmDataAtual) + Environment.NewLine + '\t' + " AND Tipo = " + FuncoesBd.CampoStringFormatar("MMA") + Environment.NewLine + '\t' + " And NumPeriodos = 21 " + Environment.NewLine + ") AS MME21 " + Environment.NewLine + " On " + pstrTabelaCotacao + ".Codigo = MME21.Codigo " + Environment.NewLine + " And " + pstrTabelaCotacao + ".Data = MME21.Data) " + Environment.NewLine;
 
-			//GERA TABELA PARA BUSCAR A MÉDIA MÓVEL DE 49 PERÍODOS.
-			//NÃO PODE FAZER SIMPLESMENTE UM LEFT JOIN COM  A TABELA DE MÉDIAS
-			//PORQUE O WHERE PELO TIPO = 'MME' AND NUMPERIODOS = 49 FAZ COM QUE OS REGISTROS
-			//QUE AINDA NÃO TENHAM A MÉDIA DE 49 NÃO SEJAM CONSIDERADOS.
-			//POR ISSO TEMOS QUE CRIAR UM SELECT INTERNO QUE FORMA A TABELA MME49
-			strTabela = "(" + strTabela + " LEFT JOIN " + Environment.NewLine + "(" + Environment.NewLine + '\t' + "SELECT Codigo, Data, Valor " + Environment.NewLine + '\t' + "FROM " + pstrTabelaMedia + Environment.NewLine + '\t' + " WHERE Data = " + FuncoesBd.CampoDateFormatar(pdtmDataAtual) + Environment.NewLine + '\t' + " AND Tipo = " + FuncoesBd.CampoStringFormatar("MME") + Environment.NewLine + '\t' + " And NumPeriodos = 49 " + Environment.NewLine + ") AS MME49 " + Environment.NewLine + " On " + pstrTabelaCotacao + ".Codigo = MME49.Codigo " + Environment.NewLine + " And " + pstrTabelaCotacao + ".Data = MME49.Data) " + Environment.NewLine;
-
-
-			strQuery = strQuery + " FROM " + strTabela + " WHERE " + pstrTabelaCotacao + ".Data = " + FuncoesBd.CampoDateFormatar(pdtmDataAtual) + " And " + pstrTabelaIFR + ".NumPeriodos = 2 " + " And " + pstrTabelaIFR + ".Valor <= " + FuncoesBd.CampoFloatFormatar(pdblIFR2LimiteSuperior);
+			strQuery = strQuery + " FROM " + strTabela + " WHERE " + pstrTabelaCotacao + ".Data = " + funcoesBd.CampoDateFormatar(pdtmDataAtual) + " And " + pstrTabelaIFR + ".NumPeriodos = 2 " + " And " + pstrTabelaIFR + ".Valor <= " + FuncoesBd.CampoFloatFormatar(pdblIFR2LimiteSuperior);
 
 
 			if (pblnAcimaMME49) {
@@ -1571,16 +1608,20 @@ namespace prmCotacao
 					//Dim strQuery As String
 
 
-				    FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
+				    FuncoesBd funcoesBd = objConexao.ObterFormatadorDeCampo();
 
 					//primeiro busca a data final da cotação semanal
-					objRS.ExecuteQuery(" SELECT Max(datafinal) As datafinal" + " FROM cotacao_semanal " + " WHERE Data = " + FuncoesBd.CampoDateFormatar(dtmDataAtual));
+					objRS.ExecuteQuery(" SELECT Max(datafinal) As datafinal" + " FROM cotacao_semanal " + " WHERE Data = " + funcoesBd.CampoDateFormatar(dtmDataAtual));
 
 					DateTime dtmCotacaoSemanalDataFinal = Convert.ToDateTime(objRS.Field("DataFinal"));
 
 					objRS.Fechar();
 
-					objRS.ExecuteQuery(" SELECT Max (contador) As contador " + " FROM " + "(" + " SELECT codigo, Count(1) As contador " + " FROM cotacao " + " WHERE Data >= " + FuncoesBd.CampoDateFormatar(dtmDataAtual) + " And data <= " + FuncoesBd.CampoDateFormatar(dtmCotacaoSemanalDataFinal) + " GROUP BY codigo " + ")");
+				    string subTabela = " SELECT codigo, Count(1) As contador " + " FROM cotacao " + " WHERE Data >= " +
+				                       funcoesBd.CampoDateFormatar(dtmDataAtual) + " And data <= " +
+				                       funcoesBd.CampoDateFormatar(dtmCotacaoSemanalDataFinal) + " GROUP BY codigo ";
+
+                    objRS.ExecuteQuery(" SELECT Max (contador) As contador " + " FROM " + funcoesBd.FormataSubSelect(subTabela));
 
 
 					if (pdblTitulosTotal != -1) {

@@ -100,19 +100,13 @@ namespace TraderWizard
 
 		public void GridCarregar(string pstrQuery)
 		{
-			DataSet objDataSet = new DataSet();
+			var objDataSet = new DataSet();
 
 			int intHeaderIndex = 0;
 
-			cGrid objGrid = new cGrid(objConexao);
+			var objGrid = new cGrid(objConexao) {Query = pstrQuery, Tabela = "Cotacao"};
 
-			objGrid.Query = pstrQuery;
-
-			objGrid.Tabela = "Cotacao";
-
-			cEnum.enumSetup intSetup = default(cEnum.enumSetup);
-
-			intSetup = ComboSetupMapear();
+		    cEnum.enumSetup intSetup = ComboSetupMapear();
 
 
 			if (objGrid.Atualizar(objDataSet)) {
@@ -209,7 +203,7 @@ namespace TraderWizard
 					}
 
 
-					if (intSetup == cEnum.enumSetup.IFRSemFiltro || intSetup == cEnum.enumSetup.IFRComFiltro) {
+					if (intSetup == cEnum.enumSetup.IFRComFiltro) {
 						objDataGridView.Columns[intHeaderIndex].HeaderText = "MME 49";
 						objDataGridView.Columns[intHeaderIndex].DefaultCellStyle.Format = "###,###0.00";
 						intHeaderIndex = intHeaderIndex + 1;
@@ -240,6 +234,8 @@ namespace TraderWizard
 
 					//Quantidade em lotes de 100 que pode ser comprado com todo o capital.
 					objDataGridView.Columns[intHeaderIndex].HeaderText = "Quant. Capital";
+				    objDataGridView.Columns[intHeaderIndex].DefaultCellStyle.Format = "n0";
+
 					intHeaderIndex = intHeaderIndex + 1;
 
 					//valor total da compra com todo o capital
@@ -253,6 +249,7 @@ namespace TraderWizard
 
 					//Quantidade que pode ser comprada utilizando o manejo de risco.
 					objDataGridView.Columns[intHeaderIndex].HeaderText = "Quant. Manejo";
+                    objDataGridView.Columns[intHeaderIndex].DefaultCellStyle.Format = "n0";
 					intHeaderIndex = intHeaderIndex + 1;
 
 					//valor total da compra utilizando o manejo de risco.
