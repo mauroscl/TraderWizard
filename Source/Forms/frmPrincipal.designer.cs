@@ -72,15 +72,10 @@ namespace TraderWizard
             this.mniIFRCalcular = new System.Windows.Forms.ToolStripMenuItem();
             this.mniIFRDiarioSimular = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuSequencialCalcular = new System.Windows.Forms.ToolStripMenuItem();
-            this.CalcularMédiaMóvelExponencialToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.AtualizarCotaçõesSemanaisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuOutrasOperacoes = new System.Windows.Forms.ToolStripMenuItem();
             this.mniBackTestUnitTest = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuitemCotacaoExcluir = new System.Windows.Forms.ToolStripMenuItem();
-            this.RelatóriosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuItmRelatGeracaoVisualizacao = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuItmRelatBackTest = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuitmRelatSpool = new System.Windows.Forms.ToolStripMenuItem();
             this.WindowsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.NewWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CascadeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -104,6 +99,7 @@ namespace TraderWizard
             this.ToolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.HelpToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.toolStripMenuSetupDeEntrada = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuStrip.SuspendLayout();
             this.ToolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -357,8 +353,8 @@ namespace TraderWizard
             this.ToolsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mniCotacaoOnline,
             this.mniGrafico,
-            this.OperaçõesToolStripMenuItem,
-            this.RelatóriosToolStripMenuItem});
+            this.toolStripMenuSetupDeEntrada,
+            this.OperaçõesToolStripMenuItem});
             this.ToolsMenu.Name = "ToolsMenu";
             this.ToolsMenu.Size = new System.Drawing.Size(84, 20);
             this.ToolsMenu.Text = "&Ferramentas";
@@ -366,14 +362,15 @@ namespace TraderWizard
             // mniCotacaoOnline
             // 
             this.mniCotacaoOnline.Name = "mniCotacaoOnline";
-            this.mniCotacaoOnline.Size = new System.Drawing.Size(156, 22);
+            this.mniCotacaoOnline.Size = new System.Drawing.Size(163, 22);
             this.mniCotacaoOnline.Text = "Cotação &Online";
+            this.mniCotacaoOnline.Visible = false;
             this.mniCotacaoOnline.Click += new System.EventHandler(this.mniCotacaoOnline_Click);
             // 
             // mniGrafico
             // 
             this.mniGrafico.Name = "mniGrafico";
-            this.mniGrafico.Size = new System.Drawing.Size(156, 22);
+            this.mniGrafico.Size = new System.Drawing.Size(163, 22);
             this.mniGrafico.Text = "&Gráficos";
             this.mniGrafico.Click += new System.EventHandler(this.mniGrafico_Click);
             // 
@@ -385,76 +382,68 @@ namespace TraderWizard
             this.mniProventoAtualizar,
             this.mniProventoCadastrar,
             this.mniIFRCalcular,
-            this.CalcularMédiaMóvelExponencialToolStripMenuItem,
             this.mniIFRDiarioSimular,
             this.mnuSequencialCalcular,
             this.AtualizarCotaçõesSemanaisToolStripMenuItem,
             this.mnuOutrasOperacoes,
             this.mnuitemCotacaoExcluir});
             this.OperaçõesToolStripMenuItem.Name = "OperaçõesToolStripMenuItem";
-            this.OperaçõesToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.OperaçõesToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.OperaçõesToolStripMenuItem.Text = "&Operações";
             // 
             // AtualizarCotaçõesHistóricasToolStripMenuItem
             // 
             this.AtualizarCotaçõesHistóricasToolStripMenuItem.Name = "AtualizarCotaçõesHistóricasToolStripMenuItem";
-            this.AtualizarCotaçõesHistóricasToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+            this.AtualizarCotaçõesHistóricasToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             this.AtualizarCotaçõesHistóricasToolStripMenuItem.Text = "Atualizar &Cotações...";
             this.AtualizarCotaçõesHistóricasToolStripMenuItem.Click += new System.EventHandler(this.AtualizarCotaçõesHistóricasToolStripMenuItem_Click);
             // 
             // mniDadosRecalcular
             // 
             this.mniDadosRecalcular.Name = "mniDadosRecalcular";
-            this.mniDadosRecalcular.Size = new System.Drawing.Size(255, 22);
+            this.mniDadosRecalcular.Size = new System.Drawing.Size(225, 22);
             this.mniDadosRecalcular.Text = "Recalcular Dados...";
             this.mniDadosRecalcular.Click += new System.EventHandler(this.mniDadosRecalcular_Click);
             // 
             // mniProventoAtualizar
             // 
             this.mniProventoAtualizar.Name = "mniProventoAtualizar";
-            this.mniProventoAtualizar.Size = new System.Drawing.Size(255, 22);
+            this.mniProventoAtualizar.Size = new System.Drawing.Size(225, 22);
             this.mniProventoAtualizar.Text = "&Importar Proventos...";
             this.mniProventoAtualizar.Click += new System.EventHandler(this.mniProventoAtualizar_Click);
             // 
             // mniProventoCadastrar
             // 
             this.mniProventoCadastrar.Name = "mniProventoCadastrar";
-            this.mniProventoCadastrar.Size = new System.Drawing.Size(255, 22);
+            this.mniProventoCadastrar.Size = new System.Drawing.Size(225, 22);
             this.mniProventoCadastrar.Text = "&Cadastrar Proventos...";
             this.mniProventoCadastrar.Click += new System.EventHandler(this.mniProventoCadastrar_Click);
             // 
             // mniIFRCalcular
             // 
             this.mniIFRCalcular.Name = "mniIFRCalcular";
-            this.mniIFRCalcular.Size = new System.Drawing.Size(255, 22);
+            this.mniIFRCalcular.Size = new System.Drawing.Size(225, 22);
             this.mniIFRCalcular.Text = "Calcular IFR...";
             this.mniIFRCalcular.Click += new System.EventHandler(this.mniIFRCalcular_Click);
             // 
             // mniIFRDiarioSimular
             // 
             this.mniIFRDiarioSimular.Name = "mniIFRDiarioSimular";
-            this.mniIFRDiarioSimular.Size = new System.Drawing.Size(255, 22);
+            this.mniIFRDiarioSimular.Size = new System.Drawing.Size(225, 22);
             this.mniIFRDiarioSimular.Text = "Simular IFR Diário...";
             this.mniIFRDiarioSimular.Click += new System.EventHandler(this.mniIFRDiarioSimular_Click);
             // 
             // mnuSequencialCalcular
             // 
             this.mnuSequencialCalcular.Name = "mnuSequencialCalcular";
-            this.mnuSequencialCalcular.Size = new System.Drawing.Size(255, 22);
+            this.mnuSequencialCalcular.Size = new System.Drawing.Size(225, 22);
             this.mnuSequencialCalcular.Text = "Calcular &Sequenciais";
             this.mnuSequencialCalcular.Click += new System.EventHandler(this.mnuSequencialCalcular_Click);
-            // 
-            // CalcularMédiaMóvelExponencialToolStripMenuItem
-            // 
-            this.CalcularMédiaMóvelExponencialToolStripMenuItem.Name = "CalcularMédiaMóvelExponencialToolStripMenuItem";
-            this.CalcularMédiaMóvelExponencialToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
-            this.CalcularMédiaMóvelExponencialToolStripMenuItem.Text = "Calcular &Média Móvel";
-            this.CalcularMédiaMóvelExponencialToolStripMenuItem.Click += new System.EventHandler(this.CalcularMédiaMóvelExponencialToolStripMenuItem_Click);
             // 
             // AtualizarCotaçõesSemanaisToolStripMenuItem
             // 
             this.AtualizarCotaçõesSemanaisToolStripMenuItem.Name = "AtualizarCotaçõesSemanaisToolStripMenuItem";
-            this.AtualizarCotaçõesSemanaisToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+            this.AtualizarCotaçõesSemanaisToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             this.AtualizarCotaçõesSemanaisToolStripMenuItem.Text = "Atualizar Cotações &Semanais";
             this.AtualizarCotaçõesSemanaisToolStripMenuItem.Visible = false;
             this.AtualizarCotaçõesSemanaisToolStripMenuItem.Click += new System.EventHandler(this.AtualizarCotaçõesSemanaisToolStripMenuItem_Click);
@@ -464,7 +453,7 @@ namespace TraderWizard
             this.mnuOutrasOperacoes.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mniBackTestUnitTest});
             this.mnuOutrasOperacoes.Name = "mnuOutrasOperacoes";
-            this.mnuOutrasOperacoes.Size = new System.Drawing.Size(255, 22);
+            this.mnuOutrasOperacoes.Size = new System.Drawing.Size(225, 22);
             this.mnuOutrasOperacoes.Text = "Outras Operações";
             // 
             // mniBackTestUnitTest
@@ -477,40 +466,9 @@ namespace TraderWizard
             // mnuitemCotacaoExcluir
             // 
             this.mnuitemCotacaoExcluir.Name = "mnuitemCotacaoExcluir";
-            this.mnuitemCotacaoExcluir.Size = new System.Drawing.Size(255, 22);
+            this.mnuitemCotacaoExcluir.Size = new System.Drawing.Size(225, 22);
             this.mnuitemCotacaoExcluir.Text = "Excluir Cotações...";
             this.mnuitemCotacaoExcluir.Click += new System.EventHandler(this.mnuitemCotacaoExcluir_Click);
-            // 
-            // RelatóriosToolStripMenuItem
-            // 
-            this.RelatóriosToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuItmRelatGeracaoVisualizacao,
-            this.mnuItmRelatBackTest,
-            this.mnuitmRelatSpool});
-            this.RelatóriosToolStripMenuItem.Name = "RelatóriosToolStripMenuItem";
-            this.RelatóriosToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
-            this.RelatóriosToolStripMenuItem.Text = "Relatórios";
-            // 
-            // mnuItmRelatGeracaoVisualizacao
-            // 
-            this.mnuItmRelatGeracaoVisualizacao.Name = "mnuItmRelatGeracaoVisualizacao";
-            this.mnuItmRelatGeracaoVisualizacao.Size = new System.Drawing.Size(177, 22);
-            this.mnuItmRelatGeracaoVisualizacao.Text = "Setups de Entrada...";
-            this.mnuItmRelatGeracaoVisualizacao.Click += new System.EventHandler(this.mnuItmRelatGeracaoVisualizacao_Click);
-            // 
-            // mnuItmRelatBackTest
-            // 
-            this.mnuItmRelatBackTest.Name = "mnuItmRelatBackTest";
-            this.mnuItmRelatBackTest.Size = new System.Drawing.Size(177, 22);
-            this.mnuItmRelatBackTest.Text = "Back Test...";
-            this.mnuItmRelatBackTest.Click += new System.EventHandler(this.mnuItmRelatBackTest_Click);
-            // 
-            // mnuitmRelatSpool
-            // 
-            this.mnuitmRelatSpool.Name = "mnuitmRelatSpool";
-            this.mnuitmRelatSpool.Size = new System.Drawing.Size(177, 22);
-            this.mnuitmRelatSpool.Text = "Spool...";
-            this.mnuitmRelatSpool.Click += new System.EventHandler(this.mnuitmRelatSpool_Click);
             // 
             // WindowsMenu
             // 
@@ -696,6 +654,13 @@ namespace TraderWizard
             this.HelpToolStripButton.Size = new System.Drawing.Size(23, 22);
             this.HelpToolStripButton.Text = "Help";
             // 
+            // toolStripMenuSetupDeEntrada
+            // 
+            this.toolStripMenuSetupDeEntrada.Name = "toolStripMenuSetupDeEntrada";
+            this.toolStripMenuSetupDeEntrada.Size = new System.Drawing.Size(163, 22);
+            this.toolStripMenuSetupDeEntrada.Text = "&Setup de Entrada";
+            this.toolStripMenuSetupDeEntrada.Click += new System.EventHandler(this.toolStripMenuSetupDeEntrada_Click);
+            // 
             // frmPrincipal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -774,18 +739,14 @@ namespace TraderWizard
 		private System.Windows.Forms.ToolStripMenuItem AtualizarCotaçõesHistóricasToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem mniProventoAtualizar;
 		private System.Windows.Forms.ToolStripMenuItem mnuSequencialCalcular;
-		private System.Windows.Forms.ToolStripMenuItem CalcularMédiaMóvelExponencialToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem AtualizarCotaçõesSemanaisToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem mniDadosRecalcular;
 		private System.Windows.Forms.ToolStripMenuItem mnuOutrasOperacoes;
 		private System.Windows.Forms.ToolStripMenuItem mnuitemCotacaoExcluir;
-		private System.Windows.Forms.ToolStripMenuItem RelatóriosToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem mnuItmRelatGeracaoVisualizacao;
-		private System.Windows.Forms.ToolStripMenuItem mnuitmRelatSpool;
 		private System.Windows.Forms.ToolStripMenuItem mniBackTestUnitTest;
-        private System.Windows.Forms.ToolStripMenuItem mnuItmRelatBackTest;
 		private System.Windows.Forms.ToolStripMenuItem mniIFRDiarioSimular;
 		private System.Windows.Forms.ToolStripMenuItem mniProventoCadastrar;
 		private System.Windows.Forms.ToolStripMenuItem mniIFRCalcular;
-	}
+        private ToolStripMenuItem toolStripMenuSetupDeEntrada;
+    }
 }

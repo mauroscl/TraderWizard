@@ -104,7 +104,7 @@ namespace TestProject1
 			var objSetup = FuncoesGerais.CarregarSetup(cEnum.enumSetup.IFRSemFiltroRP);
 			var objSimulacao = objCarregadorSimulacaoDiaria.CarregarUltimasSimulacoesPorIFRSobrevendido(objAtivo, objSetup, objIFRSobrevendido, new DateTime(2011, 10, 20));
 
-			Assert.IsTrue(objSimulacao.Count() == 0);
+			Assert.IsTrue(!objSimulacao.Any());
 
 		}
 

@@ -10,15 +10,15 @@
             to contain all cWebTest Unit Tests
             </summary>
         </member>
-        <member name="M:TestProject1.cWebTest.QuandoPassarLinkValidoFuncaoTemQueRetornarQueOLinkEhValido">
-            <summary>
-            A test for ArquivoBaixar
-            </summary>
-        </member>
         <member name="P:TestProject1.cWebTest.TestContext">
             <summary>
             Gets or sets the test context which provides
             information about and functionality for the current test run.
+            </summary>
+        </member>
+        <member name="M:TestProject1.cWebTest.QuandoPassarLinkValidoFuncaoTemQueRetornarQueOLinkEhValido">
+            <summary>
+            A test for ArquivoBaixar
             </summary>
         </member>
         <member name="T:TestProject1.testes_da_busca_do_valor_minimo_anterior">

@@ -30,6 +30,18 @@ namespace prjModelo.Entidades
 
 		}
 
+	    protected bool Equals(cIFR other)
+	    {
+	        return Equals(Cotacao, other.Cotacao) && NumPeriodos == other.NumPeriodos;
+	    }
+
+	    public override int GetHashCode()
+	    {
+	        unchecked
+	        {
+	            return ((Cotacao != null ? Cotacao.GetHashCode() : 0)*397) ^ NumPeriodos;
+	        }
+	    }
 	}
 
 	public class cIFRDiario : cIFR

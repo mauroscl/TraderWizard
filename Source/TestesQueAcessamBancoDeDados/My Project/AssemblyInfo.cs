@@ -16,7 +16,7 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyTrademark("")]
 
-[assembly: CLSCompliant(true)]
+[assembly: CLSCompliant(false)]
 
 [assembly: ComVisible(false)]
 //The following GUID is for the ID of the typelib if this project is exposed to COM

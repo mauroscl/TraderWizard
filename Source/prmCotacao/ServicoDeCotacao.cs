@@ -52,11 +52,6 @@ namespace prmCotacao
 
 		}
 
-	    public ServicoDeCotacao()
-	    {
-	        
-	    }
-
 		/// <summary>
 		/// Atualiza as cotações em todas as datas em que há pregão em um determinado período.
 		/// </summary>
@@ -183,8 +178,7 @@ namespace prmCotacao
 
 		    string strCodigoAtivo = String.Empty;
 
-			decimal decValorAbertura = default(decimal);
-			decimal decValorFechamento = default(decimal);
+		    decimal decValorFechamento = default(decimal);
 			decimal decValorMinimo = default(decimal);
 			decimal decValorMedio = default(decimal);
 			decimal decValorMaximo = default(decimal);
@@ -202,9 +196,9 @@ namespace prmCotacao
 
 		    //utilizado para calcular o sequencial do ativo.
 
-            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
+            FuncoesBd funcoesBd = objConexao.ObterFormatadorDeCampo();
 
-		    objRS.ExecuteQuery(" SELECT COUNT(1) AS Contador " + " FROM Cotacao_Intraday " + " WHERE Data = " + FuncoesBd.CampoDateFormatar(pdtmData));
+		    objRS.ExecuteQuery(" SELECT COUNT(1) AS Contador " + " FROM Cotacao_Intraday " + " WHERE Data = " + funcoesBd.CampoDateFormatar(pdtmData));
 
 
 			if ((int) objRS.Field("Contador") > 0) {
@@ -261,6 +255,7 @@ namespace prmCotacao
 			        bool blnImportarLinha;
 			        bool blnInserir;
 			        string strOscilacao;
+			        decimal decValorAbertura = default(decimal);
 			        if (strLinhaAux.Substring(0,4) + strLinhaAux.Substring( 69, 3) == "0202010") {
 						//se é a cotação de um papel
 						//e é do mercado à vista.
@@ -414,7 +409,13 @@ namespace prmCotacao
 						long lngSequencial = SequencialCalcular(strCodigoAtivo, "Cotacao", objCommand.Conexao);
 
 						//insere na tabela
-						string strQuery = " insert into Cotacao " + "(Codigo, Data, ValorAbertura, ValorFechamento " + ", ValorMinimo, ValorMedio, ValorMaximo, Oscilacao " + ", Negocios_Total, Titulos_Total, Valor_Total, Sequencial) " + " values " + "(" + FuncoesBd.CampoStringFormatar(strCodigoAtivo) + "," + FuncoesBd.CampoDateFormatar(pdtmData) + "," + FuncoesBd.CampoDecimalFormatar(decValorAbertura) + "," + FuncoesBd.CampoDecimalFormatar(decValorFechamento) + "," + FuncoesBd.CampoDecimalFormatar(decValorMinimo) + "," + FuncoesBd.CampoDecimalFormatar(decValorMedio) + "," + FuncoesBd.CampoDecimalFormatar(decValorMaximo) + "," + FuncoesBd.CampoDecimalFormatar(decOscilacao) + "," + lngNegociosTotal.ToString() + "," + lngTitulosTotal.ToString() + "," + FuncoesBd.CampoDecimalFormatar(decValorTotal) + "," + lngSequencial.ToString() + ")";
+						string strQuery = " insert into Cotacao " + "(Codigo, Data, ValorAbertura, ValorFechamento " + ", ValorMinimo, ValorMedio, ValorMaximo, Oscilacao " +
+                            ", Negocios_Total, Titulos_Total, Valor_Total, Sequencial) " + " values " + 
+                            "(" + FuncoesBd.CampoStringFormatar(strCodigoAtivo) + "," + funcoesBd.CampoDateFormatar(pdtmData) + "," + FuncoesBd.CampoDecimalFormatar(decValorAbertura) + "," 
+                            + FuncoesBd.CampoDecimalFormatar(decValorFechamento) + "," + FuncoesBd.CampoDecimalFormatar(decValorMinimo) + "," 
+                            + FuncoesBd.CampoDecimalFormatar(decValorMedio) + "," + FuncoesBd.CampoDecimalFormatar(decValorMaximo) + "," 
+                            + FuncoesBd.CampoDecimalFormatar(decOscilacao) + "," + lngNegociosTotal + "," + lngTitulosTotal + "," + FuncoesBd.CampoDecimalFormatar(decValorTotal) 
+                            + "," + lngSequencial + ")";
 
 						objCommand.Execute(strQuery);
 
@@ -493,7 +494,7 @@ namespace prmCotacao
 			if (!fileService.FileExists(strPathZip + "\\" + strArquivoZipDestino)) 
             {
 			
-				if (!objWeb.DownloadWithProxy("http://www.bmfbovespa.com.br/fechamento-pregao/bdi/" + strArquivoBaixar, strPathZip, strArquivoZipDestino))
+				if (!objWeb.DownloadWithProxy("http://bvmf.bmfbovespa.com.br/fechamento-pregao/bdi/" + strArquivoBaixar, strPathZip, strArquivoZipDestino))
 				{
 				    pcolLinhaRet = new List<string>();
 				    return false;
@@ -3930,34 +3931,6 @@ namespace prmCotacao
 
 		}
 
-		/// <summary>
-		/// Calcula o número de registro que existe na tabela de cotações recebida por parâmetro para um determinado 
-		/// ativo a partir de uma data inicial. Se existir uma cotação na data inicial esta também será incluída na contabilização.
-		/// </summary>
-		/// <param name="pstrCodigo">Código do ativo</param>
-		/// <param name="pdtmDataInicial">data inicial do cálculo</param>
-		/// <param name="pstrTabela">
-		/// Cotacao ou Cotacao_Semanal
-		/// </param>
-		/// <param name="pobjConexaoAux">conexão auxiliar de banco de dados, caso não deva utilizar a conexão principal</param>
-		/// <returns>O número de cotações existentes no período</returns>
-		/// <remarks></remarks>
-		private int NumCotacoesCalcular(string pstrCodigo, DateTime pdtmDataInicial, string pstrTabela, Conexao pobjConexaoAux = null)
-		{
-		    cRS objRs = pobjConexaoAux == null ? new cRS(objConexao) : new cRS(pobjConexaoAux);
-
-            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
-
-			//calcula o número de períodos em que há cotações para o papel no intervalo de datas recebido.
-			objRs.ExecuteQuery(" Select count(1) as Contador " + " from " + pstrTabela + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBd.CampoDateFormatar(pdtmDataInicial));
-
-			int numeroDeCotacoes = Convert.ToInt32(objRs.Field("Contador", 0));
-
-			objRs.Fechar();
-			return numeroDeCotacoes;
-
-		}
-
 		public bool MediaAtualizar(string pstrCodigo, List<cMediaDTO> plstMediasSelecionadas, string pstrPeriodoDuracao)
 		{
 
@@ -4921,26 +4894,6 @@ namespace prmCotacao
 			return AtivoSequencialMaximoBuscar(pstrCodigo, pstrTabela, pobjConexao) + 1;
 
 		}
-
-		/// <summary>
-		/// consulta o valor de fechamento da última cotação de um ativo na periodicidade diária
-		/// </summary>
-		/// <param name="pstrCodigo">Código do ativo</param>
-		/// <returns>O valor de fechamento do ativo na última cotação</returns>
-		/// <remarks></remarks>
-		public decimal CotacaoUltimaValorFechamentoConsultar(string pstrCodigo)
-		{
-		    cRS objRS = new cRS(objConexao);
-
-			objRS.ExecuteQuery("SELECT TOP 1 ValorFechamento " + "FROM Cotacao " + "WHERE Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " ORDER BY Sequencial DESC");
-
-			decimal valorFechamento = Convert.ToDecimal(objRS.Field("ValorFechamento"));
-
-			objRS.Fechar();
-			return valorFechamento;
-
-		}
-
 
 	    /// <summary>
 	    /// 'Atualiza o registro da tabela Resumo. Esta tabela contém apenas sempre 1 registro.

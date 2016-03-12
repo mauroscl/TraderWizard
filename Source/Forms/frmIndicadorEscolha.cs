@@ -31,25 +31,19 @@ namespace TraderWizard
 			this.Text = pstrText;
 
 			//colStructIndicadorEscolha = pcolStructPeriodoEscolha
-			lstMediasSelecionadas = plstMediasSelecionadas;
+			lstMediasSelecionadas = plstMediasSelecionadas ?? new List<cMediaDTO>();
 
 			//Dim objStructIndicadorEscolha As structIndicadorEscolha
 
-			ListViewItem objListViewItem = null;
-
-			//If colStructIndicadorEscolha Is Nothing Then
+		    //If colStructIndicadorEscolha Is Nothing Then
 			//    colStructIndicadorEscolha = New Collection
 			//End If
 
-			if (lstMediasSelecionadas == null) {
-				lstMediasSelecionadas = new List<cMediaDTO>();
-			}
-
-			//MONTA OS ITENS RECEBIDOS POR PARÂMETRO.
+		    //MONTA OS ITENS RECEBIDOS POR PARÂMETRO.
 
 			foreach (cMediaDTO objMediaDTO in lstMediasSelecionadas) {
 				//período
-				objListViewItem = lstPeriodoSelecionado.Items.Add(objMediaDTO.NumPeriodos.ToString());
+				var objListViewItem = lstPeriodoSelecionado.Items.Add(objMediaDTO.NumPeriodos.ToString());
 
 				//tipo
 				objListViewItem.SubItems.Add((objMediaDTO.Tipo == "E" ? "Exponencial" : "Aritmética"));

@@ -1,8 +1,7 @@
+using System;
 using DataBase;
 using DataBase.Carregadores;
 using prjDominio.Entidades;
-using prjModelo.Carregadores;
-using prjModelo.Entidades;
 using TraderWizard.Enumeracoes;
 
 namespace TestProject1
@@ -10,7 +9,7 @@ namespace TestProject1
 
 	public class FuncoesGerais
 	{
-
+        [CLSCompliant(false)]
 		public static Setup CarregarSetup(cEnum.enumSetup pintIDSetup)
 		{
 

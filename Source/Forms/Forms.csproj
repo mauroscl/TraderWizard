@@ -63,21 +63,16 @@
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>icone_principal.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
-    <Reference Include="CrystalDecisions.ReportSource, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\SAP BusinessObjects\Crystal Reports for .NET Framework 4.0\Common\SAP BusinessObjects Enterprise XI 4.0\win32_x86\dotnet\CrystalDecisions.ReportSource.dll</HintPath>
-    </Reference>
-    <Reference Include="CrystalDecisions.Shared, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\SAP BusinessObjects\Crystal Reports for .NET Framework 4.0\Common\SAP BusinessObjects Enterprise XI 4.0\win32_x86\dotnet\CrystalDecisions.Shared.dll</HintPath>
-    </Reference>
     <Reference Include="CrystalDecisions.Windows.Forms, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\CrystalDecisions.Windows.Forms.1.0.0\lib\CrystalDecisions.Windows.Forms.dll</HintPath>
@@ -133,12 +128,6 @@
     <Compile Include="frmGrafico.designer.cs">
       <DependentUpon>frmGrafico.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormMediaCalcular.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FormMediaCalcular.designer.cs">
-      <DependentUpon>FormMediaCalcular.cs</DependentUpon>
-    </Compile>
     <Compile Include="frmIFRCalcular.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -175,30 +164,6 @@
     <Compile Include="frmProventoCadastrar.designer.cs">
       <DependentUpon>frmProventoCadastrar.cs</DependentUpon>
     </Compile>
-    <Compile Include="frmRelatBackTest.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmRelatBackTest.designer.cs">
-      <DependentUpon>frmRelatBackTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="frmRelatBackTestDetalhe.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmRelatBackTestDetalhe.designer.cs">
-      <DependentUpon>frmRelatBackTestDetalhe.cs</DependentUpon>
-    </Compile>
-    <Compile Include="frmRelatCrystal.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmRelatCrystal.designer.cs">
-      <DependentUpon>frmRelatCrystal.cs</DependentUpon>
-    </Compile>
-    <Compile Include="frmRelatorioSpool.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmRelatorioSpool.designer.cs">
-      <DependentUpon>frmRelatorioSpool.cs</DependentUpon>
-    </Compile>
     <Compile Include="frmRelatVisualizacao.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -209,9 +174,6 @@
     <Compile Include="mdlGeral.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RelatBackTest.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <EmbeddedResource Include="frmConfiguracao.resx">
       <DependentUpon>frmConfiguracao.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -234,10 +196,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmGrafico.resx">
       <DependentUpon>frmGrafico.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FormMediaCalcular.resx">
-      <DependentUpon>FormMediaCalcular.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="frmIFRCalcular.resx">
@@ -264,22 +222,6 @@
       <DependentUpon>frmProventoCadastrar.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmRelatBackTest.resx">
-      <DependentUpon>frmRelatBackTest.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frmRelatBackTestDetalhe.resx">
-      <DependentUpon>frmRelatBackTestDetalhe.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frmRelatCrystal.resx">
-      <DependentUpon>frmRelatCrystal.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frmRelatorioSpool.resx">
-      <DependentUpon>frmRelatorioSpool.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="frmRelatVisualizacao.resx">
       <DependentUpon>frmRelatVisualizacao.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -298,7 +240,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="ClassDiagram1.cd" />
-    <None Include="Forms_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -376,7 +317,6 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="icone_principal.ico" />
     <None Include="icones\zoom_in.png" />
     <Content Include="icones\zoom_out.png" />
     <None Include="Resources\Image1.png" />

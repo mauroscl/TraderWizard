@@ -3,8 +3,7 @@ namespace prjDominio.Entidades
 
 	public abstract class cCriterioClassifMedia
 	{
-
-		public cCriterioClassifMedia(int pintID, string pstrDescricao)
+	    protected cCriterioClassifMedia(int pintID, string pstrDescricao)
 		{
 			intID = pintID;
 			strDescricao = pstrDescricao;

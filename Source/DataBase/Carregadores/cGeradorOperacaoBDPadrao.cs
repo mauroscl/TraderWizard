@@ -35,13 +35,11 @@ namespace DataBase.Carregadores
 
 		public bool Executar()
 		{
-
-			string strComando = null;
-
-			cCommand objCommand = new cCommand(this.Conexao);
+		    cCommand objCommand = new cCommand(this.Conexao);
 
 			foreach (OperacaoDeBancoDeDados item in this.Operacoes) {
-				if (item.Comando.ToUpper() == "INSERT") {
+			    string strComando;
+			    if (item.Comando.ToUpper() == "INSERT") {
 					strComando = GeraInsert(item.Modelo);
 				} else if (item.Comando.ToUpper() == "UPDATE") {
 					strComando = GeraUpdate(item.Modelo);

@@ -1,6 +1,6 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TraderWizard.Extensoes;
+#pragma warning disable 1591
 
 namespace Extensoes
 {

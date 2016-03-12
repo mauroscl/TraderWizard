@@ -9,7 +9,6 @@ namespace TraderWizard
 {
     public partial class frmPrincipal
     {
-        public static string strBancoTipo;
         private int m_ChildFormNumber;
         private Conexao objConexao;
 
@@ -49,51 +48,6 @@ namespace TraderWizard
             ChildForm.Show();
         }
 
-        private void OpenFile(object sender, EventArgs e)
-        {
-            var OpenFileDialog = new OpenFileDialog();
-            OpenFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            OpenFileDialog.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
-            if ((OpenFileDialog.ShowDialog(this) == DialogResult.OK))
-            {
-                string FileName = OpenFileDialog.FileName;
-                // TODO: Add code here to open the file.
-            }
-        }
-
-        private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var SaveFileDialog = new SaveFileDialog();
-            SaveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            SaveFileDialog.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
-
-            if ((SaveFileDialog.ShowDialog(this) == DialogResult.OK))
-            {
-                string FileName = SaveFileDialog.FileName;
-                // TODO: Add code here to save the current contents of the form to a file.
-            }
-        }
-
-
-        private void CutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            // Use My.Computer.Clipboard to insert the selected text or images into the clipboard
-        }
-
-        private void CopyToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            // Use My.Computer.Clipboard to insert the selected text or images into the clipboard
-        }
-
-        private void PasteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //Use My.Computer.Clipboard.GetText() or My.Computer.Clipboard.GetData to retrieve information from the clipboard.
-        }
-
-        private void ToolBarToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ToolStrip.Visible = ToolBarToolStripMenuItem.Checked;
-        }
 
         private void CascadeToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -166,14 +120,6 @@ namespace TraderWizard
             m_ChildFormNumber += 1;
 
             frmChildForm.Show();
-        }
-
-
-        private void CalcularMédiaMóvelExponencialToolStripMenuItem_Click(Object sender, EventArgs e)
-        {
-            var formMediaCalcular = new FormMediaCalcular {MdiParent = this};
-            m_ChildFormNumber += 1;
-            formMediaCalcular.Show();
         }
 
 
@@ -276,31 +222,6 @@ namespace TraderWizard
             }
         }
 
-
-        private void mnuitmRelatSpool_Click(Object sender, EventArgs e)
-        {
-            var frmChildForm = new frmRelatorioSpool(objConexao);
-            // Make it a child of this MDI form before showing it.
-            frmChildForm.MdiParent = this;
-
-            m_ChildFormNumber += 1;
-
-            frmChildForm.Show();
-        }
-
-
-        private void mnuItmRelatBackTest_Click(Object sender, EventArgs e)
-        {
-            var frmChildForm = new frmRelatBackTest(objConexao);
-            // Make it a child of this MDI form before showing it.
-            frmChildForm.MdiParent = this;
-
-            m_ChildFormNumber += 1;
-
-            frmChildForm.Show();
-        }
-
-
         private void mniProventoAtualizar_Click(Object sender, EventArgs e)
         {
             var frmChildForm = new frmProventoAtualizar();
@@ -392,6 +313,17 @@ namespace TraderWizard
                 MessageBox.Show(ex.Message, Resources.ApplicationMessageCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Close();
             }
+        }
+
+        private void toolStripMenuSetupDeEntrada_Click(object sender, EventArgs e)
+        {
+            var frmChildForm = new frmRelatVisualizacao(objConexao) {MdiParent = this};
+            // Make it a child of this MDI form before showing it.
+
+            m_ChildFormNumber += 1;
+
+            frmChildForm.Show();
+
         }
     }
 }

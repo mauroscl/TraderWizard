@@ -176,7 +176,7 @@ namespace prjDominio.Entidades
 			return pobjCotacao.ValorFechamento * 1.05M;
 		}
 
-		public decimal CalculaValorStopLossDeSaida(CotacaoAbstract pobjCotacao, InformacoesDoTradeDTO pobjInformacoesDoTradeDTO, CotacaoAbstract cotacaoDoValorMinimoAnterior)
+		public override decimal CalculaValorStopLossDeSaida(CotacaoAbstract pobjCotacao, InformacoesDoTradeDTO pobjInformacoesDoTradeDTO, CotacaoAbstract cotacaoDoValorMinimoAnterior)
 		{
 
 			if (!pobjInformacoesDoTradeDTO.IFRCruzouMediaParaCima || !pobjInformacoesDoTradeDTO.PermitiuRealizarParcial) {

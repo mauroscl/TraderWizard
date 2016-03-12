@@ -47,7 +47,7 @@ namespace prmCotacao
 				functionReturnValue = true;
 
 
-			} catch (Exception ex) {
+			} catch (Exception) {
                 MessageBox.Show("Não foi possível conectar no site www.bovespa.com.br.", "Atualizar Cotações",MessageBoxButtons.OK, MessageBoxIcon.Information);
 				functionReturnValue = false;
 
