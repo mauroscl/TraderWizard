@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 using DataBase.Carregadores;
 using Ionic.Zip;
 using prjDominio.Regras;
@@ -51,6 +52,12 @@ namespace prmCotacao
 			objWeb = new cWeb(pobjConexao);
 
 		}
+
+	    public ServicoDeCotacao()
+	    {
+	        objConexao = new Conexao();
+            objWeb = new cWeb(objConexao);
+	    }
 
 		/// <summary>
 		/// Atualiza as cotações em todas as datas em que há pregão em um determinado período.
@@ -409,15 +416,19 @@ namespace prmCotacao
 						long lngSequencial = SequencialCalcular(strCodigoAtivo, "Cotacao", objCommand.Conexao);
 
 						//insere na tabela
-						string strQuery = " insert into Cotacao " + "(Codigo, Data, ValorAbertura, ValorFechamento " + ", ValorMinimo, ValorMedio, ValorMaximo, Oscilacao " +
-                            ", Negocios_Total, Titulos_Total, Valor_Total, Sequencial) " + " values " + 
-                            "(" + FuncoesBd.CampoStringFormatar(strCodigoAtivo) + "," + funcoesBd.CampoDateFormatar(pdtmData) + "," + FuncoesBd.CampoDecimalFormatar(decValorAbertura) + "," 
-                            + FuncoesBd.CampoDecimalFormatar(decValorFechamento) + "," + FuncoesBd.CampoDecimalFormatar(decValorMinimo) + "," 
-                            + FuncoesBd.CampoDecimalFormatar(decValorMedio) + "," + FuncoesBd.CampoDecimalFormatar(decValorMaximo) + "," 
-                            + FuncoesBd.CampoDecimalFormatar(decOscilacao) + "," + lngNegociosTotal + "," + lngTitulosTotal + "," + FuncoesBd.CampoDecimalFormatar(decValorTotal) 
-                            + "," + lngSequencial + ")";
+					    var dataFormatada = funcoesBd.CampoDateFormatar(pdtmData);
 
-						objCommand.Execute(strQuery);
+                        var insertBuilder = new StringBuilder()
+                            .Append(" insert into Cotacao ")
+                            .Append("(Codigo, Data, DataFinal, ValorAbertura, ValorFechamento, ValorMinimo, ValorMedio, ValorMaximo, Oscilacao, Negocios_Total, Titulos_Total, Valor_Total, Sequencial) ")
+                            .Append(" VALUES ")
+                            .AppendFormat("({0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12})", 
+                            FuncoesBd.CampoStringFormatar(strCodigoAtivo),dataFormatada, dataFormatada, FuncoesBd.CampoDecimalFormatar(decValorAbertura), 
+                            FuncoesBd.CampoDecimalFormatar(decValorFechamento), FuncoesBd.CampoDecimalFormatar(decValorMinimo), FuncoesBd.CampoDecimalFormatar(decValorMedio),
+                            FuncoesBd.CampoDecimalFormatar(decValorMaximo), FuncoesBd.CampoDecimalFormatar(decOscilacao),
+                            lngNegociosTotal, lngTitulosTotal, FuncoesBd.CampoDecimalFormatar(decValorTotal), lngSequencial);
+
+						objCommand.Execute(insertBuilder.ToString());
 
 					}
 
@@ -608,7 +619,14 @@ namespace prmCotacao
 							long lngSequencial = SequencialCalcular(strCodigoAtivo, "Cotacao", pobjCommand.Conexao);
 
 							//insere na tabela
-							string strQuery = " insert into Cotacao " + "(Codigo, Data, ValorAbertura, ValorFechamento " + ", ValorMinimo, ValorMedio, ValorMaximo " + ", Negocios_Total, Titulos_Total, Valor_Total, Sequencial) " + " values " + "(" + FuncoesBd.CampoStringFormatar(strCodigoAtivo) + "," + FuncoesBd.CampoDateFormatar(dtmCotacaoData) + "," + FuncoesBd.CampoDecimalFormatar(decValorAbertura) + "," + FuncoesBd.CampoDecimalFormatar(decValorFechamento) + "," + FuncoesBd.CampoDecimalFormatar(decValorMinimo) + "," + FuncoesBd.CampoDecimalFormatar(decValorMedio) + "," + FuncoesBd.CampoDecimalFormatar(decValorMaximo) + "," + lngNegociosTotal.ToString() + "," + lngTitulosTotal.ToString() + "," + FuncoesBd.CampoDecimalFormatar(decValorTotal) + "," + lngSequencial.ToString() + ")";
+						    var dataFormatada = FuncoesBd.CampoDateFormatar(dtmCotacaoData);
+						    string strQuery = " insert into Cotacao " + "(Codigo, Data, DataFinal, ValorAbertura, ValorFechamento " + ", ValorMinimo, ValorMedio, ValorMaximo " + 
+                                ", Negocios_Total, Titulos_Total, Valor_Total, Sequencial) " + " values " 
+                                + "(" + FuncoesBd.CampoStringFormatar(strCodigoAtivo) + "," + dataFormatada + "," + dataFormatada + "," 
+                                + FuncoesBd.CampoDecimalFormatar(decValorAbertura) + "," + FuncoesBd.CampoDecimalFormatar(decValorFechamento) 
+                                + "," + FuncoesBd.CampoDecimalFormatar(decValorMinimo) + "," + FuncoesBd.CampoDecimalFormatar(decValorMedio) 
+                                + "," + FuncoesBd.CampoDecimalFormatar(decValorMaximo) + "," + lngNegociosTotal + "," + lngTitulosTotal + "," 
+                                + FuncoesBd.CampoDecimalFormatar(decValorTotal) + "," + lngSequencial + ")";
 
 							pobjCommand.Execute(strQuery);
 
@@ -4502,21 +4520,19 @@ namespace prmCotacao
 
 			cRS objRS = new cRS(objConexao);
 
-		    string strAtivos = String.Empty;
-
 			objCommand.BeginTrans();
 
-            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
+            FuncoesBd funcoesBd = objConexao.ObterFormatadorDeCampo();
 
 			//consistência para evitar buracos nas cotações.
 			//Para isso verificar se existe alguma cotação maior do que a primeira do array
 			//e diferente de todas as outras do array.
 
-			string strQuery = " SELECT COUNT(1) AS Contador " + " FROM Cotacao " + " WHERE Data > " + FuncoesBd.CampoDateFormatar(parrData[0]);
+			string strQuery = " SELECT COUNT(1) AS Contador " + " FROM Cotacao " + " WHERE Data > " + funcoesBd.CampoDateFormatar(parrData[0]);
 
 
 			for (int intI = 1; intI <= parrData.Length - 1; intI++) {
-				strQuery = strQuery + " AND Data <> " + FuncoesBd.CampoDateFormatar(parrData[intI]);
+				strQuery = strQuery + " AND Data <> " + funcoesBd.CampoDateFormatar(parrData[intI]);
 
 			}
 
@@ -4536,47 +4552,52 @@ namespace prmCotacao
 			objRS.Fechar();
 
 			//COTACAO
-			objCommand.Execute(" DELETE " + " FROM Cotacao " + " WHERE Data >= " + FuncoesBd.CampoDateFormatar(parrData[0]));
+			objCommand.Execute(" DELETE " + " FROM Cotacao " + " WHERE Data >= " + funcoesBd.CampoDateFormatar(parrData[0]));
 
 			//MEDIA_DIARIA
 
-			objCommand.Execute(" DELETE " + " FROM Media_Diaria " + " WHERE Data >= " + FuncoesBd.CampoDateFormatar(parrData[0]));
+			objCommand.Execute(" DELETE " + " FROM Media_Diaria " + " WHERE Data >= " + funcoesBd.CampoDateFormatar(parrData[0]));
 
 			//IFR_DIARIO
-			objCommand.Execute(" DELETE " + " FROM IFR_Diario " + " WHERE Data >= " + FuncoesBd.CampoDateFormatar(parrData[0]));
+			objCommand.Execute(" DELETE " + " FROM IFR_Diario " + " WHERE Data >= " + funcoesBd.CampoDateFormatar(parrData[0]));
 
+            var ativosBuilder = new StringBuilder();
 
-			if (pblnDadosSemanaisRecalcular) {
+            if (pblnDadosSemanaisRecalcular) {
 				//DAS COTAÇÕES SEMANAIS DEVE EXCLUIR OS REGISTROS ONDE A PRIMEIRA DATA DA SEMANA
 				//É MAIOR OU IGUAL A PRIMEIRA DATA DO ARRAY
 
 				//COTACAO_SEMANAL
-				objCommand.Execute(" DELETE " + " FROM Cotacao_Semanal " + " WHERE Data >= " + FuncoesBd.CampoDateFormatar(parrData[0]));
+				objCommand.Execute(" DELETE " + " FROM Cotacao_Semanal " + " WHERE Data >= " + funcoesBd.CampoDateFormatar(parrData[0]));
 
 				//MEDIA_SEMANAL
-				objCommand.Execute(" DELETE " + " FROM Media_Semanal " + " WHERE Data >= " + FuncoesBd.CampoDateFormatar(parrData[0]));
+				objCommand.Execute(" DELETE " + " FROM Media_Semanal " + " WHERE Data >= " + funcoesBd.CampoDateFormatar(parrData[0]));
 
 				//IFR_SEMANAL
-				objCommand.Execute(" DELETE " + " FROM IFR_Semanal " + " WHERE Data >= " + FuncoesBd.CampoDateFormatar(parrData[0]));
+				objCommand.Execute(" DELETE " + " FROM IFR_Semanal " + " WHERE Data >= " + funcoesBd.CampoDateFormatar(parrData[0]));
 
 				//verifica se existem cotações intraday para todos os ativos ou somente para ativos específicos
-				objRS.ExecuteQuery(" SELECT COUNT(1) AS Contador " + " FROM Cotacao_Intraday " + " WHERE Data >= " + FuncoesBd.CampoDateFormatar(parrData[0]));
+				objRS.ExecuteQuery(" SELECT COUNT(1) AS Contador " + " FROM Cotacao_Intraday " + " WHERE Data >= " + funcoesBd.CampoDateFormatar(parrData[0]));
 
-
-				if (Convert.ToInt32(objRS.Field("Contador")) == 0) {
+                if (Convert.ToInt32(objRS.Field("Contador")) == 0) {
 					objRS.Fechar();
 
 					//se não tem cotações intraday para todos os ativos
 					//lista apenas os ativos que tiveram cotação intraday para 
 					//fazer o recálculo dos dados semanais.
-					objRS.ExecuteQuery(" SELECT Codigo " + " FROM Cotacao_Intraday_Ativo " + " WHERE Data >= " + FuncoesBd.CampoDateFormatar(parrData[0]) + " GROUP BY Codigo");
+					objRS.ExecuteQuery(" SELECT Codigo " + " FROM Cotacao_Intraday_Ativo " + " WHERE Data >= " + funcoesBd.CampoDateFormatar(parrData[0]) + " GROUP BY Codigo");
 
+				    const string separadorDeAtivos = "#";
 
-					strAtivos = "#";
-
+				    if (objRS.DadosExistir)
+				    {
+				        ativosBuilder.Append(separadorDeAtivos);
+				    }
 
 					while (!objRS.EOF) {
-						strAtivos = strAtivos + objRS.Field("Codigo") + "#";
+
+					    ativosBuilder.Append(objRS.Field("Codigo"))
+					        .Append(separadorDeAtivos);
 
 						objRS.MoveNext();
 
@@ -4589,10 +4610,10 @@ namespace prmCotacao
 			}
 
 			//EXCLUI REGISTROS DA TABELA COTACAO_INTRADAY
-			objCommand.Execute(" DELETE " + " FROM Cotacao_Intraday " + " WHERE Data >= " + FuncoesBd.CampoDateFormatar(parrData[0]));
+			objCommand.Execute(" DELETE " + " FROM Cotacao_Intraday " + " WHERE Data >= " + funcoesBd.CampoDateFormatar(parrData[0]));
 
 			//EXCLUI REGISTROS DA TABELA COTACAO_INTRADAY_ATIVO
-			objCommand.Execute(" DELETE " + " FROM Cotacao_Intraday_Ativo " + " WHERE Data >= " + FuncoesBd.CampoDateFormatar(parrData[0]));
+			objCommand.Execute(" DELETE " + " FROM Cotacao_Intraday_Ativo " + " WHERE Data >= " + funcoesBd.CampoDateFormatar(parrData[0]));
 
 			objCommand.CommitTrans();
 
@@ -4602,7 +4623,7 @@ namespace prmCotacao
 				if (pblnDadosSemanaisRecalcular) {
 					//CHAMA A FUNÇÃO DE RECÁLCULO PARA OS DADOS SEMANAIS.
 					//SE NÃO HOUVER REGISTROS NÃO CALCULARÁ
-					CotacaoSemanalDadosAtualizar(true, true, true, true, true, parrData[0], strAtivos);
+					CotacaoSemanalDadosAtualizar(true, true, true, true, true, parrData[0], ativosBuilder.ToString());
 
 				}
 
