@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using DataBase;
 using prjDominio.Regras;
 using prjDTO;
@@ -167,11 +168,11 @@ namespace prjServicoNegocio
 
 			DateTime dtmDataInicial = DiaUtilSeguinteCalcular(ObtemDataDaUltimaCotacao());
 
-
 			//Verifica se a data atual já tem cotação
 			cWeb objWeb = new cWeb(objConexao);
 
-			if (DiaUtilVerificar(DateTime.Now) && objWeb.VerificarLink("http://www.bmfbovespa.com.br/fechamento-pregao/bdi/" + cGeradorNomeArquivo.GerarNomeArquivoRemoto(DateTime.Now))) {
+            string urlBase = ConfigurationManager.AppSettings["UrlDownloadoArquivoFechamentoPregao"];
+            if (DiaUtilVerificar(DateTime.Now) && objWeb.VerificarLink(urlBase + cGeradorNomeArquivo.GerarNomeArquivoRemoto(DateTime.Now))) {
 				dtmDataFinal = DateTime.Now;
 			} else {
 				//Calcula o dia útil anterior à data atual

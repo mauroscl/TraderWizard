@@ -106,7 +106,7 @@ namespace TraderWizard
 
 
 				if (dtmDataInicial > dtmDataFinal) {
-					MessageBox.Show("Campo \"Data Inicial\" não pode ter uma data superior ao campo \"Data Final\".",
+					MessageBox.Show(@"Campo ""Data Inicial"" não pode ter uma data superior ao campo ""Data Final"".",
                         Text,MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 					return;
@@ -117,7 +117,7 @@ namespace TraderWizard
 				if (rdbIntraday.Checked) {
 
 					if (dtmDataInicial != dtmDataFinal) {
-                        MessageBox.Show("Para atualizações intraday as datas inicial e final devem ser as mesmas.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show(@"Para atualizações intraday as datas inicial e final devem ser as mesmas.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 						return;
 
@@ -237,14 +237,14 @@ namespace TraderWizard
 
 			var objCalculadorData = new cCalculadorData(objConexao);
 
-			cSugerirAtualizacaoCotacaoDTO objRetornoDTO = objCalculadorData.SugerirAtualizarCotacao();
+			cSugerirAtualizacaoCotacaoDTO sugestao = objCalculadorData.SugerirAtualizarCotacao();
 
 
-			if ((objRetornoDTO != null)) {
-				txtDataInicial.Text = objRetornoDTO.DataInicial.ToString("dd/MM/yyyy");
-				txtDataFinal.Text = objRetornoDTO.DataFinal.ToString("dd/MM/yyyy");
+			if ((sugestao != null)) {
+				txtDataInicial.Text = sugestao.DataInicial.ToString("dd/MM/yyyy");
+				txtDataFinal.Text = sugestao.DataFinal.ToString("dd/MM/yyyy");
 
-				if (objRetornoDTO.Tipo == "online") {
+				if (sugestao.Tipo == "online") {
 					rdbOnline.Checked = true;
 				} else {
 					rdbIntraday.Checked = true;

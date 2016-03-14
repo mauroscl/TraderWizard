@@ -66,9 +66,9 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>
-    </ApplicationIcon>
+    <ApplicationIcon>1458014231_20.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup />
   <PropertyGroup>
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
@@ -317,7 +317,10 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\1458014231_20.ico" />
+    <None Include="Resources\IconePrincipal.ico" />
     <None Include="icones\zoom_in.png" />
+    <Content Include="1458014231_20.ico" />
     <Content Include="icones\zoom_out.png" />
     <None Include="Resources\Image1.png" />
   </ItemGroup>

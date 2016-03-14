@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Text;
 using DataBase.Carregadores;
@@ -504,8 +505,8 @@ namespace prmCotacao
 
 			if (!fileService.FileExists(strPathZip + "\\" + strArquivoZipDestino)) 
             {
-			
-				if (!objWeb.DownloadWithProxy("http://bvmf.bmfbovespa.com.br/fechamento-pregao/bdi/" + strArquivoBaixar, strPathZip, strArquivoZipDestino))
+                string urlBase = ConfigurationManager.AppSettings["UrlDownloadoArquivoFechamentoPregao"];
+                if (!objWeb.DownloadWithProxy(urlBase + strArquivoBaixar, strPathZip, strArquivoZipDestino))
 				{
 				    pcolLinhaRet = new List<string>();
 				    return false;
@@ -4295,9 +4296,9 @@ namespace prmCotacao
 
 			int intContador = 0;
 
-            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
+            FuncoesBd funcoesBd = objConexao.ObterFormatadorDeCampo();
             
-			objRS.ExecuteQuery(" SELECT COUNT(1) AS Contador " + " FROM Cotacao_Intraday " + " WHERE Data = " + FuncoesBd.CampoDateFormatar(pdtmData));
+			objRS.ExecuteQuery(" SELECT COUNT(1) AS Contador " + " FROM Cotacao_Intraday " + " WHERE Data = " + funcoesBd.CampoDateFormatar(pdtmData));
 
 			if ((int) objRS.Field("Contador") > 0) {
 				//blnCotacaoIntradayExistir = True
@@ -4426,7 +4427,7 @@ namespace prmCotacao
 							if (dtmCotacaoAnteriorData != Constantes.DataInvalida) {
 								//QUANDO A COTAÇAO É INTRADAY, COMO NÃO TEMOS DADOS DE VOLUME,
 								//UTILIZA OS DADOS DA COTAÇÃO ANTERIOR.
-								objRS.ExecuteQuery("SELECT Titulos_Total, Negocios_Total, Valor_Total " + " FROM Cotacao " + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(strCodigo) + " AND Data = " + FuncoesBd.CampoDateFormatar(dtmCotacaoAnteriorData));
+								objRS.ExecuteQuery("SELECT Titulos_Total, Negocios_Total, Valor_Total " + " FROM Cotacao " + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(strCodigo) + " AND Data = " + funcoesBd.CampoDateFormatar(dtmCotacaoAnteriorData));
 
 								dblNegociosTotal = Convert.ToDouble(objRS.Field("Negocios_Total"));
 
@@ -4441,7 +4442,7 @@ namespace prmCotacao
 						    //calcula o sequencial do ativo
 							long lngSequencial = SequencialCalcular(strCodigo, "Cotacao", objCommand.Conexao);
 
-							string strQuery = " insert into Cotacao " + "(Codigo, Data, ValorAbertura, ValorFechamento " + ", ValorMinimo, ValorMedio, ValorMaximo, Oscilacao " + ", Titulos_Total, Negocios_Total, Valor_Total, Sequencial) " + " values " + "(" + FuncoesBd.CampoStringFormatar(strCodigo) + "," + FuncoesBd.CampoDateFormatar(dtmData) + "," + FuncoesBd.CampoDecimalFormatar(decValorAbertura) + "," + FuncoesBd.CampoDecimalFormatar(decValorFechamento) + "," + FuncoesBd.CampoDecimalFormatar(decValorMinimo) + "," + FuncoesBd.CampoDecimalFormatar(decValorMedio) + "," + FuncoesBd.CampoDecimalFormatar(decValorMaximo) + "," + FuncoesBd.CampoDecimalFormatar(decOscilacao) + "," + FuncoesBd.CampoFloatFormatar(dblTitulosTotal) + "," + FuncoesBd.CampoFloatFormatar(dblNegociosTotal) + "," + FuncoesBd.CampoFloatFormatar(dblValorTotal) + "," + lngSequencial.ToString() + ")";
+							string strQuery = " insert into Cotacao " + "(Codigo, Data, ValorAbertura, ValorFechamento " + ", ValorMinimo, ValorMedio, ValorMaximo, Oscilacao " + ", Titulos_Total, Negocios_Total, Valor_Total, Sequencial) " + " values " + "(" + FuncoesBd.CampoStringFormatar(strCodigo) + "," + funcoesBd.CampoDateFormatar(dtmData) + "," + FuncoesBd.CampoDecimalFormatar(decValorAbertura) + "," + FuncoesBd.CampoDecimalFormatar(decValorFechamento) + "," + FuncoesBd.CampoDecimalFormatar(decValorMinimo) + "," + FuncoesBd.CampoDecimalFormatar(decValorMedio) + "," + FuncoesBd.CampoDecimalFormatar(decValorMaximo) + "," + FuncoesBd.CampoDecimalFormatar(decOscilacao) + "," + FuncoesBd.CampoFloatFormatar(dblTitulosTotal) + "," + FuncoesBd.CampoFloatFormatar(dblNegociosTotal) + "," + FuncoesBd.CampoFloatFormatar(dblValorTotal) + "," + lngSequencial.ToString() + ")";
 
 							objCommand.Execute(strQuery);
 
@@ -4473,7 +4474,7 @@ namespace prmCotacao
 
 			//If Not blnCotacaoIntradayExistir Then
 
-			objCommand.Execute(" INSERT INTO Cotacao_Intraday " + " (Data)" + " VALUES " + "(" + FuncoesBd.CampoDateFormatar(dtmData) + ")");
+			objCommand.Execute(" INSERT INTO Cotacao_Intraday " + " (Data)" + " VALUES " + "(" + funcoesBd.CampoDateFormatar(dtmData) + ")");
 
 			//End If
 

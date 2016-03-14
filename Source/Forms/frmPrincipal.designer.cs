@@ -64,6 +64,7 @@ namespace TraderWizard
             this.ToolsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.mniCotacaoOnline = new System.Windows.Forms.ToolStripMenuItem();
             this.mniGrafico = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuSetupDeEntrada = new System.Windows.Forms.ToolStripMenuItem();
             this.OperaçõesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.AtualizarCotaçõesHistóricasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mniDadosRecalcular = new System.Windows.Forms.ToolStripMenuItem();
@@ -99,7 +100,6 @@ namespace TraderWizard
             this.ToolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.HelpToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.toolStripMenuSetupDeEntrada = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuStrip.SuspendLayout();
             this.ToolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -373,6 +373,13 @@ namespace TraderWizard
             this.mniGrafico.Size = new System.Drawing.Size(163, 22);
             this.mniGrafico.Text = "&Gráficos";
             this.mniGrafico.Click += new System.EventHandler(this.mniGrafico_Click);
+            // 
+            // toolStripMenuSetupDeEntrada
+            // 
+            this.toolStripMenuSetupDeEntrada.Name = "toolStripMenuSetupDeEntrada";
+            this.toolStripMenuSetupDeEntrada.Size = new System.Drawing.Size(163, 22);
+            this.toolStripMenuSetupDeEntrada.Text = "&Setup de Entrada";
+            this.toolStripMenuSetupDeEntrada.Click += new System.EventHandler(this.toolStripMenuSetupDeEntrada_Click);
             // 
             // OperaçõesToolStripMenuItem
             // 
@@ -653,13 +660,6 @@ namespace TraderWizard
             this.HelpToolStripButton.Name = "HelpToolStripButton";
             this.HelpToolStripButton.Size = new System.Drawing.Size(23, 22);
             this.HelpToolStripButton.Text = "Help";
-            // 
-            // toolStripMenuSetupDeEntrada
-            // 
-            this.toolStripMenuSetupDeEntrada.Name = "toolStripMenuSetupDeEntrada";
-            this.toolStripMenuSetupDeEntrada.Size = new System.Drawing.Size(163, 22);
-            this.toolStripMenuSetupDeEntrada.Text = "&Setup de Entrada";
-            this.toolStripMenuSetupDeEntrada.Click += new System.EventHandler(this.toolStripMenuSetupDeEntrada_Click);
             // 
             // frmPrincipal
             // 
