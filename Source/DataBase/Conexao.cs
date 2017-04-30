@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Windows.Forms;
 using prjConfiguracao;
 using TraderWizard.Enumeracoes;
+using System.Diagnostics;
 
 namespace DataBase
 {
@@ -31,10 +32,15 @@ namespace DataBase
 			    {
                     Conn = new OleDbConnection(ConnectionString);    
 			    }
-				
 
-				//inicialização das propriedades
-				TransAberta = false;
+                StackTrace stackTrace = new StackTrace();
+
+                // Get calling method name
+                Console.WriteLine("Opening: {0}", stackTrace.GetFrame(1).GetMethod().Name);
+
+
+                //inicialização das propriedades
+                TransAberta = false;
 				TransStatus = true;
 
 
@@ -90,8 +96,14 @@ namespace DataBase
 			if ((Conn != null)) {
 				if (Conn.State == ConnectionState.Open) {
 					Conn.Close();
-				}
-			}
+
+                    StackTrace stackTrace = new StackTrace();
+
+                    // Get calling method name
+                    Console.WriteLine("Closing: {0}", stackTrace.GetFrame(1).GetMethod().Name);
+
+                }
+            }
 		}
 
 

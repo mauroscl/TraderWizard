@@ -3972,9 +3972,6 @@ namespace prmCotacao
 
 			cRS objRS = new cRS(objConexao);
 
-		    //Dim objstructMediaEscolha As structIndicadorEscolha
-
-			//Dim colMediaEscolhaAux As Collection = New Collection
 			var lstMediasSelecionadasAux = new List<cMediaDTO>();
 
             FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
@@ -3995,26 +3992,24 @@ namespace prmCotacao
 					//Só precisa calcular a média, se possuir cotação
 					objRS.ExecuteQuery(" select max(Data) as Data " + " from " + strTabelaCotacao + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data > " + FuncoesBd.CampoDateFormatar(dtmDataInicial));
 
+                    var dataPosterior = Convert.ToDateTime(objRS.Field("Data", Constantes.DataInvalida));
 
-					if (Convert.ToDateTime(objRS.Field("Data", Constantes.DataInvalida)) != Constantes.DataInvalida) {
-						//colMediaEscolhaAux.Clear()
+                    objRS.Fechar();
+
+
+                    if (dataPosterior != Constantes.DataInvalida) {
 						lstMediasSelecionadasAux.Clear();
 
-						//colMediaEscolhaAux.Add(objstructMediaEscolha)
 						lstMediasSelecionadasAux.Add(objMediaDTO);
 
-					    blnRetorno = MediaMovelGeralCalcular(pstrPeriodoDuracao, lstMediasSelecionadasAux, Convert.ToDateTime(objRS.Field("Data")), "#" + pstrCodigo + "#");
+					    blnRetorno = MediaMovelGeralCalcular(pstrPeriodoDuracao, lstMediasSelecionadasAux, dataPosterior, "#" + pstrCodigo + "#");
 
 					}
 
-					objRS.Fechar();
-
 
 				} else {
-					//colMediaEscolhaAux.Clear()
 					lstMediasSelecionadasAux.Clear();
 
-					//colMediaEscolhaAux.Add(objstructMediaEscolha)
 					lstMediasSelecionadasAux.Add(objMediaDTO);
 
 					//se não tem média calculada, tem que calcular para todo o período calculado
