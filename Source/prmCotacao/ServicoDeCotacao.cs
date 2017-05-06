@@ -35,19 +35,23 @@ namespace prmCotacao
 		/// <remarks></remarks>
 
 		private readonly cWeb objWeb;
-		//Private Sub ConexaoIniciar()
-		//    objConexao = New cConexao
-		//End Sub
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="pobjConexao">Recebe a conexão da tela principal. 
-		/// Toda clase que acessa o banco de dados tem que receber a conexão
-		/// por parâmetro</param>
-		/// <remarks></remarks>
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pobjConexao">Recebe a conexão da tela principal. 
+        /// Toda clase que acessa o banco de dados tem que receber a conexão
+        /// por parâmetro</param>
+        /// <remarks></remarks>
+        /// 
+        private readonly IEnumerable<cMediaDTO> mediasDeFechamento = new List<cMediaDTO>
+        {
+            new cMediaDTO("A", 10, "VALOR"),
+            new cMediaDTO("A", 21, "VALOR"),
+            new cMediaDTO("A", 200, "VALOR")
+        };
 
-		public ServicoDeCotacao(Conexao pobjConexao)
+        public ServicoDeCotacao(Conexao pobjConexao)
 		{
 			objConexao = pobjConexao;
 			objWeb = new cWeb(pobjConexao);
@@ -60,22 +64,20 @@ namespace prmCotacao
             objWeb = new cWeb(objConexao);
 	    }
 
-		/// <summary>
-		/// Atualiza as cotações em todas as datas em que há pregão em um determinado período.
-		/// </summary>
-		/// <param name="pdtmDataInicial">Data inicial de importação</param>
-		/// <param name="pdtmDataFinal">Data final de importação</param>
-		/// <param name="pstrCodigoUnico">Indica se é para importar o código de um único ativo. Se o parâmetro for uma string vazia deve importar todos os arquivos</param>
-		/// <returns></returns>
-		/// <remarks></remarks>
-		public bool CotacaoPeriodoAtualizar(DateTime pdtmDataInicial, DateTime pdtmDataFinal, string pstrCodigoUnico, bool pblnCalcularDados)
+        /// <summary>
+        /// Atualiza as cotações em todas as datas em que há pregão em um determinado período.
+        /// </summary>
+        /// <param name="pdtmDataInicial">Data inicial de importação</param>
+        /// <param name="pdtmDataFinal">Data final de importação</param>
+        /// <param name="pstrCodigoUnico">Indica se é para importar o código de um único ativo. Se o parâmetro for uma string vazia deve importar todos os arquivos</param>
+        /// <param name="pblnCalcularDados">Indica se após atualizar as cotações deve calcular indicadores como média, IFR, etc</param>
+        /// <returns></returns>
+        /// <remarks></remarks>
+        public bool CotacaoPeriodoAtualizar(DateTime pdtmDataInicial, DateTime pdtmDataFinal, string pstrCodigoUnico, bool pblnCalcularDados)
 		{
 
 			//inicializa a data com data inválida. Vai ser atribuido nesta variável o primeiro dia útil.
 			var dtmDataInicialAux = Constantes.DataInvalida;
-
-			//indica se o período informado é uma única data
-			//Dim blnDataUnica As Boolean = (pdtmDataInicial = pdtmDataFinal)
 
 			bool blnOk = true;
 
@@ -2829,7 +2831,7 @@ namespace prmCotacao
 	    ///  FALSE - OCORREU ERRO NA EXECUÇÃO DA MÉDIA MÓVEL PARA PELO MENOS UM DOS ATIVOS.
 	    ///  </returns>
 	    ///  <remarks></remarks>
-	    public bool MediaMovelGeralCalcular(string pstrPeriodoDuracao, List<cMediaDTO> plstMedias, DateTime pdtmDataInicial, string pstrAtivos)
+	    public bool MediaMovelGeralCalcular(string pstrPeriodoDuracao, IEnumerable<cMediaDTO> plstMedias, DateTime pdtmDataInicial, string pstrAtivos)
 		{
 			bool functionReturnValue = false;
 
@@ -3754,11 +3756,12 @@ namespace prmCotacao
 
 			if (pblnMMExpCalcular) {
 
-                lstMediasSelecionadas.Add(new cMediaDTO("A", 21, "VALOR"));
-                lstMediasSelecionadas.Add(new cMediaDTO("A", 200, "VALOR"));
-                //lstMediasSelecionadas.Add(new cMediaDTO("E", 49, "VALOR"));
+                foreach (var media in this.mediasDeFechamento)
+                {
+                    lstMediasSelecionadas.Add(media);
+                }
 
-			}
+            }
 
 
 			if (pblnIFRMedioCalcular) {
@@ -3868,11 +3871,11 @@ namespace prmCotacao
 
 				if (pblnMMExpCalcular) {
 
-					lstMediasSelecionadas.Add(new cMediaDTO("A", 21, "VALOR"));
+                    foreach (var media in this.mediasDeFechamento)
+                    {
+                        lstMediasSelecionadas.Add(media);
+                    }
 
-					lstMediasSelecionadas.Add(new cMediaDTO("A", 200, "VALOR"));
-
-					//lstMediasSelecionadas.Add(new cMediaDTO("E", 49, "VALOR"));
 
 				}
 

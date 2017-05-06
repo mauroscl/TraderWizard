@@ -1,9 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using DataBase;
 using DataBase.Carregadores;
 using prjDominio.Entidades;
-using prjModelo.Carregadores;
 using prjModelo.Entidades;
 using Services;
 
