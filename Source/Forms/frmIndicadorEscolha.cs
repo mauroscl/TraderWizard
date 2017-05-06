@@ -167,7 +167,7 @@ namespace TraderWizard
 			try {
 				objColorDialog.ShowDialog();
 				pnlCor.BackColor = objColorDialog.Color;
-			} catch (Exception ex) {
+			} catch {
 				//tem que ter sempre um exception para quando o usuário cancelar a tela
 			}
 

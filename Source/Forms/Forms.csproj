@@ -70,6 +70,7 @@
     </ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup />
+  <PropertyGroup />
   <PropertyGroup>
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
@@ -317,6 +318,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\icone_principal.ico" />
     <None Include="icones\zoom_in.png" />
     <Content Include="icones\zoom_out.png" />
   </ItemGroup>
@@ -337,9 +339,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

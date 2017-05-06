@@ -98,7 +98,7 @@ namespace TraderWizard
 
 
 
-			} catch (Exception ex) {
+			} catch {
 			    MessageBox.Show("Não foi possível conectar no site www.bmfbovespa.com.br.",this.Text,MessageBoxButtons.OK,MessageBoxIcon.Exclamation );
 
 			}

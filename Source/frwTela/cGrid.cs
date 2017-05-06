@@ -134,50 +134,6 @@ namespace frwTela
 
 		}
 
-		//-------------------------------------------------------------------------------------------------------
-		//Private Sub PreencheDataSetDeDataReader(ByVal ds As DataSet, ByVal dr As IDataReader)
-
-		//    ' Cria um  xxxDataAdapter do mesmo tipo de um DataReader
-		//    Dim tipoDataReader As Type = CObj(dr).GetType
-		//    Dim nomeTipo As String = tipoDataReader.FullName.Replace("DataReader", "DataAdapter")
-		//    Dim tipoDataAdapter As Type = tipoDataReader.Assembly.GetType(nomeTipo)
-		//    Dim da As Object = Activator.CreateInstance(tipoDataAdapter)
-
-		//    Dim args() As Object = {ds, Me.Tabela, dr, 0, 999999}
-
-		//    ' invoca o método protegido Fill que toma um objeto IDataReader
-		//    tipoDataAdapter.InvokeMember("Fill", BindingFlags.InvokeMethod Or BindingFlags.NonPublic Or BindingFlags.Instance, Nothing, da, args)
-
-		//    ' fecha o DataReader
-		//    dr.Close()
-
-		//End Sub
-
-		//Public Sub Preencher(ByRef pobjDataSet As DataSet)
-
-		//    Try
-
-		//        Dim cn As OracleConnection = New OracleConnection("user id=mscl;data source=ORCL;password=mscl")
-		//        cn.Open()
-
-
-		//        Dim cm As New OracleCommand(Me.Query, cn)
-		//        Dim dr As OracleDataReader = cm.ExecuteReader()
-
-		//        If pobjDataSet Is Nothing Then
-		//            pobjDataSet = New DataSet
-		//        End If
-
-		//        PreencheDataSetDeDataReader(pobjDataSet, dr)
-
-		//    Catch e As OracleException
-		//        MsgBox(e.Message, MsgBoxStyle.Critical)
-		//    Catch e As Exception
-		//        MsgBox(e.Message, MsgBoxStyle.Critical)
-		//    End Try
-
-		//End Sub
-
 	}
 }
 

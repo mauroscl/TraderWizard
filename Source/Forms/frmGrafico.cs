@@ -816,7 +816,7 @@ namespace TraderWizard
 				while (!objRS.EOF) {
 					try {
 						arrCandle[intArrayCandleIndice].IFR14 = Convert.ToDouble(objRS.Field("Valor"));
-					} catch (Exception ex) {
+					} catch {
                         MessageBox.Show("Erro ao atribuir o IFR no índice: " + intArrayCandleIndice + " - Tamanho total do array: " + arrCandle.Length, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 					}
 
@@ -1464,7 +1464,7 @@ namespace TraderWizard
 					intReferenciaY = intAreaTop + intMargemSuperior + Convert.ToInt32(((double) decValorMaximoPeriodo - dblValorReferencia) * dblPixelPorReal);
 
 
-				} catch (Exception ex) {
+				} catch {
                     MessageBox.Show("Erro ************** decValorMaximoPeriodo: " + decValorMaximoPeriodo + " dblValorReferencia: " + dblValorReferencia + " decValorInicialReferenciaAux: " + decValorInicialReferenciaAux + " dblpixelporreal: " + dblPixelPorReal, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 
 				}
