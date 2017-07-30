@@ -37,6 +37,7 @@ namespace prmCotacao
 		private readonly cWeb _web;
 
 	    private readonly SequencialService _sequencialService;
+	    private readonly CotacaoData _cotacaoData;
 
         private readonly IEnumerable<MediaDTO> _mediasDeFechamento = new List<MediaDTO>
         {
@@ -50,7 +51,7 @@ namespace prmCotacao
 		    _conexao = pobjConexao;
 			_web = new cWeb(_conexao);
             _sequencialService = new SequencialService();
-
+            _cotacaoData = new CotacaoData();
 		}
 
 	    public ServicoDeCotacao():this(new Conexao())
@@ -1667,7 +1668,7 @@ namespace prmCotacao
 			    while (!objRSListSplit.EOF) {
 
 					if (Convert.ToDateTime(objRSListSplit.Field("Data")) != Convert.ToDateTime(objRSListSplit.NextField("Data", Constantes.DataInvalida))) {
-						dtmDataInicialSplit = pstrTabela.ToUpper() == "COTACAO" ? Convert.ToDateTime(objRSListSplit.Field("Data")) : PrimeiraSemanaDataCalcular(Convert.ToDateTime(objRSListSplit.Field("Data")));
+						dtmDataInicialSplit = pstrTabela.ToUpper() == "COTACAO" ? Convert.ToDateTime(objRSListSplit.Field("Data")) : _cotacaoData.PrimeiraSemanaDataCalcular(Convert.ToDateTime(objRSListSplit.Field("Data")));
 
 						//acumula as diferenças positivas entre as datas do split multiplicando pelo split acumulado
 						dblDiferencaPositivaAcumulada = dblDiferencaPositivaAcumulada + (double)  CotacaoPeriodoDiferencaSomar(pstrCodigo, dtmDataInicialSplit, dtmDataFinalSplit, "P", pstrTabela) * dblSplitAcumulado;
@@ -2368,7 +2369,7 @@ namespace prmCotacao
 
 			if (intIFRNumPeriodos == -1) {
 
-                DateTime dtmDataFinalBuscaSplit = pstrTabela.ToUpper() == "COTACAO_SEMANAL" ? AtivoCotacaoSemanalUltimoDiaSemanaCalcular(pstrCodigo, pdtmDataFinal) : pdtmDataFinal;
+                DateTime dtmDataFinalBuscaSplit = pstrTabela.ToUpper() == "COTACAO_SEMANAL" ? _cotacaoData.AtivoCotacaoSemanalUltimoDiaSemanaCalcular(pstrCodigo, pdtmDataFinal) : pdtmDataFinal;
 
 				var objCarregadorSplit = new cCarregadorSplit(objRS.Conexao);
 
@@ -2392,7 +2393,7 @@ namespace prmCotacao
 
 		            if (dataDoUltimoSplit != dataDoSplitAtual)
                     {
-                        dtmDataInicialSplit = pstrTabela.ToUpper() == "COTACAO" ?  dataDoSplitAtual : PrimeiraSemanaDataCalcular(dataDoSplitAtual);
+                        dtmDataInicialSplit = pstrTabela.ToUpper() == "COTACAO" ?  dataDoSplitAtual : _cotacaoData.PrimeiraSemanaDataCalcular(dataDoSplitAtual);
 
 						dblDadoAcumulado = dblDadoAcumulado + (double) CotacaoPeriodoCampoSomar(pstrCodigo, dtmDataInicialSplit, dtmDataFinalSplit, pstrTabela, strCampo) * dblSplitAcumulado;
 
@@ -3024,131 +3025,6 @@ namespace prmCotacao
 
 		}
 
-	    /// <summary>
-	    /// Calcula, para um ativo, qual é a primeira semana que este ativo tem cotação a semana completa
-	    /// </summary>
-	    /// <param name="pstrCodigo">Código do ativo</param>
-	    /// <param name="pobjConexao"></param>
-	    /// <returns>a data da segunda-feira da primeira semana em que existe uma cotação completa</returns>
-	    /// <remarks></remarks>
-	    private DateTime PrimeiraSemanaDataCalcular(string pstrCodigo, Conexao pobjConexao = null)
-		{
-		    cRS objRs = pobjConexao == null ? new cRS(_conexao) : new cRS(pobjConexao);
-
-	        objRs.ExecuteQuery(" select min(Data) as Data " + " from Cotacao " + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo));
-
-			DateTime dtmDataAux = Convert.ToDateTime(objRs.Field("Data"));
-
-            objRs.Fechar();
-
-			return PrimeiraSemanaDataCalcular(dtmDataAux);
-
-		}
-
-		/// <summary>
-		/// Calcula, para um ativo, qual é a primeira semana que este ativo tem cotação a semana completa
-		/// </summary>
-		/// <param name="pdtmDataBase">Data recebida para iniciar os cálculos. 
-		/// A primeira semana de cálculo tem que compreender
-		/// esta data ou ser uma semana seguinte a esta data</param>
-		/// <returns></returns>
-		/// <remarks></remarks>
-		private DateTime PrimeiraSemanaDataCalcular(DateTime pdtmDataBase)
-		{
-
-			//se a data é uma segunda-feira retorna a própria data
-			DateTime dtmDataAux = pdtmDataBase;
-
-            DayOfWeek diaDaSemana = dtmDataAux.DayOfWeek;
-
-		    if (diaDaSemana == DayOfWeek.Monday)
-		    {
-		        return dtmDataAux;
-		    }
-
-		    double dblIntervalo;
-		    if (diaDaSemana ==  DayOfWeek.Saturday || diaDaSemana == DayOfWeek.Sunday) {
-		        //se o dia da semana é sábado ou domingo tem que buscar a próxima segunda-feira,
-		        //então o incremento tem que ser positivo para a data ir para uma data posterior
-		        dblIntervalo = 1;
-
-
-		    } else {
-		        //se a data está entre terça e sexta, o incremento tem que ser negativo para a data
-		        //voltar até a segunda-feira anterior
-		        dblIntervalo = -1;
-
-		    }
-
-
-		    while (diaDaSemana != DayOfWeek.Monday) {
-		        dtmDataAux = dtmDataAux.AddDays(dblIntervalo);
-
-		        //tem que descontar 1 para bater com o enum.
-		        diaDaSemana = dtmDataAux.DayOfWeek;
-
-		    }
-
-		    return dtmDataAux;
-
-		}
-
-	    /// <summary>
-		/// Consulta o primeiro dia de cotação  de uma semana para um determinado ativo.
-		/// </summary>
-		/// <param name="pstrCodigo">Código do ativo</param>
-		/// <param name="pdtmDataBase">Data para o qual deve ser buscada o primeiro dia da semana</param>
-		/// <returns>A data do primeiro dia da semana</returns>
-		/// <remarks></remarks>
-		private DateTime AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular(string pstrCodigo, DateTime pdtmDataBase)
-		{
-
-		    if (pdtmDataBase == Constantes.DataInvalida)
-		    {
-		        return Constantes.DataInvalida;
-		    }
-
-		    cRS objRS = new cRS(_conexao);
-
-            FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
-
-		    objRS.ExecuteQuery(" select max(Data) as Data " + Environment.NewLine + " from Cotacao_Semanal" +
-		                       Environment.NewLine + " where Codigo = " + funcoesBd.CampoFormatar(pstrCodigo) +
-		                       Environment.NewLine + " and Data <= " + funcoesBd.CampoFormatar(pdtmDataBase));
-
-			DateTime functionReturnValue = Convert.ToDateTime(objRS.Field("Data", Constantes.DataInvalida));
-
-			objRS.Fechar();
-			return functionReturnValue;
-
-		}
-
-		/// <summary>
-		/// Consulta o último dia de cotação de uma semana.
-		/// </summary>
-		/// <param name="pstrCodigo">Código do ativo</param>
-		/// <param name="pdtmPrimeiroDiaSemana">Primeiro dia de cotação de uma semana</param>
-		/// <returns>Data do último dia de cotação de uma semana.</returns>
-		/// <remarks></remarks>
-		private DateTime AtivoCotacaoSemanalUltimoDiaSemanaCalcular(string pstrCodigo, DateTime pdtmPrimeiroDiaSemana)
-		{
-		    cRS objRS = new cRS(_conexao);
-
-            FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
-
-            objRS.ExecuteQuery("SELECT DataFinal " + Environment.NewLine + " FROM Cotacao_Semanal " + Environment.NewLine +
-		                       " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + Environment.NewLine +
-		                       " AND Data = " + funcoesBd.CampoDateFormatar(pdtmPrimeiroDiaSemana));
-
-			DateTime dataDoUltimoDiaDaSemana = (DateTime) objRS.Field("DataFinal");
-
-			objRS.Fechar();
-
-		    return dataDoUltimoDiaDaSemana;
-
-		}
-
-
 		private void CotacaoSemanalDadosGerar(string pstrCodigo, DateTime pdtmDataSegundaFeira, DateTime pdtmDataSextaFeira, string pstrOperacaoBD, Conexao pobjConnAux, ref decimal pdecCotacaoAnteriorRet)
 		{
 			cCommand objCommand = new cCommand(pobjConnAux);
@@ -3373,9 +3249,9 @@ namespace prmCotacao
 			DateTime dtmDataSegundaFeira;
 
 			if (pdtmDataBase != Constantes.DataInvalida) {
-				dtmDataSegundaFeira = PrimeiraSemanaDataCalcular(pdtmDataBase);
+				dtmDataSegundaFeira = _cotacaoData.PrimeiraSemanaDataCalcular(pdtmDataBase);
 			} else {
-				dtmDataSegundaFeira = PrimeiraSemanaDataCalcular(pstrCodigo, objConnAux);
+				dtmDataSegundaFeira = _cotacaoData.PrimeiraSemanaDataCalcular(pstrCodigo, objConnAux);
 			}
 
 		    //a data maior da semana é sempre a data de sexta-feira, que são quatro dias após a segunda
@@ -3457,7 +3333,7 @@ namespace prmCotacao
 
 		    objCommand.BeginTrans();
 
-			DateTime dtmDataSegundaFeira = PrimeiraSemanaDataCalcular(pdtmDataBase);
+			DateTime dtmDataSegundaFeira = _cotacaoData.PrimeiraSemanaDataCalcular(pdtmDataBase);
 
 			cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(objConnAux);
 
@@ -3468,7 +3344,7 @@ namespace prmCotacao
 
 			while (!objRSSplit.EOF) {
 				//CALCULA A DATA DA SEGUNDA-FEIRA E DA SEXTA-FEIRA DA SEMANA EM QUE HÁ SPLIT.
-				dtmDataSegundaFeira = PrimeiraSemanaDataCalcular(Convert.ToDateTime(objRSSplit.Field("Data")));
+				dtmDataSegundaFeira = _cotacaoData.PrimeiraSemanaDataCalcular(Convert.ToDateTime(objRSSplit.Field("Data")));
 
 				//a data maior da semana é sempre a data de sexta-feira, que são quatro dias após a segunda
 				DateTime dtmDataSextaFeira = dtmDataSegundaFeira.AddDays(4);
@@ -5391,25 +5267,28 @@ namespace prmCotacao
 
 		}
 
-		/// <summary>
-		/// Realiza as consultas necessárias dos dados que serão mostrados no gráfico e retorna um objeto cRSList com estes dados
-		/// </summary>
-		/// <param name="pdtmDataInicial"></param>
-		/// <param name="pdtmDataFinal"></param>
-		/// <param name="pstrOrigemDado">
-		/// Indica de onde serão buscados os dados.
-		/// Valores possíveis: "COTACAO", "MEDIA"
-		/// </param>
-		/// <param name="pstrMediaTipo">Tipo da média que deve ser consultada. Necessário informar apenas quando a função é utilizada</param>
-		/// <param name="pintNumPeriodos">Número de períodos da média que deve ser consultada. Necessário informar apenas quando a função é utilizada</param>
-		/// <param name="pstrDado">VALOR OU VOLUME. Necessário informar apenas quando a função é utilizada para calcular médias</param>
-		/// <param name="pblnCotacaoBuscar">Indica se é para buscar dados das cotações</param>
-		/// <param name="pblnVolumeBuscar">Indica se é para buscar dados do volume</param>
-		/// <param name="pdtmDataMaximaSplit">Data máxima (pdtmDataFinal) que deve ser utilizada na busca do split. Caso seja necessários consultar
-		/// todos os splits até a data mais recente, parâmetro não deve ser passado. </param>
-		/// <returns></returns>
-		/// <remarks></remarks>
-		private List<string> ConsultaQueriesGerar(string pstrCodigoAtivo, DateTime pdtmDataInicial, DateTime pdtmDataFinal, string pstrPeriodicidade, string pstrOrigemDado, DateTime pdtmDataMaximaSplit, bool pblnCotacaoBuscar = false, bool pblnVolumeBuscar = false, string pstrMediaTipo = "", int pintNumPeriodos = -1,
+	    /// <summary>
+	    /// Realiza as consultas necessárias dos dados que serão mostrados no gráfico e retorna um objeto cRSList com estes dados
+	    /// </summary>
+	    /// <param name="pdtmDataInicial"></param>
+	    /// <param name="pdtmDataFinal"></param>
+	    /// <param name="pstrPeriodicidade"></param>
+	    /// <param name="pstrOrigemDado">
+	    /// Indica de onde serão buscados os dados.
+	    /// Valores possíveis: "COTACAO", "MEDIA"
+	    /// </param>
+	    /// <param name="pstrMediaTipo">Tipo da média que deve ser consultada. Necessário informar apenas quando a função é utilizada</param>
+	    /// <param name="pintNumPeriodos">Número de períodos da média que deve ser consultada. Necessário informar apenas quando a função é utilizada</param>
+	    /// <param name="pstrDado">VALOR OU VOLUME. Necessário informar apenas quando a função é utilizada para calcular médias</param>
+	    /// <param name="pblnCotacaoBuscar">Indica se é para buscar dados das cotações</param>
+	    /// <param name="pblnVolumeBuscar">Indica se é para buscar dados do volume</param>
+	    /// <param name="pdtmDataMaximaSplit">Data máxima (pdtmDataFinal) que deve ser utilizada na busca do split. Caso seja necessários consultar
+	    /// todos os splits até a data mais recente, parâmetro não deve ser passado. </param>
+	    /// <param name="pstrOrderBy"></param>
+	    /// <returns></returns>
+	    /// <remarks></remarks>
+	    private List<string> ConsultaQueriesGerar(string pstrCodigoAtivo, DateTime pdtmDataInicial, DateTime pdtmDataFinal, string pstrPeriodicidade, string pstrOrigemDado, 
+            DateTime pdtmDataMaximaSplit, bool pblnCotacaoBuscar = false, bool pblnVolumeBuscar = false, string pstrMediaTipo = "", int pintNumPeriodos = -1,
 		string pstrDado = "", string pstrOrderBy = "")
 		{
 
@@ -5475,7 +5354,7 @@ namespace prmCotacao
 							//quando a cotação é semanal, a data inicial tem que ser a data menor ou igual a data do split,
 							//pois se ocorrer um split em uma data que não for a primeira data da semana, toda as cotações
 							//desta semana já foram convertidas para a razão do split
-							dtmDataMinima = AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular(pstrCodigoAtivo, dtmDataMinima);
+							dtmDataMinima = _cotacaoData.AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular(pstrCodigoAtivo, dtmDataMinima);
 
 						}
 
@@ -5487,7 +5366,7 @@ namespace prmCotacao
 					} else if (pstrPeriodicidade == "SEMANAL")
 					{
 					    DateTime dataDoProximoSplit = Convert.ToDateTime(objRSListSplit.NextField("Data", Constantes.DataInvalida));
-                        DateTime primeiraDataDaSemana = dataDoProximoSplit == Constantes.DataInvalida ? Constantes.DataInvalida : AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular(pstrCodigoAtivo,dataDoProximoSplit);
+                        DateTime primeiraDataDaSemana = dataDoProximoSplit == Constantes.DataInvalida ? Constantes.DataInvalida :_cotacaoData.AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular(pstrCodigoAtivo,dataDoProximoSplit);
 						blnRealizarConsultaUnitaria = (dtmDataMinima <= pdtmDataFinal) && (dtmDataMinima != primeiraDataDaSemana);
 					}
 
@@ -5531,7 +5410,7 @@ namespace prmCotacao
 
 
 						} else if (pstrPeriodicidade == "SEMANAL") {
-							blnAtribuirOperador = dtmDataMinima != AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular(pstrCodigoAtivo, Convert.ToDateTime(objRSListSplit.NextField("Data", Constantes.DataInvalida)));
+							blnAtribuirOperador = dtmDataMinima != _cotacaoData.AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular(pstrCodigoAtivo, Convert.ToDateTime(objRSListSplit.NextField("Data", Constantes.DataInvalida)));
 
 						}
 
@@ -5849,7 +5728,7 @@ namespace prmCotacao
 							//quando a cotação é semanal, a data inicial tem que ser a data menor ou igual a data do split,
 							//pois se ocorrer um split em uma data que não for a primeira data da semana, toda as cotações
 							//desta semana já foram convertidas para a razão do split
-							dtmDataMinima = AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular(pstrCodigoAtivo, dtmDataMinima);
+						    dtmDataMinima = _cotacaoData.AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular(pstrCodigoAtivo, dtmDataMinima);
 
 						}
 
@@ -5860,9 +5739,10 @@ namespace prmCotacao
 						blnRealizarConsultaUnitaria = dtmDataMinima <= pdtmDataFinal && dtmDataMinima != Convert.ToDateTime(objRSListSplit.NextField("Data", Constantes.DataInvalida));
 
 
-					} else if (pstrPeriodicidade == "SEMANAL") {
+					} else if (pstrPeriodicidade == "SEMANAL")
+					{
 
-						blnRealizarConsultaUnitaria = dtmDataMinima <= pdtmDataFinal && dtmDataMinima != AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular(pstrCodigoAtivo, Convert.ToDateTime(objRSListSplit.NextField("Data", Constantes.DataInvalida)));
+					    blnRealizarConsultaUnitaria = dtmDataMinima <= pdtmDataFinal && dtmDataMinima != _cotacaoData.AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular(pstrCodigoAtivo, Convert.ToDateTime(objRSListSplit.NextField("Data", Constantes.DataInvalida)));
 
 					}
 
@@ -5993,7 +5873,7 @@ namespace prmCotacao
 
 
 						} else if (pstrPeriodicidade == "SEMANAL") {
-							blnAtribuirOperador = dtmDataMinima != AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular(pstrCodigoAtivo, Convert.ToDateTime(objRSListSplit.NextField("Data", Constantes.DataInvalida)));
+							blnAtribuirOperador = dtmDataMinima != _cotacaoData.AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular(pstrCodigoAtivo, Convert.ToDateTime(objRSListSplit.NextField("Data", Constantes.DataInvalida)));
 
 						}
 
