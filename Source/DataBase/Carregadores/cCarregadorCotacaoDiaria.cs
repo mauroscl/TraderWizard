@@ -1,14 +1,12 @@
-using DataBase.Carregadores;
-using DataBase.Interfaces;
 using System;
 using System.Collections.Generic;
-using DataBase;
+using DataBase.Interfaces;
 using prjDominio.Entidades;
 using prjDTO;
 using prjModelo.Entidades;
 using TraderWizard.Enumeracoes;
 
-namespace prjModelo.Carregadores
+namespace DataBase.Carregadores
 {
 
 	public class CarregadorCotacaoDiaria : CarregadorGenerico, ICarregadorCotacao
@@ -18,11 +16,11 @@ namespace prjModelo.Carregadores
 		{
 		}
 
-		public CarregadorCotacaoDiaria() : base()
+		public CarregadorCotacaoDiaria()
 		{
 		}
 
-		public IList<CotacaoDiaria> CarregarPorPeriodo(Ativo pobjAtivo, System.DateTime pdtmDataInicial, System.DateTime pdtmDataFinal, string pstrOrdem, IList<cMediaDTO> plstMedias, bool pblnCarregarIFR)
+		public IList<CotacaoDiaria> CarregarPorPeriodo(Ativo pobjAtivo, System.DateTime pdtmDataInicial, System.DateTime pdtmDataFinal, string pstrOrdem, IList<MediaDTO> plstMedias, bool pblnCarregarIFR)
 		{
 
 			cRS objRS = new cRS(Conexao);
@@ -38,7 +36,7 @@ namespace prjModelo.Carregadores
 			strWhere += " AND C.Data BETWEEN " + FuncoesBd.CampoFormatar(pdtmDataInicial) + " AND " + FuncoesBd.CampoFormatar(pdtmDataFinal) + Environment.NewLine;
 
 
-		    foreach (cMediaDTO objMediaDTO in plstMedias) {
+		    foreach (MediaDTO objMediaDTO in plstMedias) {
 				string strAliasTabelaMedia = objMediaDTO.GetAlias;
 
 				strSelect += ", " + strAliasTabelaMedia + ".Valor AS " + strAliasTabelaMedia;
@@ -48,7 +46,7 @@ namespace prjModelo.Carregadores
 				string strTabelaMedia = "(" + Environment.NewLine;
 				strTabelaMedia += '\t' + "SELECT Codigo, Data, Valor" + Environment.NewLine;
 				strTabelaMedia += '\t' + " FROM Media_Diaria " + strAliasTabelaMedia + Environment.NewLine;
-				strTabelaMedia += '\t' + " WHERE Tipo = " + FuncoesBd.CampoStringFormatar(objMediaDTO.CampoTipoBD) + Environment.NewLine;
+				strTabelaMedia += '\t' + " WHERE Tipo = " + FuncoesBd.CampoStringFormatar(objMediaDTO.CampoTipoBd) + Environment.NewLine;
 				strTabelaMedia += '\t' + " AND NumPeriodos = " + FuncoesBd.CampoFormatar(objMediaDTO.NumPeriodos) + Environment.NewLine;
 				strTabelaMedia += '\t' + " AND Codigo = " + FuncoesBd.CampoStringFormatar(pobjAtivo.Codigo) + Environment.NewLine;
 				strTabelaMedia += '\t' + " AND Data BETWEEN " + FuncoesBd.CampoFormatar(pdtmDataInicial) + " AND " + FuncoesBd.CampoFormatar(pdtmDataFinal) + Environment.NewLine;
@@ -94,11 +92,11 @@ namespace prjModelo.Carregadores
 				objCotacaoDiaria.ValorMinimo = Convert.ToDecimal(objRS.Field("ValorMinimo"));
 				objCotacaoDiaria.ValorMaximo = Convert.ToDecimal(objRS.Field("ValorMaximo"));
 
-		        foreach (cMediaDTO objMediaDTO in plstMedias)
+		        foreach (MediaDTO mediaDto in plstMedias)
 				{
 				    double valordaMedia;
-				    if (double.TryParse(Convert.ToString( objRS.Field(objMediaDTO.GetAlias)),out valordaMedia)) {
-                        objCotacaoDiaria.Medias.Add(new MediaDiaria(objCotacaoDiaria, objMediaDTO.CampoTipoBD, objMediaDTO.NumPeriodos, valordaMedia));
+				    if (double.TryParse(Convert.ToString( objRS.Field(mediaDto.GetAlias)),out valordaMedia)) {
+                        objCotacaoDiaria.Medias.Add(new MediaDiaria(objCotacaoDiaria, mediaDto.CampoTipoBd, mediaDto.NumPeriodos, valordaMedia));
 					}
 				}
 

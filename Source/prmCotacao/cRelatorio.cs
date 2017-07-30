@@ -1531,37 +1531,28 @@ namespace prmCotacao
 			//valor máximo que pode ser perdido utilizando o manejo.
 			decimal decValorPerdaManejo = pdecCapitalTotal * pdecPercentualManejo / 100;
 
-			cCalculadorTabelas.TabelasCalcular(pstrPeriodo, ref strTabelaCotacao, ref strTabelaMedia, ref strTabelaIFR);
+		    var cotacaoData = new CotacaoData();
+            cCalculadorTabelas.TabelasCalcular(pstrPeriodo, ref strTabelaCotacao, ref strTabelaMedia, ref strTabelaIFR);
 
 			//verifica se a data recebida é uma data de cotação
-
-
 			if (pstrPeriodo == "DIARIO") {
 
 				dtmDataAtual = objCotacao.CotacaoDataExistir(pdtmData, strTabelaCotacao) ? pdtmData : objCotacao.CotacaoAnteriorDataConsultar(pdtmData, strTabelaCotacao);
 
 
-			} else {
-				dtmDataAtual = objCotacao.CotacaoSemanalPrimeiroDiaSemanaCalcular(pdtmData);
+			} else
+			{
+			    
+			    dtmDataAtual = cotacaoData.CotacaoSemanalPrimeiroDiaSemanaCalcular(pdtmData);
 
 			}
 
 			//verifica se o setup utiliza cotacao de data anterior. se utiliza tem que buscar a data anterior.
 			//o único que não utiliza é o IFR 2 abaixo de 5.
 
-			if (pintSetup != cEnum.enumSetup.IFRSemFiltro && pintSetup != cEnum.enumSetup.IFRSemFiltroRP) {
-
-				if (pstrPeriodo == "DIARIO") {
-					dtmDataAnterior = objCotacao.CotacaoAnteriorDataConsultar(dtmDataAtual, strTabelaCotacao);
-
-
-				} else {
-					//TEM QUE PASSAR COMO PARÂMETRO UMA DIA ANTES DA DATA ENCONTRADA COMO PRIMEIRO DIA DA SEMANA
-					//MAIS ATUAL, POIS CASO CONTRÁRIO A FUNÇÃO RETORNARÁ A MESMA DATA.
-					dtmDataAnterior = objCotacao.CotacaoSemanalPrimeiroDiaSemanaCalcular(dtmDataAtual.AddDays(-1));
-
-				}
-
+			if (pintSetup != cEnum.enumSetup.IFRSemFiltro && pintSetup != cEnum.enumSetup.IFRSemFiltroRP)
+			{
+			    dtmDataAnterior = pstrPeriodo == "DIARIO" ? objCotacao.CotacaoAnteriorDataConsultar(dtmDataAtual, strTabelaCotacao) : cotacaoData.CotacaoSemanalPrimeiroDiaSemanaCalcular(dtmDataAtual.AddDays(-1));
 			}
 
 

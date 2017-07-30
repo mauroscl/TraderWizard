@@ -12,13 +12,13 @@ namespace TraderWizard
 
 		//Private colStructIndicadorEscolha As Collection
 
-		private readonly List<cMediaDTO> lstMediasSelecionadas;
+		private readonly List<MediaDTO> lstMediasSelecionadas;
 		//Indica o item do grid que está selecionado
 
 		private ListViewItem ItemSelecionado;
 		//Public Sub New(ByVal pstrText As String, ByVal pcolStructPeriodoEscolha As Collection)
 
-		public frmIndicadorEscolha(string pstrText, List<cMediaDTO> plstMediasSelecionadas)
+		public frmIndicadorEscolha(string pstrText, List<MediaDTO> plstMediasSelecionadas)
 		{
 			KeyUp += frmIndicadorEscolha_KeyUp;
 			// This call is required by the Windows Form Designer.
@@ -31,7 +31,7 @@ namespace TraderWizard
 			this.Text = pstrText;
 
 			//colStructIndicadorEscolha = pcolStructPeriodoEscolha
-			lstMediasSelecionadas = plstMediasSelecionadas ?? new List<cMediaDTO>();
+			lstMediasSelecionadas = plstMediasSelecionadas ?? new List<MediaDTO>();
 
 			//Dim objStructIndicadorEscolha As structIndicadorEscolha
 
@@ -41,7 +41,7 @@ namespace TraderWizard
 
 		    //MONTA OS ITENS RECEBIDOS POR PARÂMETRO.
 
-			foreach (cMediaDTO objMediaDTO in lstMediasSelecionadas) {
+			foreach (MediaDTO objMediaDTO in lstMediasSelecionadas) {
 				//período
 				var objListViewItem = lstPeriodoSelecionado.Items.Add(objMediaDTO.NumPeriodos.ToString());
 
@@ -61,7 +61,7 @@ namespace TraderWizard
 
 		}
 
-		public List<cMediaDTO> MediasSelecionadas {
+		public List<MediaDTO> MediasSelecionadas {
 			get { return lstMediasSelecionadas; }
 		}
 
@@ -192,7 +192,7 @@ namespace TraderWizard
 
 
 			for (intI = 0; intI <= lstPeriodoSelecionado.Items.Count - 1; intI++) {
-				lstMediasSelecionadas.Add(new cMediaDTO((lstPeriodoSelecionado.Items[intI].SubItems[1].Text == "Exponencial" ? "E" : "A"), Convert.ToInt32(lstPeriodoSelecionado.Items[intI].Text), "VALOR", lstPeriodoSelecionado.Items[intI].SubItems[2].BackColor));
+				lstMediasSelecionadas.Add(new MediaDTO((lstPeriodoSelecionado.Items[intI].SubItems[1].Text == "Exponencial" ? "E" : "A"), Convert.ToInt32(lstPeriodoSelecionado.Items[intI].Text), "VALOR", lstPeriodoSelecionado.Items[intI].SubItems[2].BackColor));
 
 			}
 

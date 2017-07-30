@@ -43,7 +43,7 @@ namespace prjDominio.Entidades
 		    return Equals((MediaAbstract) obj);
 		}
 
-		public cMediaDTO ObtemDTO()
+		public MediaDTO ObtemDTO()
 		{
 
 			string strDado;
@@ -71,7 +71,7 @@ namespace prjDominio.Entidades
 					throw new Exception("Tipo não encontrado para conversão: " + Tipo);
 			}
 
-			return new cMediaDTO(strTipo, NumPeriodos, strDado);
+			return new MediaDTO(strTipo, NumPeriodos, strDado);
 
 		}
 

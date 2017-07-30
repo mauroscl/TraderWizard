@@ -10,7 +10,7 @@ namespace DataBase.Interfaces
 	public interface ICarregadorCotacao
 	{
 
-		IList<CotacaoDiaria> CarregarPorPeriodo(Ativo pobjAtivo, System.DateTime pdtmDataInicial, System.DateTime pdtmDataFinal, string pstrOrdem, IList<cMediaDTO> psltMedias, bool pblnCarregarIFR);
+		IList<CotacaoDiaria> CarregarPorPeriodo(Ativo pobjAtivo, System.DateTime pdtmDataInicial, System.DateTime pdtmDataFinal, string pstrOrdem, IList<MediaDTO> psltMedias, bool pblnCarregarIFR);
 
 		IList<CotacaoDiaria> CarregaComIFRSobrevendidoSemSimulacao(Ativo pobjAtivo, Setup pobjSetup, double pdblValorMaximoIFRSobrevendido, cEnum.enumMediaTipo pintMediaTipo);
 

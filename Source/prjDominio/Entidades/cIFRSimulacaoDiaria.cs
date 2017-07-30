@@ -108,9 +108,9 @@ namespace prjDominio.Entidades
 
 			PercentualSaida = (ValorSaida / ValorEntradaAjustado - 1) * 100;
 
-			PercentualMME21 = pobjCotacaoDeEntrada.CalculaPercentualDoFechamentoEmRelacaoAMedia(new cMediaDTO("E", 21, "VALOR"));
-			PercentualMME49 = pobjCotacaoDeEntrada.CalculaPercentualDoFechamentoEmRelacaoAMedia(new cMediaDTO("E", 49, "VALOR"));
-			PercentualMME200 = pobjCotacaoDeEntrada.CalculaPercentualDoFechamentoEmRelacaoAMedia(new cMediaDTO("E", 200, "VALOR"));
+			PercentualMME21 = pobjCotacaoDeEntrada.CalculaPercentualDoFechamentoEmRelacaoAMedia(new MediaDTO("E", 21, "VALOR"));
+			PercentualMME49 = pobjCotacaoDeEntrada.CalculaPercentualDoFechamentoEmRelacaoAMedia(new MediaDTO("E", 49, "VALOR"));
+			PercentualMME200 = pobjCotacaoDeEntrada.CalculaPercentualDoFechamentoEmRelacaoAMedia(new MediaDTO("E", 200, "VALOR"));
 
 			ValorStopLossInicial = pobjSetup.CalculaValorStopLossInicial(pobjCotacaoDeAcionamentoDoSetup);
 

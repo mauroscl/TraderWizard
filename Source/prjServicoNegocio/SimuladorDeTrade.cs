@@ -194,12 +194,12 @@ namespace prjServicoNegocio
 
 			cCalculadorTabelas.TabelasCalcular("DIARIO", ref strTabelaCotacao, ref strTabelaMedia, ref strTabelaIFR);
 
-			List<cMediaDTO> lstMediasParaCarregar = new List<cMediaDTO>();
+			List<MediaDTO> lstMediasParaCarregar = new List<MediaDTO>();
 
-			lstMediasParaCarregar.Add(new cMediaDTO("E", 21, "VALOR"));
-			lstMediasParaCarregar.Add(new cMediaDTO("E", 49, "VALOR"));
-			lstMediasParaCarregar.Add(new cMediaDTO("E", 200, "VALOR"));
-			lstMediasParaCarregar.Add(new cMediaDTO("A", 13, "IFR2"));
+			lstMediasParaCarregar.Add(new MediaDTO("E", 21, "VALOR"));
+			lstMediasParaCarregar.Add(new MediaDTO("E", 49, "VALOR"));
+			lstMediasParaCarregar.Add(new MediaDTO("E", 200, "VALOR"));
+			lstMediasParaCarregar.Add(new MediaDTO("A", 13, "IFR2"));
 
 		    var objCalculadorData = new cCalculadorData(objConexao);
 

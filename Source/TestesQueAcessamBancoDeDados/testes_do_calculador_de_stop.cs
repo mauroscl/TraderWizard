@@ -60,14 +60,14 @@ namespace TestProject1
 		//
 		#endregion
 
-		private IList<cMediaDTO> RetornaListaDeMediasUtilizadasNaClassificacao()
+		private IList<MediaDTO> RetornaListaDeMediasUtilizadasNaClassificacao()
 		{
 
-			List<cMediaDTO> lstMediasDTO = new List<cMediaDTO>();
+			List<MediaDTO> lstMediasDTO = new List<MediaDTO>();
 
-			lstMediasDTO.Add(new cMediaDTO("E", 21, "VALOR"));
-			lstMediasDTO.Add(new cMediaDTO("E", 49, "VALOR"));
-			lstMediasDTO.Add(new cMediaDTO("E", 200, "VALOR"));
+			lstMediasDTO.Add(new MediaDTO("E", 21, "VALOR"));
+			lstMediasDTO.Add(new MediaDTO("E", 49, "VALOR"));
+			lstMediasDTO.Add(new MediaDTO("E", 200, "VALOR"));
 
 			return lstMediasDTO;
 

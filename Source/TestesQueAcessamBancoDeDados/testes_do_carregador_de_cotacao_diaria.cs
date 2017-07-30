@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using DataBase.Carregadores;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using prjDominio.Entidades;
 using prjDTO;
@@ -65,7 +66,7 @@ namespace TestProject1
 		{
 			CarregadorCotacaoDiaria objCarregadorCotacaoDiaria = new CarregadorCotacaoDiaria(objConexao);
 
-			var lstCotacoes = objCarregadorCotacaoDiaria.CarregarPorPeriodo(new Ativo("CSNA3", string.Empty), new System.DateTime(2011, 1, 8), new System.DateTime(2011, 1, 13), "DATA ASC", new List<cMediaDTO>(), false);
+			var lstCotacoes = objCarregadorCotacaoDiaria.CarregarPorPeriodo(new Ativo("CSNA3", string.Empty), new System.DateTime(2011, 1, 8), new System.DateTime(2011, 1, 13), "DATA ASC", new List<MediaDTO>(), false);
 
 			Assert.AreEqual(4, lstCotacoes.Count);
 
@@ -90,12 +91,12 @@ namespace TestProject1
 
 		public void QuandoCarregarCotacaoComMediasDeveRetornarUmaCotacaoComUmaListaDeMediasContendoAsMediasSolicitadas()
 		{
-			List<cMediaDTO> lstMediasParaCarregar = new List<cMediaDTO>();
+			List<MediaDTO> lstMediasParaCarregar = new List<MediaDTO>();
 
-			lstMediasParaCarregar.Add(new cMediaDTO("E", 21, "VALOR"));
-			lstMediasParaCarregar.Add(new cMediaDTO("E", 49, "VALOR"));
-			lstMediasParaCarregar.Add(new cMediaDTO("E", 200, "VALOR"));
-			lstMediasParaCarregar.Add(new cMediaDTO("A", 13, "IFR2"));
+			lstMediasParaCarregar.Add(new MediaDTO("E", 21, "VALOR"));
+			lstMediasParaCarregar.Add(new MediaDTO("E", 49, "VALOR"));
+			lstMediasParaCarregar.Add(new MediaDTO("E", 200, "VALOR"));
+			lstMediasParaCarregar.Add(new MediaDTO("A", 13, "IFR2"));
 
 			CarregadorCotacaoDiaria objCarregadorDeCotacoes = new CarregadorCotacaoDiaria(objConexao);
 

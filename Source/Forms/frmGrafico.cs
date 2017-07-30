@@ -162,7 +162,7 @@ namespace TraderWizard
         //*************collection de indicadores: média e IFR
         //Dim colStructIndicadorMMExp As Collection
 
-        List<cMediaDTO> lstMediasSelecionadas;
+        List<MediaDTO> lstMediasSelecionadas;
 
         private struct structSplit
         {
@@ -198,9 +198,6 @@ namespace TraderWizard
 
         //TABELA UTILIZADA PARA BUSCAR OS DADOS DAS COTAÇÕES
         string strTabelaCotacao;
-
-        //TABELA UTILIZADA PARA BUSCAR AS MÉDIAS DAS COTAÇÕES
-        string strTabelaMedia;
 
         //TABELA UTILIZADA PARA BUSCAR O IFR DAS COTAÇÕES
         string strTabelaIFR;
@@ -448,7 +445,6 @@ namespace TraderWizard
             if ((string) ToolStripcmbPeriodoDuracao.SelectedItem == "Diário")
             {
                 strTabelaCotacao = "Cotacao";
-                strTabelaMedia = "Media_Diaria";
                 strTabelaIFR = "IFR_DIARIO";
 
 
@@ -456,7 +452,6 @@ namespace TraderWizard
             else
             {
                 strTabelaCotacao = "Cotacao_Semanal";
-                strTabelaMedia = "Media_Semanal";
                 strTabelaIFR = "IFR_SEMANAL";
 
             }
@@ -1026,7 +1021,7 @@ namespace TraderWizard
 
                         //For Each objstructMediaEscolha In colStructIndicadorMMExp
 
-                        foreach (cMediaDTO objMediaDTO in lstMediasSelecionadas)
+                        foreach (MediaDTO objMediaDTO in lstMediasSelecionadas)
                         {
 
                             if (objstructMediaValor.intPeriodo == objMediaDTO.NumPeriodos &&
@@ -1067,15 +1062,13 @@ namespace TraderWizard
                 //collection de objetos da estrutura structIndicadorEscolha que conterá
                 //todas as médias que precisam ser calculadas.
                 //Dim colMediaEscolhaAux As Collection = New Collection
-                List<cMediaDTO> lstMediasSelecionadasAux = new List<cMediaDTO>();
+                List<MediaDTO> lstMediasSelecionadasAux = new List<MediaDTO>();
 
 
                 if (blnCotacaoBuscar)
                 {
                     //se tiver que buscar as cotações tem que buscar todas as médias
-                    //colMediaEscolhaAux = colStructIndicadorMMExp
                     lstMediasSelecionadasAux = lstMediasSelecionadas;
-
 
                 }
                 else
@@ -1083,34 +1076,29 @@ namespace TraderWizard
                     //obtém collection de médias do candle de data mais recente.
                     colMediaValorAux = arrCandle[arrCandle.Length - 1].GetMedia();
 
-
                     if (colMediaValorAux == null)
                     {
                         //se os candles ainda não tem nenhuma média calculada, então tem que buscar todas
                         //colMediaEscolhaAux = colStructIndicadorMMExp
                         lstMediasSelecionadasAux = lstMediasSelecionadas;
 
-
                     }
                     else
                     {
-                        //Dim blnMediaCalcular As Boolean
 
                         //percorre todas as médias escolhidas pelos usuários e verifica quais já estão calculadas no último candle
                         //As médias que já estiverem calculadas não precisa buscar novamente.
 
-                        //For Each objstructMediaEscolha In colStructIndicadorMMExp
-
-                        foreach (cMediaDTO objMediaDTO in lstMediasSelecionadas)
+                        foreach (MediaDTO mediaDto in lstMediasSelecionadas)
                         {
                             //If Not UltimoCandleMediaExistir(objstructMediaEscolha, blnCotacaoBuscar, intIndiceInicial, intIndiceFinal) Then
 
-                            if (!UltimoCandleMediaExistir(objMediaDTO, blnCotacaoBuscar, intIndiceInicial,
+                            if (!UltimoCandleMediaExistir(mediaDto, blnCotacaoBuscar, intIndiceInicial,
                                 intIndiceFinal))
                             {
                                 //se não encontrou a média tem que calculá-la, então adiciona na collection
                                 //colMediaEscolhaAux.Add(objstructMediaEscolha)
-                                lstMediasSelecionadasAux.Add(objMediaDTO);
+                                lstMediasSelecionadasAux.Add(mediaDto);
 
                             }
 
@@ -1132,7 +1120,7 @@ namespace TraderWizard
                 //Percorre a collection de médias que devem ser calculadas 
                 //For Each objstructMediaEscolha In colMediaEscolhaAux
 
-                foreach (cMediaDTO objMediaDTO in lstMediasSelecionadasAux)
+                foreach (MediaDTO objMediaDTO in lstMediasSelecionadasAux)
                 {
                     //verifica se a média já existe no último candle
 
@@ -2105,19 +2093,6 @@ namespace TraderWizard
                 //pelo largura dos candles (corpo + espaçamento), que é indicando pela propriedade intLargura
                 //Tem que descontar um do resultado porque o array é base 0.
 
-                //divisão inteira
-                //intNumCandles = (intX - intCandle1X) \ intLargura
-
-                //If (intX - intCandle1X) Mod intLargura <> 0 Then
-
-                //    'se a divisão não é exata tem que somar 1
-                //    intNumCandles = intNumCandles + 1
-
-                //End If
-
-                //'decrementa um da posição final porque o array é base 0 
-                //intPosicaoArray = intArrayCandlePosicaoInicial + intNumCandles - 1
-
                 cCandle candle = arrCandle[intPosicaoArray];
 
                 if (candle.RectAreaTotal.Contains(intX, intY))
@@ -2139,7 +2114,7 @@ namespace TraderWizard
                     {
                         string strTexto = String.Empty;
 
-                        foreach (cMediaDTO objMediaDTO in lstMediasSelecionadas)
+                        foreach (MediaDTO objMediaDTO in lstMediasSelecionadas)
                         {
                             double dblMedia = candle.MediaBuscar(objMediaDTO.NumPeriodos, objMediaDTO.Tipo);
 
@@ -2323,7 +2298,7 @@ namespace TraderWizard
             {
                 //Inicializa lista global da tela que contem as médias que devem ser desenhadas no gráfico.
                 //colStructIndicadorMMExp = New Collection
-                lstMediasSelecionadas = new List<cMediaDTO>();
+                lstMediasSelecionadas = new List<MediaDTO>();
 
             }
 
@@ -2331,7 +2306,7 @@ namespace TraderWizard
             {
 
 
-                lstMediasSelecionadas.Add(new cMediaDTO(((string) objRS.Field("Tipo") == "MME" ? "E" : "A"),
+                lstMediasSelecionadas.Add(new MediaDTO(((string) objRS.Field("Tipo") == "MME" ? "E" : "A"),
                     Convert.ToInt32(objRS.Field("NumPeriodos")), "VALOR",
                     Color.FromArgb(Convert.ToInt32(objRS.Field("Cor")))));
 
@@ -2600,7 +2575,7 @@ namespace TraderWizard
             int intIFRNumRegistros = 0;
             int intIFRMedioNumRegistros = 0;
             int intVolumeMedioNumRegistros = 0;
-            List<cMediaDTO> lstMediasNumRegistros = null;
+            List<MediaDTO> lstMediasNumRegistros = null;
 
             //CALCULA O VALOR MÍNIMO E MÁXIMO DA ÁREA DE COTAÇÕES. LEVA EM CONSIDERAÇÃO
             //AS COTAÇÕES E AS MÉDIAS QUE SERÃO DESENHADAS.
@@ -2638,8 +2613,6 @@ namespace TraderWizard
             }
 
             int intArrayIFRIndice = 0;
-            int intArrayIFRMedioIndice = 0;
-
 
             if (blnIFRDesenhar)
             {
@@ -2663,10 +2636,10 @@ namespace TraderWizard
             if (blnMMExpDesenhar)
             {
 
-                foreach (cMediaDTO objMediaDTO in lstMediasSelecionadas)
+                foreach (MediaDTO objMediaDTO in lstMediasSelecionadas)
                 {
 
-                    foreach (cMediaDTO objMediaDTONumRegistros in lstMediasNumRegistros)
+                    foreach (MediaDTO objMediaDTONumRegistros in lstMediasNumRegistros)
                     {
 
                         if (objMediaDTONumRegistros.Equals(objMediaDTO))
@@ -3347,7 +3320,7 @@ namespace TraderWizard
         /// <param name="pintBuscaIndiceFinal">Caso tenha buscado cotações, indica o indice final do array de candles que foi buscado</param>
         /// <returns></returns>
         /// <remarks></remarks>
-        private bool UltimoCandleMediaExistir(cMediaDTO pobjMediaDTO, bool pblnCotacoesBuscou,
+        private bool UltimoCandleMediaExistir(MediaDTO pobjMediaDTO, bool pblnCotacoesBuscou,
             int pintBuscaIndiceInicial, int pintBuscaIndiceFinal)
         {
             //inicializa marcando que a média não existe.

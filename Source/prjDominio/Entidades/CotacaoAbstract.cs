@@ -55,10 +55,10 @@ namespace prjDominio.Entidades
 		    return Equals((CotacaoAbstract) obj);
 		}
 
-		public decimal CalculaPercentualDoFechamentoEmRelacaoAMedia(cMediaDTO pobjMediaDTO)
+		public decimal CalculaPercentualDoFechamentoEmRelacaoAMedia(MediaDTO pobjMediaDTO)
 		{
 
-			decimal decValorMedia = (from x in Medias where x.Tipo == pobjMediaDTO.CampoTipoBD && x.NumPeriodos == pobjMediaDTO.NumPeriodos select Convert.ToDecimal (x.Valor)).Single();
+			decimal decValorMedia = (from x in Medias where x.Tipo == pobjMediaDTO.CampoTipoBd && x.NumPeriodos == pobjMediaDTO.NumPeriodos select Convert.ToDecimal (x.Valor)).Single();
 
 			return (ValorFechamento / decValorMedia - 1) * 100;
 
@@ -87,7 +87,7 @@ namespace prjDominio.Entidades
 
 		}
 
-		public IList<cMediaDTO> ObtemListaDeMediasDTO()
+		public IList<MediaDTO> ObtemListaDeMediasDTO()
 		{
 			return (from m in Medias select m.ObtemDTO()).ToList();
 		}

@@ -19,7 +19,7 @@ namespace DataBase.Carregadores
 		{
 		}
 
-		public MediaAbstract CarregarPorData(CotacaoDiaria pobjCotacaoDiaria, cMediaDTO pobjMediaDTO)
+		public MediaAbstract CarregarPorData(CotacaoDiaria pobjCotacaoDiaria, MediaDTO pobjMediaDTO)
 		{
 		    cRS objRS = new cRS(Conexao);
 
@@ -29,7 +29,7 @@ namespace DataBase.Carregadores
 			strSQL = strSQL + " FROM Media_Diaria " + Environment.NewLine;
 			strSQL = strSQL + " WHERE Codigo = " + FuncoesBd.CampoFormatar(pobjCotacaoDiaria.Ativo.Codigo);
 			strSQL = strSQL + " AND Data = " + FuncoesBd.CampoFormatar(pobjCotacaoDiaria.Data);
-			strSQL = strSQL + " AND Tipo = " + FuncoesBd.CampoFormatar(pobjMediaDTO.CampoTipoBD);
+			strSQL = strSQL + " AND Tipo = " + FuncoesBd.CampoFormatar(pobjMediaDTO.CampoTipoBd);
 			strSQL = strSQL + " AND NumPeriodos = " + FuncoesBd.CampoFormatar(pobjMediaDTO.NumPeriodos);
 
 			objRS.ExecuteQuery(strSQL);

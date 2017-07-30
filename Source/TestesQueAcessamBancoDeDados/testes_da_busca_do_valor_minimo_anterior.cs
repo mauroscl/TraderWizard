@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DataBase.Carregadores;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using prjDominio.Entidades;
 using prjDTO;
@@ -68,7 +69,7 @@ namespace TestProject1
 			var objCarregadorCotacao = new CarregadorCotacaoDiaria(objConexao);
 
 		    var ativo = new Ativo("CSNA3", "");
-			var objCotacao = objCarregadorCotacao.CarregarPorPeriodo(ativo, new System.DateTime(2011, 5, 13), new System.DateTime(2011, 5, 13), string.Empty, new List<cMediaDTO>(), false).Single();
+			var objCotacao = objCarregadorCotacao.CarregarPorPeriodo(ativo, new System.DateTime(2011, 5, 13), new System.DateTime(2011, 5, 13), string.Empty, new List<MediaDTO>(), false).Single();
 
 			//TODO: ver o que fazer com o valor 22.09. Talvez tenha que chamar o método do setup que calcula o stop loss.
 		    var servicoDeCotacaoDeAtivo = new ServicoDeCotacaoDeAtivo(ativo, objConexao);
@@ -86,7 +87,7 @@ namespace TestProject1
 			var objCarregadorCotacao = new CarregadorCotacaoDiaria(objConexao);
 
 		    var ativo = new Ativo("CSNA3", "");
-			var objCotacao = objCarregadorCotacao.CarregarPorPeriodo(ativo, new DateTime(2010, 3, 26), new DateTime(2010, 3, 26), string.Empty, new List<cMediaDTO>(), false).Single();
+			var objCotacao = objCarregadorCotacao.CarregarPorPeriodo(ativo, new DateTime(2010, 3, 26), new DateTime(2010, 3, 26), string.Empty, new List<MediaDTO>(), false).Single();
 
 			//TODO: ver o que fazer com o valor 34.21. Talvez tenha que chamar o método do setup que calcula o stop loss.
             var servicoDeCotacaoDeAtivo = new ServicoDeCotacaoDeAtivo(ativo, objConexao);
@@ -105,7 +106,7 @@ namespace TestProject1
 			var objCarregadorCotacao = new CarregadorCotacaoDiaria(objConexao);
 
 		    var ativo = new Ativo("ETER3", "");
-		    var objCotacao = objCarregadorCotacao.CarregarPorPeriodo(ativo, new DateTime(2011, 5, 10), new DateTime(2011, 5, 10), string.Empty, new List<cMediaDTO>(), false).Single();
+		    var objCotacao = objCarregadorCotacao.CarregarPorPeriodo(ativo, new DateTime(2011, 5, 10), new DateTime(2011, 5, 10), string.Empty, new List<MediaDTO>(), false).Single();
 
 			//TODO: ver o que fazer com o valor 10.36. Talvez tenha que chamar o método do setup que calcula o stop loss.
             var servicoDeCotacaoDeAtivo = new ServicoDeCotacaoDeAtivo(ativo, objConexao);

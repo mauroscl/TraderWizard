@@ -66,17 +66,9 @@ namespace prmCotacao
 		    try {
 				//medias da vale nas posições 2 e 3 do datatable
 			    decimal decValorMedio;
-			    if (decimal.TryParse((string) dtbCotacao.Rows[2]["Medio"], out decValorMedio)) {
-					pdecVALE3MediaAtualRet = decValorMedio;
-				} else {
-					pdecVALE3MediaAtualRet = 0;
-				}
+			    pdecVALE3MediaAtualRet = decimal.TryParse((string) dtbCotacao.Rows[2]["Medio"], out decValorMedio) ? decValorMedio : 0;
 
-				if (decimal.TryParse((string) dtbCotacao.Rows[3]["Medio"],out decValorMedio)) {
-					pdecVALE5MediaAtualRet = Convert.ToDecimal(dtbCotacao.Rows[3]["Medio"]);
-				} else {
-					pdecVALE5MediaAtualRet = 0;
-				}
+				pdecVALE5MediaAtualRet = decimal.TryParse((string) dtbCotacao.Rows[3]["Medio"],out decValorMedio) ? Convert.ToDecimal(dtbCotacao.Rows[3]["Medio"]) : 0;
 
 				pdecVALE3MediaAnteriorRet = objCotacao.UltimaMediaConsultar("VALE3");
 				pdecVALE5MediaAnteriorRet = objCotacao.UltimaMediaConsultar("VALE5");
@@ -85,19 +77,9 @@ namespace prmCotacao
 
 				if (pintFormaCalculo == 0) {
 				    decimal decOscilacao;
-				    decimal decVale3Oscilacao;
-				    if (decimal.TryParse((string) dtbCotacao.Rows[2]["Oscilacao"], out decOscilacao)) {
-						decVale3Oscilacao = decOscilacao;
-					} else {
-						decVale3Oscilacao = 0;
-					}
+				    var decVale3Oscilacao = decimal.TryParse((string) dtbCotacao.Rows[2]["Oscilacao"], out decOscilacao) ? decOscilacao : 0;
 
-				    decimal decVale5Oscilacao;
-				    if (decimal.TryParse((string)dtbCotacao.Rows[3]["Oscilacao"],out decOscilacao)) {
-						decVale5Oscilacao = decOscilacao;
-					} else {
-						decVale5Oscilacao = 0;
-					}
+				    var decVale5Oscilacao = decimal.TryParse((string)dtbCotacao.Rows[3]["Oscilacao"],out decOscilacao) ? decOscilacao : 0;
 
 					pdecOscilacaoRet = Math.Round(decVale3Oscilacao * 0.6948M + decVale5Oscilacao * 0.3052M, 3);
 

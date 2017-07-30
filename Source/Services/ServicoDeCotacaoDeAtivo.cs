@@ -75,7 +75,7 @@ namespace Services
 	    /// <returns>True - encontrou cotações no período
 	    /// False - não encontrou cotações no período</returns>
 	    /// <remarks></remarks>
-	    public bool CarregarCotacoes(DateTime pdtmDataInicial, DateTime pdtmDataFinal, IList<cMediaDTO> plstMedias, bool pblnCarregarIFR)
+	    public bool CarregarCotacoes(DateTime pdtmDataInicial, DateTime pdtmDataFinal, IList<MediaDTO> plstMedias, bool pblnCarregarIFR)
 		{
 
 			var objCarregadorCotacoes = new CarregadorCotacaoDiaria();
@@ -112,7 +112,7 @@ namespace Services
 		}
 
 
-		public void CarregarMedias(DateTime pdtmData, IList<cMediaDTO> plstMedias)
+		public void CarregarMedias(DateTime pdtmData, IList<MediaDTO> plstMedias)
 		{
 		    int intContadorDeRegistros = (from c in CotacoesDiarias from m in c.Medias where m.Cotacao.Data == pdtmData select m.Cotacao.Data).Count();
 
@@ -122,7 +122,7 @@ namespace Services
 		        CotacaoAbstract objCotacao = CotacoesDiarias.First(c => c.Data == pdtmData);
 
 
-				foreach (cMediaDTO objMediaDTO in plstMedias)
+				foreach (MediaDTO objMediaDTO in plstMedias)
 				{
 				    MediaAbstract objMedia = objCarregadorMedias.CarregarPorData((CotacaoDiaria) objCotacao, objMediaDTO);
 

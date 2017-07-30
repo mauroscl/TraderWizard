@@ -239,11 +239,11 @@ namespace TraderWizard
             if (MessageBox.Show("Recalcular os Sequenciais dos ativos em que o valor do sequencial máximo for diferente do número de cotações?"
                 , Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
             
-            var objCotacao = new ServicoDeCotacao(objConexao);
-
             Cursor = Cursors.WaitCursor;
 
-            bool blnRetorno = objCotacao.SequencialPreencher();
+            var sequencialService = new SequencialService();
+
+            bool blnRetorno = sequencialService.SequencialPreencher();
 
             Cursor = Cursors.Default;
 

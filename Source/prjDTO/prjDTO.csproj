@@ -46,7 +46,7 @@
   <ItemGroup>
     <Compile Include="AtivoSelecao.cs" />
     <Compile Include="cFaixaDTO.cs" />
-    <Compile Include="cMediaDTO.cs" />
+    <Compile Include="MediaDTO.cs" />
     <Compile Include="CotacaoDataDto.cs" />
     <Compile Include="CotacaoDiferencaDto.cs" />
     <Compile Include="CotacaoFechamentoDto.cs" />

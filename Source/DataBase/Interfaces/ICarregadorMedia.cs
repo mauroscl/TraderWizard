@@ -8,7 +8,7 @@ namespace DataBase.Interfaces
 	public interface ICarregadorMedia
 	{
 
-		MediaAbstract CarregarPorData(CotacaoDiaria pobjCotacaoDiaria, cMediaDTO pobjMediaDto1);
+		MediaAbstract CarregarPorData(CotacaoDiaria pobjCotacaoDiaria, MediaDTO pobjMediaDto1);
 
 	}
 
