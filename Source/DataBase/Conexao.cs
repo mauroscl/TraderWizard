@@ -93,17 +93,13 @@ namespace DataBase
 		//Fecha a conexão
 		public void FecharConexao()
 		{
-			if ((Conn != null)) {
-				if (Conn.State == ConnectionState.Open) {
-					Conn.Close();
+		    if (Conn?.State != ConnectionState.Open) return;
+		    Conn.Close();
 
-                    StackTrace stackTrace = new StackTrace();
+		    StackTrace stackTrace = new StackTrace();
 
-                    // Get calling method name
-                    Console.WriteLine("Closing: {0}", stackTrace.GetFrame(1).GetMethod().Name);
-
-                }
-            }
+		    // Get calling method name
+		    Console.WriteLine("Closing: {0}", stackTrace.GetFrame(1).GetMethod().Name);
 		}
 
 

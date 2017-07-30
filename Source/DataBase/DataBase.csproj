@@ -91,7 +91,7 @@
     <Compile Include="cCommand.cs" />
     <Compile Include="Conexao.cs" />
     <Compile Include="cDadosDB.cs" />
-    <Compile Include="cGeradorQuery.cs" />
+    <Compile Include="GeradorQuery.cs" />
     <Compile Include="cRS.cs" />
     <Compile Include="cRSList.cs" />
     <Compile Include="frmInformacao.cs">

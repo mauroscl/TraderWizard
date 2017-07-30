@@ -136,7 +136,7 @@ namespace DataBase.Carregadores
 	    public IList<CotacaoDiaria> CarregaComIFRSobrevendidoSemSimulacao(Ativo pobjAtivo, Setup pobjSetup, double pdblValorMaximoIFRSobrevendido, cEnum.enumMediaTipo pintMediaTipo)
 		{
 
-			string strSQL = cGeradorQuery.BackTestingIFRSemFiltroEntradaQueryGerar(pobjAtivo.Codigo, "DIARIO", "TODOS", pdblValorMaximoIFRSobrevendido, 1, pintMediaTipo, true);
+			string strSQL = GeradorQuery.BackTestingIFRSemFiltroEntradaQueryGerar(pobjAtivo.Codigo, "DIARIO", "TODOS", pdblValorMaximoIFRSobrevendido, 1, pintMediaTipo, true);
 
 			//Somente utiliza este filtro quando a tabela envolvida for a tabela do IFR diário
 			strSQL += " AND NOT EXISTS " + Environment.NewLine;
@@ -208,7 +208,7 @@ namespace DataBase.Carregadores
 			//FALSE nesta chamada porque será feito uma verificação aqui nesta função se o setup será acionado.
 			//Se o parâmetro for passado com valor TRUE retornará apenas as datas em que houver rompimento 
 			//no período seguinte ao período em que o IFR cruzou a média. 
-			string strSQL = cGeradorQuery.BackTestingIFRComFiltroEntradaQueryGerar(Conexao.ObterFormatadorDeCampo() , pobjAtivo.Codigo, "DIARIO", "TODOS", 1, pintMediaTipo, pdtmDataInicial, false, true);
+			string strSQL = GeradorQuery.BackTestingIFRComFiltroEntradaQueryGerar(Conexao.ObterFormatadorDeCampo() , pobjAtivo.Codigo, "DIARIO", "TODOS", 1, pintMediaTipo, pdtmDataInicial, false, true);
 
 			//inclui ordenamento por data.
 			strSQL += " ORDER BY Dia2.Data ";

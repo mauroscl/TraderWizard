@@ -12,6 +12,10 @@ namespace prmCotacao
             this._conexao = new Conexao();
         }
 
+        //~SequencialService()
+        //{
+        //    this._conexao.FecharConexao();
+        //}
 
         /// <summary>
         /// Preenche o campo SEQUENCIAL para um determinado ativo em uma determinada tabela

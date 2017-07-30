@@ -1,15 +1,20 @@
 ﻿using System;
 using prjDominio.Regras;
-using prjModelo;
 using TraderWizard.Enumeracoes;
 
 namespace DataBase
 {
 
-	public class cGeradorQuery
+	public class GeradorQuery
 	{
+	    private readonly FuncoesBd _formatadorDeCampo;
 
-		/// <summary>
+	    public GeradorQuery(FuncoesBd formatadorDeCampo)
+	    {
+	        _formatadorDeCampo = formatadorDeCampo;
+	    }
+
+	    /// <summary>
 		/// Gera a query que retorna as datas e os valores de entrada utilizando o setup do IFR 2 COM FILTRO.
 		/// </summary>
 		/// <param name="pstrCodigo">Código do ativo</param>
@@ -165,13 +170,13 @@ namespace DataBase
 			//Faz um SELECT para gerar uma tabela interna com a média de 200 períodos. 
 			//Não pode fazer uma junção direta com a tabela de médias.
 
-		    string strTabelaMME200 = "(SELECT Codigo, Data, Valor" + Environment.NewLine + " FROM " + strTabelaMedia +
+		    string strTabelaMme200 = "(SELECT Codigo, Data, Valor" + Environment.NewLine + " FROM " + strTabelaMedia +
 		                             Environment.NewLine + " WHERE Tipo = " + FuncoesBd.CampoStringFormatar(strMediaTipo) +
 		                             Environment.NewLine + " AND NumPeriodos = 200 " + Environment.NewLine + " AND Codigo = " +
 		                             FuncoesBd.CampoStringFormatar(pstrCodigo) + ") AS MM200_FECH";
 
 			//concatena a tabela da MME200 na tabela do segundo dia.
-			strTabelaSegundoDia = "(" + strTabelaSegundoDia + " INNER JOIN " + Environment.NewLine + strTabelaMME200 + " On C.CODIGO = MM200_FECH.CODIGO " + Environment.NewLine + " And C.DATA = MM200_FECH.DATA) " + Environment.NewLine;
+			strTabelaSegundoDia = "(" + strTabelaSegundoDia + " INNER JOIN " + Environment.NewLine + strTabelaMme200 + " On C.CODIGO = MM200_FECH.CODIGO " + Environment.NewLine + " And C.DATA = MM200_FECH.DATA) " + Environment.NewLine;
 
 			strQuery = strQuery + '\t' + " FROM " + strTabelaSegundoDia + '\t' + " WHERE C.Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + Environment.NewLine + '\t' + " And MM_IFR.TIPO = " + FuncoesBd.CampoStringFormatar("IFR2") + Environment.NewLine + '\t' + " And MM_IFR.NUMPERIODOS = 13 " + Environment.NewLine + '\t' + " And I.NUMPERIODOS = 2 " + Environment.NewLine + '\t' + " And I.VALOR > MM_IFR.VALOR " + Environment.NewLine;
 
@@ -289,7 +294,7 @@ namespace DataBase
 			string strTabelaMedia = String.Empty;
 			string strTabelaIFR = String.Empty;
 
-			string strMediaTipo = null;
+			string strMediaTipo;
 
 			if (pintMediaTipo == cEnum.enumMediaTipo.Aritmetica) {
 				strMediaTipo = "MMA";
@@ -302,10 +307,7 @@ namespace DataBase
 			//Busca o nome das tabelas
 			cCalculadorTabelas.TabelasCalcular(pstrPeriodicidade, ref strTabelaCotacao, ref strTabelaMedia, ref strTabelaIFR);
 
-			string strQuery = null;
-			string strTabela = null;
-
-			strTabela = "(" + strTabelaCotacao + " C" + " INNER JOIN " + strTabelaIFR + " I " + Environment.NewLine + " On C.CODIGO = I.CODIGO " + Environment.NewLine + " And C.DATA = I.DATA" + ")" + Environment.NewLine;
+		    var strTabela = "(" + strTabelaCotacao + " C" + " INNER JOIN " + strTabelaIFR + " I " + Environment.NewLine + " On C.CODIGO = I.CODIGO " + Environment.NewLine + " And C.DATA = I.DATA" + ")" + Environment.NewLine;
 
 			//Inicio da tabela da média de 49
 			strTabela = "(" + strTabela;
@@ -328,12 +330,11 @@ namespace DataBase
 
 			//Faz um SELECT para gerar uma tabela interna com a média de 200 períodos. 
 			//Não pode fazer uma junção direta com a tabela de médias.
-			string strTabelaMME200 = null;
 
-			strTabelaMME200 = "(" + Environment.NewLine + '\t' + "SELECT Codigo, Data, Valor" + Environment.NewLine + '\t' + " FROM " + strTabelaMedia + Environment.NewLine + '\t' + " WHERE Tipo = " + FuncoesBd.CampoStringFormatar(strMediaTipo) + Environment.NewLine + '\t' + " AND NumPeriodos = 200 " + Environment.NewLine + '\t' + " AND Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + Environment.NewLine + ") AS MM200" + Environment.NewLine;
+		    var strTabelaMme200 = "(" + Environment.NewLine + '\t' + "SELECT Codigo, Data, Valor" + Environment.NewLine + '\t' + " FROM " + strTabelaMedia + Environment.NewLine + '\t' + " WHERE Tipo = " + FuncoesBd.CampoStringFormatar(strMediaTipo) + Environment.NewLine + '\t' + " AND NumPeriodos = 200 " + Environment.NewLine + '\t' + " AND Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + Environment.NewLine + ") AS MM200" + Environment.NewLine;
 
 			//concatena a tabela da MME200  na tabela do segundo dia.
-			strTabela = "(" + strTabela + " INNER JOIN " + Environment.NewLine + strTabelaMME200 + " On C.CODIGO = MM200.CODIGO " + Environment.NewLine + " And C.DATA = MM200.DATA) " + Environment.NewLine;
+			strTabela = "(" + strTabela + " INNER JOIN " + Environment.NewLine + strTabelaMme200 + " On C.CODIGO = MM200.CODIGO " + Environment.NewLine + " And C.DATA = MM200.DATA) " + Environment.NewLine;
 
 
 			string strTabelaMediaIFR = "(" + Environment.NewLine + '\t' + "SELECT Codigo, Data, Valor" + Environment.NewLine + '\t' + " FROM " + strTabelaMedia + Environment.NewLine + '\t' + " WHERE Tipo = " + FuncoesBd.CampoStringFormatar("IFR2") + Environment.NewLine + '\t' + " AND NumPeriodos = 13 " + Environment.NewLine + '\t' + " AND Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + Environment.NewLine + ") AS MMIFR" + Environment.NewLine;
@@ -342,7 +343,7 @@ namespace DataBase
 			strTabela = "(" + strTabela + " INNER JOIN " + Environment.NewLine + strTabelaMediaIFR + " On C.CODIGO = MMIFR.CODIGO " + Environment.NewLine + " And C.DATA = MMIFR.DATA) " + Environment.NewLine;
 
 
-			strQuery = "SELECT " + FuncoesBd.CampoStringFormatar("IFR2SOBREVEND") + " AS SETUP" + ", " + " C.DATA As DATA_ENTRADA, VALORFECHAMENTO As VALOR_ENTRADA " + ", Round(VALORMINIMO - (VALORMAXIMO - VALORMINIMO) * 1.3, 2) As VALOR_STOP_LOSS " + ", " + pintOrdem.ToString() + " As ORDEM " + ", Sequencial, I.Valor AS VALOR_IFR, ValorAbertura, ValorMaximo, ValorMinimo, MME49.VALOR AS MME49, MM200.Valor AS MME200, MMIFR.Valor AS MMIFR ";
+			var strQuery = "SELECT " + FuncoesBd.CampoStringFormatar("IFR2SOBREVEND") + " AS SETUP" + ", " + " C.DATA As DATA_ENTRADA, VALORFECHAMENTO As VALOR_ENTRADA " + ", Round(VALORMINIMO - (VALORMAXIMO - VALORMINIMO) * 1.3, 2) As VALOR_STOP_LOSS " + ", " + pintOrdem.ToString() + " As ORDEM " + ", Sequencial, I.Valor AS VALOR_IFR, ValorAbertura, ValorMaximo, ValorMinimo, MME49.VALOR AS MME49, MM200.Valor AS MME200, MMIFR.Valor AS MMIFR ";
 
 
 			if (pblnMME21Incluir) {
@@ -398,7 +399,202 @@ namespace DataBase
 
 		}
 
+	    /// <summary>
+	    /// Gera as cláusulas FROM e WHERE para serem utilizadas com as queries que buscam os dados para gerar os gráficos.
+	    /// </summary>
+	    /// <param name="pstrCodigoAtivo"></param>
+	    /// <param name="pdtmDataMinima">Data inicial de busca dos dados</param>
+	    /// <param name="pdtmDataMaxima">Data final de busca dos dados</param>
+	    /// <param name="pstrTabela">
+	    /// Indica a tabela que será utilizada para buscar os dados do gráfico.
+	    /// Os valores possíveis são: COTACAO, COTACAO_SEMANAL, MEDIA_DIARIA, MEDIA_SEMANAL.
+	    /// </param>
+	    /// <param name="pdblOperador">Quando a cotação possuir splits, contém todas as operações para transformar
+	    /// as cotações de períodos anteriores ao split na mesma razão da última cotação</param>
+	    /// <param name="pdblOperadorInvertido">Mesma função do parâmetro pstrOperador, porém com as operações invertidas,
+	    /// caso seja necessário obter os valores do split invertido. Este operador é utilizado geralmente para calcular o volume
+	    /// </param>
+	    /// <param name="pintNumPeriodos">Número de períodos da média que dever ser buscada. Necessário informar apenas quando a função é utilizada
+	    /// para calcular médias</param>
+	    /// <param name="pstrDado">VALOR OU VOLUME. Necessário informar apenas quando a função é utilizada
+	    /// para calcular médias</param>
+	    /// <param name="pstrFinalidade">Indica se esta função está sendo chamada para obter todos os registros de um determinado período
+	    /// ou apenas os valores mínimos e máximos
+	    /// Valores possíveis: "TODOS", "EXTREMOS"</param>
+	    /// <param name="pblnCotacaoBuscar">Indica se devem ser buscadas dados relativos ao preço do ativo</param>
+	    /// <param name="pblnVolumeBuscar">Indica se devem ser buscados dados relativos ao volume do ativo</param>
+	    /// <param name="pstrMediaTipo">Tipo da média que deve ser consultada. Valores possíveis: "E" (exponencial), "A" (aritmética). 
+	    /// Necessário informar apenas quando a função é utilizada para calcular médias</param>
+	    /// <param name="pstrOrderBy">Indica o ordenamento da consulta. Deve ser informado apenas quando o parâmetro "pstrFinalidade" estiver
+	    /// com o valor "TODOS", mas não é obrigatório informar neste caso.</param>
+	    /// <returns>string contendo as cláusulas from e where</returns>
+	    /// <remarks></remarks>
+	    public string ConsultaUnitariaGerar(string pstrCodigoAtivo, DateTime pdtmDataMinima, DateTime pdtmDataMaxima, string pstrTabela, double pdblOperador, double pdblOperadorInvertido, string pstrFinalidade, string pstrMediaTipo = "", int pintNumPeriodos = -1, string pstrDado = "",
+	        bool pblnCotacaoBuscar = false, bool pblnVolumeBuscar = false, string pstrOrderBy = "")
+	    {
+
+	        string strSql = String.Empty;
+
+	        string strColunas = String.Empty;
+
+	        string strTabelaAux = pstrTabela.ToUpper();
+
+	        if (strTabelaAux == "COTACAO" || strTabelaAux == "COTACAO_SEMANAL")
+	        {
+
+	            if (pstrFinalidade == "TODOS")
+	            {
+
+	                if (pblnCotacaoBuscar)
+	                {
+	                    strColunas = " data, valorabertura * " + FuncoesBd.CampoFormatar(pdblOperador) + " as valorabertura " + Environment.NewLine + ", valorfechamento * " + FuncoesBd.CampoFormatar(pdblOperador) + " as valorfechamento " + Environment.NewLine + ", valorminimo * " + FuncoesBd.CampoFormatar(pdblOperador) + " as valorminimo " + Environment.NewLine + ", valormaximo * " + FuncoesBd.CampoFormatar(pdblOperador) + " as valormaximo " + Environment.NewLine + ", Oscilacao ";
 
 
-	}
+	                    if (strTabelaAux == "COTACAO_SEMANAL")
+	                    {
+	                        strColunas = strColunas + ", DataFinal";
+
+	                    }
+
+	                }
+
+
+	            }
+	            else if (pstrFinalidade == "EXTREMOS")
+	            {
+	                strSql = " SELECT MIN(ValorMinimo * " + FuncoesBd.CampoFormatar(pdblOperador) + ") AS ValorMinimo " + ", MAX(ValorMaximo * " + FuncoesBd.CampoFormatar(pdblOperador) + ") AS ValorMaximo ";
+
+	            }
+
+
+	        }
+	        else
+	        {
+	            //se é a tabela de médias
+	            if (pstrDado == "VALOR")
+	            {
+	                //SE É MEDIA DE VALOR
+
+	                if (pstrFinalidade == "TODOS")
+	                {
+	                    strSql = " SELECT Data, Valor * " + FuncoesBd.CampoFormatar(pdblOperador) + " as Valor " + Environment.NewLine;
+
+
+	                }
+	                else if (pstrFinalidade == "EXTREMOS")
+	                {
+	                    strSql = " SELECT MIN(Valor * " + FuncoesBd.CampoFormatar(pdblOperador) + ") AS ValorMinimo " + Environment.NewLine + ", MAX(Valor * " + FuncoesBd.CampoFormatar(pdblOperador) + ") AS ValorMaximo " + Environment.NewLine + ", COUNT(1) as NumRegistros " + Environment.NewLine;
+
+	                }
+	            }
+	            else
+	            {
+	                //SE É MEDIA DE VOLUME
+
+	                if (pstrFinalidade == "TODOS")
+	                {
+	                    strSql = '\t' + " select Data, Valor * " + FuncoesBd.CampoFormatar(pdblOperadorInvertido) + " as Valor " + Environment.NewLine;
+
+
+	                }
+	                else if (pstrFinalidade == "EXTREMOS")
+	                {
+	                    strSql = " SELECT MIN(Valor * " + FuncoesBd.CampoFormatar(pdblOperadorInvertido) + ") AS ValorMinimo " + Environment.NewLine + ", MAX(Valor * " + FuncoesBd.CampoFormatar(pdblOperadorInvertido) + ") AS ValorMaximo " + Environment.NewLine + ", COUNT(1) as NumRegistros " + Environment.NewLine;
+
+	                }
+
+	            }
+
+	        }
+
+	        //Quando é uma das tabelas de cotações, calcula o volume também.
+
+	        if (strTabelaAux == "COTACAO" || strTabelaAux == "COTACAO_SEMANAL")
+	        {
+
+	            if (pstrFinalidade == "TODOS")
+	            {
+
+	                if (pblnVolumeBuscar)
+	                {
+	                    if (strColunas != String.Empty)
+	                    {
+	                        strColunas = strColunas + ", ";
+	                    }
+
+	                    strColunas = strColunas + "titulos_total * " + FuncoesBd.CampoFormatar(pdblOperadorInvertido) + " as Titulos_Total " + Environment.NewLine + ", Negocios_Total, Valor_Total " + Environment.NewLine;
+
+	                }
+
+
+	            }
+	            else
+	            {
+	                strSql = strSql + ", MIN(titulos_total * " + FuncoesBd.CampoFormatar(pdblOperadorInvertido) + ") as Volume_Minimo " + Environment.NewLine + ", MAX(titulos_total * " + FuncoesBd.CampoFormatar(pdblOperadorInvertido) + ") as Volume_Maximo " + Environment.NewLine + ", COUNT(1) AS ContadorVolumeMedio " + Environment.NewLine;
+
+	            }
+
+	        }
+
+
+	        if ((strTabelaAux == "COTACAO" || strTabelaAux == "COTACAO_SEMANAL") && pstrFinalidade == "TODOS")
+	        {
+	            strSql = "SELECT " + strColunas;
+
+	        }
+
+	        //********INICIO DO TRATAMENTO DO FROM, WHERE e ORDER BY 
+	        strSql = strSql + " from " + pstrTabela + Environment.NewLine;
+
+	        strSql = strSql + " where codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigoAtivo) + Environment.NewLine + 
+                " and data >= " + this._formatadorDeCampo.CampoDateFormatar(pdtmDataMinima) + Environment.NewLine +
+                " and data <= " + this._formatadorDeCampo.CampoDateFormatar(pdtmDataMaxima) + Environment.NewLine;
+
+
+	        if (strTabelaAux == "MEDIA_DIARIA" || strTabelaAux == "MEDIA_SEMANAL")
+	        {
+	            string strMediaTipoAux;
+
+	            if (pstrDado == "VALOR")
+	            {
+	                if (pstrMediaTipo == "E")
+	                {
+	                    strMediaTipoAux = "MME";
+	                }
+	                else if (pstrMediaTipo == "A")
+	                {
+	                    strMediaTipoAux = "MMA";
+	                }
+	                else
+	                {
+	                    strMediaTipoAux = String.Empty;
+	                }
+	            }
+	            else if (pstrDado == "VOLUME")
+	            {
+	                //volume não verifica qual o tipo de média. É sempre aritmética
+	                strMediaTipoAux = "VMA";
+	            }
+	            else
+	            {
+	                strMediaTipoAux = String.Empty;
+	            }
+
+	            strSql = strSql + " and Tipo = " + FuncoesBd.CampoStringFormatar(strMediaTipoAux) + Environment.NewLine + " and NumPeriodos = " + pintNumPeriodos.ToString() + Environment.NewLine;
+
+	        }
+
+
+	        if (pstrFinalidade == "TODOS" && pstrOrderBy != String.Empty)
+	        {
+	            //se é para listar todos os registros e foi passado um ORDER BY
+	            strSql = strSql + " ORDER BY " + pstrOrderBy;
+
+	        }
+
+	        return strSql;
+
+	    }
+
+    }
 }

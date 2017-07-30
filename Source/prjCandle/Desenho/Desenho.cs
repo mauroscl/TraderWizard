@@ -6,7 +6,7 @@ namespace prjCandle
     public abstract class Desenho
     {
         protected AreaDeDesenho AreaDeDesenho { get; set; }
-        public PontoDoDesenho PontoInicial { get; private set; }
+        public PontoDoDesenho PontoInicial { get; }
         public PontoDoDesenho PontoFinal { get; protected set; }
         public cEnum.SentidaHorizontalDaLinha SentidoHorizontal
         {

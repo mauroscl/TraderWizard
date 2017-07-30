@@ -14,6 +14,11 @@ namespace prmCotacao
 
         }
 
+        //~CotacaoData()
+        //{
+        //    this._conexao.FecharConexao();
+        //}
+
         /// <summary>
         /// Recebe uma data e busca o primeiro dia da semana para a qual esta data pertence.
         /// Se a data recebida for um dia sem cotação, como um sábado ou domingo, irá buscar a primeira data da

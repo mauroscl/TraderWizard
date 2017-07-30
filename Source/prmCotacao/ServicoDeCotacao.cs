@@ -18,8 +18,7 @@ using TraderWizard.Enumeracoes;
 
 namespace prmCotacao
 {
-
-	public class ServicoDeCotacao
+    public class ServicoDeCotacao
 	{
 
 		/// <summary>
@@ -38,6 +37,9 @@ namespace prmCotacao
 
 	    private readonly SequencialService _sequencialService;
 	    private readonly CotacaoData _cotacaoData;
+	    private readonly GeradorQuery _geradorQuery;
+
+	    //private readonly bool _localDataBaseConnection;
 
         private readonly IEnumerable<MediaDTO> _mediasDeFechamento = new List<MediaDTO>
         {
@@ -52,11 +54,21 @@ namespace prmCotacao
 			_web = new cWeb(_conexao);
             _sequencialService = new SequencialService();
             _cotacaoData = new CotacaoData();
+            _geradorQuery = new GeradorQuery(_conexao.ObterFormatadorDeCampo());
 		}
 
 	    public ServicoDeCotacao():this(new Conexao())
 	    {
+	        //_localDataBaseConnection = true;
 	    }
+
+	    //~ServicoDeCotacao()
+	    //{
+	    //    if (this._localDataBaseConnection)
+	    //    {
+     //           this._conexao.FecharConexao();	            
+	    //    }
+	    //}
 
 	    /// <summary>
         /// Atualiza as cotações em todas as datas em que há pregão em um determinado período.
@@ -3032,8 +3044,6 @@ namespace prmCotacao
 			cRSList objRsSplit = null;
 
 		    double dblSplitRazaoCotacaoAbertura = 0;
-			//Dim dblSplitRazaoInvertida As Double
-			//Dim dtmSplitData As Date
 
 			//indica se tem splits em todo o período calculado
 
@@ -5021,7 +5031,7 @@ namespace prmCotacao
 			//busca o último dia útil antes da data ex-provento
 			DateTime dtmUltimoDiaCom = objCalculadorData.DiaUtilAnteriorCalcular(pdtmDataEx);
 
-            FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
+            FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
 			switch (pintProventoTipo) {
 
@@ -5059,7 +5069,7 @@ namespace prmCotacao
 
 			double dblQuantidadeAnterior = Convert.ToDouble(decUltimoPrecoCom) - Convert.ToDouble(pdecValorPorAcao);
 
-			string strQuery = "INSERT INTO Split " + Environment.NewLine + "(Codigo, Data, Tipo, QuantidadeAnterior, QuantidadePosterior)" + Environment.NewLine + " VALUES " + Environment.NewLine + "(" + FuncoesBd.CampoStringFormatar(pstrCodigo) + ", " + FuncoesBd.CampoDateFormatar(pdtmDataEx) + ", " + strProventoTipoAbreviatura + ", " + FuncoesBd.CampoFloatFormatar(dblQuantidadeAnterior) + ", " + FuncoesBd.CampoFloatFormatar(Convert.ToDouble(decUltimoPrecoCom)) + ")";
+			string strQuery = "INSERT INTO Split " + Environment.NewLine + "(Codigo, Data, Tipo, QuantidadeAnterior, QuantidadePosterior)" + Environment.NewLine + " VALUES " + Environment.NewLine + "(" + FuncoesBd.CampoStringFormatar(pstrCodigo) + ", " + funcoesBd.CampoDateFormatar(pdtmDataEx) + ", " + strProventoTipoAbreviatura + ", " + FuncoesBd.CampoFloatFormatar(dblQuantidadeAnterior) + ", " + FuncoesBd.CampoFloatFormatar(Convert.ToDouble(decUltimoPrecoCom)) + ")";
 
 			objCommand.Execute(strQuery);
 
@@ -5107,169 +5117,9 @@ namespace prmCotacao
 		}
 
 	    /// <summary>
-	    /// Gera as cláusulas FROM e WHERE para serem utilizadas com as queries que buscam os dados para gerar os gráficos.
-	    /// </summary>
-	    /// <param name="pstrCodigoAtivo"></param>
-	    /// <param name="pdtmDataMinima">Data inicial de busca dos dados</param>
-	    /// <param name="pdtmDataMaxima">Data final de busca dos dados</param>
-	    /// <param name="pstrTabela">
-	    /// Indica a tabela que será utilizada para buscar os dados do gráfico.
-	    /// Os valores possíveis são: COTACAO, COTACAO_SEMANAL, MEDIA_DIARIA, MEDIA_SEMANAL.
-	    /// </param>
-	    /// <param name="pdblOperador">Quando a cotação possuir splits, contém todas as operações para transformar
-	    /// as cotações de períodos anteriores ao split na mesma razão da última cotação</param>
-	    /// <param name="pdblOperadorInvertido">Mesma função do parâmetro pstrOperador, porém com as operações invertidas,
-	    /// caso seja necessário obter os valores do split invertido. Este operador é utilizado geralmente para calcular o volume
-	    /// </param>
-	    /// <param name="pintNumPeriodos">Número de períodos da média que dever ser buscada. Necessário informar apenas quando a função é utilizada
-	    /// para calcular médias</param>
-	    /// <param name="pstrDado">VALOR OU VOLUME. Necessário informar apenas quando a função é utilizada
-	    /// para calcular médias</param>
-	    /// <param name="pstrFinalidade">Indica se esta função está sendo chamada para obter todos os registros de um determinado período
-	    /// ou apenas os valores mínimos e máximos
-	    /// Valores possíveis: "TODOS", "EXTREMOS"</param>
-	    /// <param name="pblnCotacaoBuscar">Indica se devem ser buscadas dados relativos ao preço do ativo</param>
-	    /// <param name="pblnVolumeBuscar">Indica se devem ser buscados dados relativos ao volume do ativo</param>
-	    /// <param name="pstrMediaTipo">Tipo da média que deve ser consultada. Valores possíveis: "E" (exponencial), "A" (aritmética). 
-	    /// Necessário informar apenas quando a função é utilizada para calcular médias</param>
-	    /// <param name="pstrOrderBy">Indica o ordenamento da consulta. Deve ser informado apenas quando o parâmetro "pstrFinalidade" estiver
-	    /// com o valor "TODOS", mas não é obrigatório informar neste caso.</param>
-	    /// <returns>string contendo as cláusulas from e where</returns>
-	    /// <remarks></remarks>
-	    private string ConsultaUnitariaGerar(string pstrCodigoAtivo, DateTime pdtmDataMinima, DateTime pdtmDataMaxima, string pstrTabela, double pdblOperador, double pdblOperadorInvertido, string pstrFinalidade, string pstrMediaTipo = "", int pintNumPeriodos = -1, string pstrDado = "",
-		bool pblnCotacaoBuscar = false, bool pblnVolumeBuscar = false, string pstrOrderBy = "")
-		{
-
-			string strSQL = String.Empty;
-
-			string strColunas = String.Empty;
-
-			string strTabelaAux = pstrTabela.ToUpper();
-
-            FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
-
-			if (strTabelaAux == "COTACAO" || strTabelaAux == "COTACAO_SEMANAL") {
-
-				if (pstrFinalidade == "TODOS") {
-
-					if (pblnCotacaoBuscar) {
-						strColunas = " data, valorabertura * " + FuncoesBd.CampoFormatar(pdblOperador) + " as valorabertura " + Environment.NewLine + ", valorfechamento * " + FuncoesBd.CampoFormatar(pdblOperador) + " as valorfechamento " + Environment.NewLine + ", valorminimo * " + FuncoesBd.CampoFormatar(pdblOperador) + " as valorminimo " + Environment.NewLine + ", valormaximo * " + FuncoesBd.CampoFormatar(pdblOperador) + " as valormaximo " + Environment.NewLine + ", Oscilacao ";
-
-
-						if (strTabelaAux == "COTACAO_SEMANAL") {
-							strColunas = strColunas + ", DataFinal";
-
-						}
-
-					}
-
-
-				} else if (pstrFinalidade == "EXTREMOS") {
-					strSQL = " SELECT MIN(ValorMinimo * " + FuncoesBd.CampoFormatar(pdblOperador) + ") AS ValorMinimo " + ", MAX(ValorMaximo * " + FuncoesBd.CampoFormatar(pdblOperador) + ") AS ValorMaximo ";
-
-				}
-
-
-			} else {
-				//se é a tabela de médias
-				if (pstrDado == "VALOR") {
-					//SE É MEDIA DE VALOR
-
-					if (pstrFinalidade == "TODOS") {
-						strSQL = " SELECT Data, Valor * " + FuncoesBd.CampoFormatar(pdblOperador) + " as Valor " + Environment.NewLine;
-
-
-					} else if (pstrFinalidade == "EXTREMOS") {
-						strSQL = " SELECT MIN(Valor * " + FuncoesBd.CampoFormatar(pdblOperador) + ") AS ValorMinimo " + Environment.NewLine + ", MAX(Valor * " + FuncoesBd.CampoFormatar(pdblOperador) + ") AS ValorMaximo " + Environment.NewLine + ", COUNT(1) as NumRegistros " + Environment.NewLine;
-
-					}
-				} else {
-					//SE É MEDIA DE VOLUME
-
-					if (pstrFinalidade == "TODOS") {
-						strSQL = '\t' + " select Data, Valor * " + FuncoesBd.CampoFormatar(pdblOperadorInvertido) + " as Valor " + Environment.NewLine;
-
-
-					} else if (pstrFinalidade == "EXTREMOS") {
-						strSQL = " SELECT MIN(Valor * " + FuncoesBd.CampoFormatar(pdblOperadorInvertido) + ") AS ValorMinimo " + Environment.NewLine + ", MAX(Valor * " + FuncoesBd.CampoFormatar(pdblOperadorInvertido) + ") AS ValorMaximo " + Environment.NewLine + ", COUNT(1) as NumRegistros " + Environment.NewLine;
-
-					}
-
-				}
-
-			}
-
-			//Quando é uma das tabelas de cotações, calcula o volume também.
-
-			if (strTabelaAux == "COTACAO" || strTabelaAux == "COTACAO_SEMANAL") {
-
-				if (pstrFinalidade == "TODOS") {
-
-					if (pblnVolumeBuscar) {
-						if (strColunas != String.Empty) {
-							strColunas = strColunas + ", ";
-						}
-
-						strColunas = strColunas + "titulos_total * " + FuncoesBd.CampoFormatar(pdblOperadorInvertido) + " as Titulos_Total " + Environment.NewLine + ", Negocios_Total, Valor_Total " + Environment.NewLine;
-
-					}
-
-
-				} else {
-					strSQL = strSQL + ", MIN(titulos_total * " + FuncoesBd.CampoFormatar(pdblOperadorInvertido) + ") as Volume_Minimo " + Environment.NewLine + ", MAX(titulos_total * " + FuncoesBd.CampoFormatar(pdblOperadorInvertido) + ") as Volume_Maximo " + Environment.NewLine + ", COUNT(1) AS ContadorVolumeMedio " + Environment.NewLine;
-
-				}
-
-			}
-
-
-			if ((strTabelaAux == "COTACAO" || strTabelaAux == "COTACAO_SEMANAL") && pstrFinalidade == "TODOS") {
-				strSQL = "SELECT " + strColunas;
-
-			}
-
-			//********INICIO DO TRATAMENTO DO FROM, WHERE e ORDER BY 
-			strSQL = strSQL + " from " + pstrTabela + Environment.NewLine;
-
-			strSQL = strSQL + " where codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigoAtivo) + Environment.NewLine + " and data >= " + FuncoesBd.CampoDateFormatar(pdtmDataMinima) + Environment.NewLine + " and data <= " + FuncoesBd.CampoDateFormatar(pdtmDataMaxima) + Environment.NewLine;
-
-
-			if (strTabelaAux == "MEDIA_DIARIA" || strTabelaAux == "MEDIA_SEMANAL") {
-				string strMediaTipoAux;
-
-				if (pstrDado == "VALOR") {
-					if (pstrMediaTipo == "E") {
-						strMediaTipoAux = "MME";
-					} else if (pstrMediaTipo == "A") {
-						strMediaTipoAux = "MMA";
-					} else {
-						strMediaTipoAux = String.Empty;
-					}
-				} else if (pstrDado == "VOLUME") {
-					//volume não verifica qual o tipo de média. É sempre aritmética
-					strMediaTipoAux = "VMA";
-				} else {
-					strMediaTipoAux = String.Empty;
-				}
-
-				strSQL = strSQL + " and Tipo = " + FuncoesBd.CampoStringFormatar(strMediaTipoAux) + Environment.NewLine + " and NumPeriodos = " + pintNumPeriodos.ToString() + Environment.NewLine;
-
-			}
-
-
-			if (pstrFinalidade == "TODOS" && pstrOrderBy != String.Empty) {
-				//se é para listar todos os registros e foi passado um ORDER BY
-				strSQL = strSQL + " ORDER BY " + pstrOrderBy;
-
-			}
-
-			return strSQL;
-
-		}
-
-	    /// <summary>
 	    /// Realiza as consultas necessárias dos dados que serão mostrados no gráfico e retorna um objeto cRSList com estes dados
 	    /// </summary>
+	    /// <param name="pstrCodigoAtivo"></param>
 	    /// <param name="pdtmDataInicial"></param>
 	    /// <param name="pdtmDataFinal"></param>
 	    /// <param name="pstrPeriodicidade"></param>
@@ -5295,7 +5145,7 @@ namespace prmCotacao
 			cRSList objRSListSplit = null;
 			var lstQueries = new List<string>();
 
-			string strSQL;
+			string strSql;
 
 			string strTabela = string.Empty;
 			string strTabelaCotacao = string.Empty;
@@ -5377,10 +5227,10 @@ namespace prmCotacao
 
 						//Regra do parâmetro "pdtmDataFinal": se a data final de busca (pdtmDataFinal) for menor que a data maxima da iteração
 						//tem que utilizar a data final, senão utiliza a data máxima
-						strSQL = ConsultaUnitariaGerar(pstrCodigoAtivo, dtmDataMinima, dtmDataMaxima, strTabela, dblOperador, dblOperadorInvertido, "TODOS", pstrMediaTipo, pintNumPeriodos, pstrDado,
+					    strSql = _geradorQuery.ConsultaUnitariaGerar(pstrCodigoAtivo, dtmDataMinima, dtmDataMaxima, strTabela, dblOperador, dblOperadorInvertido, "TODOS", pstrMediaTipo, pintNumPeriodos, pstrDado,
 						pblnCotacaoBuscar, pblnVolumeBuscar, pstrOrderBy);
 
-						lstQueries.Add(strSQL);
+						lstQueries.Add(strSql);
 
 						//para a próxima iteração a data máxima é a data anterior ao split que está acabando
 						dtmDataMaxima = dtmDataMinima.AddDays(-1);
@@ -5423,17 +5273,7 @@ namespace prmCotacao
 
 						objRSListSplit.MoveNext();
 
-
-
-						if (objRSListSplit.EOF) {
-							//se chegou ao fim do RS de splits, marca como data mínima para próxima iteração
-							dtmDataMinima = pdtmDataInicial;
-
-						} else {
-							//a data mínima é a data do split
-							dtmDataMinima = Convert.ToDateTime(objRSListSplit.Field("Data"));
-
-						}
+						dtmDataMinima = objRSListSplit.EOF ? pdtmDataInicial : Convert.ToDateTime(objRSListSplit.Field("Data"));
 
 					}
 
@@ -5443,10 +5283,10 @@ namespace prmCotacao
 
 			} else {
 				//Não tem split: consulta única.
-				strSQL = ConsultaUnitariaGerar(pstrCodigoAtivo, pdtmDataInicial, pdtmDataFinal, strTabela, dblOperador, dblOperadorInvertido, "TODOS", pstrMediaTipo, pintNumPeriodos, pstrDado,
+			    strSql = _geradorQuery.ConsultaUnitariaGerar(pstrCodigoAtivo, pdtmDataInicial, pdtmDataFinal, strTabela, dblOperador, dblOperadorInvertido, "TODOS", pstrMediaTipo, pintNumPeriodos, pstrDado,
 				pblnCotacaoBuscar, pblnVolumeBuscar, pstrOrderBy);
 
-				lstQueries.Add(strSQL);
+				lstQueries.Add(strSql);
 
 
 			}
@@ -5471,437 +5311,6 @@ namespace prmCotacao
 			return objRSList;
 
 		}
-
-
-	    /// <summary>
-	    /// Calcula os valores máximo e mínimo das áreas de desenho do gráfico  (cotação, volume, ifr). 
-	    /// Função unitária que não considera splits.
-	    /// </summary>
-	    /// <param name="pdtmDataInicial">Data do primeiro candle que será mostrado na área de visualização do gráfico</param>
-	    /// <param name="pdtmDataFinal">Data do último candle que será mostrado na área de visualização do gráfico</param>
-	    /// <param name="pdblOperador">Operador que será utilizando para fazer as conversão dos preços. 
-	    /// Quando a área de dados não possuir splits, o valor é "1" para não alterar o valor dos dados </param>
-	    /// <param name="pdblOperadorInvertido">Operador que será utilizando para fazer as conversão dos volumes. 
-	    /// Quando a área de dados não possuir splits, o valor é "1" para não alterar o valor dos dados </param>
-	    /// <param name="pdecValorMinimoRet">Valor mínimo que será mostrado na área de preços</param>
-	    /// <param name="pdecValorMaximoRet">Valor máximo que será mostrado na área de preços</param>
-	    /// <param name="plstMediasRet">lista que contém o número de registros que serão desenhadas para cada uma das médias do gráfico</param>
-	    /// <param name="pdblVolumeMinimoRet">Menor valor que será mostrado na área de volume</param>
-	    /// <param name="pdblVolumeMaximoRet">Maior valor que será mostrado na área de volume</param>
-	    /// <param name="pintContadorIFRMedioRet">Número de registros de média do IFR que serão mostrados</param>
-	    /// <param name="pintContadorIFRRet">Núumero de registros do IFR que serão mostrados</param>
-	    /// <param name="pintVolumeMedioNumRegistrosRet">Número de registros do volume que serão mostrados</param>
-	    /// <param name="pblnVolumeDesenhar"></param>
-	    /// <param name="pblnIFRDesenhar"></param>
-	    /// <param name="pstrCodigoAtivo"></param>
-	    /// <param name="pstrPeriodicidade"></param>
-	    /// <param name="pblnMediaMovelDesenhar"></param>
-	    /// <remarks></remarks>
-	    private bool ValoresExtremosUnitarioCalcular(string pstrCodigoAtivo, string pstrPeriodicidade, bool pblnMediaMovelDesenhar, List<MediaDTO> plstMediasSelecionadas, 
-        bool pblnVolumeDesenhar, bool pblnIFRDesenhar, int pintIFRNumPeriodos, DateTime pdtmDataInicial, DateTime pdtmDataFinal, double pdblOperador,
-		double pdblOperadorInvertido, ref decimal pdecValorMinimoRet, ref decimal pdecValorMaximoRet, ref double pdblVolumeMinimoRet, ref double pdblVolumeMaximoRet, 
-        ref int pintContadorIFRRet, ref int pintContadorIFRMedioRet, ref int pintVolumeMedioNumRegistrosRet, ref List<MediaDTO> plstMediasRet)
-		{
-			cRS objRS = new cRS(_conexao);
-
-		    string strTabelaCotacao = string.Empty;
-			string strTabelaMedia = string.Empty;
-			string strTabelaIFR = string.Empty;
-
-			cCalculadorTabelas.TabelasCalcular(pstrPeriodicidade, ref strTabelaCotacao, ref strTabelaMedia, ref strTabelaIFR);
-
-			string strQuery = ConsultaUnitariaGerar(pstrCodigoAtivo, pdtmDataInicial, pdtmDataFinal, strTabelaCotacao, pdblOperador, pdblOperadorInvertido, "EXTREMOS");
-
-			objRS.ExecuteQuery(strQuery);
-
-            if (Convert.ToInt32(objRS.Field("ContadorVolumeMedio")) == 0)
-		    {
-		        return false;
-		    }
-
-			pdecValorMinimoRet = Convert.ToDecimal(objRS.Field("ValorMinimo"));
-			pdecValorMaximoRet = Convert.ToDecimal(objRS.Field("ValorMaximo"));
-
-
-			if (pblnVolumeDesenhar) {
-				pdblVolumeMinimoRet = Convert.ToDouble(objRS.Field("Volume_Minimo"));
-
-				pdblVolumeMaximoRet = Convert.ToDouble(objRS.Field("Volume_Maximo"));
-
-			}
-
-			objRS.Fechar();
-
-			//******************INICIO DO TRATAMENTO PARA O IFR******************
-
-			if (pblnIFRDesenhar) {
-
-                FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
-
-                //Calcula o número de registros que serão desenhados do IFR de 2 períodos 
-				strQuery = " SELECT COUNT(1) AS ContadorIFR" + " FROM " + strTabelaIFR + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigoAtivo) + " AND NumPeriodos = " + pintIFRNumPeriodos + " AND Data >= " + FuncoesBd.CampoDateFormatar(pdtmDataInicial) + " AND Data <= " + FuncoesBd.CampoDateFormatar(pdtmDataFinal);
-
-				objRS.ExecuteQuery(strQuery);
-
-				pintContadorIFRRet = Convert.ToInt16(objRS.Field("ContadorIFR"));
-
-				objRS.Fechar();
-
-
-				if (pintIFRNumPeriodos == 2) {
-					//Calcula o número de registros que serão desenhados da média de 13 períodos do IFR de 2 períodos 
-					strQuery = " SELECT COUNT(1) AS ContadorIFRMedio" + " FROM " + strTabelaMedia + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigoAtivo) + " AND Tipo = " + FuncoesBd.CampoStringFormatar("IFR2") + " AND NumPeriodos = 13" + " AND Data >= " + FuncoesBd.CampoDateFormatar(pdtmDataInicial) + " AND Data <= " + FuncoesBd.CampoDateFormatar(pdtmDataFinal);
-
-					objRS.ExecuteQuery(strQuery);
-
-					pintContadorIFRMedioRet = Convert.ToInt16(objRS.Field("ContadorIFRMedio"));
-
-					objRS.Fechar();
-
-				} else {
-					pintContadorIFRMedioRet = 0;
-				}
-
-			}
-			//********************FIM DO TRATAMENTO PARA O IFR*******************
-
-			//********************INICIO DO TRATAMENTO PARA O VOLUME MÉDIO*******************
-
-
-			if (pblnVolumeDesenhar) {
-				//busca os valores máximo e mínimo da média de 21 períodos do volume
-				strQuery = ConsultaUnitariaGerar(pstrCodigoAtivo, pdtmDataInicial, pdtmDataFinal, strTabelaMedia, pdblOperador, pdblOperadorInvertido, "EXTREMOS", "A", 21, "VOLUME");
-
-				objRS.ExecuteQuery(strQuery);
-
-
-				if (Convert.ToDouble(objRS.Field("ValorMinimo")) < pdblVolumeMinimoRet) {
-					pdblVolumeMinimoRet = Convert.ToDouble(objRS.Field("ValorMinimo"));
-
-				}
-
-
-				if (Convert.ToDouble(objRS.Field("ValorMaximo")) > pdblVolumeMaximoRet) {
-					pdblVolumeMaximoRet = Convert.ToDouble(objRS.Field("ValorMaximo"));
-
-				}
-
-				pintVolumeMedioNumRegistrosRet = Convert.ToInt16(objRS.Field("NumRegistros"));
-
-				objRS.Fechar();
-
-			}
-
-			//********************FIM DO TRATAMENTO PARA O VOLUME MÉDIO*******************
-
-			//********************INICIO DO TRATAMENTO PARA AS MÉDIAS MÓVEIS*******************
-
-
-			if (pblnMediaMovelDesenhar) {
-				plstMediasRet = new List<MediaDTO>();
-
-				//percorre a collection que contém todas as médias que serão desenhadas e calcula
-				//os valores máximo e mínimo no período em que os dados serão desenhados.
-
-
-				foreach (MediaDTO objMediaDTO in plstMediasSelecionadas) {
-					//calcula a tabela para as médias
-					strQuery = ConsultaUnitariaGerar(pstrCodigoAtivo, pdtmDataInicial, pdtmDataFinal, strTabelaMedia, pdblOperador, pdblOperadorInvertido, "EXTREMOS", objMediaDTO.Tipo, objMediaDTO.NumPeriodos, "VALOR");
-
-					objRS.ExecuteQuery(strQuery);
-
-
-					if (Convert.ToDecimal(objRS.Field("ValorMinimo", 0)) > 0) {
-
-						if (Convert.ToDecimal(objRS.Field("ValorMinimo")) < pdecValorMinimoRet) {
-							pdecValorMinimoRet = Convert.ToDecimal(objRS.Field("ValorMinimo"));
-
-						}
-
-					}
-
-
-					if (Convert.ToDecimal(objRS.Field("ValorMaximo", 0)) > 0) {
-
-						if (Convert.ToDecimal(objRS.Field("ValorMaximo")) > pdecValorMaximoRet) {
-							pdecValorMaximoRet = Convert.ToDecimal(objRS.Field("ValorMaximo"));
-
-						}
-
-					}
-
-					//atribui na estrutura de médias o número de registros encontrados.
-					//será utilizada posteriormente para redimensionar os arrays de médias
-					plstMediasRet.Add(new MediaDTO(objMediaDTO.Tipo, objMediaDTO.NumPeriodos, "VALOR", Convert.ToInt16(objRS.Field("NumRegistros"))));
-
-					objRS.Fechar();
-
-				}
-
-			}
-			//If blnMMExpDesenhar Then...
-
-			//********************FIM DO TRATAMENTO PARA AS MÉDIAS MÓVEIS EXPONENCIAIS*******************
-
-		    return true;
-		}
-
-
-		/// <summary>
-		/// Calcula os valores máximo e mínimo das áreas de desenho do gráfico  (cotação, volume, ifr).
-		/// Função que calcula para toda a área de dados e faz tratamento para os splits.
-		/// </summary>
-		/// <param name="pdtmDataInicial">Data do primeiro candle que será mostrado na área de visualização do gráfico</param>
-		/// <param name="pdtmDataFinal">Data do último candle que será mostrado na área de visualização do gráfico</param>
-		/// <param name="pdecValorMinimoRet">Valor mínimo que será mostrado na área de preços</param>
-		/// <param name="pdecValorMaximoRet">Valor máximo que será mostrado na área de preços</param>
-		/// <param name="plstMediasRet">Lista que contém o número de registros que serão desenhadas para cada uma das médias do gráfico</param>
-		/// <param name="pdblVolumeMinimoRet">Menor valor que será mostrado na área de volume</param>
-		/// <param name="pdblVolumeMaximoRet">Maior valor que será mostrado na área de volume</param>
-		/// <param name="pintContadorIFRMedioRet">Número de registros de média do IFR que serão mostrados</param>
-		/// <param name="pintContadorIFRRet">Núumero de registros do IFR que serão mostrados</param>
-		/// <param name="pintVolumeMedioNumRegistrosRet">Número de registros do volume que serão mostrados</param>
-		/// <remarks></remarks>
-		public void ValoresExtremosCalcular(string pstrCodigoAtivo, string pstrPeriodicidade, bool pblnMMDesenhar, List<MediaDTO> plstMediasSelecionadas, bool pblnVolumeDesenhar, bool pblnIFRDesenhar, int pintIFRNumPeriodos, DateTime pdtmDataInicial, DateTime pdtmDataFinal, ref decimal pdecValorMinimoRet,
-
-		ref decimal pdecValorMaximoRet, ref double pdblVolumeMinimoRet, ref double pdblVolumeMaximoRet, ref int pintContadorIFRRet, ref List<MediaDTO> plstMediasRet, ref int pintVolumeMedioNumRegistrosRet, ref int pintContadorIFRMedioRet)
-		{
-			cRSList objRSListSplit = null;
-
-			double dblOperador = 1;
-			double dblOperadorInvertido = 1;
-
-			//inicializa os operadores com 1 para que a multiplicação até o primeiro split não altere os valores
-			double dblOperadorAux = 1;
-			double dblOperadorInvertidoAux = 1;
-
-			//sempre considera a data inicial de geração do gráfico mais um, pois se tiver um split na data 
-			//do primeiro dia de gráfico não tem valores para serem convertidos.
-			//***Ordena os splits em ordem DECRESCENTE de data.
-
-			cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(_conexao);
-
-			bool blnSplitExistir = objCarregadorSplit.SplitConsultar(pstrCodigoAtivo, pdtmDataInicial.AddDays(1), "D", ref objRSListSplit,Constantes.DataInvalida);
-
-
-			if (blnSplitExistir) {
-				//Tem split. Necessário percorrer o RS de splits e gerar queries para cada dado a cada split.
-
-				//As variávies com sufixo Aux são passadas por referência para a função "ValoresExtremosUnitarioCalcular"
-				decimal decValorMinimoAux = default(decimal);
-				decimal decValorMaximoAux = default(decimal);
-				double dblVolumeMinimoAux = 0;
-				double dblVolumeMaximoAux = 0;
-				int intContadorIFRAux = 0;
-				List<MediaDTO> lstMediasAux = null;
-				int intVolumeMedioNumRegistrosAux = 0;
-				int intContadorIFRMedioAux = 0;
-
-				DateTime dtmDataMinima = Convert.ToDateTime(objRSListSplit.Field("Data"));
-				//Inicializa a data máxima com a data final porque na primeira iteração, se já for necessário calcular valores (dtmDataMinima < pdtmDataFinal)
-				//os valores têm que ser calculados da data do primeiro split até a data final do gráfico.
-				DateTime dtmDataMaxima = pdtmDataFinal;
-
-				//Indica se é a primeira iteração da busca de valores extremos quando há extremos.
-				//Serve para saber se deve atribuir os valores de retorno da função "ValoresExtremosUnitarioCalcular"
-				//diretamente ou se deve comparar com algum valor das iterações anteriores.
-				bool blnPrimeiraIteracao = true;
-
-				//Utilizada para saber se encontrou um item na collection de médias.
-
-			    bool blnRealizarConsultaUnitaria = false;
-				bool blnAtribuirOperador = false;
-
-				//Fica em loop calculando os valores extremos até que a data máxima fique menor do que a data mínima.
-				//Isto vai acontecer logo após a iteração referente as datas entre a data inicial (pdtmDataInicial) 
-				//e o Split com menor data, que no caso será o último split do RS, pois o mesmo está em ordem 
-				//decrescente de data.
-				//Tem que colocar um OR pelo EOF do RS porque quando a área de desenho vai mostrar os dados que não são as últimas cotações
-				//pode acontecer de inicialmente a data máxima ser menor do que a data mínima. Isto vai acontecer se a data máximo for menor 
-				//do que a data do split mais recente.
-
-				while ((dtmDataMaxima >= dtmDataMinima) || (!objRSListSplit.EOF)) {
-
-					if (!objRSListSplit.EOF) {
-
-						if (pstrPeriodicidade == "SEMANAL") {
-							//quando a cotação é semanal, a data inicial tem que ser a data menor ou igual a data do split,
-							//pois se ocorrer um split em uma data que não for a primeira data da semana, toda as cotações
-							//desta semana já foram convertidas para a razão do split
-						    dtmDataMinima = _cotacaoData.AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular(pstrCodigoAtivo, dtmDataMinima);
-
-						}
-
-					}
-
-
-					if (pstrPeriodicidade == "DIARIO") {
-						blnRealizarConsultaUnitaria = dtmDataMinima <= pdtmDataFinal && dtmDataMinima != Convert.ToDateTime(objRSListSplit.NextField("Data", Constantes.DataInvalida));
-
-
-					} else if (pstrPeriodicidade == "SEMANAL")
-					{
-
-					    blnRealizarConsultaUnitaria = dtmDataMinima <= pdtmDataFinal && dtmDataMinima != _cotacaoData.AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular(pstrCodigoAtivo, Convert.ToDateTime(objRSListSplit.NextField("Data", Constantes.DataInvalida)));
-
-					}
-
-
-
-					if (blnRealizarConsultaUnitaria) {
-						//tem que gerar a tabela somente se o split estiver dentro da área de dados,
-						//senão tem que ficar calculando apenas o operador para fazer as multiplicações depois.
-
-						//Regra do parâmetro "pdtmDataFinal": se a data final de busca (pdtmDataFinal) for menor que a data maxima da iteração
-						//tem que utilizar a data final, senão utiliza a data máxima
-						if (ValoresExtremosUnitarioCalcular(pstrCodigoAtivo, pstrPeriodicidade, pblnMMDesenhar, plstMediasSelecionadas, pblnVolumeDesenhar, pblnIFRDesenhar, pintIFRNumPeriodos, 
-                            dtmDataMinima, dtmDataMaxima, dblOperador,dblOperadorInvertido, ref decValorMinimoAux, ref decValorMaximoAux, ref dblVolumeMinimoAux, ref dblVolumeMaximoAux, 
-                            ref intContadorIFRAux, ref intContadorIFRMedioAux, ref intVolumeMedioNumRegistrosAux, ref lstMediasAux))
-						{
-						    if (blnPrimeiraIteracao) {
-						        //Se é a primeira iteração atribui diretamente nas variáveis de retorno sem comparação
-						        pdecValorMinimoRet = decValorMinimoAux;
-						        pdecValorMaximoRet = decValorMaximoAux;
-
-						        pdblVolumeMinimoRet = dblVolumeMinimoAux;
-						        pdblVolumeMaximoRet = dblVolumeMaximoAux;
-
-						        pintContadorIFRRet = intContadorIFRAux;
-						        pintContadorIFRMedioRet = intContadorIFRMedioAux;
-
-						        pintVolumeMedioNumRegistrosRet = intVolumeMedioNumRegistrosAux;
-
-						        plstMediasRet = lstMediasAux;
-
-
-						    } else {
-
-						        if (decValorMinimoAux < pdecValorMinimoRet) {
-						            pdecValorMinimoRet = decValorMinimoAux;
-
-						        }
-
-
-						        if (decValorMaximoAux > pdecValorMaximoRet) {
-						            pdecValorMaximoRet = decValorMaximoAux;
-
-						        }
-
-
-						        if (dblVolumeMinimoAux < pdblVolumeMinimoRet) {
-						            pdblVolumeMinimoRet = dblVolumeMinimoAux;
-
-						        }
-
-
-						        if (dblVolumeMaximoAux > pdblVolumeMaximoRet) {
-						            pdblVolumeMaximoRet = dblVolumeMaximoAux;
-
-						        }
-
-						        pintContadorIFRRet = pintContadorIFRRet + intContadorIFRAux;
-
-						        pintContadorIFRMedioRet = pintContadorIFRMedioRet + intContadorIFRMedioAux;
-
-						        pintVolumeMedioNumRegistrosRet = pintVolumeMedioNumRegistrosRet + intVolumeMedioNumRegistrosAux;
-
-						        //Percorre cada um dos items da collection retorna pela função "ValoresExtremosUnitarioCalcular".
-
-						        foreach (MediaDTO objMediaAux in lstMediasAux) {
-						            //marca como item não encontrado
-						            bool blnItemEncontrado = false;
-
-
-						            for (int intI = 0; intI <= plstMediasRet.Count - 1; intI++) {
-
-						                if (plstMediasRet[intI].Equals(objMediaAux)) {
-						                    blnItemEncontrado = true;
-
-						                    //Incrementa o número de registros do item atual na collection geral.
-						                    plstMediasRet[intI].IncrementaNumRegistros(objMediaAux.NumRegistros);
-
-						                    //No momento que  encontrou o item pode sair do for
-						                    break; // TODO: might not be correct. Was : Exit For
-
-						                }
-
-						            }
-
-
-						            if (!blnItemEncontrado) {
-						                //Se o item não foi encontrado, adiciona na collection geral
-						                plstMediasRet.Add(objMediaAux);
-
-						            }
-
-						        }
-
-						    }
-						    
-						}						// If blnPrimeiraIteracao Then
-
-						//Marca como false, para nas próximas iterações comparar com os valores já atribuidos nas variáveis.
-						blnPrimeiraIteracao = false;
-
-						//para a próxima iteração a data máxima é a data anterior ao split que está acabando
-						dtmDataMaxima = dtmDataMinima.AddDays(-1);
-
-					}
-					//If dtmDataMinima <= pdtmDataFinal Then
-
-
-
-					if (!objRSListSplit.EOF) {
-						dblOperadorAux = dblOperadorAux * Convert.ToDouble(objRSListSplit.Field("Razao"));
-
-						//A razão invertida só é utilizada no cálculo do volume. 
-						//O volume só deve utilizar os splits de desdobramento (tipo = 'DESD').
-						//Por isso, só multiplica o operador invertido pela razão invertida neste caso.
-						if ((string) objRSListSplit.Field("Tipo") == "DESD") {
-							dblOperadorInvertidoAux = dblOperadorInvertidoAux * Convert.ToDouble(objRSListSplit.Field("RazaoInvertida"));
-						}
-
-						//Ajusta o operador quando a próxima data for diferente.
-						//Tem que colocar este IF antes do MOVENEXT, pois caso contrário vai alterar o operador antes de chamar
-						//a função "ConsultaUnitariaGerar", fazendo com que os valores sejam multiplicados em um intervalo 
-						//imediatamente anterior ao que deve ser multiplicado
-
-
-
-						if (pstrPeriodicidade == "DIARIO") {
-							blnAtribuirOperador = dtmDataMinima != Convert.ToDateTime(objRSListSplit.NextField("Data", Constantes.DataInvalida));
-
-
-						} else if (pstrPeriodicidade == "SEMANAL") {
-							blnAtribuirOperador = dtmDataMinima != _cotacaoData.AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular(pstrCodigoAtivo, Convert.ToDateTime(objRSListSplit.NextField("Data", Constantes.DataInvalida)));
-
-						}
-
-
-						if (blnAtribuirOperador) {
-							dblOperador = dblOperadorAux;
-							dblOperadorInvertido = dblOperadorInvertidoAux;
-
-						}
-
-
-						objRSListSplit.MoveNext();
-
-						dtmDataMinima = objRSListSplit.EOF ? pdtmDataInicial : Convert.ToDateTime(objRSListSplit.Field("Data"));
-
-					}
-
-				}
-
-
-			} else {
-				//Não tem split. Tem que chamar a função ValoresExtremosUnitarioCalcular uma única vez para todo o período que será desenhado o gráfico
-				ValoresExtremosUnitarioCalcular(pstrCodigoAtivo, pstrPeriodicidade, pblnMMDesenhar, plstMediasSelecionadas, pblnVolumeDesenhar, pblnIFRDesenhar, pintIFRNumPeriodos, pdtmDataInicial, pdtmDataFinal, dblOperador,
-				dblOperadorInvertido, ref pdecValorMinimoRet, ref pdecValorMaximoRet, ref pdblVolumeMinimoRet, ref pdblVolumeMaximoRet, ref pintContadorIFRRet, ref pintContadorIFRMedioRet, ref pintVolumeMedioNumRegistrosRet, ref plstMediasRet);
-
-			}
-		}
-
 
 		public void RecalcularIndicadores()
 		{

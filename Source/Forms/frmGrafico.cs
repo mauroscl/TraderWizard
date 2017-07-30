@@ -56,7 +56,7 @@ namespace TraderWizard
 
         //collection contendo as médias que serão impressas. A collection será preenchida com itens da estrutura structMedia
 
-        IList<cIndicador> colMedia = new List<cIndicador>();
+        IList<Indicador> colMedia = new List<Indicador>();
         //retângulo contendo a área de impressão do gráfico. 
         //Considera como área do gráfico também a área de estudos como volume e IFR.
 
@@ -1862,9 +1862,9 @@ namespace TraderWizard
                 e.Graphics.DrawRectangle(Pens.Black, objRectAreaLegenda);
 
 
-                foreach (cIndicador objMedia_loopVariable in colMedia)
+                foreach (Indicador objMedia_loopVariable in colMedia)
                 {
-                    cIndicador objMedia = objMedia_loopVariable;
+                    Indicador objMedia = objMedia_loopVariable;
                     //desenha todas as médias móveis.
 
                     if (objMedia.IndicadorPonto.Length > 1)
@@ -2556,38 +2556,29 @@ namespace TraderWizard
                 ref intArrayCandlePosicaoInicial, ref intArrayCandlePosicaoFinal);
 
             //menor e maior data dos dados que serão impressos.
-            System.DateTime dtmDataMinima = arrCandle[intArrayCandlePosicaoInicial].Data;
-            System.DateTime dtmDataMaxima = arrCandle[intArrayCandlePosicaoFinal].Data;
+            DateTime dtmDataMinima = arrCandle[intArrayCandlePosicaoInicial].Data;
+            var dtmDataMaxima = arrCandle[intArrayCandlePosicaoFinal].Data;
 
             DateTime dtmDataMaximaSplit = strPeriodoDuracao == "DIARIO"
                 ? arrCandle[intArrayCandlePosicaoFinal].Data
                 : arrCandle[intArrayCandlePosicaoFinal].DataFinal;
 
-            decimal decValorMinimoPeriodo = default(decimal);
-            double dblVolumeMinimoPeriodo = 0;
-
             int intI;
 
             //***********************TRATAMENTO PARA OS VALORES MÍNIMO E MÁXIMO DO GRÁFICO***************************
 
-            ServicoDeCotacao objCotacao = new ServicoDeCotacao(objConexao);
-
-            int intIFRNumRegistros = 0;
-            int intIFRMedioNumRegistros = 0;
-            int intVolumeMedioNumRegistros = 0;
-            List<MediaDTO> lstMediasNumRegistros = null;
+            var valoresExtremosService = new ValoresExtremosService();
 
             //CALCULA O VALOR MÍNIMO E MÁXIMO DA ÁREA DE COTAÇÕES. LEVA EM CONSIDERAÇÃO
             //AS COTAÇÕES E AS MÉDIAS QUE SERÃO DESENHADAS.
 
             //também calcula o número de pontos que serão impressos no IFR, no ifr médio, no volume médio
             //, nas médias móveis
-            objCotacao.ValoresExtremosCalcular(strCodigoAtivo, strPeriodoDuracao, blnMMExpDesenhar,
-                lstMediasSelecionadas, blnVolumeDesenhar, blnIFRDesenhar, intIFRNumPeriodos, dtmDataMinima,
-                dtmDataMaxima, ref decValorMinimoPeriodo,
-                ref decValorMaximoPeriodo, ref dblVolumeMinimoPeriodo, ref dblVolumeMaximoPeriodo,
-                ref intIFRNumRegistros, ref lstMediasNumRegistros, ref intVolumeMedioNumRegistros,
-                ref intIFRMedioNumRegistros);
+            var valoresExtremos = valoresExtremosService.ValoresExtremosCalcular(new ConfiguracaoDeVisualizacao(strCodigoAtivo, strPeriodoDuracao, blnMMExpDesenhar, lstMediasSelecionadas, blnVolumeDesenhar, blnIFRDesenhar, intIFRNumPeriodos, dtmDataMinima, dtmDataMaxima));
+            var decValorMinimoPeriodo = valoresExtremos.ValorMinimo;
+            decValorMaximoPeriodo = valoresExtremos.ValorMaximo;
+            var dblVolumeMinimoPeriodo = valoresExtremos.VolumeMinimo;
+            dblVolumeMaximoPeriodo = valoresExtremos.VolumeMaximo;
 
             //Debug.Print("Retornou de ValoresExtremos")
 
@@ -2606,7 +2597,7 @@ namespace TraderWizard
                 //para calcular o indice não precisa somar 1 porque o array é base 0.
                 intArrayVolumeIndice = intArrayCandlePosicaoFinal - intArrayCandlePosicaoInicial;
 
-                Array.Resize(ref arrVolumeMedio, intVolumeMedioNumRegistros);
+                Array.Resize(ref arrVolumeMedio, valoresExtremos.VolumeMedioNumRegistros);
 
                 intArrayVolumeMedioIndice = arrVolumeMedio.Length - 1;
 
@@ -2616,7 +2607,7 @@ namespace TraderWizard
 
             if (blnIFRDesenhar)
             {
-                Array.Resize(ref arrIFRPonto, intIFRNumRegistros);
+                Array.Resize(ref arrIFRPonto, valoresExtremos.ContadorIFR);
 
                 intArrayIFRIndice = arrIFRPonto.Length - 1;
 
@@ -2624,11 +2615,7 @@ namespace TraderWizard
             }
 
             //redimensiona o array
-            cIndicador objMedia;
-
-            //Dim objStructIndicadorMMExp As structIndicadorEscolha
-
-            //Dim intNumRegistros As Integer
+            Indicador objMedia;
 
             colMedia.Clear();
 
@@ -2636,40 +2623,27 @@ namespace TraderWizard
             if (blnMMExpDesenhar)
             {
 
-                foreach (MediaDTO objMediaDTO in lstMediasSelecionadas)
+                foreach (MediaDTO mediaSelecionada in lstMediasSelecionadas)
                 {
 
-                    foreach (MediaDTO objMediaDTONumRegistros in lstMediasNumRegistros)
+                    foreach (MediaDTO mediaExtremos in valoresExtremos.Medias)
                     {
+                        if (!mediaExtremos.Equals(mediaSelecionada)) continue;
+                        if (mediaExtremos.NumRegistros <= 0) continue;
 
-                        if (objMediaDTONumRegistros.Equals(objMediaDTO))
+                        objMedia = new Indicador
                         {
+                            NumPeriodos = mediaSelecionada.NumPeriodos,
+                            Tipo = mediaSelecionada.Tipo,
+                            Cor = mediaSelecionada.Cor
+                        };
 
-                            if (objMediaDTONumRegistros.NumRegistros > 0)
-                            {
-                                objMedia = new cIndicador();
+                        objMedia.ArrayPontoRedimensionar(mediaExtremos.NumRegistros);
 
-                                objMedia.NumPeriodos = objMediaDTO.NumPeriodos;
-
-                                objMedia.Tipo = objMediaDTO.Tipo;
-
-                                objMedia.ArrayPontoRedimensionar(objMediaDTONumRegistros.NumRegistros);
-
-                                //    'objstructMedia.intPeriodos = objStructIndicadorMMExp.intPeriodo 'período da média
-                                objMedia.Cor = objMediaDTO.Cor;
-                                //cor da linha que será impressa
-
-                                //    'adiciona o array na collection de média
-                                colMedia.Add(objMedia);
-
-                            }
-
-                        }
-
+                        colMedia.Add(objMedia);
                     }
 
                 }
-
 
             }
 
@@ -2829,7 +2803,7 @@ namespace TraderWizard
                 if (blnMMExpDesenhar)
                 {
 
-                    foreach (cIndicador objMedia_loopVariable in colMedia)
+                    foreach (Indicador objMedia_loopVariable in colMedia)
                     {
                         objMedia = objMedia_loopVariable;
 

@@ -71,26 +71,6 @@ namespace DataBase
 
 		}
 
-		//Public Function RegistroAdicionar() As Boolean
-
-		//    Try
-
-		//        colRegistro.Add(colCampo)
-
-		//        colCampo = New Collection
-
-		//        RegistroAdicionar = True
-
-		//    Catch ex As Exception
-
-		//        MsgBox(ex.Message, MsgBoxStyle.Critical, "Trader Wizard")
-
-		//        RegistroAdicionar = False
-
-		//    End Try
-
-		//End Function
-
 		private bool RegistroExistir(string pstrWhere)
 		{
 			bool functionReturnValue = false;

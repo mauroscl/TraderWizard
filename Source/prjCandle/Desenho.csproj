@@ -56,7 +56,7 @@
     <Compile Include="Desenho\Canal.cs" />
     <Compile Include="Desenho\cCandle.cs" />
     <Compile Include="Desenho\FibonacciRetracement.cs" />
-    <Compile Include="Desenho\cIndicador.cs" />
+    <Compile Include="Desenho\Indicador.cs" />
     <Compile Include="Desenho\Linha.cs" />
     <Compile Include="Desenho\LinhaTendencia.cs" />
     <Compile Include="Desenho\Desenho.cs" />

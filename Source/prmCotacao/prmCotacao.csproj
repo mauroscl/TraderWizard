@@ -49,12 +49,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfiguracaoDeVisualizacao.cs" />
     <Compile Include="CotacaoData.cs" />
     <Compile Include="SequencialService.cs" />
     <Compile Include="ServicoDeCotacao.cs" />
     <Compile Include="cInvestimento.cs" />
     <Compile Include="cRelatorio.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ValoresExtremos.cs" />
+    <Compile Include="ValoresExtremosService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataBase\DataBase.csproj">
