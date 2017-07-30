@@ -9,52 +9,27 @@ namespace prjCandle
 
 	public class cCandle
 	{
+	    //utiliza quando o gráfico é semanal
 
-
-		private DateTime dtmData;
-		//utiliza quando o gráfico é semanal
-
-		private System.DateTime dtmDataFinal;
-		//L = LINHA
+	    //L = LINHA
 		//R = RETANGULO
 
-		private string strCorpoTipo;
-		//RETANGULO CONTENDO O CORPO DO CANDLE
+	    //RETANGULO CONTENDO O CORPO DO CANDLE
 
-		private Rectangle objRectCorpo;
+	    //objeto pen que contém a cor das linha da borda ou da cauda do candle. Por padrão será preto.
 
-		Brush objCorpoCor;
-		//objeto pen que contém a cor das linha da borda ou da cauda do candle. Por padrão será preto.
-
-		private Pen objLinePen;
+		private readonly Pen _linePen;
 		//PONTOS X, Y DA LINHA HORIZONTAL DO CORPO, QUANDO VALOR ABERTURA E FECHAMENTO FOREM IGUAIS
-		private int intLinhaCorpoX1;
-		private int intLinhaCorpoY;
 
-		private int intLinhaCorpoX2;
-		//PONTOS X, Y DA LINHA VERTICAL DA CAUDA DO CANDLE
-		private int intLinhaCaudaX;
-		private int intLinhaCaudaY1;
+	    //PONTOS X, Y DA LINHA VERTICAL DA CAUDA DO CANDLE
 
-		private int intLinhaCaudaY2;
-		//retangulo contendo a área total do candle: corpo + cauda
+	    //retangulo contendo a área total do candle: corpo + cauda
 
-		private Rectangle objRectAreaTotal;
-		//VALORES DO CANDLE
-		private decimal decValorAbertura;
-		private decimal decValorFechamento;
-		private decimal decValorMinimo;
-		private decimal decValorMaximo;
-		private decimal decOscilacao;
-		private double dblIFR14 = -1;
-		private double dblVolume;
+	    //VALORES DO CANDLE
 
-		private double dblVolumeMedio;
+	    private Dictionary <string, cEstrutura.structMediaValor> _medias;
 
-		private Dictionary <string, cEstrutura.structMediaValor> colMedia;
-
-		private double dblIFRMedio = -1;
-		//PROPERTY GET E PROPERTY SET
+	    //PROPERTY GET E PROPERTY SET
 
 		/// <summary>
 		/// Indica o tipo de corpo do candle. Uma linha quando valor de abertura é igual ao valor de fechamento,
@@ -65,109 +40,53 @@ namespace prjCandle
 		/// L = LINHA    
 		/// </value>
 		/// <remarks></remarks>
-		public string CorpoTipo {
-			get { return strCorpoTipo; }
-			set { strCorpoTipo = value; }
-		}
+		public string CorpoTipo { get; set; }
 
 
-		public Rectangle RectCorpo {
-			get { return objRectCorpo; }
-			set { objRectCorpo = value; }
-		}
+	    public Rectangle RectCorpo { get; set; }
 
-		public Brush CorpoCor {
-			set { objCorpoCor = value; }
-		}
+	    public Brush CorpoCor { get; set; }
 
-		public int LinhaCorpoX1 {
-			get { return intLinhaCorpoX1; }
-			set { intLinhaCorpoX1 = value; }
-		}
+	    public int LinhaCorpoX1 { get; set; }
 
-		public int LinhaCorpoY {
-			set { intLinhaCorpoY = value; }
-		}
+	    public int LinhaCorpoY { get; set; }
 
-		public int LinhaCorpoX2 {
-			set { intLinhaCorpoX2 = value; }
-		}
+	    public int LinhaCorpoX2 { get; set; }
 
-		public Rectangle RectAreaTotal {
-			get { return objRectAreaTotal; }
-			set { objRectAreaTotal = value; }
-		}
+	    public Rectangle RectAreaTotal { get; set; }
 
-		public int LinhaCaudaX {
+	    public int LinhaCaudaX { get; set; }
 
-			get { return intLinhaCaudaX; }
-			set { intLinhaCaudaX = value; }
-		}
+	    public int LinhaCaudaY1 { get; set; }
 
-		public int LinhaCaudaY1 {
-			set { intLinhaCaudaY1 = value; }
-		}
+	    public int LinhaCaudaY2 { get; set; }
 
-		public int LinhaCaudaY2 {
-			set { intLinhaCaudaY2 = value; }
-		}
+	    public DateTime Data { get; }
 
-		public System.DateTime Data {
-			get { return dtmData; }
-		}
+	    public DateTime DataFinal { get; set; }
 
-		public DateTime DataFinal {
-			get { return dtmDataFinal; }
-			set { dtmDataFinal = value; }
-		}
+	    public decimal ValorAbertura { get; }
 
-		public decimal ValorAbertura {
-			get { return decValorAbertura; }
-		}
+	    public decimal ValorFechamento { get; }
 
-		public decimal ValorFechamento {
-			get { return decValorFechamento; }
-		}
+	    public decimal ValorMinimo { get; }
 
-		public decimal ValorMinimo {
-			get { return decValorMinimo; }
-		}
+	    public decimal ValorMaximo { get; }
 
-		public decimal ValorMaximo {
-			get { return decValorMaximo; }
-		}
+	    public decimal Oscilacao { get; }
 
-		public decimal Oscilacao {
-			get { return decOscilacao; }
-		}
+	    public double IFR14 { get; set; } = -1;
 
-		public double IFR14 {
-			get { return dblIFR14; }
-			set { dblIFR14 = value; }
-		}
+	    public double Volume { get; set; }
 
-		public double Volume {
-			get { return dblVolume; }
-			set { dblVolume = value; }
-		}
+	    public double VolumeMedio { get; set; }
 
-		public double VolumeMedio {
-			get { return dblVolumeMedio; }
-			set { dblVolumeMedio = value; }
-		}
+        public Dictionary<string, cEstrutura.structMediaValor> GetMedia()
+        {
+            return _medias;
+        }
 
-		public Dictionary<string, cEstrutura.structMediaValor> Media {
-			get { return colMedia; }
-		}
-
-		public double IFRMedio {
-			get { return dblIFRMedio; }
-			set { dblIFRMedio = value; }
-		}
-
-		//Public Sub New(ByVal pdtmData As Date, ByVal pdecValorAbertura As Decimal, ByVal pdecValorFechamento As Decimal _
-		//, ByVal pdecValorMaximo As Decimal, ByVal pdecValorMinimo As Decimal _
-		//, ByVal pdblIFR14 As Double, ByVal pdecOscilacao As Decimal, ByVal pblnMediaArmazenar As Boolean)
+        //public double IFRMedio { get; set; } = -1;
 
 		/// <summary>
 		/// 
@@ -182,48 +101,50 @@ namespace prjCandle
 		/// <remarks></remarks>
 
 
-		public cCandle(System.DateTime pdtmData, decimal pdecValorAbertura, decimal pdecValorFechamento, decimal pdecValorMaximo, decimal pdecValorMinimo, decimal pdecOscilacao, bool pblnMediaArmazenar)
+		public cCandle(DateTime pdtmData, decimal pdecValorAbertura, decimal pdecValorFechamento, decimal pdecValorMaximo, decimal pdecValorMinimo, decimal pdecOscilacao, bool pblnMediaArmazenar)
 		{
-			dtmData = pdtmData;
-			decValorAbertura = pdecValorAbertura;
-			decValorFechamento = pdecValorFechamento;
-			decValorMinimo = pdecValorMinimo;
-			decValorMaximo = pdecValorMaximo;
+			Data = pdtmData;
+			ValorAbertura = pdecValorAbertura;
+			ValorFechamento = pdecValorFechamento;
+			ValorMinimo = pdecValorMinimo;
+			ValorMaximo = pdecValorMaximo;
 			//dblIFR14 = pdblIFR14
-			decOscilacao = pdecOscilacao;
+			Oscilacao = pdecOscilacao;
 
 
 			if (pblnMediaArmazenar) {
-                colMedia = new Dictionary<string, cEstrutura.structMediaValor>();
+                _medias = new Dictionary<string, cEstrutura.structMediaValor>();
 
 			}
 
-			objLinePen = new Pen(Color.Black);
+			_linePen = new Pen(Color.Black);
 
 		}
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name=" pobjStructMediaValor"></param>
-		/// estrutura contendo o período, o tipo, e o valor da média.
-		/// E = EXPONENCIAL
-		/// A = ARITMÉTICA
-		/// <returns></returns>
-		/// <remarks></remarks>
-		public bool MediaAtribuir( cEstrutura.structMediaValor pobjStructMediaValor)
+
+	    /// <summary>
+	    /// 
+	    /// </summary>
+	    /// <param name=" pobjStructMediaValor"></param>
+	    /// <param name="pobjStructMediaValor"></param>
+	    /// estrutura contendo o período, o tipo, e o valor da média.
+	    /// E = EXPONENCIAL
+	    /// A = ARITMÉTICA
+	    /// <returns></returns>
+	    /// <remarks></remarks>
+	    public bool MediaAtribuir( cEstrutura.structMediaValor pobjStructMediaValor)
 		{
-			bool functionReturnValue = false;
+			bool functionReturnValue;
 
 
 			try {
 
-				if (colMedia == null) {
-                    colMedia = new Dictionary<string,cEstrutura.structMediaValor>();
+				if (_medias == null) {
+                    _medias = new Dictionary<string,cEstrutura.structMediaValor>();
 
 				}
 
 				//o número de períodos e o tipo de média formam a chave da collection
-                colMedia.Add(pobjStructMediaValor.intPeriodo.ToString() + pobjStructMediaValor.strTipo, pobjStructMediaValor);
+                _medias.Add(pobjStructMediaValor.intPeriodo + pobjStructMediaValor.strTipo, pobjStructMediaValor);
 
 				functionReturnValue = true;
 
@@ -238,13 +159,13 @@ namespace prjCandle
 
 		public bool MediaRemover(string pstrKey)
 		{
-			bool functionReturnValue = false;
+			bool functionReturnValue;
 
 
 			try {
 				//o número de períodos e o tipo de média formam a chave da collection
-				if (colMedia.Count > 1) {
-					colMedia.Remove(pstrKey);
+				if (_medias.Count > 1) {
+					_medias.Remove(pstrKey);
 				}
 
 				functionReturnValue = true;
@@ -270,7 +191,7 @@ namespace prjCandle
 
 
 			try {
-				colMedia.Clear();
+				_medias.Clear();
 			    functionReturnValue = true;
 
 			} catch (Exception ex) {
@@ -286,15 +207,10 @@ namespace prjCandle
 			double functionReturnValue = 0;
 
 
-			try {
-				if (colMedia.Count > 0) {
-					functionReturnValue = colMedia[pintNumPeriodos.ToString() + pstrMediaTipo].dblValor;
-				} else {
-					functionReturnValue = 0;
-				}
-
-
-			} catch (Exception ex) {
+			try
+			{
+			    functionReturnValue = _medias.Count > 0 ? _medias[pintNumPeriodos + pstrMediaTipo].dblValor : 0;
+			} catch (Exception) {
 				//MsgBox(ex.Message, MsgBoxStyle.Critical, "Trader Wizard")
 				functionReturnValue = 0;
 
@@ -308,45 +224,26 @@ namespace prjCandle
         public void Desenhar(Graphics pobjGraphics)
 		{
 			//primeiro tem que desenhar a linha da cauda do candle
-			pobjGraphics.DrawLine(objLinePen, intLinhaCaudaX, intLinhaCaudaY1, intLinhaCaudaX, intLinhaCaudaY2);
+			pobjGraphics.DrawLine(_linePen, LinhaCaudaX, LinhaCaudaY1, LinhaCaudaX, LinhaCaudaY2);
 
 			//para desenhar o corpo do candle tem que saber se o corpo é um retângulo ou uma linha.
 
-			if (strCorpoTipo == "R") {
+			if (CorpoTipo == "R") {
 				//preenche a cor do candle de acordo com os valores de abertura e fechamento
-				pobjGraphics.FillRectangle(objCorpoCor, objRectCorpo);
+				pobjGraphics.FillRectangle(CorpoCor, RectCorpo);
 
 				//desenha o corpo do candle.
-				pobjGraphics.DrawRectangle(objLinePen, objRectCorpo);
+				pobjGraphics.DrawRectangle(_linePen, RectCorpo);
 
 
-			} else if (strCorpoTipo == "L") {
+			} else if (CorpoTipo == "L") {
 				//se é uma linha desenha a linha
-				pobjGraphics.DrawLine(objLinePen, intLinhaCorpoX1, intLinhaCorpoY, intLinhaCorpoX2, intLinhaCorpoY);
+				pobjGraphics.DrawLine(_linePen, LinhaCorpoX1, LinhaCorpoY, LinhaCorpoX2, LinhaCorpoY);
 
 			}
 
 		}
 
-		public int CoordenadaX1
-		{
-            get
-            {
-                
-			    int functionReturnValue = 0;
-
-			    if (strCorpoTipo == "R") {
-				    //se o corpo do candle é um retângulo
-				    functionReturnValue = objRectCorpo.X;
-			    } else {
-				    //se o corpo do candle é uma linha, ou seja, valor abertura e valor fechamento são iguais.
-				    functionReturnValue = intLinhaCorpoX1;
-			    }
-			    return functionReturnValue;
-
-            }
-
-		}
-
+		public int CoordenadaX1 => CorpoTipo == "R" ? RectCorpo.X : LinhaCorpoX1;
 	}
 }

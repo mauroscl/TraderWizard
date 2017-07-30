@@ -52,6 +52,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>1</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>18F865C85EB18F34CB950018EF51F460AAE5DEB6</ManifestCertificateThumbprint>
@@ -66,7 +67,8 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>icone_principal.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup />
@@ -317,7 +319,6 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="icone_principal.ico" />
     <Content Include="Resources\icone_principal.ico" />
     <None Include="icones\zoom_in.png" />
     <Content Include="icones\zoom_out.png" />
