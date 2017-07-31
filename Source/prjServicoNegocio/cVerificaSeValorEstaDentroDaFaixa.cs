@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using DataBase;
+using DataBase.Carregadores;
 using prjDominio.Entidades;
 using prjDominio.Regras;
 using prjDominio.ValueObjects;

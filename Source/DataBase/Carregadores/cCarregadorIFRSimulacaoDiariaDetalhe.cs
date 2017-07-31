@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using prjDominio.Entidades;
-using prjModelo.Carregadores;
 using prjModelo.Entidades;
 
 namespace DataBase.Carregadores
@@ -22,19 +21,19 @@ namespace DataBase.Carregadores
 		}
 		public IList<cIFRSimulacaoDiariaDetalhe> CarregarTodosDeUmaSimulacao(cIFRSimulacaoDiaria pobjIFRSimulacaoDiaria)
 		{
-            FuncoesBd FuncoesBd = Conexao.ObterFormatadorDeCampo();
+            FuncoesBd funcoesBd = Conexao.ObterFormatadorDeCampo();
 
-		    string strSQL = "SELECT ID_IFR_Sobrevendido, NumTentativas, MelhorEntrada, Data_Entrada_Efetiva, SomatorioCriterios, AgrupadorTentativas " + Environment.NewLine;
-			strSQL = strSQL + " FROM IFR_Simulacao_Diaria_Detalhe " + Environment.NewLine;
-			strSQL = strSQL + " WHERE Codigo = " + FuncoesBd.CampoFormatar(pobjIFRSimulacaoDiaria.Ativo.Codigo) + Environment.NewLine;
-			strSQL = strSQL + " AND ID_Setup = " + FuncoesBd.CampoFormatar(pobjIFRSimulacaoDiaria.Setup.Id) + Environment.NewLine;
-			strSQL = strSQL + " AND Data_Entrada_Efetiva = " + FuncoesBd.CampoFormatar(pobjIFRSimulacaoDiaria.DataEntradaEfetiva);
+		    string strSql = "SELECT ID_IFR_Sobrevendido, NumTentativas, MelhorEntrada, Data_Entrada_Efetiva, SomatorioCriterios, AgrupadorTentativas " + Environment.NewLine;
+			strSql = strSql + " FROM IFR_Simulacao_Diaria_Detalhe " + Environment.NewLine;
+			strSql = strSql + " WHERE Codigo = " + funcoesBd.CampoFormatar(pobjIFRSimulacaoDiaria.Ativo.Codigo) + Environment.NewLine;
+			strSql = strSql + " AND ID_Setup = " + FuncoesBd.CampoFormatar(pobjIFRSimulacaoDiaria.Setup.Id) + Environment.NewLine;
+			strSql = strSql + " AND Data_Entrada_Efetiva = " + funcoesBd.CampoFormatar(pobjIFRSimulacaoDiaria.DataEntradaEfetiva);
 
 			cRS objRS = new cRS(Conexao);
 
 			List<cIFRSimulacaoDiariaDetalhe> lstRetorno = new List<cIFRSimulacaoDiariaDetalhe>();
 
-			objRS.ExecuteQuery(strSQL);
+			objRS.ExecuteQuery(strSql);
 
 			cCarregadorIFRSobrevendido objCarregadorIFRSobrevendido = new cCarregadorIFRSobrevendido(Conexao);
 

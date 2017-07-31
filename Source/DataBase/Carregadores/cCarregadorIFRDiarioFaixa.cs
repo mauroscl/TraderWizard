@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using DataBase;
 using prjDominio.Entidades;
-using prjModelo.Entidades;
 using TraderWizard.Enumeracoes;
 
-namespace prjModelo.Carregadores
+namespace DataBase.Carregadores
 {
 	public class cCarregadorIFRDiarioFaixa
 	{
@@ -36,21 +34,21 @@ namespace prjModelo.Carregadores
 
 			cRS objRS = new cRS(objConexao);
 
-            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
+            FuncoesBd funcoesBd = objConexao.ObterFormatadorDeCampo();
 
-		    string strSQL = "SELECT MAX(Data) AS Data " + Environment.NewLine;
-			strSQL += " FROM IFR_Simulacao_Diaria_Faixa F1 " + Environment.NewLine;
-			strSQL += " WHERE Codigo = " + FuncoesBd.CampoFormatar(pstrCodigo) + Environment.NewLine;
-			strSQL += " AND ID_CM = " + FuncoesBd.CampoFormatar(pobjCM.ID) + Environment.NewLine;
-			strSQL += " AND ID_Setup = " + FuncoesBd.CampoFormatar(pobjSetup.Id) + Environment.NewLine;
-			strSQL += " AND ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.Id);
-			strSQL += " AND Data <= " + FuncoesBd.CampoFormatar(dtmDataSolicitacao);
+		    string strSql = "SELECT MAX(Data) AS Data " + Environment.NewLine;
+			strSql += " FROM IFR_Simulacao_Diaria_Faixa F1 " + Environment.NewLine;
+			strSql += " WHERE Codigo = " + funcoesBd.CampoFormatar(pstrCodigo) + Environment.NewLine;
+			strSql += " AND ID_CM = " + FuncoesBd.CampoFormatar(pobjCM.ID) + Environment.NewLine;
+			strSql += " AND ID_Setup = " + FuncoesBd.CampoFormatar(pobjSetup.Id) + Environment.NewLine;
+			strSql += " AND ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.Id);
+			strSql += " AND Data <= " + funcoesBd.CampoFormatar(dtmDataSolicitacao);
 
 			if ((pobjCriterioCM != null)) {
-				strSQL += " AND ID_Criterio_CM = " + FuncoesBd.CampoFormatar(pobjCriterioCM.ID);
+				strSql += " AND ID_Criterio_CM = " + FuncoesBd.CampoFormatar(pobjCriterioCM.ID);
 			}
 
-			objRS.ExecuteQuery(strSQL);
+			objRS.ExecuteQuery(strSql);
 
 			dtmUltimaData = Convert.ToDateTime(objRS.Field("Data", Constantes.DataInvalida));
 
@@ -69,18 +67,18 @@ namespace prjModelo.Carregadores
 
 			cRS objRS = new cRS(objConexao);
 
-            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
+            FuncoesBd funcoesBd = objConexao.ObterFormatadorDeCampo();
 
-		    string strSQL = "SELECT ID, Valor_Minimo, Valor_Maximo, NumTentativas_Minimo " + Environment.NewLine;
-			strSQL = strSQL + " FROM IFR_Simulacao_Diaria_Faixa F1 " + Environment.NewLine;
-			strSQL = strSQL + " WHERE Codigo = " + FuncoesBd.CampoFormatar(pstrCodigo) + Environment.NewLine;
-			strSQL = strSQL + " AND ID_CM = " + FuncoesBd.CampoFormatar(pobjCM.ID) + Environment.NewLine;
-			strSQL = strSQL + " AND ID_Setup = " + FuncoesBd.CampoFormatar(pobjSetup.Id) + Environment.NewLine;
-			strSQL = strSQL + " AND ID_Criterio_CM = " + FuncoesBd.CampoFormatar(pobjCriterioCM.ID);
-			strSQL = strSQL + " AND ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.Id);
-			strSQL = strSQL + " AND Data = " + FuncoesBd.CampoFormatar(dtmUltimaData);
+		    string strSql = "SELECT ID, Valor_Minimo, Valor_Maximo, NumTentativas_Minimo " + Environment.NewLine;
+			strSql = strSql + " FROM IFR_Simulacao_Diaria_Faixa F1 " + Environment.NewLine;
+			strSql = strSql + " WHERE Codigo = " + funcoesBd.CampoFormatar(pstrCodigo) + Environment.NewLine;
+			strSql = strSql + " AND ID_CM = " + FuncoesBd.CampoFormatar(pobjCM.ID) + Environment.NewLine;
+			strSql = strSql + " AND ID_Setup = " + FuncoesBd.CampoFormatar(pobjSetup.Id) + Environment.NewLine;
+			strSql = strSql + " AND ID_Criterio_CM = " + FuncoesBd.CampoFormatar(pobjCriterioCM.ID);
+			strSql = strSql + " AND ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.Id);
+			strSql = strSql + " AND Data = " + funcoesBd.CampoFormatar(dtmUltimaData);
 
-			objRS.ExecuteQuery(strSQL);
+			objRS.ExecuteQuery(strSql);
 
 
 			while (!objRS.EOF) {
@@ -104,17 +102,17 @@ namespace prjModelo.Carregadores
 				CalcularUltimaData(pstrCodigo, pobjSetup, pobjCM, null, pobjIFRSobrevendido, pdtmData);
 			}
 
-            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
+            FuncoesBd funcoesBd = objConexao.ObterFormatadorDeCampo();
 
-			string strSQL = "SELECT COUNT(1) AS Contador " + Environment.NewLine;
-			strSQL = strSQL + " FROM IFR_Simulacao_Diaria_Faixa F1 " + Environment.NewLine;
-			strSQL = strSQL + " WHERE Codigo = " + FuncoesBd.CampoFormatar(pstrCodigo) + Environment.NewLine;
-			strSQL = strSQL + " AND ID_CM = " + FuncoesBd.CampoFormatar(pobjCM.ID) + Environment.NewLine;
-			strSQL = strSQL + " AND ID_Setup = " + FuncoesBd.CampoFormatar(pobjSetup.Id) + Environment.NewLine;
-			strSQL = strSQL + " AND ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.Id);
-			strSQL = strSQL + " AND Data = " + FuncoesBd.CampoFormatar(dtmUltimaData);
+			string strSql = "SELECT COUNT(1) AS Contador " + Environment.NewLine;
+			strSql = strSql + " FROM IFR_Simulacao_Diaria_Faixa F1 " + Environment.NewLine;
+			strSql = strSql + " WHERE Codigo = " + funcoesBd.CampoFormatar(pstrCodigo) + Environment.NewLine;
+			strSql = strSql + " AND ID_CM = " + FuncoesBd.CampoFormatar(pobjCM.ID) + Environment.NewLine;
+			strSql = strSql + " AND ID_Setup = " + FuncoesBd.CampoFormatar(pobjSetup.Id) + Environment.NewLine;
+			strSql = strSql + " AND ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.Id);
+			strSql = strSql + " AND Data = " + funcoesBd.CampoFormatar(dtmUltimaData);
 
-			objRS.ExecuteQuery(strSQL);
+			objRS.ExecuteQuery(strSql);
 
 			bool functionReturnValue = (Convert.ToInt16(objRS.Field("Contador")) > 0);
 

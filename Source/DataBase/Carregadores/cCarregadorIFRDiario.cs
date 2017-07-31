@@ -1,11 +1,9 @@
-using DataBase.Carregadores;
-using DataBase.Interfaces;
 using System;
-using DataBase;
+using DataBase.Interfaces;
 using prjDominio.Entidades;
 using prjModelo.Entidades;
 
-namespace prjModelo.Carregadores
+namespace DataBase.Carregadores
 {
 
 	public class CarregadorIFRDiario : CarregadorGenerico, ICarregadorIFR
@@ -15,10 +13,9 @@ namespace prjModelo.Carregadores
 		{
 		}
 
-		public CarregadorIFRDiario() : base()
+		public CarregadorIFRDiario()
 		{
 		}
-
 
 		public cIFR CarregarPorData(CotacaoDiaria pobjCotacaoDiaria, int pintNumPeriodos)
 		{

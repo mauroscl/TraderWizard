@@ -50,9 +50,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AtualizadorDeCotacao.cs" />
-    <Compile Include="AtualizadorDeIfr.cs" />
+    <Compile Include="CalculadorDeIfr.cs" />
     <Compile Include="ConfiguracaoDeVisualizacao.cs" />
     <Compile Include="CotacaoData.cs" />
+    <Compile Include="ProventoService.cs" />
     <Compile Include="SequencialService.cs" />
     <Compile Include="ServicoDeCotacao.cs" />
     <Compile Include="cInvestimento.cs" />

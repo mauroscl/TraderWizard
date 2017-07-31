@@ -41,7 +41,7 @@ namespace TraderWizard
 
             Conexao objConexao = new Conexao();
 
-		    ServicoDeCotacao objCotacao = new ServicoDeCotacao(objConexao);
+		    var proventoService = new ProventoService();
 
 		    DateTime dtmDataFinal;
 		    if (!DateTime.TryParse(txtDataFinal.Text, out dtmDataFinal) ) {
@@ -51,7 +51,7 @@ namespace TraderWizard
 		    this.Cursor = Cursors.WaitCursor;
 
 		    //If objCotacao.ProventoAtualizar(CDate(txtDataUltimAtualizacao.Text), dtmDataFinal) Then
-		    if (objCotacao.ProventoAtualizar(dtmDataFinal)) {
+		    if (proventoService.ProventoAtualizar(dtmDataFinal)) {
 		        MessageBox.Show("Operação realizada com sucesso.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 		    } else {
 		        MessageBox.Show("Ocorreram erros ao executar a operação.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);

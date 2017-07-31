@@ -6,6 +6,7 @@ using prjDominio.ValueObjects;
 using prjModelo.Entidades;
 using prjModelo.Carregadores;
 using DataBase;
+using DataBase.Carregadores;
 using TraderWizard.Infra.Repositorio;
 
 namespace prjServicoNegocio

@@ -98,12 +98,11 @@ namespace TraderWizard
 
 			}
 
-			var objCotacao = new ServicoDeCotacao(objConexao);
+			var proventoService = new ProventoService();
 
 		    this.Cursor = Cursors.WaitCursor;
 
-
-			cEnum.enumRetorno intRetorno = objCotacao.ProventoCadastrar(mCotacao.ObterCodigoDoAtivoSelecionado(cmbAtivo),  
+			cEnum.enumRetorno intRetorno = proventoService.ProventoCadastrar(mCotacao.ObterCodigoDoAtivoSelecionado(cmbAtivo),  
                 mdlGeral.ComboProventoTipoCodigoRetornar(cmbProventoTipo), Convert.ToDateTime(txtDataAprovacao.Text), 
                 Convert.ToDateTime(txtDataEx.Text), Convert.ToDecimal(txtValorPorAcao.Text));
 

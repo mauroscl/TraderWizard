@@ -158,11 +158,9 @@ namespace TraderWizard
         int intVolumePosicaoSelecionada = -1;
 
 
-        private Conexao objConexao;
-        //*************collection de indicadores: média e IFR
-        //Dim colStructIndicadorMMExp As Collection
+        private readonly Conexao _conexao;
 
-        List<MediaDTO> lstMediasSelecionadas;
+        List<MediaDTO> _mediasSelecionadas;
 
         private struct structSplit
         {
@@ -255,7 +253,7 @@ namespace TraderWizard
             InitializeComponent();
 
             // Add any initialization after the InitializeComponent() call.
-            objConexao = pobjConexao;
+            _conexao = pobjConexao;
             _desenhosCriados = new List<Desenho>();
 
         }
@@ -352,7 +350,7 @@ namespace TraderWizard
 
             ToolStripcmbAtivo.Items.Clear();
 
-            var ativos = new Ativos(objConexao);
+            var ativos = new Ativos(_conexao);
 
             IList<Ativo> ativosValidos = ativos.Validos();
 
@@ -456,11 +454,11 @@ namespace TraderWizard
 
             }
 
-            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
+            FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
 
-            cRS objRS = new cRS(objConexao);
+            cRS objRS = new cRS(_conexao);
 
-            ServicoDeCotacao objCotacao = new ServicoDeCotacao(objConexao);
+            ServicoDeCotacao objCotacao = new ServicoDeCotacao(_conexao);
 
             //código do ativo atual.
 
@@ -718,7 +716,7 @@ namespace TraderWizard
                 intIFRNumPeriodos = Convert.ToInt32(ToolStripcmbIFRNumPeriodos.Text);
             }
 
-            blnMMExpDesenhar = (TSmnuMMExibir.Checked) && ((lstMediasSelecionadas != null));
+            blnMMExpDesenhar = (TSmnuMMExibir.Checked) && ((_mediasSelecionadas != null));
 
             if (strCodigoAtivo !=
                 mdlGeral.ObtemCodigoDoAtivoSelecionadoNoCombo((string) ToolStripcmbAtivo.SelectedItem))
@@ -738,31 +736,21 @@ namespace TraderWizard
             //pois a atualização do array é feita do final para o início.
             int intArrayCandleIndice = intIndiceFinal;
 
-            //calcula a tabela que será usada na busca das queries
-            //Dim strTabelaQuery As String
-
             //busca a data equivalente ao sequencial mínimo
-            dtmDataMinimaAreaDados =
-                objCotacao.AtivoSequencialDataBuscar(strCodigoAtivo, lngAreaDadosSequencialInicial, strTabelaCotacao);
+            dtmDataMinimaAreaDados = objCotacao.AtivoSequencialDataBuscar(strCodigoAtivo, lngAreaDadosSequencialInicial, strTabelaCotacao);
 
             //busca a data equivalente ao sequencial máximo
-            dtmDataMaximaAreaDados =
-                objCotacao.AtivoSequencialDataBuscar(strCodigoAtivo, lngAreaDadosSequencialFinal, strTabelaCotacao);
+            dtmDataMaximaAreaDados = objCotacao.AtivoSequencialDataBuscar(strCodigoAtivo, lngAreaDadosSequencialFinal, strTabelaCotacao);
 
             //conterá a data mínima e data máxima dos dados que serão buscados
-            System.DateTime dtmDataMinimaBusca = default(System.DateTime);
-            System.DateTime dtmDataMaximaBusca = default(System.DateTime);
-
+            var dtmDataMinimaBusca = default(DateTime);
+            var dtmDataMaximaBusca = default(DateTime);
 
             if (blnCotacaoBuscar)
             {
-                //data minima
-
                 dtmDataMinimaBusca = lngSequencialBuscaInicial == lngAreaDadosSequencialInicial
                     ? dtmDataMinimaAreaDados
                     : objCotacao.AtivoSequencialDataBuscar(strCodigoAtivo, lngSequencialBuscaInicial, strTabelaCotacao);
-
-                //data máxima de busca
 
                 dtmDataMaximaBusca = lngSequencialBuscaFinal == lngAreaDadosSequencialFinal
                     ? dtmDataMaximaAreaDados
@@ -990,7 +978,6 @@ namespace TraderWizard
                 //quais delas não estão mais entre as médias escolhidas pelo usuário
 
                 cEstrutura.structMediaValor objstructMediaValor = default(cEstrutura.structMediaValor);
-                //Dim objstructMediaEscolha As structIndicadorEscolha
 
                 //busca a collection de média do último candle preenchido.
                 Dictionary<string, cEstrutura.structMediaValor> colMediaValorAux =
@@ -1021,7 +1008,7 @@ namespace TraderWizard
 
                         //For Each objstructMediaEscolha In colStructIndicadorMMExp
 
-                        foreach (MediaDTO objMediaDTO in lstMediasSelecionadas)
+                        foreach (MediaDTO objMediaDTO in _mediasSelecionadas)
                         {
 
                             if (objstructMediaValor.intPeriodo == objMediaDTO.NumPeriodos &&
@@ -1061,15 +1048,12 @@ namespace TraderWizard
 
                 //collection de objetos da estrutura structIndicadorEscolha que conterá
                 //todas as médias que precisam ser calculadas.
-                //Dim colMediaEscolhaAux As Collection = New Collection
                 List<MediaDTO> lstMediasSelecionadasAux = new List<MediaDTO>();
-
 
                 if (blnCotacaoBuscar)
                 {
                     //se tiver que buscar as cotações tem que buscar todas as médias
-                    lstMediasSelecionadasAux = lstMediasSelecionadas;
-
+                    lstMediasSelecionadasAux = _mediasSelecionadas;
                 }
                 else
                 {
@@ -1080,7 +1064,7 @@ namespace TraderWizard
                     {
                         //se os candles ainda não tem nenhuma média calculada, então tem que buscar todas
                         //colMediaEscolhaAux = colStructIndicadorMMExp
-                        lstMediasSelecionadasAux = lstMediasSelecionadas;
+                        lstMediasSelecionadasAux = _mediasSelecionadas;
 
                     }
                     else
@@ -1089,7 +1073,7 @@ namespace TraderWizard
                         //percorre todas as médias escolhidas pelos usuários e verifica quais já estão calculadas no último candle
                         //As médias que já estiverem calculadas não precisa buscar novamente.
 
-                        foreach (MediaDTO mediaDto in lstMediasSelecionadas)
+                        foreach (MediaDTO mediaDto in _mediasSelecionadas)
                         {
                             //If Not UltimoCandleMediaExistir(objstructMediaEscolha, blnCotacaoBuscar, intIndiceInicial, intIndiceFinal) Then
 
@@ -1746,8 +1730,6 @@ namespace TraderWizard
             //indica o número de mêses que deve ter o intervalo de cada label.
             //Inicializa com 1 porque tanto no diário quanto no semanal o primeiro label 
             //é inserido na primeira troca de mês.
-            //Dim intNumMesesIntervaloLabels As Integer = 1
-
             int intNumDiasIntervaloLabels = 0;
 
             switch (intZoom)
@@ -2114,7 +2096,7 @@ namespace TraderWizard
                     {
                         string strTexto = String.Empty;
 
-                        foreach (MediaDTO objMediaDTO in lstMediasSelecionadas)
+                        foreach (MediaDTO objMediaDTO in _mediasSelecionadas)
                         {
                             double dblMedia = candle.MediaBuscar(objMediaDTO.NumPeriodos, objMediaDTO.Tipo);
 
@@ -2268,7 +2250,7 @@ namespace TraderWizard
         private void ParametroConsultar(string pstrParametro, out string pstrValorRet)
         {
 
-            var objDadosDB = new cDadosDB(objConexao, "Configuracao");
+            var objDadosDB = new cDadosDB(_conexao, "Configuracao");
 
             objDadosDB.CampoAdicionar("Parametro", true, pstrParametro);
 
@@ -2283,9 +2265,7 @@ namespace TraderWizard
 
         private void IndicadorCarregar()
         {
-            cRS objRS = new cRS(objConexao);
-
-            //Dim objIndicadorEscolha As structIndicadorEscolha
+            cRS objRS = new cRS(_conexao);
 
             objRS.ExecuteQuery(" select Tipo, NumPeriodos, Cor " + Environment.NewLine +
                                " from Configuracao_Indicador " + Environment.NewLine + " where Tipo = " +
@@ -2293,20 +2273,16 @@ namespace TraderWizard
                                FuncoesBd.CampoStringFormatar("MMA") + Environment.NewLine +
                                " ORDER BY NumPeriodos, Tipo");
 
-
             if (objRS.DadosExistir)
             {
                 //Inicializa lista global da tela que contem as médias que devem ser desenhadas no gráfico.
-                //colStructIndicadorMMExp = New Collection
-                lstMediasSelecionadas = new List<MediaDTO>();
-
+                _mediasSelecionadas = new List<MediaDTO>();
             }
 
             while (!objRS.EOF)
             {
 
-
-                lstMediasSelecionadas.Add(new MediaDTO(((string) objRS.Field("Tipo") == "MME" ? "E" : "A"),
+                _mediasSelecionadas.Add(new MediaDTO(((string) objRS.Field("Tipo") == "MME" ? "E" : "A"),
                     Convert.ToInt32(objRS.Field("NumPeriodos")), "VALOR",
                     Color.FromArgb(Convert.ToInt32(objRS.Field("Cor")))));
 
@@ -2574,7 +2550,7 @@ namespace TraderWizard
 
             //também calcula o número de pontos que serão impressos no IFR, no ifr médio, no volume médio
             //, nas médias móveis
-            var valoresExtremos = valoresExtremosService.ValoresExtremosCalcular(new ConfiguracaoDeVisualizacao(strCodigoAtivo, strPeriodoDuracao, blnMMExpDesenhar, lstMediasSelecionadas, blnVolumeDesenhar, blnIFRDesenhar, intIFRNumPeriodos, dtmDataMinima, dtmDataMaxima));
+            var valoresExtremos = valoresExtremosService.ValoresExtremosCalcular(new ConfiguracaoDeVisualizacao(strCodigoAtivo, strPeriodoDuracao, blnMMExpDesenhar, _mediasSelecionadas, blnVolumeDesenhar, blnIFRDesenhar, intIFRNumPeriodos, dtmDataMinima, dtmDataMaxima));
             var decValorMinimoPeriodo = valoresExtremos.ValorMinimo;
             decValorMaximoPeriodo = valoresExtremos.ValorMaximo;
             var dblVolumeMinimoPeriodo = valoresExtremos.VolumeMinimo;
@@ -2623,7 +2599,7 @@ namespace TraderWizard
             if (blnMMExpDesenhar)
             {
 
-                foreach (MediaDTO mediaSelecionada in lstMediasSelecionadas)
+                foreach (MediaDTO mediaSelecionada in _mediasSelecionadas)
                 {
 
                     foreach (MediaDTO mediaExtremos in valoresExtremos.Medias)
@@ -2725,7 +2701,7 @@ namespace TraderWizard
                 colSplit.Clear();
             }
 
-            cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(this.objConexao);
+            cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(this._conexao);
 
             //busca os splits do papel em ordem decrescente
             objCarregadorSplit.SplitConsultar(strCodigoAtivo, dtmDataMinima, "D", ref objRsSplit, dtmDataMaximaSplit,
@@ -2749,20 +2725,13 @@ namespace TraderWizard
 
             //****FIM DO TRECHO CRIADO PARA ENCONTRAR ERROS
 
-            //pontos da média móvel exponencial
-
             //*********************CALCULA AS MÉDIAS MÓVEIS ESCOLHIDAS PELO USUÁRIO***********************
-
-            //limpa a collection que contém as médias calculadas anteriormente
 
             //utilizado no loop
 
             Rectangle objRectCandleCorpo = new Rectangle();
 
-            //Dim intCorpoX As Integer = FlowLayoutPanel1.Width - intBorda
             int intCorpoX = intAreaRight - intCandleWidth / 2;
-
-            //Dim dblCorpoWidth As Double
 
             //IMPRIME OS CANDLES DA DIREITA PARA A ESQUERDA, PARA OS CASOS EM QUE NÃO TEM CANDLES SUFICIENTES
             //PARA TODO O PERÍODO
@@ -3198,7 +3167,7 @@ namespace TraderWizard
 
         private void TSmnuMMConfigurar_Click(System.Object sender, System.EventArgs e)
         {
-            frmIndicadorEscolha frmForm = new frmIndicadorEscolha("Escolha as Médias Móveis", lstMediasSelecionadas);
+            frmIndicadorEscolha frmForm = new frmIndicadorEscolha("Escolha as Médias Móveis", _mediasSelecionadas);
 
             frmForm.ShowDialog();
 
@@ -3206,7 +3175,7 @@ namespace TraderWizard
             if (frmForm.DialogResult == System.Windows.Forms.DialogResult.OK)
             {
                 //se retornou OK tem que atualizar a collection
-                lstMediasSelecionadas = frmForm.MediasSelecionadas;
+                _mediasSelecionadas = frmForm.MediasSelecionadas;
 
             }
 
