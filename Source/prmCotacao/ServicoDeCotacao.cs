@@ -2,15 +2,11 @@
 using System.Windows.Forms;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
-using System.Text;
 using DataBase.Carregadores;
-using Ionic.Zip;
 using prjDominio.Regras;
 using prjServicoNegocio;
 using Services;
-using pWeb;
 using DataBase;
 using prjDTO;
 using prjConfiguracao;
@@ -21,23 +17,12 @@ namespace prmCotacao
     public class ServicoDeCotacao
 	{
 
-		/// <summary>
-		/// Propriedade que contém a conexão ativa com o banco de dados, para não precisar
-		/// passar por parâmetro em todas as funções
-		/// </summary>
-		/// <remarks></remarks>
-
 		private readonly Conexao _conexao;
-		/// <summary>
-		/// contém o objeto que faz downloads na internet.
-		/// </summary>
-		/// <remarks></remarks>
-
-		private readonly cWeb _web;
 
 	    private readonly SequencialService _sequencialService;
 	    private readonly CotacaoData _cotacaoData;
 	    private readonly GeradorQuery _geradorQuery;
+	    private readonly AtualizadorDeIfr _atualizadorDeIfr;
 
 	    //private readonly bool _localDataBaseConnection;
 
@@ -51,10 +36,10 @@ namespace prmCotacao
 	    public ServicoDeCotacao(Conexao pobjConexao)
 		{
 		    _conexao = pobjConexao;
-			_web = new cWeb(_conexao);
             _sequencialService = new SequencialService();
             _cotacaoData = new CotacaoData();
             _geradorQuery = new GeradorQuery(_conexao.ObterFormatadorDeCampo());
+            _atualizadorDeIfr = new AtualizadorDeIfr();
 		}
 
 	    public ServicoDeCotacao():this(new Conexao())
@@ -70,464 +55,6 @@ namespace prmCotacao
 	    //    }
 	    //}
 
-	    /// <summary>
-        /// Atualiza as cotações em todas as datas em que há pregão em um determinado período.
-        /// </summary>
-        /// <param name="pdtmDataInicial">Data inicial de importação</param>
-        /// <param name="pdtmDataFinal">Data final de importação</param>
-        /// <param name="pstrCodigoUnico">Indica se é para importar o código de um único ativo. Se o parâmetro for uma string vazia deve importar todos os arquivos</param>
-        /// <param name="pblnCalcularDados">Indica se após atualizar as cotações deve calcular indicadores como média, IFR, etc</param>
-        /// <returns></returns>
-        /// <remarks></remarks>
-        public bool CotacaoPeriodoAtualizar(DateTime pdtmDataInicial, DateTime pdtmDataFinal, string pstrCodigoUnico, bool pblnCalcularDados)
-		{
-
-			//inicializa a data com data inválida. Vai ser atribuido nesta variável o primeiro dia útil.
-			var dtmDataInicialAux = Constantes.DataInvalida;
-
-			bool blnOk = true;
-
-		    DateTime dtmDataUltimaCotacao = Constantes.DataInvalida;
-
-			var objCalculadorData = new cCalculadorData(_conexao);
-
-			//enquanto a data inicial for menor que a data final.
-
-			while ((pdtmDataInicial <= pdtmDataFinal) && blnOk) {
-
-				if (objCalculadorData.DiaUtilVerificar(pdtmDataInicial)) {
-					if (dtmDataInicialAux == Constantes.DataInvalida) {
-						//se a data que será utilizada nos cálculos de IFR, MÉDIA, ETC 
-						//ainda não foi atribuida, atribui com o primeiro dia útil.
-						dtmDataInicialAux = pdtmDataInicial;
-					}
-
-					cEnum.enumRetorno intRetorno = CotacaoDataAtualizar(pdtmDataInicial, pstrCodigoUnico);
-
-
-					if (intRetorno == cEnum.enumRetorno.RetornoOK) {
-						dtmDataUltimaCotacao = pdtmDataInicial;
-
-
-					} else if (intRetorno == cEnum.enumRetorno.RetornoErro2) {
-						//não conseguiu baixar o arquivo na data.
-
-						//se é uma data única avisa para o usuário.
-						//se é mais de uma data não faz nada e busca a próxima data
-
-						//If blnDataUnica Then
-
-						blnOk = false;
-                        MessageBox.Show("Não foi possível baixar o arquivo de cotações na data " + pdtmDataInicial.ToString("dd/MM/yyyy") + ".", "Atualizar Cotações", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-
-					    //End If
-
-
-					} else if (intRetorno == cEnum.enumRetorno.RetornoErro3) {
-						blnOk = false;
-						//já existe cotação na data
-                        MessageBox.Show("Já existe cotação na data " + pdtmDataInicial.ToString("dd/MM/yyyy") + ".", "Atualizar Cotações", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-
-
-
-					} else if (intRetorno == cEnum.enumRetorno.RetornoErroInesperado) {
-						//erro na transação. Sai fora porque ocorreu um erro
-						blnOk = false;
-                        MessageBox.Show("Ocorreram erros ao executar a operação.", "Atualizar Cotações", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-
-					}
-
-				}
-
-				//incrementa um dia na data inicial
-				pdtmDataInicial = pdtmDataInicial.AddDays(1);
-
-			}
-
-			//********MAURO, 11/05/2010
-			//Atualiza a tabela de resumo.
-
-			if (dtmDataUltimaCotacao != Constantes.DataInvalida) {
-				//se alguma cotação foi atualizada com sucesso atualiza a tabela de resumo.
-				TabelaResumoAtualizar(dtmDataUltimaCotacao, Constantes.DataInvalida);
-
-
-				if (blnOk) {
-
-					if (pblnCalcularDados) {
-						DadosRecalcular(true, false, true, true, true, true, true, true, true, true,
-						true, dtmDataInicialAux);
-
-					}
-
-                    MessageBox.Show("Atualização das cotações realizada com sucesso.", "Atualizar Cotações", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-
-				}
-
-
-			} else {
-                MessageBox.Show("Não existem cotações para serem atualizadas.", "Atualizar Cotações", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-
-			}
-
-			return blnOk;
-
-		}
-
-
-		/// <summary>
-		/// "Faz download do arquivo de cotações da Bovespa de uma determinada data e salva na tabela em Access"
-		/// </summary>
-		/// <param name="pdtmData"></param>
-		/// <param name="pstrCodigoUnico">Indica se é para importar o código de um único ativo. Se o parâmetro for uma string vazia deve importar todos os arquivos</param>
-		/// <returns></returns>
-		///RetornoOK = operação realizada com sucesso.
-		///RetornoErro2 = não foi possível baixar o arquivo na data especificada
-		///RetornoErroInesperado = Erro ao executar a operação de atualização de cotas.             
-		///RetornoErro3 = Já existe cotações na data específicada    
-		/// <remarks></remarks>
-		private cEnum.enumRetorno CotacaoDataAtualizar(DateTime pdtmData, string pstrCodigoUnico)
-		{
-		    cCommand objCommand = new cCommand(_conexao);
-
-			IList<string> colLinha;
-
-		    string strCodigoAtivo = String.Empty;
-
-		    decimal decValorFechamento = default(decimal);
-			decimal decValorMinimo = default(decimal);
-			decimal decValorMedio = default(decimal);
-			decimal decValorMaximo = default(decimal);
-
-			decimal decOscilacao = default(decimal);
-
-		    long lngNegociosTotal = 0;
-			long lngTitulosTotal = 0;
-			decimal decValorTotal = default(decimal);
-
-		    const char strSeparadorDecimal = ',';
-
-
-			cRS objRS = new cRS(_conexao);
-
-		    //utilizado para calcular o sequencial do ativo.
-
-            FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
-
-		    objRS.ExecuteQuery(" SELECT COUNT(1) AS Contador " + " FROM Cotacao_Intraday " + " WHERE Data = " + funcoesBd.CampoDateFormatar(pdtmData));
-
-
-			if ((int) objRS.Field("Contador") > 0) {
-				DateTime[] arrData = { pdtmData };
-
-
-				if (CotacaoExcluir(arrData, false) != cEnum.enumRetorno.RetornoOK) {
-					objRS.Fechar();
-
-                    MessageBox.Show("Erro ao excluir as cotações intraday.", "Atualizar Cotações", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    
-
-					return cEnum.enumRetorno.RetornoErroInesperado;
-
-				}
-
-			}
-
-			objRS.Fechar();
-
-			objCommand.BeginTrans();
-
-		    bool blnCotacaoExistir = pstrCodigoUnico == string.Empty ? CotacaoDataExistir(pdtmData, "Cotacao") : CotacaoDataExistir(pdtmData, "Cotacao", pstrCodigoUnico);
-
-			if (blnCotacaoExistir) {
-				//se já existe alguma cotação na data,
-				//faz rollback e sai da função
-				objCommand.RollBackTrans();
-
-				return cEnum.enumRetorno.RetornoErro3;
-
-			}
-
-			//baixar as cotações do site da bovespa
-
-			if (ArquivoDataBaixar(pdtmData, out colLinha)) {
-				//busca os ativos que não devem ser consideros
-				string strAtivosDesconsiderados = AtivosDesconsideradosListar();
-
-			    //se foi possivel baixar...
-				//percorre todas as linhas da collection e nas linhas que forem cotações de ativos insere no banco de dados
-
-			    int intI;
-			    for (intI = 0; intI < colLinha.Count; intI++) {
-					//coloca a linha na variável auxiliar
-					string strLinhaAux = colLinha[intI];
-
-					//os dois primeiros caracteres indicam o tipo de registro.
-					//o tipo de registro 02 indica que é a cotação de um papel
-					//o terceiro e quarto caracteres indicam o código BDI do papel.
-					//O código 02 indica que é um papel do lote padrão
-					//posição 70 - 73 indica o tipo  de mercado do ativo
-					//o tipo de mercado 010 é o mercado A VISTA
-			        bool blnImportarLinha;
-			        bool blnInserir;
-			        string strOscilacao;
-			        decimal decValorAbertura = default(decimal);
-			        if (strLinhaAux.Substring(0,4) + strLinhaAux.Substring( 69, 3) == "0202010") {
-						//se é a cotação de um papel
-						//e é do mercado à vista.
-
-						//busca código do ativo, posicao 58-69
-						strCodigoAtivo = strLinhaAux.Substring(57, 12).Trim();
-
-
-						if (pstrCodigoUnico == string.Empty) {
-							//Se é para importar todos os códigos, verifica se o mesmo não se encontra na lista de ativos desconsiderados
-                            blnImportarLinha = (strAtivosDesconsiderados.IndexOf("#" + strCodigoAtivo + "#",StringComparison.InvariantCultureIgnoreCase) == -1);
-                            
-						} else {
-							//Se é para importar um único ativo, verificar se a linha refere-se ao código que deve ser importado
-							blnImportarLinha = (strCodigoAtivo == pstrCodigoUnico);
-						}
-
-						//verifica se deve importar a linha
-						if (blnImportarLinha) {
-							//se o ativo não foi encontrado na lista dos desconsiderados.
-
-							//TOTAL DE NEGÓCIOS (174-178)
-							lngNegociosTotal = Convert.ToInt64(strLinhaAux.Substring(173, 5));
-
-							//algumas ações não tem negócios no dia. Estas cotações não serão importadas.
-
-							if (lngNegociosTotal > 0) {
-								//busca valor de abertura do ativo: 91 - 99 (inteiro), 100-101 (decimal)
-								decValorAbertura = Convert.ToDecimal(strLinhaAux.Substring( 90, 9) + strSeparadorDecimal + strLinhaAux.Substring(99, 2));
-
-								//busca o valor máximo do ativo: 102-110 (inteiro), 111-112 (decimal)
-								decValorMaximo = Convert.ToDecimal(strLinhaAux.Substring(101, 9) + strSeparadorDecimal + strLinhaAux.Substring(110, 2));
-
-								//busca o valor mínimo do ativo: 113-121 (inteiro), 122-123 (decimal)
-								decValorMinimo = Convert.ToDecimal(strLinhaAux.Substring(112, 9) + strSeparadorDecimal + strLinhaAux.Substring(121, 2));
-
-								//busca o valor médio do ativo: 124-132 (inteiro), 133-134 (decimal)
-								decValorMedio = Convert.ToDecimal(strLinhaAux.Substring( 123, 9) + strSeparadorDecimal + strLinhaAux.Substring(132, 2));
-
-								//busca o valor de fechamento do ativo: 135-143 (inteiro), 144-145 (decimal)
-								decValorFechamento = Convert.ToDecimal(strLinhaAux.Substring(134, 9) + strSeparadorDecimal + strLinhaAux.Substring(143, 2));
-
-								//busca a oscilação do papel em relação ao dia anterior
-								//146 = sinal da oscilação (+ ou -)
-								//147-149 = parte inteira da oscilação
-								//150-151 = parte decimal da oscilação
-
-								strOscilacao = strLinhaAux.Substring( 146, 3) + strSeparadorDecimal + strLinhaAux.Substring(149, 2);
-
-
-								if (strLinhaAux.Substring(145, 1) == "-") {
-									strOscilacao = "-" + strOscilacao;
-
-								}
-
-								decOscilacao = Convert.ToDecimal(strOscilacao);
-
-								//TOTAL DE TÍTULOS NEGOCIADOS (179-193)
-								lngTitulosTotal = Convert.ToInt64(strLinhaAux.Substring(178, 15));
-
-								//VALOR TOTAL NEGOCIADO: 194-208 (inteiro), 209-210 (decimal)
-								decValorTotal = Convert.ToDecimal(strLinhaAux.Substring(193, 15) + strSeparadorDecimal + strLinhaAux.Substring(208, 2));
-
-								blnInserir = true;
-
-							} else {
-								//se não teve negócios no dia
-								blnInserir = false;
-
-							}
-							//if lngNegocios_Total > 0 then
-
-
-						} else {
-							//se o ativo deve ser desconsiderado
-							blnInserir = false;
-
-						}
-
-
-					} else if (strLinhaAux.Substring(0,12) == "0101IBOVESPA") {
-						if (pstrCodigoUnico == string.Empty) {
-							blnImportarLinha = true;
-						} else {
-							blnImportarLinha = (pstrCodigoUnico == "IBOV");
-						}
-
-
-						if (blnImportarLinha) {
-							//é o indice BOVESPA
-							strCodigoAtivo = "IBOV";
-
-							//busca valor de abertura do ativo: 35 - 40
-							decValorAbertura = Convert.ToDecimal(strLinhaAux.Substring(34, 6));
-
-							//busca o valor máximo do ativo: 41-46
-							decValorMinimo = Convert.ToDecimal(strLinhaAux.Substring(40, 6));
-
-							//busca o valor mínimo do ativo: 47-52
-							decValorMaximo = Convert.ToDecimal(strLinhaAux.Substring(46, 6));
-
-							//busca o valor médio do ativo: 53-58
-							decValorMedio = Convert.ToDecimal(strLinhaAux.Substring(52, 6));
-
-							//busca o valor de fechamento do ativo: 93-98
-							decValorFechamento = Convert.ToDecimal(strLinhaAux.Substring(92, 6));
-
-							//busca a oscilação do papel em relação ao dia anterior
-							//99 = sinal da oscilação (+ ou -)
-							//100-102 = parte inteira da oscilação
-							//103-104 = parte decimal da oscilação
-
-							strOscilacao = strLinhaAux.Substring(99, 3) + strSeparadorDecimal + strLinhaAux.Substring(102, 2);
-
-
-							if (strLinhaAux.Substring(98, 1) == "-") {
-								strOscilacao = "-" + strOscilacao;
-
-							}
-
-							decOscilacao = Convert.ToDecimal(strOscilacao);
-
-							//TOTAL DE NEGÓCIOS (159-164)
-							lngNegociosTotal = Convert.ToInt64(strLinhaAux.Substring(158, 6));
-
-							//TOTAL DE TÍTULOS NEGOCIADOS (165-179)
-							lngTitulosTotal = Convert.ToInt64(strLinhaAux.Substring(164, 15));
-
-							//VALOR TOTAL NEGOCIADO: 180-194 (inteiro), 195-196 (decimal)
-							decValorTotal = Convert.ToDecimal(strLinhaAux.Substring(179, 15) + strSeparadorDecimal + strLinhaAux.Substring(194, 2));
-
-							blnInserir = true;
-
-
-						} else {
-							blnInserir = false;
-
-						}
-
-
-					} else {
-						//não é um ativo do mercado à vista, nem o indice BOVESPA
-						blnInserir = false;
-
-					}
-					//se é uma linha do mercado à vista.
-
-
-					if (blnInserir) {
-						//calcula o sequencial do ativo
-						long lngSequencial = _sequencialService.SequencialCalcular(strCodigoAtivo, "Cotacao", objCommand.Conexao);
-
-						//insere na tabela
-					    var dataFormatada = funcoesBd.CampoDateFormatar(pdtmData);
-
-                        var insertBuilder = new StringBuilder()
-                            .Append(" insert into Cotacao ")
-                            .Append("(Codigo, Data, DataFinal, ValorAbertura, ValorFechamento, ValorMinimo, ValorMedio, ValorMaximo, Oscilacao, Negocios_Total, Titulos_Total, Valor_Total, Sequencial) ")
-                            .Append(" VALUES ")
-                            .AppendFormat("({0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12})", 
-                            FuncoesBd.CampoStringFormatar(strCodigoAtivo),dataFormatada, dataFormatada, FuncoesBd.CampoDecimalFormatar(decValorAbertura), 
-                            FuncoesBd.CampoDecimalFormatar(decValorFechamento), FuncoesBd.CampoDecimalFormatar(decValorMinimo), FuncoesBd.CampoDecimalFormatar(decValorMedio),
-                            FuncoesBd.CampoDecimalFormatar(decValorMaximo), FuncoesBd.CampoDecimalFormatar(decOscilacao),
-                            lngNegociosTotal, lngTitulosTotal, FuncoesBd.CampoDecimalFormatar(decValorTotal), lngSequencial);
-
-						objCommand.Execute(insertBuilder.ToString());
-
-					}
-
-				}
-
-
-			} else {
-				//se não conseguiu baixar o arquivo
-				objCommand.RollBackTrans();
-
-				return cEnum.enumRetorno.RetornoErro2;
-
-			}
-			//if ArquivoDataBaixar
-
-			objCommand.CommitTrans();
-
-			cEnum.enumRetorno functionReturnValue = objCommand.TransStatus ? cEnum.enumRetorno.RetornoOK : cEnum.enumRetorno.RetornoErroInesperado;
-
-		    return functionReturnValue;
-
-		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="pstrCaminho"> Pasta onde se encontra o arquivo </param>
-		/// <param name="pstrArquivoZip"> Nome do arquivo que deve ser descompactado </param>
-		/// <param name="pstrArquivoTexto"> Nome do arquivo contido dentro do arquivo zip  </param>
-		/// <param name="pcolLinhaRet"> retorna collection com todas as linhas do arquivo texto descompactado</param>
-		/// <returns> 
-		/// True = arquivo zip descomptactado e arquivo texto lido com sucesso 
-		/// False = algum erro na descompactação do arquivo zip ou leitura do arquivo texto
-		/// </returns>
-		/// <remarks></remarks>
-		private bool ArquivoDescompactar(string pstrCaminho, string pstrArquivoZip, string pstrArquivoTexto, out IList<string> pcolLinhaRet)
-		{
-            var zipFile = new ZipFile(pstrCaminho + "\\" + pstrArquivoZip);
-
-            zipFile.ExtractAll(pstrCaminho);
-
-            IFileService fileService = new FileService();
-
-            //o conteúdo do arquivo zipado é um arquivo chamado BDIN, sem extensão
-            //abre o arquivo para leitura
-            pcolLinhaRet = fileService.ReadAllLines(pstrCaminho + "\\" + pstrArquivoTexto);
-
-			//apaga o arquivo BDIN que foi extraído do zip.
-			fileService.Delete(pstrCaminho + "\\" + pstrArquivoTexto) ;
-
-			return true;
-
-		}
-
-
-		private bool ArquivoDataBaixar(DateTime pdtmData, out IList<string> pcolLinhaRet)
-		{
-		    string strPathZip = cBuscarConfiguracao.ObtemCaminhoPadrao();
-
-			strPathZip = strPathZip + "Arquivos";
-
-			//Verifica se existe o diretório para armazenar os arquivos baixados
-
-		    var fileService = new FileService();
-            fileService.CreateFolder(strPathZip);
-
-			//gera o nome do arquivo que deve ser baixado
-			string strArquivoBaixar = cGeradorNomeArquivo.GerarNomeArquivoRemoto(pdtmData);
-
-			//Nome que será dado ao arquivo baixado :"bdi" + yyyymmdd + ".zip"
-			string strArquivoZipDestino = cGeradorNomeArquivo.GerarNomeArquivoLocal(pdtmData);
-
-			if (!fileService.FileExists(strPathZip + "\\" + strArquivoZipDestino)) 
-            {
-                string urlBase = ConfigurationManager.AppSettings["UrlDownloadoArquivoFechamentoPregao"];
-                if (!_web.DownloadWithProxy(urlBase + strArquivoBaixar, strPathZip, strArquivoZipDestino))
-				{
-				    pcolLinhaRet = new List<string>();
-				    return false;
-				}
-            }
-
-		    //CHAMA FUNÇÃO QUE DESCOMPACTA O ARQUIVO, ABRE O ARQUIVO TEXTO, FAZ A LEITURA E RETORNA TODAS AS LINHAS
-		    //EM UMA COLLECTION.
-		    bool blnDescompactar = ArquivoDescompactar(strPathZip, strArquivoZipDestino, "BDIN", out pcolLinhaRet);
-
-		    return blnDescompactar;
-
-		}
 
 		public decimal UltimaMediaConsultar(string pstrCodigo)
 		{
@@ -538,320 +65,6 @@ namespace prmCotacao
 			objRS.ExecuteQuery(strQuery);
 
 			decimal functionReturnValue = Convert.ToDecimal(objRS.Field("ValorMedio", "0"));
-
-			objRS.Fechar();
-			return functionReturnValue;
-
-		}
-
-	    /// <summary>
-	    /// Recebe uma collection com as linhas de um arquivo
-	    /// </summary>
-	    /// <param name="pcolLinha">Collection contendo as linhas do arquivo de cotações</param>
-	    /// <param name="pobjCommand"></param>
-	    /// <returns>status da transação</returns>
-	    /// <remarks></remarks>
-	    private void CotacoesImportar(IList<string> pcolLinha, cCommand pobjCommand)
-		{
-			int intI;
-
-		    DateTime dtmCotacaoData = default(DateTime);
-
-	        //utilizado para calcular o sequencial do ativo.
-
-		    const char strSeparadorDecimal = ',';
-
-			//busca os ativos que não devem ser consideros
-			string strAtivosDesconsiderados = AtivosDesconsideradosListar();
-
-            FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
-
-			//se foi possivel baixar...
-			//percorre todas as linhas da collection e nas linhas que forem cotações de ativos insere no banco de dados
-
-			for (intI = 1; intI <= pcolLinha.Count; intI++)
-			{
-			    //coloca a linha na variável auxiliar
-			    string strLinhaAux = pcolLinha[intI];
-
-			    //os dois primeiros caracteres indicam o tipo de registro.
-				//o tipo de registro 01 indica que é a cotação de um papel do mercado a vista
-
-				//posição 11-12 indica o código BDI do papel. O código 02 indica que é um LOTE PADRÃO
-
-				//posição 25 - 27 indica o tipo  de mercado do ativo
-				//o tipo de mercado 010 é o mercado A VISTA
-				if (strLinhaAux.Substring(0, 2) + strLinhaAux.Substring(10, 2) + strLinhaAux.Substring(24, 3) == "0102010")
-				{
-				    //se é a cotação de um papel
-					//e é do mercado à vista.
-
-					//busca código do ativo, posicao 13-24
-				    string strCodigoAtivo = strLinhaAux.Substring(12, 12).Trim();
-
-				    //verifica se o ativo não deve ser desconsiderado
-					if (strAtivosDesconsiderados.IndexOf("#" + strCodigoAtivo + "#", StringComparison.InvariantCultureIgnoreCase ) < 0)
-					{
-					    //se o ativo não foi encontrado na lista dos desconsiderados.
-
-						//TOTAL DE NEGÓCIOS (148-152)
-					    long lngNegociosTotal = Convert.ToInt64(strLinhaAux.Substring(147, 5));
-
-					    //ALGUNS ATIVOS NÃO TEM NEGÓCIOS E NÃO DEVEM SER IMPORTADOS
-
-						if (lngNegociosTotal > 0) {
-							//busca a data da cotação: 3-10 no formato YYYYMMDD
-							dtmCotacaoData = new DateTime(Convert.ToInt32(strLinhaAux.Substring(2, 4)), Convert.ToInt32(strLinhaAux.Substring(6, 2)), Convert.ToInt32(strLinhaAux.Substring(8, 2)));
-
-							//busca valor de abertura do ativo: 57 - 67 (inteiro), 68-69 (decimal)
-							decimal decValorAbertura = Convert.ToDecimal(strLinhaAux.Substring(56, 11) + strSeparadorDecimal + strLinhaAux.Substring(67, 2));
-
-							//busca o valor máximo do ativo: 70-80 (inteiro), 81-82 (decimal)
-							decimal decValorMaximo = Convert.ToDecimal(strLinhaAux.Substring(69, 11) + strSeparadorDecimal + strLinhaAux.Substring(80, 2));
-
-							//busca o valor mínimo do ativo: 83-93 (inteiro), 94-95 (decimal)
-							decimal decValorMinimo = Convert.ToDecimal(strLinhaAux.Substring(82, 11) + strSeparadorDecimal + strLinhaAux.Substring(93, 2));
-
-							//busca o valor médio do ativo: 96-106 (inteiro), 107-108 (decimal)
-							decimal decValorMedio = Convert.ToDecimal(strLinhaAux.Substring(95, 11) + strSeparadorDecimal + strLinhaAux.Substring(106, 2));
-
-							//busca o valor de fechamento do ativo: 109-119 (inteiro), 120-121 (decimal)
-							decimal decValorFechamento = Convert.ToDecimal(strLinhaAux.Substring(108, 11) + strSeparadorDecimal + strLinhaAux.Substring(119, 2));
-
-							//TOTAL DE TÍTULOS NEGOCIADOS (153-170)
-							long lngTitulosTotal = Convert.ToInt64(strLinhaAux.Substring(152, 18));
-
-							//VALOR TOTAL NEGOCIADO: 171-186 (inteiro), 187-188 (decimal)
-							decimal decValorTotal = Convert.ToDecimal(strLinhaAux.Substring(170, 16) + strSeparadorDecimal + strLinhaAux.Substring(186, 2));
-
-							//calcula o sequencial do ativo
-							long lngSequencial = _sequencialService.SequencialCalcular(strCodigoAtivo, "Cotacao", pobjCommand.Conexao);
-
-							//insere na tabela
-						    var dataFormatada = FuncoesBd.CampoDateFormatar(dtmCotacaoData);
-						    string strQuery = " insert into Cotacao " + "(Codigo, Data, DataFinal, ValorAbertura, ValorFechamento " + ", ValorMinimo, ValorMedio, ValorMaximo " + 
-                                ", Negocios_Total, Titulos_Total, Valor_Total, Sequencial) " + " values " 
-                                + "(" + FuncoesBd.CampoStringFormatar(strCodigoAtivo) + "," + dataFormatada + "," + dataFormatada + "," 
-                                + FuncoesBd.CampoDecimalFormatar(decValorAbertura) + "," + FuncoesBd.CampoDecimalFormatar(decValorFechamento) 
-                                + "," + FuncoesBd.CampoDecimalFormatar(decValorMinimo) + "," + FuncoesBd.CampoDecimalFormatar(decValorMedio) 
-                                + "," + FuncoesBd.CampoDecimalFormatar(decValorMaximo) + "," + lngNegociosTotal + "," + lngTitulosTotal + "," 
-                                + FuncoesBd.CampoDecimalFormatar(decValorTotal) + "," + lngSequencial + ")";
-
-							pobjCommand.Execute(strQuery);
-
-						}
-						//if lngNegocios_Total > 0 then
-					}
-				    //se o ativo não foi desconsiderado
-				}
-			    //se é uma cotação à vista.
-			}
-
-		    //atualiza a tabela de resumo
-			TabelaResumoAtualizar(dtmCotacaoData,Constantes.DataInvalida);
-		}
-
-		/// <summary>
-		/// Recebe uma data e procura um arquivo de cotação histórica na pasta Arquivos.
-		/// Importa as cotações deste arquivo e salva na tabela.
-		/// </summary>
-		/// <param name="pdtmData"> Indica a data que deve ser feita a atualização </param>
-		/// <returns>
-		///RetornoOK = operação realizada com sucesso.
-		///RetornoErro2 = não foi possível encontrar o arquivo na data especificada
-		///RetornoErroInesperado = Erro ao executar a operação de atualização de cotas.             
-		///RetornoErro3 = Já existe cotações na data específicada       
-		/// </returns>
-		/// <remarks></remarks>
-		private cEnum.enumRetorno CotacaoHistoricaDataAtualizar(DateTime pdtmData)
-		{
-
-			cCommand objCommand = new cCommand(_conexao);
-
-			IList<string> colLinha;
-
-		    //nome dado ao arquivo zip que for baixado
-
-		    string strPathZip = cBuscarConfiguracao.ObtemCaminhoPadrao();
-
-			strPathZip = strPathZip + "Arquivos";
-
-			//Nome do arquivo zip baixado :"COTAHIST_D" + ddmmyyyy + ".zip"
-			string strArquivoZipDestino = "COTAHIST_D" + pdtmData.ToString("ddMMyyyy") + ".ZIP";
-
-			string strArquivoTextoDestino = "COTAHIST_D" + pdtmData.ToString("ddMMyyyy") + ".TXT";
-
-			cRS objRS = new cRS(_conexao);
-
-            FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
-
-			objRS.ExecuteQuery(" SELECT COUNT(1) AS Contador " + " FROM Cotacao_Intraday " + " WHERE Data = " + funcoesBd.CampoDateFormatar(pdtmData));
-
-
-			if (Convert.ToInt32( objRS.Field("Contador")) > 0) {
-				DateTime[] arrData = { pdtmData };
-
-
-				if (CotacaoExcluir(arrData, false) != cEnum.enumRetorno.RetornoOK) {
-					objRS.Fechar();
-
-                    MessageBox.Show("Erro ao excluir as cotações intraday.", "Atualizar Cotações", MessageBoxButtons.OK,MessageBoxIcon.Exclamation);
-
-					return cEnum.enumRetorno.RetornoErroInesperado;
-
-				}
-
-			}
-
-			objRS.Fechar();
-
-			//**************** INICIO DA TRANSAÇÃO
-			objCommand.BeginTrans();
-
-
-			if (CotacaoDataExistir(pdtmData, "Cotacao")) {
-				//se já existe cotação na data faz rollback para não sobrescrever
-				objCommand.RollBackTrans();
-
-				//retorno erro conforme descrito no cabeçalho da função
-				return cEnum.enumRetorno.RetornoErro3;
-
-			}
-
-			//descompactar o arquivo que contém as cotações
-
-			if (ArquivoDescompactar(strPathZip, strArquivoZipDestino, strArquivoTextoDestino, out colLinha)) {
-				CotacoesImportar(colLinha, objCommand);
-
-			}
-
-			//**************** FIM DA TRANSAÇÃO
-			objCommand.CommitTrans();
-
-			return objCommand.TransStatus ? cEnum.enumRetorno.RetornoOK : cEnum.enumRetorno.RetornoErroInesperado;
-		}
-
-		/// <summary>
-		/// Atualiza as cotações de um ano todo
-		/// </summary>
-		/// <param name="pintAno">Ano da cotação</param>
-		/// <returns></returns>
-		/// RetornoOK - Operação realizada com sucesso.
-		/// RetornoErroInesperado - algum erro inesperado de banco de dados ou de programação
-		/// RetornoErro2 - Já existe cotação no ano.
-		/// RetornoErro3 - Não foi possível descompactar o arquivo zip ou abrir o arquivo txt.
-		/// <remarks></remarks>
-		public cEnum.enumRetorno CotacaoHistoricaAnoAtualizar(int pintAno)
-		{
-
-			cCommand objCommand = new cCommand(_conexao);
-
-			//objConexao = objCommand.Conexao
-
-			cRS objRS = new cRS(_conexao);
-
-			IList<string> colLinha;
-
-		    //nome dado ao arquivo zip que for baixado
-
-		    string strPathZip = cBuscarConfiguracao.ObtemCaminhoPadrao();
-
-			strPathZip = strPathZip + "Arquivos";
-
-			//Nome do arquivo zip baixado :"COTAHIST_A" + YYYY + ".zip"
-			string strArquivoZipDestino = "COTAHIST_A" + Convert.ToString(pintAno) + ".ZIP";
-
-			string strArquivoTextoDestino = "COTAHIST_A" + Convert.ToString(pintAno) + ".TXT";
-
-			//**************** INICIO DA TRANSAÇÃO
-			objCommand.BeginTrans();
-
-            FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
-
-			//verifica se tem alguma cotação no ano. Se já existir avisa para o usuário.
-		    objRS.ExecuteQuery(" select count(1) as contador " + " from Cotacao " + " where Data >= " +
-		                       FuncoesBd.CampoDateFormatar(new DateTime(pintAno, 1, 1)) + " and Data <= " +
-		                       FuncoesBd.CampoDateFormatar(new DateTime(pintAno, 12, 31)));
-
-
-			if (Convert.ToInt64(objRS.Field("Contador", 0)) > 0) {
-				//se já existe cotação na data faz rollback para não sobrescrever
-				objCommand.RollBackTrans();
-
-				objRS.Fechar();
-
-				//retorno erro conforme descrito no cabeçalho da função
-				return cEnum.enumRetorno.RetornoErro2;
-
-			}
-
-			objRS.Fechar();
-
-			//descompactar o arquivo que contém as cotações
-
-			if (ArquivoDescompactar(strPathZip, strArquivoZipDestino, strArquivoTextoDestino, out colLinha)) {
-				CotacoesImportar(colLinha, objCommand);
-
-
-			} else {
-				objCommand.RollBackTrans();
-				return cEnum.enumRetorno.RetornoErro3;
-
-			}
-
-			//**************** FIM DA TRANSAÇÃO
-			objCommand.CommitTrans();
-
-			return objCommand.TransStatus ? cEnum.enumRetorno.RetornoOK : cEnum.enumRetorno.RetornoErroInesperado;
-
-		}
-
-		/// <summary>
-		/// Verifica se existe alguma cotação em uma determinada data
-		/// </summary>
-		/// <param name="pdtmData"> Data que deve ser verificada se existe cotação </param>
-		/// <returns>
-		/// True = Existe cotação na data
-		/// False = Não existe cotação na data
-		/// </returns>
-		/// <remarks></remarks>
-		public bool CotacaoDataExistir(DateTime pdtmData, string pstrTabela)
-		{
-		    cRS objRS = new cRS(_conexao);
-
-            FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
-
-		    string strQuery = " select 1 " + " from " + pstrTabela + " where Data = " + FuncoesBd.CampoDateFormatar(pdtmData);
-
-			objRS.ExecuteQuery(strQuery);
-
-			bool functionReturnValue = objRS.DadosExistir;
-
-			objRS.Fechar();
-			return functionReturnValue;
-
-		}
-
-		/// <summary>
-		/// Verifica se existe alguma cotação em uma determinada data para um determinado ativo
-		/// </summary>
-		/// <param name="pdtmData"> Data que deve ser verificada se existe cotação </param>
-		/// <returns>
-		/// True = Existe cotação na data
-		/// False = Não existe cotação na data
-		/// </returns>
-		/// <remarks></remarks>
-		public bool CotacaoDataExistir(DateTime pdtmData, string pstrTabela, string pstrCodigoAtivo)
-		{
-		    cRS objRS = new cRS(_conexao);
-
-            FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
-
-		    string strQuery = " select 1 " + " FROM " + pstrTabela + " WHERE Data = " + FuncoesBd.CampoFormatar(pdtmData) + " AND Codigo = " + FuncoesBd.CampoFormatar(pstrCodigoAtivo);
-
-			objRS.ExecuteQuery(strQuery);
-
-			bool functionReturnValue = objRS.DadosExistir;
 
 			objRS.Fechar();
 			return functionReturnValue;
@@ -895,165 +108,6 @@ namespace prmCotacao
 		}
 
 
-		/// <summary>
-		/// Atualiza as cotações em todas as datas em que há pregão em um determinado período.
-		/// Os arquivos já devem estar baixados
-		/// </summary>
-		/// <param name="pdtmDataInicial">Data inicial do cálculo</param>
-		/// <param name="pdtmDataFinal">Data final do cálculo</param>
-		/// <returns></returns>
-		/// <remarks></remarks>
-		public bool CotacaoHistoricaPeriodoAtualizar(DateTime pdtmDataInicial, DateTime pdtmDataFinal, bool pblnCalcularDados)
-		{
-
-			//inicializa a data com data inválida. Vai ser atribuido nesta variável o primeiro dia útil.
-			DateTime dtmDataInicialAux = Constantes.DataInvalida;
-
-			//indica se o período informado é uma única data
-			bool blnDataUnica = (pdtmDataInicial == pdtmDataFinal);
-
-			bool blnOK = true;
-
-		    DateTime dtmData_Ultima_Cotacao = Constantes.DataInvalida;
-
-			cCalculadorData objCalculadorData = new cCalculadorData(_conexao);
-
-			//enquanto a data inicial for menor que a data final.
-
-			while ((pdtmDataInicial <= pdtmDataFinal) && blnOK) {
-
-				if (objCalculadorData.DiaUtilVerificar(pdtmDataInicial)) {
-					if (dtmDataInicialAux == Constantes.DataInvalida) {
-						//se a data que será utilizada nos cálculos de IFR, MÉDIA, ETC 
-						//ainda não foi atribuida, atribui com o primeiro dia útil.
-						dtmDataInicialAux = pdtmDataInicial;
-					}
-
-					cEnum.enumRetorno intRetorno = CotacaoHistoricaDataAtualizar(pdtmDataInicial);
-
-
-					if (intRetorno == cEnum.enumRetorno.RetornoOK) {
-						dtmData_Ultima_Cotacao = pdtmDataInicial;
-
-
-					} else if (intRetorno == cEnum.enumRetorno.RetornoErro2) {
-						//não conseguiu baixar o arquivo na data.
-
-						//se é uma data única avisa para o usuário.
-						//se é mais de uma data não faz nada e busca a próxima data
-						if (blnDataUnica) {
-							blnOK = false;
-                            MessageBox.Show("Não foi possível baixar o arquivo de cotações na data " + pdtmDataInicial.ToString("dd/MM/yyyy") + ".", "Atualizar Cotações", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-						}
-
-
-					} else if (intRetorno == cEnum.enumRetorno.RetornoErro3) {
-						blnOK = false;
-						//já existe cotação na data
-                        MessageBox.Show("Já existe cotação na data " + pdtmDataInicial.ToString("dd/MM/yyyy") + ".", "Atualizar Cotações", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-
-
-
-					} else if (intRetorno == cEnum.enumRetorno.RetornoErroInesperado) {
-						//erro na transação. Sai fora porque ocorreu um erro
-						blnOK = false;
-                        MessageBox.Show("Ocorreram erros ao executar a operação.", "Atualizar Cotações", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-
-					}
-
-				}
-
-				//incrementa um dia na data inicial
-				pdtmDataInicial = pdtmDataInicial.AddDays(1);
-
-			}
-
-			//********MAURO, 11/05/2010
-			//Atualiza a tabela de resumo.
-
-			if (dtmData_Ultima_Cotacao != Constantes.DataInvalida) {
-				//se alguma cotação foi atualizada com sucesso atualiza a tabela de resumo.
-				TabelaResumoAtualizar(dtmData_Ultima_Cotacao,Constantes.DataInvalida);
-
-			}
-
-			if (blnOK) {
-				if (pblnCalcularDados) {
-					DadosRecalcular(true, true, true, true, true, true, true, true, true, true,
-					true, dtmDataInicialAux);
-				}
-
-			    MessageBox.Show("Atualização das cotações realizada com sucesso.", "Atualizar Cotações", MessageBoxButtons.OK,MessageBoxIcon.Exclamation);
-
-			}
-
-			return blnOK;
-
-		}
-
-		/// <summary>
-		/// Busca a data da cotação imediatamente anterior a uma data recebida por parâmetro
-		/// </summary>
-		/// <param name="pstrCodigo">Código do ativo</param>
-		/// <param name="pdtmDataBase">Data base utilizada para buscar a cotação anterior</param>
-		/// <param name="pstrTabela">
-		/// Cotacao
-		/// Cotacao_Semanal
-		/// </param>
-		/// <returns></returns>
-		/// <remarks></remarks>
-		private DateTime AtivoCotacaoAnteriorDataConsultar(string pstrCodigo, DateTime pdtmDataBase, string pstrTabela, Conexao pobjConexao = null)
-		{
-			DateTime functionReturnValue;
-
-			cRS objRsData;
-
-			if (pobjConexao == null) {
-				objRsData = new cRS(_conexao);
-			} else {
-				objRsData = new cRS(pobjConexao);
-			}
-
-			string strPeriodo;
-
-			pstrTabela = pstrTabela.ToUpper();
-
-			switch (pstrTabela)
-			{
-			    case "COTACAO":
-			        strPeriodo = "DIARIO";
-			        break;
-			    case "COTACAO_SEMANAL":
-			        strPeriodo = "SEMANAL";
-			        break;
-			    default:
-			        strPeriodo = String.Empty;
-			        break;
-            }
-
-            FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
-
-			objRsData.ExecuteQuery("SELECT Data_Anterior" + " FROM Cotacao_Anterior" + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " AND Data = " + FuncoesBd.CampoDateFormatar(pdtmDataBase) + " AND Periodo = " + FuncoesBd.CampoStringFormatar(strPeriodo));
-
-
-			if (objRsData.DadosExistir) {
-				functionReturnValue = Convert.ToDateTime(objRsData.Field("Data_Anterior"));
-
-
-			} else {
-				objRsData.Fechar();
-
-				//Busca a data imediatamente anterior que tem uma cotação para o ativo recebido por parâmetro.
-				objRsData.ExecuteQuery(" select max(Data) as Data " + " from " + pstrTabela + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data < " + FuncoesBd.CampoDateFormatar(pdtmDataBase));
-
-				functionReturnValue = Convert.ToDateTime(objRsData.Field("Data", Constantes.DataInvalida));
-
-			}
-
-			objRsData.Fechar();
-			return functionReturnValue;
-
-		}
 
 		/// <summary>
 		/// Calcula a cotação imediatamente posterior a uma data para um determinado ativo.
@@ -1104,10 +158,10 @@ namespace prmCotacao
 		{
 		    cRS objRsData = pobjConexao == null ? new cRS(_conexao) : new cRS(pobjConexao);
 
-            FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
+            FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
 			//Busca a data imediatamente anterior que tem uma cotação para o ativo recebido por parâmetro.
-			objRsData.ExecuteQuery(" select max(Data) as Data " + " from " + pstrTabela + " where Data < " + FuncoesBd.CampoDateFormatar(pdtmDataBase));
+			objRsData.ExecuteQuery(" select max(Data) as Data " + " from " + pstrTabela + " where Data < " + funcoesBd.CampoDateFormatar(pdtmDataBase));
 
 			DateTime functionReturnValue = Convert.ToDateTime(objRsData.Field("Data", Constantes.DataInvalida));
 
@@ -1218,15 +272,6 @@ namespace prmCotacao
 
 			}
 
-			//'*************************************************
-			//'UTILIZADO PARA DEBUG. COLOCAR O CÓDIGO DE UM PAPEL
-			//If strWhere <> "" Then strWhere = strWhere & " and "
-
-			//strWhere = strWhere _
-			//& " Codigo = " & FuncoesBD.CampoStringFormatar("GGBR4")
-			//'*************************************************
-
-
 			if (!string.IsNullOrEmpty(strWhere)) {
 				strQuery = strQuery + " where " + strWhere;
 
@@ -1264,7 +309,7 @@ namespace prmCotacao
 
 
 					if (pdtmDataInicial != Constantes.DataInvalida) {
-						dtmCalculoDataInicial = AtivoCotacaoAnteriorDataConsultar(strCodigo, pdtmDataInicial, "Cotacao", objConnAux);
+						dtmCalculoDataInicial = this._cotacaoData.AtivoCotacaoAnteriorDataConsultar(strCodigo, pdtmDataInicial, "Cotacao", objConnAux);
 
 					}
 
@@ -1443,7 +488,7 @@ namespace prmCotacao
 					//Quando o próximo registro tiver data diferente tem que atualizar a oscilação e a diferença
 					// da data atual, pois na próxima iteração os cálculos já serão referentes à outra data.
 
-					DateTime dtmCotacaoAnteriorData = AtivoCotacaoAnteriorDataConsultar(pstrCodigo, dtmDataAtual, "Cotacao", objConnAux);
+					DateTime dtmCotacaoAnteriorData = this._cotacaoData.AtivoCotacaoAnteriorDataConsultar(pstrCodigo, dtmDataAtual, "Cotacao", objConnAux);
 
 					//busca a cotação anterior do ativo.
 					string strQuery = " select ValorFechamento " + " from Cotacao " + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data = " + FuncoesBd.CampoDateFormatar(dtmCotacaoAnteriorData);
@@ -1490,766 +535,6 @@ namespace prmCotacao
 		}
 
 		/// <summary>
-		/// Verifica se o número de períodos em um determinado intervalo de datas em que há cotações é o número de períodos que se deseja
-		/// </summary>
-		/// <param name="pstrCodigo">Código do ativo</param>
-		/// <param name="pdtmDataInicial">data inicial do intervalo</param>
-		/// <param name="pdtmDataFinal">data final do intervalo</param>
-		/// <param name="pintNumPeriodos">número de períodos do intervalo que devem ter cotações</param>
-		/// <param name="pstrTabela">
-		/// Cotacao
-		/// Cotacao_Semanal
-		/// </param>
-		/// <returns>
-		/// TRUE - O número de cotações é igual ao número esperado
-		/// FALSE - O número de cotações é diferente do número esperado.
-		/// </returns>
-		/// <remarks></remarks>
-		private bool IntervaloNumPeriodosVerificar(string pstrCodigo, DateTime pdtmDataInicial, DateTime pdtmDataFinal, int pintNumPeriodos, string pstrTabela, int pintNumPeriodosTabelaDados = -1, Conexao pobjConexao = null)
-		{
-		    cRS objRs = pobjConexao == null ? new cRS(_conexao) : new cRS(pobjConexao);
-
-            FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
-
-			//calcula o número de períodos em que há cotações para o papel no intervalo de datas recebido.
-			string strQuery = " Select count(1) as Contador " + " from " + pstrTabela + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBd.CampoDateFormatar(pdtmDataInicial) + " and Data <= " + FuncoesBd.CampoDateFormatar(pdtmDataFinal);
-
-			if (pintNumPeriodosTabelaDados != -1) {
-				strQuery = strQuery + " and NumPeriodos = " + pintNumPeriodosTabelaDados.ToString();
-			}
-
-			objRs.ExecuteQuery(strQuery);
-
-			bool functionReturnValue = Convert.ToInt32(objRs.Field("Contador", "0")) == pintNumPeriodos;
-
-			objRs.Fechar();
-			return functionReturnValue;
-
-		}
-
-		/// <summary>
-		/// Para um determinado ativo retorna a data inicial e a data final em que existem os primeiros
-		/// "pintNumPeriodos" com cotação.
-		/// </summary>
-		/// <param name="pstrCodigo">Código do ativo</param>
-		/// <param name="pintNumPeriodos">Número de períodos desejado</param>
-		/// <param name="pdtmDataInicialRet">Retorna a data inicial do número de períodos desejado</param>
-		/// <param name="pdtmDataFinalRet">Retorna a data final do número de períodos desejado</param>
-		/// <returns>    
-		/// TRUE - Foi possível encontrar o número de períodos desejados
-		/// FALSE - Não foi possível encontrar o número de períodos desejados 
-		/// <param name="pblnPrimeiraDataConsiderar">Indica se deve ser considerada a primeira cotação. 
-		/// Em cálculos em que é necessário utilizar a Oscilação ou a Diferença só pode ser utilizado a partir 
-		/// do segundo período, pois é só a partir do segundo período que esta informaçãoexiste.
-		/// TRUE - considera a primeira data
-		/// FALSE - não considera a primeira data.
-		/// </param>
-		/// <param name="pstrTabela">
-		/// Cotacao
-		/// Cotacao_Semanal
-		/// </param>
-		/// <param name="pintNumPeriodoTabelaDados"></param>
-		/// Quando pstrTabelaDados for uma tabela de IFR, indica qual o período do IFR que deve ser utilizado
-		/// para calcular a média.
-		/// </returns>
-		/// <remarks></remarks>
-		private bool NumPeriodosDataInicialCalcular(string pstrCodigo, int pintNumPeriodos, bool pblnPrimeiraDataConsiderar, ref DateTime pdtmDataInicialRet, ref DateTime pdtmDataFinalRet, string pstrTabela, int pintNumPeriodosTabelaDados = -1, Conexao pobjConexao = null)
-		{
-		    string strQuery;
-
-			cRS objRS = pobjConexao == null ? new cRS(_conexao) : new cRS(pobjConexao);
-
-            FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
-
-			string strCodigoFormatado = FuncoesBd.CampoStringFormatar(pstrCodigo);
-
-			int intNumPeriodosFinal;
-
-		    string subQuery;
-
-			if (pblnPrimeiraDataConsiderar) {
-				//se é para considerar a primeira cotação, para calcular a data inicial 
-				//basta pegar um min(Data) das cotações do papel
-
-				strQuery = " select min(Data) as DataInicial " + " from " + pstrTabela + " where Codigo = " + strCodigoFormatado;
-
-
-				if (pintNumPeriodosTabelaDados != -1) {
-					strQuery = strQuery + " and NumPeriodos = " + pintNumPeriodosTabelaDados.ToString();
-
-				}
-
-				objRS.ExecuteQuery(strQuery);
-
-				pdtmDataInicialRet = Convert.ToDateTime(objRS.Field("DataInicial", Constantes.DataInvalida));
-
-				//Se é para considerar a primeira data a última cotação que deve ser buscada 
-				//é a cotação do número de periodos
-				intNumPeriodosFinal = pintNumPeriodos;
-
-
-			} else {
-				//se não é para considerar a primeira data, pega a segunda data.
-
-                subQuery = " select top 2 Data " + " from " + pstrTabela + " where Codigo = " + strCodigoFormatado;
-
-				if (pintNumPeriodosTabelaDados != -1) {
-					subQuery += " and NumPeriodos = " + pintNumPeriodosTabelaDados.ToString();
-
-				}
-
-				subQuery += " order by Data " ;
-
-                strQuery = " select max(Data) as DataInicial " + " from " + FuncoesBd.FormataSubSelect(subQuery) ;
-
-				objRS.ExecuteQuery(strQuery);
-
-				pdtmDataInicialRet = Convert.ToDateTime(objRS.Field("DataInicial", Constantes.DataInvalida));
-
-				//Se não é para considerar a primeira data a última cotação que deve ser buscada 
-				//é a cotação do número de periodos + 1
-				intNumPeriodosFinal = pintNumPeriodos + 1;
-
-			}
-
-			objRS.Fechar();
-
-			if (pdtmDataInicialRet == Constantes.DataInvalida) {
-				//se não encontrou data inicial significa que não existem cotações para o papel
-				return false;
-
-			}
-
-			//para obter a data final da cotação que contém o número do periodos desejados tem que fazer os seguintes passos:
-			//1) Ordenar as cotações em ordem crescente
-			//2) Pegar as "pintNumPeriodos" primeiras
-			//3) Pegar a data máxima entre "pintNumPeriodos" primeiras
-			subQuery = " select top " + intNumPeriodosFinal + " Data " +
-            " from " + pstrTabela + " where Codigo = " + strCodigoFormatado;
-
-
-			if (pintNumPeriodosTabelaDados != -1) {
-				subQuery += " and NumPeriodos = " + pintNumPeriodosTabelaDados.ToString();
-
-			}
-
-			subQuery += " order by Data ";
-
-            strQuery = " select max(Data) as DataMaxima FROM " + FuncoesBd.FormataSubSelect(subQuery);
-
-			objRS.ExecuteQuery(strQuery);
-
-			pdtmDataFinalRet = Convert.ToDateTime(objRS.Field("DataMaxima", Constantes.DataInvalida));
-
-            objRS.Fechar();
-
-			//retorna resultado da função que verifica se o intervalo realmente tem o número de períodos informado.
-			bool functionReturnValue = IntervaloNumPeriodosVerificar(pstrCodigo, pdtmDataInicialRet, pdtmDataFinalRet, pintNumPeriodos, pstrTabela, pintNumPeriodosTabelaDados, objRS.Conexao);
-
-			return functionReturnValue;
-
-		}
-
-		public decimal IFRCalcular(string pstrCodigo, DateTime pdtmDataInicial, DateTime pdtmDataFinal, int pintNumPeriodos, string pstrTabela, 
-            out double pdblMediaAltaAnteriorRet, out double pdblMediaBaixaAnteriorRet, Conexao pobjConexao = null)
-		{
-		    cRS objRS = pobjConexao == null ? new cRS(_conexao) : new cRS(pobjConexao);
-
-			cRSList objRSListSplit = null;
-
-		    //contém a razão acumulada de todos os splits do período.
-			double dblSplitAcumulado = 1;
-			double dblDiferencaPositivaAcumulada = 0;
-			double dblDiferencaNegativaAcumulada = 0;
-
-		    double dblIFR;
-
-			cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(objRS.Conexao);
-
-			//busca os splits do ativo no período, ordenado pelo último split.
-			//Tem que começar a buscar um dia após 
-			bool blnSplitExistir = objCarregadorSplit.SplitConsultar(pstrCodigo, pdtmDataInicial.AddDays(1), "D", ref objRSListSplit, pdtmDataFinal);
-
-
-			if (blnSplitExistir) {
-				DateTime dtmDataFinalSplit = pdtmDataFinal;
-
-				//quando tem script todas as cotaçoes tem que ser convertidas de acordo com o split
-
-			    DateTime dtmDataInicialSplit;
-			    while (!objRSListSplit.EOF) {
-
-					if (Convert.ToDateTime(objRSListSplit.Field("Data")) != Convert.ToDateTime(objRSListSplit.NextField("Data", Constantes.DataInvalida))) {
-						dtmDataInicialSplit = pstrTabela.ToUpper() == "COTACAO" ? Convert.ToDateTime(objRSListSplit.Field("Data")) : _cotacaoData.PrimeiraSemanaDataCalcular(Convert.ToDateTime(objRSListSplit.Field("Data")));
-
-						//acumula as diferenças positivas entre as datas do split multiplicando pelo split acumulado
-						dblDiferencaPositivaAcumulada = dblDiferencaPositivaAcumulada + (double)  CotacaoPeriodoDiferencaSomar(pstrCodigo, dtmDataInicialSplit, dtmDataFinalSplit, "P", pstrTabela) * dblSplitAcumulado;
-
-						//acumula as diferenças positivas entre as datas do split multiplicando pelo split acumulado
-						dblDiferencaNegativaAcumulada = dblDiferencaNegativaAcumulada + (double) CotacaoPeriodoDiferencaSomar(pstrCodigo, dtmDataInicialSplit, dtmDataFinalSplit, "N", pstrTabela) * dblSplitAcumulado;
-
-						//a data final para o próximo período e um dia antes ao periodo anterior
-						dtmDataFinalSplit = dtmDataInicialSplit.AddDays(-1);
-
-					}
-
-					//multiplica o split anterior pelo split da data para o próximo periodo
-					dblSplitAcumulado = dblSplitAcumulado * Convert.ToDouble(objRSListSplit.Field("Razao"));
-
-					objRSListSplit.MoveNext();
-
-				}
-
-				//após o loop de splits ainda tem que somar o acumulado entre a data inicial e o primeiro split.
-				dtmDataInicialSplit = pdtmDataInicial;
-
-				//acumula as diferenças positivas entre as datas do split multiplicando pelo split acumulado
-				dblDiferencaPositivaAcumulada = dblDiferencaPositivaAcumulada + (double) CotacaoPeriodoDiferencaSomar(pstrCodigo, dtmDataInicialSplit, dtmDataFinalSplit, "P", pstrTabela) * dblSplitAcumulado;
-
-				//acumula as diferenças positivas entre as datas do split multiplicando pelo split acumulado
-				dblDiferencaNegativaAcumulada = dblDiferencaNegativaAcumulada + (double) CotacaoPeriodoDiferencaSomar(pstrCodigo, dtmDataInicialSplit, dtmDataFinalSplit, "N", pstrTabela) * dblSplitAcumulado;
-
-				//calcula a média das diferenças acumuladas
-				pdblMediaAltaAnteriorRet = dblDiferencaPositivaAcumulada / pintNumPeriodos;
-				pdblMediaBaixaAnteriorRet = dblDiferencaNegativaAcumulada / pintNumPeriodos;
-
-
-			} else {
-				//SE NÃO TEM SPLIT FAZ O CÁLCULO NORMAL.
-                FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
-
-				//calcula a média do valor de fechamento nos ultimos pintNumPeriodos com cotação positiva
-				string strQuery = " select ROUND(SUM(Diferenca)/" + pintNumPeriodos + ",6) as MediaPositiva " + " from " + pstrTabela + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBd.CampoDateFormatar(pdtmDataInicial) + " and Data <= " + FuncoesBd.CampoDateFormatar(pdtmDataFinal) + " and Diferenca > 0 ";
-
-				objRS.ExecuteQuery(strQuery);
-
-				pdblMediaAltaAnteriorRet = Convert.ToDouble(objRS.Field("MediaPositiva", 0));
-
-				objRS.Fechar();
-
-				//calcula a média do valor de fechamento nos ultimos pintNumPeriodos com cotação negativa.
-				//ANTES DE SOMAR CONVERTE O VALOR PARA O VALOR ABSOLUTO, POIS A DIFERENÇA NESTES CASOS ESTÁ COM SINAL NEGATIVO
-				strQuery = " select ROUND(SUM(ABS(Diferenca)) / " + pintNumPeriodos + ",6) as MediaNegativa " + " from " + pstrTabela + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBd.CampoDateFormatar(pdtmDataInicial) + " and Data <= " + FuncoesBd.CampoDateFormatar(pdtmDataFinal) + " and Diferenca < 0 ";
-
-				objRS.ExecuteQuery(strQuery);
-
-				pdblMediaBaixaAnteriorRet = Convert.ToDouble(objRS.Field("MediaNegativa", 0));
-
-				objRS.Fechar();
-
-			}
-
-			//calcula o INDICE DE FORÇA RELATIVA
-			//IFR = 100 - (100 / (1 + U / D))
-			//U = média das cotações dos últimos N dias em que a cotação subiu
-			//D = média das cotações dos últimos N dias em que a cotação desceu 
-
-
-			if (pdblMediaBaixaAnteriorRet != 0) {
-				dblIFR = 100 - (100 / (1 + pdblMediaAltaAnteriorRet / pdblMediaBaixaAnteriorRet));
-			} else {
-				dblIFR = 100;
-			}
-
-            return Convert.ToDecimal(dblIFR);
-
-		}
-		/// <summary>
-		/// Calcula o IFR para um determinado número de períodos tendo a informação de médias do último
-		/// período e uma diferença entre de cotação em relação ao último período.
-		/// </summary>
-		/// <param name="pintNumPeriodos">Número de períodos utilizados no cálculo</param>
-		/// <param name="pdblMediaAltaAnterior">Média de altas dos últimos pintNumPeriodos</param>
-		/// <param name="pdblMediaBaixaAnterior">Média de baixas dos últimos pintNumPeriodos</param>
-		/// <param name="pdecDiferenca">diferença entre o período que será calculado o IFR e o período imediatamente anterior</param>
-		/// <param name="pdblMediaAltaAtualRet">Retorna a média de alta já considerando o período para o qual o IFR está sendo calculado</param>
-		/// <param name="pdblMediaBaixaAtualRet">Retorna a média de baixa já considerando o período para o qual o IFR está sendo calculado</param>
-		/// <returns>O indice de força relativa calculado</returns>
-		/// <remarks></remarks>
-		private double IFRCalcular(int pintNumPeriodos, double pdblMediaAltaAnterior, double pdblMediaBaixaAnterior, decimal pdecDiferenca, ref double pdblMediaAltaAtualRet, ref double pdblMediaBaixaAtualRet)
-		{
-
-			double dblIFR;
-
-			//Mup = ((Mup anterior)*(pd-1)+M) / pd;
-			pdblMediaAltaAtualRet = (pdblMediaAltaAnterior * (pintNumPeriodos - 1) + Convert.ToDouble((pdecDiferenca > 0 ? pdecDiferenca : 0))) / pintNumPeriodos;
-
-			//Mdown = ((Mdown anterior)*(pd-1)+M) / pd;
-			pdblMediaBaixaAtualRet = (pdblMediaBaixaAnterior * (pintNumPeriodos - 1) + Convert.ToDouble((pdecDiferenca < 0 ? Math.Abs(pdecDiferenca) : 0))) / pintNumPeriodos;
-
-			//calcula o INDICE DE FORÇA RELATIVA
-			//IFR = 100 - (100 / (1 + U / D))
-			//U = média das cotações dos últimos N dias em que a cotação subiu
-			//D = média das cotações dos últimos N dias em que a cotação desceu 
-
-
-			if (pdblMediaBaixaAtualRet != 0) {
-				dblIFR = 100 - (100 / (1 + pdblMediaAltaAtualRet / pdblMediaBaixaAtualRet));
-			} else {
-				//se a média de baixa está zerada, ou seja, não tem cotação em baixa,
-				//o IFR é 100.
-				dblIFR = 100;
-			}
-
-			return dblIFR;
-
-		}
-
-		/// <summary>
-		/// Calcula o IFR de 14 períodos para uma diferença recebida por parâmetro em relação 
-		/// ao último IFR calculado
-		/// </summary>
-		/// <param name="pstrCodigo"></param>
-		/// <param name="pstrTabela"></param>
-		/// <param name="pdecDiferenca"></param>
-		/// <returns></returns>
-		/// <remarks></remarks>
-
-		public double IFRSimuladoCalcular(string pstrCodigo, string pstrTabela, decimal pdecDiferenca)
-		{
-
-			cRS objRS = new cRS(_conexao);
-
-			cCalculadorData objCalculadorData = new cCalculadorData(this._conexao);
-
-			DateTime dtmDataMaxima = objCalculadorData.CotacaoDataMaximaConsultar(pstrCodigo, pstrTabela);
-
-		    string strTabelaIFR = pstrTabela.ToUpper() == "COTACAO" ? "IFR_DIARIO" : "IFR_SEMANAL";
-
-            FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
-
-			objRS.ExecuteQuery(" select MediaBaixa, MediaAlta " + " from " + strTabelaIFR + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data = " + funcoesBd.CampoDateFormatar(dtmDataMaxima) + " and NumPeriodos = 14 ");
-
-		    double pdblMediaBaixaAtualRet = 0.0;
-		    double pdblMediaAltaAtualRet = 0.0;
-		    double dblIFR = IFRCalcular(14, Convert.ToDouble(objRS.Field("MediaAlta")), Convert.ToDouble(objRS.Field("MediaBaixa")), pdecDiferenca, ref pdblMediaAltaAtualRet, ref pdblMediaBaixaAtualRet);
-
-			objRS.Fechar();
-
-			return dblIFR;
-
-		}
-
-	    /// <summary>
-	    /// Calcula o IFR a partir de uma data base até a cotação mais existente
-	    /// </summary>
-	    /// <param name="pstrCodigo">Código do ativo</param>
-	    /// <param name="pdtmDataBase">data inicial utilizada no cálculo</param>
-	    /// <param name="pintNumPeriodos">número de períodos utilizado no cálculo do IFR</param>
-	    /// <param name="pstrTabela">
-	    /// Cotacao
-	    /// Cotacao_Semanal
-	    /// </param>
-	    /// <param name="pdtmCotacaoAnteriorData"></param>
-	    /// <returns>
-	    /// RETORNOOK = OPERAÇÃO REALIZADA COM SUCESSO
-	    /// RETORNOERROINESPERADO = ALGUM ERRO DE BANCO DE DADOS OU PROGRAMAÇÃO
-	    /// RETORNOERRO2 = NÃO EXISTE UM NÚMERO SUFICIENTES DE PERÍODO PARA FAZER O CÁLCULO.
-	    /// </returns>
-	    /// <remarks></remarks>
-	    public cEnum.enumRetorno IFRRetroativoUnitCalcular(string pstrCodigo, DateTime pdtmDataBase, int pintNumPeriodos, string pstrTabela, DateTime pdtmCotacaoAnteriorData)
-		{
-	        Conexao objConnAux = new Conexao();
-
-			cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(objConnAux);
-
-			cCommand objCommand = new cCommand(objConnAux);
-
-			cRS objRS = new cRS(objConnAux);
-			cRSList objRSSplit = null;
-
-		    double dblIFR;
-			double dblMediaAltaAnterior = 0;
-			double dblMediaBaixaAnterior = 0;
-
-			double dblMediaAlta = 0;
-			double dblMediaBaixa = 0;
-
-			DateTime dtmDataInicial = default(DateTime);
-			DateTime dtmDataFinal = default(DateTime);
-
-		    bool blnPeriodoCalcular = false;
-
-			//tabela onde devem ser buscados / armazenados os dados do IFR
-	        pstrTabela = pstrTabela.ToUpper();
-
-		    string strTabelaIfr = pstrTabela == "COTACAO" ? "IFR_DIARIO" : "IFR_SEMANAL";
-
-			//**********************inicia transação
-			objCommand.BeginTrans();
-
-			DateTime dtmCotacaoAnteriorData = pdtmCotacaoAnteriorData;
-
-            FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
-
-			if (dtmCotacaoAnteriorData != Constantes.DataInvalida) {
-				//se tem busca as médias do IFR na data
-				objRS.ExecuteQuery(" select MediaAlta, MediaBaixa " + " from " + strTabelaIfr + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data = " + FuncoesBd.CampoDateFormatar(dtmCotacaoAnteriorData) + " AND NumPeriodos = " + pintNumPeriodos.ToString());
-
-				//verifica se os campos estão preenchidos e estão com valor maior do que zero.
-
-				if (Convert.ToDouble(objRS.Field("MediaAlta", 0)) > 0 && Convert.ToDouble(objRS.Field("MediaBaixa", 0)) > 0) {
-					dblMediaAltaAnterior = Convert.ToDouble(objRS.Field("MediaAlta"));
-					dblMediaBaixaAnterior = Convert.ToDouble(objRS.Field("MediaBaixa"));
-				} else {
-					//se tem cotação mas não tem as médias calculadas, tem que calcular o período inicial.
-					blnPeriodoCalcular = true;
-				}
-
-				objRS.Fechar();
-
-
-			} else {
-				//se não encontrou cotação tem que calcular o período inicial
-				blnPeriodoCalcular = true;
-
-			}
-
-
-			if (blnPeriodoCalcular) {
-				//verifica se existe o número de períodos necessários para fazer pelo menos um cálculo e retorna o
-				//periodo para calcular o IFR inicial.
-				//Para calcular o periodo inicial não pode considerar o primeiro dia, pois o primeiro dia não tem a diferença.
-
-				if (NumPeriodosDataInicialCalcular(pstrCodigo, pintNumPeriodos, false, ref dtmDataInicial, ref dtmDataFinal, pstrTabela,-1 , objConnAux)) {
-					//calcula o IFR inicial no período retornado pela função
-					dblIFR = Convert.ToDouble( IFRCalcular(pstrCodigo, dtmDataInicial, dtmDataFinal, pintNumPeriodos, pstrTabela, out dblMediaAltaAnterior, out dblMediaBaixaAnterior, objConnAux));
-
-					//tem que excluir os registros caso já existam
-					objCommand.Execute(" DELETE " + " FROM " + strTabelaIfr + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBd.CampoDateFormatar(dtmDataFinal) + " and NumPeriodos = " + pintNumPeriodos.ToString());
-
-					//atualiza o IFR na tabela 
-					IFRAtualizar(pstrCodigo, dtmDataFinal, pintNumPeriodos, strTabelaIfr, dblIFR, dblMediaAltaAnterior, dblMediaBaixaAnterior, objConnAux);
-
-					//neste caso a data base tem que ser um dia posterior à data final da data calculada
-					//pdtmDataBase = DateAdd(DateInterval.Day, 1, dtmDataFinal)
-					var objCalculadorData = new cCalculadorData(objConnAux);
-					pdtmDataBase = objCalculadorData.CalcularDataProximoPeriodo(pstrCodigo, dtmDataFinal, pstrTabela);
-
-
-				} else {
-
-					//se não encontrou um intervalo de datas que também tenha o mesmo número de periodos 
-					//sai da função retornando o erro.
-					//Antes de sair tem que fazer rollback para não deixar a transação aberta.
-					objCommand.RollBackTrans();
-
-					return cEnum.enumRetorno.RetornoErro2;
-				}
-
-			}
-
-			if (pdtmDataBase != Constantes.DataInvalida) {
-
-				if (!blnPeriodoCalcular) {
-					//tem que excluir os registros caso já existam e não tenha sido necessário calcular o período.
-					//se o período foi calculado, os registros já foram excluidos
-					objCommand.Execute(" DELETE " + " FROM " + strTabelaIfr + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBd.CampoDateFormatar(pdtmDataBase) + " and NumPeriodos = " + pintNumPeriodos.ToString());
-
-				}
-
-                //busca todos os splits a partir da data base em ordem ascendente
-                objCarregadorSplit.SplitConsultar(pstrCodigo, pdtmDataBase, "A", ref objRSSplit, Constantes.DataInvalida);
-
-				//busca todas as cotações a partir da data base. Busca a diferença, pois o IFR é calculado em cima deste valor.
-
-				string strQuery = " select Data, Diferenca";
-
-				if (pstrTabela == "COTACAO_SEMANAL") {
-					//SE É COTAÇÃO SEMANAL TEM QUE BUSCAR A DATA FINAL PARA USAR NO CÁLCULO DOS SPLITS
-					strQuery = strQuery + ", DataFinal";
-
-				}
-
-				strQuery = strQuery + " from " + pstrTabela + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBd.CampoDateFormatar(pdtmDataBase) + " order by Data ";
-
-				objRS.ExecuteQuery(strQuery);
-
-			    var cotacoes = new List<CotacaoDiferencaDto>();
-
-			    while (!objRS.EOF)
-			    {
-			        var cotacaoDiferencaDto = new CotacaoDiferencaDto
-			        {
-			            DataInicial = Convert.ToDateTime(objRS.Field("Data")),
-			            Diferenca = Convert.ToDecimal(objRS.Field("Diferenca"))
-			        };
-			        if (pstrTabela == "COTACAO_SEMANAL")
-			        {
-			            cotacaoDiferencaDto.DataFinal = Convert.ToDateTime(objRS.Field("DataFinal")) ;
-			        }
-                    cotacoes.Add(cotacaoDiferencaDto);
-
-			        objRS.MoveNext();
-			    }
-                objRS.Fechar();
-				//loop para calcular a média exponencial em todas as datas subsequentes
-
-				foreach (var cotacaoDiferencaDto in cotacoes) {
-
-					if (!objRSSplit.EOF) {
-						bool blnContinuarLoop;
-
-
-						if (pstrTabela == "COTACAO") {
-							//********TRATAMENTO PARA A COTAÇÃO DIÁRIA
-
-							blnContinuarLoop = (cotacaoDiferencaDto.DataInicial == Convert.ToDateTime(objRSSplit.Field("Data")));
-
-
-							while (blnContinuarLoop) {
-								//se a data do split é a mesma data do cálculo da média
-
-								//multiplica a média anterior pelo split
-								dblMediaAltaAnterior = dblMediaAltaAnterior * Convert.ToDouble(objRSSplit.Field("Razao"));
-								dblMediaBaixaAnterior = dblMediaBaixaAnterior * Convert.ToDouble(objRSSplit.Field("Razao"));
-
-								//passa para o próximo registro
-								objRSSplit.MoveNext();
-
-								if (objRSSplit.EOF) {
-									blnContinuarLoop = false;
-								} else {
-
-									if (cotacaoDiferencaDto.DataInicial != Convert.ToDateTime(objRSSplit.Field("Data"))) {
-										blnContinuarLoop = false;
-
-									}
-
-								}
-
-							}
-
-						} else {
-							//para aplicar o split na cotação semanal, a data do split tem que estar entre 
-							//o primeiro e ó último dia da semana.
-
-							blnContinuarLoop = (Convert.ToDateTime(objRSSplit.Field("Data")) >= cotacaoDiferencaDto.DataInicial && Convert.ToDateTime(objRSSplit.Field("Data")) <= cotacaoDiferencaDto.DataFinal);
-
-							while (blnContinuarLoop) {
-								//multiplica a média anterior pelo split
-								dblMediaAltaAnterior = dblMediaAltaAnterior * Convert.ToDouble(objRSSplit.Field("Razao"));
-								dblMediaBaixaAnterior = dblMediaBaixaAnterior * Convert.ToDouble(objRSSplit.Field("Razao"));
-
-								//passa para o próximo registro
-								objRSSplit.MoveNext();
-
-								if (objRSSplit.EOF) {
-									blnContinuarLoop = false;
-
-								} else {
-									blnContinuarLoop = (Convert.ToDateTime(objRSSplit.Field("Data")) >= cotacaoDiferencaDto.DataInicial && Convert.ToDateTime(objRSSplit.Field("Data")) <= cotacaoDiferencaDto.DataFinal);
-
-								}
-
-							}
-
-						}
-
-					}
-
-					//calcula o IFR
-					dblIFR = IFRCalcular(pintNumPeriodos, dblMediaAltaAnterior, dblMediaBaixaAnterior, cotacaoDiferencaDto.Diferenca, ref dblMediaAlta, ref dblMediaBaixa);
-
-					//atualiza na tabela o IFR e as médias dos períodos de alta e baixa
-					IFRAtualizar(pstrCodigo, cotacaoDiferencaDto.DataInicial, pintNumPeriodos, strTabelaIfr, dblIFR, dblMediaAlta, dblMediaBaixa, objConnAux);
-
-					//atribui a média calculada como média anterior para a próxima iteração;
-					dblMediaAltaAnterior = dblMediaAlta;
-					dblMediaBaixaAnterior = dblMediaBaixa;
-
-				}
-
-
-			}
-			// pdtmDataBase <> DataInvalida Then
-
-			//******************ENCERRA TRANSAÇÃO
-			objCommand.CommitTrans();
-
-			//retorna de acordo com o status da transação.
-			cEnum.enumRetorno functionReturnValue = objCommand.TransStatus ? cEnum.enumRetorno.RetornoOK : cEnum.enumRetorno.RetornoErroInesperado;
-
-		    objConnAux.FecharConexao();
-
-			return functionReturnValue;
-
-		}
-
-	    /// <summary>
-	    /// Calcula o IFR para todos os ativos a partir da data inicial
-	    /// </summary>
-	    /// <param name="pcolPeriodos">Collection contendo o número de períodos para os quais deve ser feito o cálculo</param>
-	    /// <param name="pPeriodicidade"></param>
-	    /// <param name="pdtmDataInicial"></param>
-	    /// <param name="pstrAtivos"></param>
-	    /// <returns>
-	    /// TRUE - Cálculo correto para todos os ativos
-	    /// FALSE - Cálculo errado para pelo menos um dos ativos
-	    /// </returns>
-	    /// <remarks></remarks>
-	    public bool IFRGeralCalcular(IList<int> pcolPeriodos, cEnum.Periodicidade pPeriodicidade, DateTime pdtmDataInicial, string pstrAtivos = "")
-		{
-			bool functionReturnValue = false;
-
-			//**********PARA BUSCAR OS ATIVOS NÃO PODE USAR A MESMA CONEXÃO DA TRANSAÇÃO,
-			//**********POIS SE A TRANSAÇÃO FIZER ROLLBACK PARA UM ATIVO O RECORDSET NÃO IRÁ FUNCIONAR MAIS.
-			cRS objRSAtivo = new cRS();
-
-			//Dim objRSCotacao As cRS = New cRS(objConexao)
-
-		    bool blnRetorno = true;
-
-		    string strWhere = String.Empty;
-
-			string strLog = "";
-
-			//indica o nome da tabela de cotações, de acordo com a duração do período das cotações
-			string strTabela = null;
-
-			switch (pPeriodicidade)
-			{
-			    case cEnum.Periodicidade.Diario:
-			        strTabela = "Cotacao";
-			        break;
-			    case cEnum.Periodicidade.Semanal:
-			        strTabela = "Cotacao_Semanal";
-			        break;
-			}
-
-			//busca todos os ativos do período e a menor data para ser utilizada como data base.
-			string strQuery = " select Codigo, min(Data) as DataInicial " + " from " + strTabela;
-
-            FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
-
-			if (pdtmDataInicial != Constantes.DataInvalida) {
-				if (!string.IsNullOrEmpty(strWhere))
-					strWhere = strWhere + " and ";
-
-
-				if (pPeriodicidade == cEnum.Periodicidade.Diario) {
-					//se passou uma data inicial busca as cotações a partir de uma data.
-					strWhere = strWhere + " Data >= " + funcoesBd.CampoDateFormatar(pdtmDataInicial);
-
-
-				} else if (pPeriodicidade == cEnum.Periodicidade.Semanal) {
-					//se é uma cotação semanal, a data recebida por parâmetro tem que estar entre 
-					//a data inicial e a data final da semana,
-					//ou então tem que estar na próxima semana, caso a data informada seja uma data de final de 
-					//semana ou feriado que esteja ligado com final de semana 
-					strWhere = strWhere + " ((Data <= " + funcoesBd.CampoDateFormatar(pdtmDataInicial) + " and DataFinal >= " + funcoesBd.CampoDateFormatar(pdtmDataInicial) + ")" + " or Data > " + funcoesBd.CampoDateFormatar(pdtmDataInicial) + ")";
-
-				}
-
-			}
-
-
-			if (pstrAtivos != String.Empty) {
-				if (!string.IsNullOrEmpty(strWhere))
-					strWhere = strWhere + " And ";
-
-
-			    if (_conexao.BancoDeDados == cEnum.BancoDeDados.SqlServer)
-			    {
-			        //remove sustenido do inicio
-			        string ativosAux = pstrAtivos.Remove(0, 1);
-
-			        //remove ultimo sustenido
-			        ativosAux = ativosAux.Remove(ativosAux.Length - 1);
-
-			        //faz split pelo sustenido
-			        string[] ativosSelecionados = ativosAux.Split('#');
-
-			        strWhere += "Codigo IN (" + string.Join(", ", ativosSelecionados.Select(funcoesBd.CampoFormatar)) + ")";
-
-			    }
-			    else
-			    {
-
-			        string sustenidoFormatado = FuncoesBd.CampoStringFormatar("#");
-			        strWhere += funcoesBd.IndiceDaSubString(funcoesBd.ConcatenarStrings(new[] {sustenidoFormatado, "Codigo", sustenidoFormatado}),FuncoesBd.CampoStringFormatar(pstrAtivos)) + " > 0";
-			    }
-
-			}
-
-
-			//'*************************************************
-			//'UTILIZADO PARA DEBUG. COLOCAR O CÓDIGO DE UM PAPEL
-			//If strWhere <> "" Then strWhere = strWhere & " and "
-
-			//strWhere = strWhere _
-			//& " Codigo = " & FuncoesBD.CampoStringFormatar("GGBR4")
-			//'*************************************************
-
-
-			if (!string.IsNullOrEmpty(strWhere)) {
-				strQuery = strQuery + " where " + strWhere;
-
-			}
-
-			strQuery = strQuery + " group by Codigo ";
-
-			objRSAtivo.ExecuteQuery(strQuery);
-
-		    var ativos = new List<CotacaoDataDto>();
-
-		    while ((!objRSAtivo.EOF))
-		    {
-                ativos.Add(new CotacaoDataDto { 
-                    Codigo = (string)objRSAtivo.Field("Codigo"), 
-                    Data = Convert.ToDateTime(objRSAtivo.Field("DataInicial")) 
-                });
-                objRSAtivo.MoveNext();
-		    }
-
-            objRSAtivo.Fechar();
-
-		    foreach (var cotacaoDataDto in ativos) {
-
-				DateTime dtmCotacaoAnteriorData = AtivoCotacaoAnteriorDataConsultar(cotacaoDataDto.Codigo, cotacaoDataDto.Data, strTabela);
-
-				foreach (int intNumPeriodos in pcolPeriodos) {
-					cEnum.enumRetorno intRetorno = IFRRetroativoUnitCalcular(cotacaoDataDto.Codigo, cotacaoDataDto.Data, intNumPeriodos, strTabela, dtmCotacaoAnteriorData);
-
-					if (intRetorno != cEnum.enumRetorno.RetornoOK) {
-						blnRetorno = false;
-
-						if (!string.IsNullOrEmpty(strLog)) {
-							//coloca um ENTER PARA QUEBRAR A LINHA
-							strLog = strLog + Environment.NewLine;
-						}
-						strLog = strLog + " Código = " + cotacaoDataDto.Codigo + " - Período: " + intNumPeriodos + " - Data Inicial: " + cotacaoDataDto.Data;
-					}
-				}
-			}
-
-
-			if (!string.IsNullOrEmpty(strLog)) {
-				string strArquivoNome = null;
-
-				if (pPeriodicidade == cEnum.Periodicidade.Diario) {
-					strArquivoNome = "Log_IFR_Diario.txt";
-				} else if (pPeriodicidade == cEnum.Periodicidade.Semanal) {
-					strArquivoNome = "Log_IFR_Semanal.txt";
-				}
-
-			    var fileService = new FileService();
-                fileService.Save(cBuscarConfiguracao.ObtemCaminhoPadrao() + strArquivoNome, strLog);
-
-			}
-
-
-			if (objRSAtivo.QueryStatus) {
-				functionReturnValue = blnRetorno;
-			}
-
-			return functionReturnValue;
-
-		}
-
-
-
-		/// <summary>
 		/// Soma o campo de uma determinada tabela no período indicado.
 		/// </summary>
         /// <param name="pstrCodigo"></param>
@@ -2263,56 +548,11 @@ namespace prmCotacao
 		{
 		    cRS objRS = new cRS(_conexao);
 
-            FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
+            FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
-			objRS.ExecuteQuery(" select sum(" + pstrCampo + ") as total " + " from " + pstrTabela + " where codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and data >= " + FuncoesBd.CampoDateFormatar(pdtmDataInicial) + " and data <= " + FuncoesBd.CampoDateFormatar(pdtmDataFinal));
+			objRS.ExecuteQuery(" select sum(" + pstrCampo + ") as total " + " from " + pstrTabela + " where codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and data >= " + funcoesBd.CampoDateFormatar(pdtmDataInicial) + " and data <= " + funcoesBd.CampoDateFormatar(pdtmDataFinal));
 
 			decimal functionReturnValue = Convert.ToDecimal(objRS.Field("total"));
-
-			objRS.Fechar();
-			return functionReturnValue;
-
-		}
-
-		/// <summary>
-		/// Soma o valor absoluto das diferenças de cotações em um período.
-		/// </summary>
-		/// <param name="pstrCodigo"></param>
-		/// <param name="pdtmDataInicial"></param>
-		/// <param name="pdtmDataFinal"></param>
-		/// <param name="pstrSinal">
-		/// Indica se deve considerar somente cotações positivas ou somente cotações negativas
-		/// P - POSITIVA
-		/// N - NEGATIVA
-		/// </param>
-		/// <param name="pstrTabela">
-		/// Cotacao
-		/// Cotacao_Semanal
-		/// </param>
-		/// <returns>Soma da diferença das cotações do período, conforme o sinal recebido por parâmetro</returns>
-		/// <remarks></remarks>
-		private decimal CotacaoPeriodoDiferencaSomar(string pstrCodigo, DateTime pdtmDataInicial, DateTime pdtmDataFinal, string pstrSinal, string pstrTabela)
-		{
-		    cRS objRS = new cRS(_conexao);
-
-            FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
-
-		    //TEM QUE SER O VALOR ABSOLUTO, POIS NO CÁLCULO OS VALORES TEM QUE SER SEMPRE POSITIVOS.
-			string strQuery = " select sum(ABS(Diferenca)) as Total " + " from " + pstrTabela + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + FuncoesBd.CampoDateFormatar(pdtmDataInicial) + " and Data <= " + FuncoesBd.CampoDateFormatar(pdtmDataFinal);
-
-
-			if (pstrSinal == "P") {
-				strQuery = strQuery + " and Diferenca > 0 ";
-
-
-			} else if (pstrSinal == "N") {
-				strQuery = strQuery + " and Diferenca < 0 ";
-
-			}
-
-			objRS.ExecuteQuery(strQuery);
-
-			decimal functionReturnValue = Convert.ToDecimal(objRS.Field("Total"));
 
 			objRS.Fechar();
 			return functionReturnValue;
@@ -2519,33 +759,6 @@ namespace prmCotacao
 			objCommand.Execute(strQuery);
 		}
 
-	    /// <summary>
-	    /// Atualiza o valor do IFR no banco de dados
-	    /// </summary>
-	    /// <param name="pstrCodigo">Código do papel</param>
-	    /// <param name="pdtmData"></param>
-	    /// <param name="pintPeriodo"></param>
-	    /// <param name="pstrTabela"></param>
-	    /// <param name="pdblIFR"></param>
-	    /// <param name="pdblMediaAlta"></param>
-	    /// <param name="pdblMediaBaixa"></param>
-	    /// <param name="pobjConexao"></param>
-	    /// <returns></returns>
-	    /// <remarks></remarks>
-	    private void IFRAtualizar(string pstrCodigo, DateTime pdtmData, int pintPeriodo, string pstrTabela, double pdblIFR, double pdblMediaAlta, double pdblMediaBaixa, Conexao pobjConexao = null)
-		{
-	        cCommand objCommand = pobjConexao == null ? new cCommand(_conexao) : new cCommand(pobjConexao);
-
-            FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
-
-	        //******ALTERADO POR MAURO, 19/12/2009
-			//******ARMAZENAMENTO DO IFR EM TABELA PRÓPRIA PARA O IFR DIÁRIO E PARA O IFR SEMANAL
-			string strQuery = " INSERT INTO " + pstrTabela + "(Codigo, Data, NumPeriodos, MediaBaixa, MediaAlta, Valor) " + " VALUES " + "(" + FuncoesBd.CampoStringFormatar(pstrCodigo) + ", " + funcoesBd.CampoDateFormatar(pdtmData) + ", " + pintPeriodo.ToString() + ", " + FuncoesBd.CampoDecimalFormatar((decimal?) pdblMediaBaixa) + ", " + FuncoesBd.CampoDecimalFormatar((decimal?) pdblMediaAlta) + ", " + FuncoesBd.CampoDecimalFormatar((decimal?) pdblIFR) + ")";
-
-			objCommand.Execute(strQuery);
-		}
-
-
 		/// <summary>
 		/// Calcula a média móvel exponencial para um determinado ativo desde a data inicial até a data da cotação 
 		/// mais recente encontrada
@@ -2648,7 +861,7 @@ namespace prmCotacao
 
 			    var dtmDataInicial = new DateTime();
 			    var dtmDataFinal = new DateTime();
-			    if (NumPeriodosDataInicialCalcular(pstrCodigo, pintNumPeriodos, true, ref dtmDataInicial, ref dtmDataFinal, pstrTabela,-1 , objConnAux))
+			    if (_cotacaoData.NumPeriodosDataInicialCalcular(pstrCodigo, pintNumPeriodos, true, ref dtmDataInicial, ref dtmDataFinal, pstrTabela,-1 , objConnAux))
 				{
 				    var calculadorData = new cCalculadorData(_conexao);
 
@@ -2953,7 +1166,7 @@ namespace prmCotacao
 
 				} else {
 					dtmDataInicialAux = cotacaoDataDto.Data ;
-					dtmCotacaoAnteriorData = AtivoCotacaoAnteriorDataConsultar(cotacaoDataDto.Codigo, dtmDataInicialAux, strTabela);
+					dtmCotacaoAnteriorData = this._cotacaoData.AtivoCotacaoAnteriorDataConsultar(cotacaoDataDto.Codigo, dtmDataInicialAux, strTabela);
 				}
 
 				//For Each objStructMedia In pcolMedia
@@ -3005,37 +1218,6 @@ namespace prmCotacao
 
 		}
 
-		/// <summary>
-		/// Lita todos os ativos que não devem ser considerados separados pelo simbolo "#"
-		/// </summary>
-		/// <returns>String contendo a lista de ativos não considerados</returns>
-		/// <remarks></remarks>
-		private string AtivosDesconsideradosListar()
-		{
-
-			cRS objRS = new cRS(_conexao);
-
-			string strLista = String.Empty;
-
-			objRS.ExecuteQuery(" select Codigo " + " from Ativos_Desconsiderados");
-
-
-			while (!objRS.EOF) {
-				strLista = strLista + "#" + objRS.Field("Codigo");
-
-				objRS.MoveNext();
-
-			}
-
-			objRS.Fechar();
-
-			//tem que colocar o # para não ocorrer erros do tipo ter um código desconsiderado VALE50
-			//e o ativo VALE5 NÃO SER IMPORTADO
-			strLista = strLista + "#";
-
-			return strLista;
-
-		}
 
 		private void CotacaoSemanalDadosGerar(string pstrCodigo, DateTime pdtmDataSegundaFeira, DateTime pdtmDataSextaFeira, string pstrOperacaoBD, Conexao pobjConnAux, ref decimal pdecCotacaoAnteriorRet)
 		{
@@ -3286,7 +1468,7 @@ namespace prmCotacao
 				//dtmCotacaoAnteriorData = AtivoCotacaoAnteriorDataConsultar(pstrCodigo, pdtmDataBase _
 				//, "Cotacao_Semanal", objConnAux)
 
-				DateTime dtmCotacaoAnteriorData = AtivoCotacaoAnteriorDataConsultar(pstrCodigo, dtmDataSegundaFeira, "Cotacao_Semanal", objConnAux);
+				DateTime dtmCotacaoAnteriorData = this._cotacaoData.AtivoCotacaoAnteriorDataConsultar(pstrCodigo, dtmDataSegundaFeira, "Cotacao_Semanal", objConnAux);
 
                 decimal valorDeAbertura = 0;
 				//busca o valor de fechamento nesta data.
@@ -3359,7 +1541,7 @@ namespace prmCotacao
 				//a data maior da semana é sempre a data de sexta-feira, que são quatro dias após a segunda
 				DateTime dtmDataSextaFeira = dtmDataSegundaFeira.AddDays(4);
 
-				DateTime dtmCotacaoAnteriorData = AtivoCotacaoAnteriorDataConsultar(pstrCodigo, dtmDataSegundaFeira, "Cotacao_Semanal", objConnAux);
+				DateTime dtmCotacaoAnteriorData = this._cotacaoData.AtivoCotacaoAnteriorDataConsultar(pstrCodigo, dtmDataSegundaFeira, "Cotacao_Semanal", objConnAux);
 
 				//busca o valor de fechamento nesta data.
 			    decimal pdecValorAberturaRet = -1M;
@@ -3436,10 +1618,7 @@ namespace prmCotacao
                 {
                     string sustenidoFormatado = FuncoesBd.CampoStringFormatar("#");
                     strQuery += funcoesBd.IndiceDaSubString(funcoesBd.ConcatenarStrings(new[] { sustenidoFormatado, "Codigo", sustenidoFormatado }), FuncoesBd.CampoStringFormatar(pstrAtivos)) + " > 0";
-                    
                 }
-
-
 
 			}
 
@@ -3456,7 +1635,6 @@ namespace prmCotacao
 
 				if (!blnRetorno) {
 					if (!string.IsNullOrEmpty(strLog)) {
-						//coloca um ENTER PARA QUEBRAR A LINHA
 						strLog = strLog + Environment.NewLine;
 					}
 
@@ -3467,7 +1645,6 @@ namespace prmCotacao
 				objRS.MoveNext();
 
 			}
-
 
 			if (!string.IsNullOrEmpty(strLog)) {
 			    var fileService = new FileService();
@@ -3510,33 +1687,27 @@ namespace prmCotacao
 		private bool CotacaoDiariaDadosAtualizar(bool pblnOscilacaoCalcular, bool pblnOscilacaoPercentualCalcular, bool pblnIFRCalcular, bool pblnMMExpCalcular, bool pblnVolumeMedioCalcular, bool pblnIFRMedioCalcular, DateTime pdtmDataBase, string pstrAtivos = "", bool pblnCotacaoAnteriorInicializar = true, bool pblnConsiderarApenasDataSplit = false)
 		{
 
-			bool blnOK = true;
-			bool blnIFROK = true;
-			bool blnMMExpOK = true;
-
+			bool blnOk = true;
+			bool blnIfrok = true;
+			bool blnMmExpOk = true;
 
 			if ((pdtmDataBase != Constantes.DataInvalida) && pblnCotacaoAnteriorInicializar) {
-				blnOK = CotacaoAnteriorInicializar("DIARIO", pdtmDataBase, pstrAtivos);
+				blnOk = CotacaoAnteriorInicializar("DIARIO", pdtmDataBase, pstrAtivos);
 
-
-				if (!blnOK) {
+				if (!blnOk)
+                {
                     MessageBox.Show("Ocorreram erros ao inicializar os dados das cotações anteriores.", "Atualizar Cotações", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-
 					return false;
-
 				}
 
 			}
 
-
 			if (pblnOscilacaoCalcular) {
-				//atualiza os dados "Oscilacao" e "Diferenca" da tabela "Cotacao"
-				blnOK = OscilacaoGeralCalcular(pblnOscilacaoPercentualCalcular, pdtmDataBase, pstrAtivos, pblnConsiderarApenasDataSplit);
+				blnOk = OscilacaoGeralCalcular(pblnOscilacaoPercentualCalcular, pdtmDataBase, pstrAtivos, pblnConsiderarApenasDataSplit);
 
 			}
 
-
-			if (blnOK) {
+			if (blnOk) {
 
 				if (pblnIFRCalcular) {
 					IList<int> colPeriodos = new List<int>();
@@ -3544,57 +1715,44 @@ namespace prmCotacao
 					colPeriodos.Add(2);
                     colPeriodos.Add(14);
 
-					blnIFROK = IFRGeralCalcular(colPeriodos, cEnum.Periodicidade.Diario, pdtmDataBase, pstrAtivos);
+				    blnIfrok = _atualizadorDeIfr.IFRGeralCalcular(colPeriodos, cEnum.Periodicidade.Diario, pdtmDataBase, pstrAtivos);
 
 				}
-
-
-			} else {
+			}
+            else
+            {
                 MessageBox.Show("Ocorreram erros ao calcular os dados das cotações diárias.", "Atualizar Cotações", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-
 			}
 
-			//Dim objstructMediaEscolha As structIndicadorEscolha
-
-			//Dim colMediaEscolha As Collection
-			List<MediaDTO> lstMediasSelecionadas = null;
-
+            List<MediaDTO> lstMediasSelecionadas = null;
 
 			if (pblnMMExpCalcular || pblnVolumeMedioCalcular || pblnIFRMedioCalcular) {
-				//colMediaEscolha = New Collections
 				lstMediasSelecionadas = new List<MediaDTO>();
 
 			}
 
-
 			if (pblnMMExpCalcular) {
-
                 foreach (var media in this._mediasDeFechamento)
                 {
                     lstMediasSelecionadas.Add(media);
                 }
-
             }
 
-
 			if (pblnIFRMedioCalcular) {
-
                 lstMediasSelecionadas.Add(new MediaDTO("A", 13, "IFR2"));
 			}
 
-
-			if (pblnVolumeMedioCalcular) {
+			if (pblnVolumeMedioCalcular)
+            {
 				lstMediasSelecionadas.Add(new MediaDTO("A", 21, "VOLUME"));
 			}
 
-
 			if (pblnMMExpCalcular || pblnVolumeMedioCalcular || pblnIFRMedioCalcular)
 			{
-			    blnMMExpOK = MediaMovelGeralCalcular("DIARIO", lstMediasSelecionadas, pdtmDataBase, pstrAtivos);
-
+			    blnMmExpOk = MediaMovelGeralCalcular("DIARIO", lstMediasSelecionadas, pdtmDataBase, pstrAtivos);
 			}
 
-		    return (blnOK && blnIFROK && blnMMExpOK);
+		    return (blnOk && blnIfrok && blnMmExpOk);
 
 		}
 
@@ -3617,18 +1775,17 @@ namespace prmCotacao
 		/// RetornoErro4 = erro ao calcular a média móvel exponencial.
 		///</returns>
 		/// <remarks></remarks>
-		private bool CotacaoSemanalDadosAtualizar(bool pblnDadosCalcular, bool pblnIFRCalcular, bool pblnMMExpCalcular, bool pblnVolumeMedioCalcular, bool pblnIFRMedioCalcular, DateTime pdtmDataBase, string pstrAtivos = "", bool pblnConsiderarApenasDataSplit = false)
+		public bool CotacaoSemanalDadosAtualizar(bool pblnDadosCalcular, bool pblnIFRCalcular, bool pblnMMExpCalcular, bool pblnVolumeMedioCalcular, bool pblnIFRMedioCalcular, DateTime pdtmDataBase, string pstrAtivos = "", bool pblnConsiderarApenasDataSplit = false)
 		{
 
-			bool blnOK = true;
-
+			bool blnOk = true;
 
 			if ((pdtmDataBase != Constantes.DataInvalida)) {
 				//INICIALIZA AS COTAÇÕES DE DATAS ANTERIORES ANTES DE TODAS AS OPERAÇÕES.
-				blnOK = CotacaoAnteriorInicializar("SEMANAL", pdtmDataBase, pstrAtivos);
+				blnOk = CotacaoAnteriorInicializar("SEMANAL", pdtmDataBase, pstrAtivos);
 
 
-				if (!blnOK) {
+				if (!blnOk) {
                     MessageBox.Show("Ocorreram erros ao inicializar os dados das cotações anteriores.", "Atualizar Cotações", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
 					return false;
@@ -3640,47 +1797,30 @@ namespace prmCotacao
 
 			if (pblnDadosCalcular) {
 				//atualiza os dados da tabela de cotação semanal buscando da tabela de cotação diária
-				blnOK = CotacaoSemanalRetroativoGeralCalcular(pdtmDataBase, pstrAtivos, pblnConsiderarApenasDataSplit);
+				blnOk = CotacaoSemanalRetroativoGeralCalcular(pdtmDataBase, pstrAtivos, pblnConsiderarApenasDataSplit);
 
 			}
 
 
-			if (blnOK) {
+			if (blnOk) {
 
 				if (pblnIFRCalcular) {
 					IList<int> colPeriodos = new List<int>();
-
-					//colPeriodos.Add(14)
 
 					colPeriodos.Add(2);
 
                     colPeriodos.Add(14);
 
-					//If Not IFRGeralCalcular(14, "SEMANAL", pdtmDataBase, pstrAtivos) Then
-
-
-					if (!IFRGeralCalcular(colPeriodos, cEnum.Periodicidade.Semanal, pdtmDataBase, pstrAtivos)) {
-						//MsgBox("Ocorreram erros ao calcular o Indice de Força Relativa para as cotações semanais." _
-						//, MsgBoxStyle.Exclamation, "Atualizar Cotações")
-
-						blnOK = false;
-
+					if (!_atualizadorDeIfr.IFRGeralCalcular(colPeriodos, cEnum.Periodicidade.Semanal, pdtmDataBase, pstrAtivos)) {
+						blnOk = false;
 					}
-
 				}
 
-				//Dim objstructMediaEscolha As structIndicadorEscolha
-
-				//Dim colMediaEscolha As Collection
 				List<MediaDTO> lstMediasSelecionadas = null;
 
-
 				if (pblnMMExpCalcular || pblnVolumeMedioCalcular || pblnIFRMedioCalcular) {
-					//colMediaEscolha = New Collection
 					lstMediasSelecionadas = new List<MediaDTO>();
-
 				}
-
 
 				if (pblnMMExpCalcular) {
 
@@ -3688,36 +1828,30 @@ namespace prmCotacao
                     {
                         lstMediasSelecionadas.Add(media);
                     }
-
-
 				}
-
 
 				if (pblnIFRMedioCalcular) {
 					lstMediasSelecionadas.Add(new MediaDTO("A", 13, "IFR2"));
-
 				}
-
 
 				if (pblnVolumeMedioCalcular) {
 					lstMediasSelecionadas.Add(new MediaDTO("A", 21, "VOLUME"));
-
 				}
-
 
 				if (pblnMMExpCalcular || pblnVolumeMedioCalcular || pblnIFRMedioCalcular)
 				{
-				    if (!MediaMovelGeralCalcular("SEMANAL", lstMediasSelecionadas, pdtmDataBase, pstrAtivos)) {
-						blnOK = false;
-
+				    if (!MediaMovelGeralCalcular("SEMANAL", lstMediasSelecionadas, pdtmDataBase, pstrAtivos))
+                    {
+						blnOk = false;
 					}
 				}
-			} else {
+			}
+            else
+            {
 			    MessageBox.Show("Ocorreram erros ao calcular os dados das cotações semanais.", "Atualizar Cotações", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-
 			}
 
-			return blnOK;
+			return blnOk;
 
 		}
 
@@ -3937,7 +2071,7 @@ namespace prmCotacao
 				//se não recebeu uma data final, que é a data da primeira média que deve ser calculada, então tem
 				//que calcular desde o inicio das cotações. Para descobrir o primeiro período chamada a função
 
-				if (!NumPeriodosDataInicialCalcular(pstrCodigo, pintNumPeriodos, true, ref dtmDataInicial,ref pdtmDataFinal, strTabelaDados, intNumPeriodosTabelaDados)) {
+				if (!this._cotacaoData.NumPeriodosDataInicialCalcular(pstrCodigo, pintNumPeriodos, true, ref dtmDataInicial,ref pdtmDataFinal, strTabelaDados, intNumPeriodosTabelaDados)) {
 					//se não foi possível calcular o período, provavelmente porque não tem cotações
 					//suficientes faz rollback.
 					objCommand.RollBackTrans();
@@ -3977,11 +2111,11 @@ namespace prmCotacao
 
 				//verifica se o período entre as datas calculas é o mesmo recebido por parâmetro
 
-				if (!IntervaloNumPeriodosVerificar(pstrCodigo, dtmDataInicial, pdtmDataFinal, pintNumPeriodos, strTabelaDados, intNumPeriodosTabelaDados, objConnAux)) {
+				if (!_cotacaoData.IntervaloNumPeriodosVerificar(pstrCodigo, dtmDataInicial, pdtmDataFinal, pintNumPeriodos, strTabelaDados, intNumPeriodosTabelaDados, objConnAux)) {
 					//se o intervalo calculado não contém o número de períodos necessários,
 					//então tenta buscar um intervalo desde o início das cotações
 
-					if (!NumPeriodosDataInicialCalcular(pstrCodigo, pintNumPeriodos, true,ref dtmDataInicial, ref pdtmDataFinal, strTabelaDados, intNumPeriodosTabelaDados)) {
+					if (!_cotacaoData.NumPeriodosDataInicialCalcular(pstrCodigo, pintNumPeriodos, true,ref dtmDataInicial, ref pdtmDataFinal, strTabelaDados, intNumPeriodosTabelaDados)) {
 						//se não foi possível calcular o período, provavelmente porque não tem cotações
 						//suficientes faz rollback.
 						objCommand.RollBackTrans();
@@ -4084,362 +2218,7 @@ namespace prmCotacao
 
 		}
 
-		/// <summary>
-		/// Busca as cotações direto do site da bovespa, baixa o xml para a pasta temporária,
-		/// lê o xml e atualiza as cotações.
-		/// </summary>
-		/// <returns></returns>
-		/// <remarks></remarks>
-		public bool CotacaoIntraDayAtualizar(DateTime pdtmData, bool pblnCalcularDados)
-		{
-		    string strAtivos = String.Empty;
 
-		    cCommand objCommand = new cCommand(_conexao);
-
-			cRS objRS = new cRS(_conexao);
-
-			IList<string> colAtivos = new List<string>();
-
-			int intContador = 0;
-
-            FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
-            
-			objRS.ExecuteQuery(" SELECT COUNT(1) AS Contador " + " FROM Cotacao_Intraday " + " WHERE Data = " + funcoesBd.CampoDateFormatar(pdtmData));
-
-			if ((int) objRS.Field("Contador") > 0) {
-				//blnCotacaoIntradayExistir = True
-
-				DateTime[] arrData = { pdtmData };
-
-
-				if (CotacaoExcluir(arrData, false) != cEnum.enumRetorno.RetornoOK) {
-					objRS.Fechar();
-
-                    MessageBox.Show("Erro ao excluir as cotações intraday.", "Atualizar Cotações", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-
-					return false;
-
-				}
-			}
-
-			objRS.Fechar();
-
-			//inicializa os dados das cotações anteriores, pois serão utilizados depois para buscar o volume médio
-
-			if (!CotacaoAnteriorInicializar("DIARIO", pdtmData)) {
-                MessageBox.Show("Ocorreram erros ao calcular os dados das cotações anteriores.", "Atualizar Cotações", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-				return false;
-
-			}
-
-			objCommand.BeginTrans();
-
-			//busca os ativos para os quais devem ser buscadas as cotações.
-			//DEVE buscar todos os ativos que não foram desconsiderados.
-			//Os ativos que ainda não foram cadastrados na tabela Ativo não serão considerados
-
-			objRS.ExecuteQuery(" select Codigo " + " from Ativo " + " where Codigo not in " + "(" + " select Codigo " + " from Ativos_Desconsiderados" + ")");
-
-			int intNumeroDeAtivosCotacaoIntraday = cBuscarConfiguracao.NumeroDeAtivosCotacaoIntraday();
-
-
-			while (!objRS.EOF) {
-				//Gera os códigos separados por "|"
-
-				if (strAtivos != String.Empty) {
-					//teste para gerar o pipe a partir do segundo e não gerar para o último.
-					strAtivos = strAtivos + "|";
-
-				}
-
-				strAtivos = strAtivos + objRS.Field("Codigo");
-
-				intContador = intContador + 1;
-
-
-				if (intContador == intNumeroDeAtivosCotacaoIntraday) {
-					colAtivos.Add(strAtivos);
-
-					intContador = 0;
-
-					strAtivos = String.Empty;
-
-				}
-
-				objRS.MoveNext();
-
-			}
-
-
-			if (strAtivos != String.Empty) {
-				colAtivos.Add(strAtivos);
-
-			}
-
-			objRS.Fechar();
-
-			cWeb objWebLocal = new cWeb(_conexao);
-
-		    DateTime dtmData = pdtmData;
-			//Dim strDataAux As String
-
-		    double dblNegociosTotal = 0;
-			double dblTitulosTotal = 0;
-			double dblValorTotal = 0;
-
-		    string strCaminhoPadrao = cBuscarConfiguracao.ObtemCaminhoPadrao();
-
-		    foreach (string strAtivosLoop in colAtivos) {
-			    string strUrl = "http://www.bmfbovespa.com.br/Pregao-Online/ExecutaAcaoAjax.asp?CodigoPapel=" + strAtivosLoop;
-
-
-				if (objWebLocal.DownloadWithProxy(strUrl, strCaminhoPadrao + "temp", "cotacao.xml")) {
-					var objArquivoXml = new cArquivoXML(strCaminhoPadrao + "temp\\cotacao.xml");
-
-
-					if (!objArquivoXml.Abrir()) {
-						objCommand.RollBackTrans();
-
-						return false;
-
-					}
-
-
-					while ((!objArquivoXml.EOF()) && (objCommand.TransStatus)) {
-						decimal decValorAbertura = Convert.ToDecimal(objArquivoXml.LerAtributo("Abertura", 0));
-
-
-						if (decValorAbertura != 0) {
-							var strCodigo = (string) objArquivoXml.LerAtributo("Codigo");
-
-							decimal decValorFechamento = Convert.ToDecimal(objArquivoXml.LerAtributo("Ultimo", 0));
-
-							decimal decValorMinimo = Convert.ToDecimal(objArquivoXml.LerAtributo("Minimo", 0));
-
-							decimal decValorMaximo = Convert.ToDecimal(objArquivoXml.LerAtributo("Maximo", 0));
-
-							decimal decValorMedio = Convert.ToDecimal(objArquivoXml.LerAtributo("Medio", 0));
-
-							decimal decOscilacao = Convert.ToDecimal(objArquivoXml.LerAtributo("Oscilacao", 0));
-
-							//CONSULTA A COTAÇÃO ANTERIOR PARA O ATIVO
-							DateTime dtmCotacaoAnteriorData = AtivoCotacaoAnteriorDataConsultar(strCodigo, pdtmData, "Cotacao");
-
-
-							if (dtmCotacaoAnteriorData != Constantes.DataInvalida) {
-								//QUANDO A COTAÇAO É INTRADAY, COMO NÃO TEMOS DADOS DE VOLUME,
-								//UTILIZA OS DADOS DA COTAÇÃO ANTERIOR.
-								objRS.ExecuteQuery("SELECT Titulos_Total, Negocios_Total, Valor_Total " + " FROM Cotacao " + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(strCodigo) + " AND Data = " + funcoesBd.CampoDateFormatar(dtmCotacaoAnteriorData));
-
-								dblNegociosTotal = Convert.ToDouble(objRS.Field("Negocios_Total"));
-
-								dblTitulosTotal = Convert.ToDouble(objRS.Field("Titulos_Total"));
-
-								dblValorTotal = Convert.ToDouble(objRS.Field("Valor_Total"));
-
-								objRS.Fechar();
-
-							}
-
-						    //calcula o sequencial do ativo
-							long lngSequencial = _sequencialService.SequencialCalcular(strCodigo, "Cotacao", objCommand.Conexao);
-
-							string strQuery = " insert into Cotacao " + "(Codigo, Data, ValorAbertura, ValorFechamento " + ", ValorMinimo, ValorMedio, ValorMaximo, Oscilacao " + ", Titulos_Total, Negocios_Total, Valor_Total, Sequencial) " + " values " + "(" + FuncoesBd.CampoStringFormatar(strCodigo) + "," + funcoesBd.CampoDateFormatar(dtmData) + "," + FuncoesBd.CampoDecimalFormatar(decValorAbertura) + "," + FuncoesBd.CampoDecimalFormatar(decValorFechamento) + "," + FuncoesBd.CampoDecimalFormatar(decValorMinimo) + "," + FuncoesBd.CampoDecimalFormatar(decValorMedio) + "," + FuncoesBd.CampoDecimalFormatar(decValorMaximo) + "," + FuncoesBd.CampoDecimalFormatar(decOscilacao) + "," + FuncoesBd.CampoFloatFormatar(dblTitulosTotal) + "," + FuncoesBd.CampoFloatFormatar(dblNegociosTotal) + "," + FuncoesBd.CampoFloatFormatar(dblValorTotal) + "," + lngSequencial.ToString() + ")";
-
-							objCommand.Execute(strQuery);
-
-						}
-
-						objArquivoXml.LerNodo();
-
-					}
-
-					objArquivoXml.Fechar();
-
-
-				} else {
-					objCommand.RollBackTrans();
-
-				}
-
-			}
-
-			//inserir registro na tabela COTACAO_INTRADAY, para saber que esta cotação
-			//foi salva com dados intraday e não com dados oficiais de fechamento
-
-			//primeiro verifica se já existe registro na tabela, porque esta cotação pode ser baixada
-			//várias vezes durante o dia.
-
-			//ALTERADO EM 12/03/2010 PARA SEMPRE INSERIR O REGISTRO NA TABELA COTACAO_INTRADAY
-			//POIS O REGISTRO É EXCLUIDO PELA FUNÇÃO COTACAOEXCLUIR QUE É CHAMADA ANTERIORMENTE
-			//NESTA FUNÇÃO.
-
-			//If Not blnCotacaoIntradayExistir Then
-
-			objCommand.Execute(" INSERT INTO Cotacao_Intraday " + " (Data)" + " VALUES " + "(" + funcoesBd.CampoDateFormatar(dtmData) + ")");
-
-			//End If
-
-			objCommand.CommitTrans();
-
-
-			if (objCommand.TransStatus) {
-				if (pblnCalcularDados) {
-					DadosRecalcular(true, false, true, true, true, true, true, true, true, true,
-					true, dtmData);
-				}
-
-
-			    MessageBox.Show("Atualização das cotações realizada com sucesso.", "Atualizar Cotações", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-
-			} else {
-                MessageBox.Show("Ocorreram erros ao executar a operação.", "Atualizar Cotações", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-
-			}
-
-			return objCommand.TransStatus;
-
-		}
-
-	    /// <summary>
-	    /// Exclui as cotações das datas recebidas por parâmetros e recalcula os dados semanais se
-	    /// for necessário
-	    /// </summary>
-	    /// <param name="parrData">Array contendo a data das cotações que devem ser excluídas.
-	    /// O array está ordenado em ordem crescente.</param>
-	    /// <param name="pblnDadosSemanaisRecalcular"></param>
-	    /// <returns>
-	    /// RetornoOK = operação executada com sucesso.
-	    /// RetornoErroInesperado = algum erro de banco de dados ou de programação.
-	    /// RetornoErro2 = existem cotações posteriores às datas recebidas por parâmetro.
-	    /// </returns>
-	    /// <remarks></remarks>
-	    public cEnum.enumRetorno CotacaoExcluir(DateTime[] parrData, bool pblnDadosSemanaisRecalcular)
-		{
-			cEnum.enumRetorno functionReturnValue;
-
-			cCommand objCommand = new cCommand(_conexao);
-
-			cRS objRS = new cRS(_conexao);
-
-			objCommand.BeginTrans();
-
-            FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
-
-			//consistência para evitar buracos nas cotações.
-			//Para isso verificar se existe alguma cotação maior do que a primeira do array
-			//e diferente de todas as outras do array.
-
-			string strQuery = " SELECT COUNT(1) AS Contador " + " FROM Cotacao " + " WHERE Data > " + funcoesBd.CampoDateFormatar(parrData[0]);
-
-
-			for (int intI = 1; intI <= parrData.Length - 1; intI++) {
-				strQuery = strQuery + " AND Data <> " + funcoesBd.CampoDateFormatar(parrData[intI]);
-
-			}
-
-			objRS.ExecuteQuery(strQuery);
-
-
-			if (Convert.ToInt32(objRS.Field("Contador")) > 0) {
-				//se existem alguma data intermediária não pode deixar buraco.
-				objRS.Fechar();
-
-				objCommand.RollBackTrans();
-
-				return cEnum.enumRetorno.RetornoErro2;
-
-			}
-
-			objRS.Fechar();
-
-			//COTACAO
-			objCommand.Execute(" DELETE " + " FROM Cotacao " + " WHERE Data >= " + funcoesBd.CampoDateFormatar(parrData[0]));
-
-			//MEDIA_DIARIA
-
-			objCommand.Execute(" DELETE " + " FROM Media_Diaria " + " WHERE Data >= " + funcoesBd.CampoDateFormatar(parrData[0]));
-
-			//IFR_DIARIO
-			objCommand.Execute(" DELETE " + " FROM IFR_Diario " + " WHERE Data >= " + funcoesBd.CampoDateFormatar(parrData[0]));
-
-            var ativosBuilder = new StringBuilder();
-
-            if (pblnDadosSemanaisRecalcular) {
-				//DAS COTAÇÕES SEMANAIS DEVE EXCLUIR OS REGISTROS ONDE A PRIMEIRA DATA DA SEMANA
-				//É MAIOR OU IGUAL A PRIMEIRA DATA DO ARRAY
-
-				//COTACAO_SEMANAL
-				objCommand.Execute(" DELETE " + " FROM Cotacao_Semanal " + " WHERE Data >= " + funcoesBd.CampoDateFormatar(parrData[0]));
-
-				//MEDIA_SEMANAL
-				objCommand.Execute(" DELETE " + " FROM Media_Semanal " + " WHERE Data >= " + funcoesBd.CampoDateFormatar(parrData[0]));
-
-				//IFR_SEMANAL
-				objCommand.Execute(" DELETE " + " FROM IFR_Semanal " + " WHERE Data >= " + funcoesBd.CampoDateFormatar(parrData[0]));
-
-				//verifica se existem cotações intraday para todos os ativos ou somente para ativos específicos
-				objRS.ExecuteQuery(" SELECT COUNT(1) AS Contador " + " FROM Cotacao_Intraday " + " WHERE Data >= " + funcoesBd.CampoDateFormatar(parrData[0]));
-
-                if (Convert.ToInt32(objRS.Field("Contador")) == 0) {
-					objRS.Fechar();
-
-					//se não tem cotações intraday para todos os ativos
-					//lista apenas os ativos que tiveram cotação intraday para 
-					//fazer o recálculo dos dados semanais.
-					objRS.ExecuteQuery(" SELECT Codigo " + " FROM Cotacao_Intraday_Ativo " + " WHERE Data >= " + funcoesBd.CampoDateFormatar(parrData[0]) + " GROUP BY Codigo");
-
-				    const string separadorDeAtivos = "#";
-
-				    if (objRS.DadosExistir)
-				    {
-				        ativosBuilder.Append(separadorDeAtivos);
-				    }
-
-					while (!objRS.EOF) {
-
-					    ativosBuilder.Append(objRS.Field("Codigo"))
-					        .Append(separadorDeAtivos);
-
-						objRS.MoveNext();
-
-					}
-
-				}
-
-				objRS.Fechar();
-
-			}
-
-			//EXCLUI REGISTROS DA TABELA COTACAO_INTRADAY
-			objCommand.Execute(" DELETE " + " FROM Cotacao_Intraday " + " WHERE Data >= " + funcoesBd.CampoDateFormatar(parrData[0]));
-
-			//EXCLUI REGISTROS DA TABELA COTACAO_INTRADAY_ATIVO
-			objCommand.Execute(" DELETE " + " FROM Cotacao_Intraday_Ativo " + " WHERE Data >= " + funcoesBd.CampoDateFormatar(parrData[0]));
-
-			objCommand.CommitTrans();
-
-
-			if (objCommand.TransStatus) {
-
-				if (pblnDadosSemanaisRecalcular) {
-					//CHAMA A FUNÇÃO DE RECÁLCULO PARA OS DADOS SEMANAIS.
-					//SE NÃO HOUVER REGISTROS NÃO CALCULARÁ
-					CotacaoSemanalDadosAtualizar(true, true, true, true, true, parrData[0], ativosBuilder.ToString());
-
-				}
-
-				functionReturnValue = cEnum.enumRetorno.RetornoOK;
-
-
-			} else {
-				functionReturnValue = cEnum.enumRetorno.RetornoErroInesperado;
-
-			}
-			return functionReturnValue;
-
-		}
 
 		private bool CotacaoAnteriorInicializar(string pstrPeriodo, DateTime pdtmDataInicial, string pstrAtivos = "")
 		{
@@ -4556,66 +2335,6 @@ namespace prmCotacao
 		    return objCommand.TransStatus;
 
 		}
-
-
-
-	    /// <summary>
-	    /// 'Atualiza o registro da tabela Resumo. Esta tabela contém apenas sempre 1 registro.
-	    /// </summary>
-	    /// <param name="pdtmDataUltimaCotacao">Data em que foi buscada a última cotação das ações.
-	    ///     Não devem ser consideradas as cotações intraday </param>
-	    /// <param name="pdtmDataUltimoProvento">Data em que foi atualizado o último arquivo de proventos</param>
-	    /// <returns></returns>
-	    /// <remarks></remarks>
-	    private void TabelaResumoAtualizar(DateTime pdtmDataUltimaCotacao, DateTime pdtmDataUltimoProvento)
-		{
-
-			cCommand objCommand = new cCommand(_conexao);
-
-			string strQuery = String.Empty;
-
-		    bool blnTransacaoInterna = !_conexao.TransAberta;
-
-			if (blnTransacaoInterna)
-				objCommand.BeginTrans();
-
-            FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
-
-			if (pdtmDataUltimaCotacao != Constantes.DataInvalida) {
-				strQuery = "Data_Ultima_Cotacao = " + FuncoesBd.CampoDateFormatar(pdtmDataUltimaCotacao) + Environment.NewLine;
-
-			}
-
-
-			if (pdtmDataUltimoProvento != Constantes.DataInvalida) {
-
-				if (strQuery != String.Empty) {
-					strQuery = strQuery + ", ";
-
-				}
-
-				strQuery = strQuery + "Data_Ultimo_Provento = " + FuncoesBd.CampoDateFormatar(pdtmDataUltimoProvento) + Environment.NewLine;
-
-			}
-
-			strQuery = "UPDATE Resumo SET " + Environment.NewLine + strQuery;
-
-			//quando estiver atualizando a data da última cotaçao atualiza somente se a data for maior do que a data
-			//já existente na tabela
-
-			if (pdtmDataUltimaCotacao != Constantes.DataInvalida) {
-				strQuery = strQuery + Environment.NewLine + " WHERE Data_Ultima_Cotacao < " + FuncoesBd.CampoDateFormatar(pdtmDataUltimaCotacao);
-
-			}
-
-			objCommand.Execute(strQuery);
-
-			if (blnTransacaoInterna)
-				objCommand.CommitTrans();
-
-		}
-
-
 
 		/// <summary>
 		/// Busca os registros de proventos (dividendos e juros) na tabela de Proventos e atualiza na tabela Split
@@ -5014,7 +2733,7 @@ namespace prmCotacao
 
 			//Verifica se existe cotação na data Ex.
 
-			if (!CotacaoDataExistir(pdtmDataEx, strTabelaCotacao)) {
+			if (!this._cotacaoData.CotacaoDataExistir(pdtmDataEx, strTabelaCotacao)) {
 				objCommand.RollBackTrans();
 
 				return cEnum.enumRetorno.RetornoErro2;
@@ -5022,7 +2741,7 @@ namespace prmCotacao
 			}
 
 			//busca a última data em que houve cotação antes da data ex-provento
-			DateTime dtmDataUltimoPrecoCom = AtivoCotacaoAnteriorDataConsultar(pstrCodigo, pdtmDataEx, strTabelaCotacao);
+			DateTime dtmDataUltimoPrecoCom = this._cotacaoData.AtivoCotacaoAnteriorDataConsultar(pstrCodigo, pdtmDataEx, strTabelaCotacao);
 
 			//busca a cotação na última data com
 		    decimal pdecValorAberturaRet = -1M;

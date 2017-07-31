@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Windows.Forms;
 using System;
 using System.Collections.Generic;
@@ -10,7 +9,6 @@ using prjDominio.ValueObjects;
 using prjModelo.Entidades;
 using prjModelo.Carregadores;
 using DataBase;
-using prjModelo;
 using prjDTO;
 using prjServicoNegocio;
 using Services;
@@ -23,11 +21,13 @@ namespace prmCotacao
 	{
 
 
-		private readonly Conexao objConexao;
+		private readonly Conexao _conexao;
+	    private readonly CotacaoData _cotacaoData;
 
 		public cRelatorio(Conexao pobjConexao)
 		{
-			objConexao = pobjConexao;
+			_conexao = pobjConexao;
+            this._cotacaoData = new CotacaoData();
 
 		}
 
@@ -56,7 +56,7 @@ namespace prmCotacao
 
 		    string strTabelaMME21 = pstrTabelaCotacao.ToUpper() == "COTACAO" ? "MME21_Diario" : "MME21_Semanal";
 
-            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
+            FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
 
 			string strQuery = " SELECT dia_atual.codigo, dia_atual.ValorFechamento " + Environment.NewLine + ", ROUND(mmexp9, 2) AS MMExp9 " + Environment.NewLine + ", ROUND((dia_atual.ValorFechamento / MMExp9 - 1) * 100, 4) AS Perc_MME9 " + Environment.NewLine + ", ROUND(dia_atual.valormaximo + 0.01, 2) As ENTRADA " + Environment.NewLine + ", ROUND(((dia_atual.valormaximo + 0.01) / dia_atual.valorfechamento - 1) * 100, 4) As PERC_ENTRADA " + Environment.NewLine + ", ROUND(dia_atual.valorminimo - 0.03, 2) As STOP_LOSS " + Environment.NewLine + ", ROUND(((dia_atual.valorminimo - 0.03) / (dia_atual.valormaximo + 0.01)  - 1) * 100, 4) As PERC_STOP_LOSS " + Environment.NewLine;
 
@@ -196,7 +196,7 @@ namespace prmCotacao
             decimal pdecValorCapital, decimal pdecValorPerdaManejo, double pdblTitulosTotal = -1, Int32 pintNegociosTotal = -1, decimal pdecValorTotal = -1,decimal pdecPercentualStopGain = -1)
 		{
 
-            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
+            FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
 
 		    string strTabelaMME21 = pstrTabelaCotacao.ToUpper() == "COTACAO" ? "MME21_Diario" : "MME21_Semanal";
 
@@ -340,7 +340,7 @@ namespace prmCotacao
 		private string SetupMME93QueryGerar(System.DateTime pdtmDataAnterior, System.DateTime pdtmDataAtual, string pstrTabelaCotacao, string pstrTabelaMedia, bool pblnAlijamentoCalcular, decimal pdecValorCapital, decimal pdecValorPerdaManejo, double pdblTitulosTotal = -1, Int32 pintNegociosTotal = -1, decimal pdecValorTotal = -1,
 		decimal pdecPercentualStopGain = -1)
 		{
-		    FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
+		    FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
 
 			string strTabelaMME21 = pstrTabelaCotacao.ToUpper() == "COTACAO" ? "MME21_Diario" : "MME21_Semanal";
 
@@ -479,7 +479,7 @@ namespace prmCotacao
 		int pintNegociosTotal = -1, decimal pdecValorTotal = -1, decimal pdecPercentualStopGain = -1)
 		{
 
-            FuncoesBd funcoesBd = objConexao.ObterFormatadorDeCampo();
+            FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
 
 		    string strQuery = " SELECT " + pstrTabelaCotacao + ".codigo, ValorFechamento " + ", ROUND(" + pstrTabelaIFR + ".Valor, 2) AS IFR2" + Environment.NewLine  + ", ROUND(valorfechamento,2) As entrada " + Environment.NewLine + ", ROUND(valorminimo - (valormaximo - valorminimo) * 1.3, 2) As stop_loss " + Environment.NewLine + ", ROUND(((valorminimo - (valormaximo - valorminimo) * 1.3) / valorfechamento -1) * 100, 4) As perc_stop_loss " + Environment.NewLine;
@@ -496,7 +496,7 @@ namespace prmCotacao
 
 		    string valorDoCapitalFormatado = FuncoesBd.CampoDecimalFormatar(pdecValorCapital);
 
-		    if (objConexao.BancoDeDados == cEnum.BancoDeDados.Access)
+		    if (_conexao.BancoDeDados == cEnum.BancoDeDados.Access)
 		    {
 		        //1)divide o total do capital pelo valor de entrada e por 100, pois os lotes são de 100 ações.
 		        //com isso teremos o nº de lotes em decimais, ou seja pode haver lotes quebrados
@@ -544,7 +544,7 @@ namespace prmCotacao
 
 		    string formulaDaQuantidadeComManejo;
 
-		    if (objConexao.BancoDeDados == cEnum.BancoDeDados.Access)
+		    if (_conexao.BancoDeDados == cEnum.BancoDeDados.Access)
 		    {
 		        //1)divide o total do capital que pode ser perdido pelo valor de perda por ação e por 100, 
 		        //pois os lotes são de 100 ações. com isso teremos o nº de lotes em decimais, ou seja pode haver lotes quebrados
@@ -576,7 +576,7 @@ namespace prmCotacao
 
 		    string formulaDoPercentualDeRiscoQuandoPuderComprarPeloMenosUmLote = string.Format("ROUND({0} * {1} / {2} * 100, 2)", formulaDaQuantidadeComManejo, perdaPorAcao, valorDoCapitalFormatado);
             
-		    if (objConexao.BancoDeDados == cEnum.BancoDeDados.SqlServer)
+		    if (_conexao.BancoDeDados == cEnum.BancoDeDados.SqlServer)
 		    {
                 strQuery += string.Format(", {0}  AS Perc_Risco_Manejo ", funcoesBd.Condicional(string.Format("{0} = 0", formulaDaQuantidadeDeCapital), "0", formulaDoPercentualDeRiscoQuandoPuderComprarPeloMenosUmLote));
 		    }
@@ -660,7 +660,7 @@ namespace prmCotacao
 		private int NumTentativasCalcular(string pstrCodigo, long plngSequencialInicial, double pdblValorMaximoIFRSobrevendido)
 		{
 
-			cRS objRS = new cRS(objConexao);
+			cRS objRS = new cRS(_conexao);
 
 		    dynamic lngSequencialAtual = plngSequencialInicial;
 			bool blnOK = false;
@@ -668,7 +668,7 @@ namespace prmCotacao
 
 			//Enquanto não encontrar o número de tentativas
 
-		    FuncoesBd funcoesBd = objConexao.ObterFormatadorDeCampo();
+		    FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
 			while (!blnOK) {
 				string strSQL = "SELECT TOP 5 Sequencial, Valor " + Environment.NewLine;
@@ -732,7 +732,7 @@ namespace prmCotacao
 
 			string strSQL = " SELECT MIN(Percentual_Maximo) AS Percentual_Realizacao_Parcial, MAX(Percentual_Saida) AS Percentual_Saida_Maximo " + Environment.NewLine;
 
-            FuncoesBd FuncoesBd  = objConexao.ObterFormatadorDeCampo();
+            FuncoesBd FuncoesBd  = _conexao.ObterFormatadorDeCampo();
 
 			strWhere += " FROM IFR_SIMULACAO_DIARIA D " + Environment.NewLine;
 			strWhere += " WHERE D.Codigo = " + FuncoesBd.CampoFormatar(pstrCodigo) + Environment.NewLine;
@@ -757,7 +757,7 @@ namespace prmCotacao
 
 			strSQL = strSQL + strWhere;
 
-			cRS objRS = new cRS(objConexao);
+			cRS objRS = new cRS(_conexao);
 
 			objRS.ExecuteQuery(strSQL);
 
@@ -803,7 +803,7 @@ namespace prmCotacao
 		{
 			string functionReturnValue;
 
-			cCarregadorDeResumoDoIFRDiario objCarregadorResumo = new cCarregadorDeResumoDoIFRDiario(objConexao);
+			cCarregadorDeResumoDoIFRDiario objCarregadorResumo = new cCarregadorDeResumoDoIFRDiario(_conexao);
 
 			cIFRSimulacaoDiariaFaixaResumo objResumo = objCarregadorResumo.Carregar(pobjSimulacaoDiariaVO);
 
@@ -834,7 +834,7 @@ namespace prmCotacao
 
 		private void SetupIFR2SemFiltroDiarioPersonalizadoVerificar(Setup pobjSetup, System.DateTime pdtmDataAtual, double pdblTitulosTotal = -1, Int32 pintNegociosTotal = -1, decimal pdecValorTotal = -1)
 		{
-            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
+            FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
 
 		    string strTabela = "COTACAO CH INNER JOIN IFR_DIARIO IFRH " + Environment.NewLine;
 			strTabela = strTabela + " On CH.CODIGO = IFRH.CODIGO " + Environment.NewLine;
@@ -914,7 +914,7 @@ namespace prmCotacao
 			strSQL += '\t' + " ) " + Environment.NewLine;
 			strSQL += " )" + Environment.NewLine;
 
-			cRS objRS = new cRS(objConexao);
+			cRS objRS = new cRS(_conexao);
 
 			//Debug.Print(strSQL)
 
@@ -1050,12 +1050,12 @@ namespace prmCotacao
 		private string RelatIFR2SemFiltroDiarioPersonalizadoGerar(Setup pobjSetup, DateTime pdtmDataAtual, decimal pdecValorCapital, decimal pdecValorPerdaManejo, cIFRSobrevendido pobjIFRSobrevendido, double pdblIFR2LimiteSuperior = 5, double pdblTitulosTotal = -1, Int32 pintNegociosTotal = -1, decimal pdecValorTotal = -1)
 		{
 
-            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
+            FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
 
 			//Chama função que verifica se existe alguma simulação pendente e pergunta se o usuário que executá-la antes de iniciar o relatório.
 			SetupIFR2SemFiltroDiarioPersonalizadoVerificar(pobjSetup, pdtmDataAtual, pdblTitulosTotal, pintNegociosTotal, pdecValorTotal);
 
-			cCommand objCommand = new cCommand(objConexao);
+			cCommand objCommand = new cCommand(_conexao);
 
 			objCommand.BeginTrans();
 
@@ -1064,7 +1064,7 @@ namespace prmCotacao
 
 			objCommand.Execute(strSQL);
 
-			cRS objRS = new cRS(objConexao);
+			cRS objRS = new cRS(_conexao);
 
 
 			strSQL = " SELECT Sequencial, C.Codigo, ValorFechamento ";
@@ -1198,12 +1198,12 @@ namespace prmCotacao
 
 		    cValorCriterioClassifMediaVO objValorCriterioCMVO = new cValorCriterioClassifMediaVO();
 
-		    dynamic objCarregadorCarteira = new CarregadorCarteira(objConexao);
+		    dynamic objCarregadorCarteira = new CarregadorCarteira(_conexao);
 			dynamic objCarteiraAtiva = objCarregadorCarteira.CarregaAtiva(pobjIFRSobrevendido);
 
 		    //Para cada um dos itens que está com IFR sobrevendido.
 
-			while ((!objRS.EOF) && (objConexao.TransStatus)) {
+			while ((!objRS.EOF) && (_conexao.TransStatus)) {
 				lstFaixas.Clear();
 
 				string strValorRealizacaoParcial = string.Empty;
@@ -1212,7 +1212,7 @@ namespace prmCotacao
 
 				Ativo objAtivo = new Ativo((string) objRS.Field("Codigo"), string.Empty);
 
-			    var servicoDeCotacaoDeAtivo = new ServicoDeCotacaoDeAtivo(objAtivo, objConexao);
+			    var servicoDeCotacaoDeAtivo = new ServicoDeCotacaoDeAtivo(objAtivo, _conexao);
 
 				CotacaoDiaria objCotacaoDiaria = new CotacaoDiaria(objAtivo, pdtmDataAtual);
 				objCotacaoDiaria.ValorFechamento = Convert.ToDecimal(objRS.Field("ValorFechamento"));
@@ -1229,7 +1229,7 @@ namespace prmCotacao
 				int intNumTentativas = NumTentativasCalcular((string) objRS.Field("Codigo"), Convert.ToInt64(objRS.Field("Sequencial")), pobjIFRSobrevendido.ValorMaximo);
 
 				//Verifica se atende a todos os critérios
-				var objVerificaSeDeveGerarEntrada = new cVerificaSeDeveGerarEntrada(objConexao);
+				var objVerificaSeDeveGerarEntrada = new cVerificaSeDeveGerarEntrada(_conexao);
 
 				objValorCriterioCMVO.PercentualMM21 = Convert.ToDouble(objRS.Field("Percentual_MME21"));
 				objValorCriterioCMVO.PercentualMM49 = Convert.ToDouble(objRS.Field("Percentual_MME49"));
@@ -1345,7 +1345,7 @@ namespace prmCotacao
 		{
 		    string strQuery = " SELECT segundo_dia.Codigo, segundo_dia.ValorFechamento " + ", ROUND(segundo_dia.Valor, 2) AS IFR2" + Environment.NewLine + ", MMExp49 AS Valor_MME49 " + ", ROUND((ValorFechamento / MMExp49 - 1) * 100, 4) AS Perc_MME49 " + Environment.NewLine + ", ROUND(segundo_dia.Valor_Entrada, 2) As entrada " + ", ROUND(((segundo_dia.Valor_Entrada) / segundo_dia.ValorFechamento - 1) * 100, 4) As perc_entrada " + ", ROUND(segundo_dia.Valor_Stop_Loss, 2) As stop_loss " + ", ROUND(((segundo_dia.Valor_Stop_Loss) / (segundo_dia.Valor_Entrada) -1) * 100, 4) As perc_stop_loss ";
 
-            FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
+            FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
 
 			if (pdecPercentualStopGain != -1) {
 				strQuery = strQuery + ", ROUND((segundo_dia.Valor_Entrada) " + "* (1 + " + FuncoesBd.CampoDecimalFormatar(pdecPercentualStopGain) + " / 100), 2) AS STOP_GAIN ";
@@ -1516,7 +1516,7 @@ namespace prmCotacao
 		{
 			string functionReturnValue;
 
-			ServicoDeCotacao objCotacao = new ServicoDeCotacao(objConexao);
+			ServicoDeCotacao objCotacao = new ServicoDeCotacao(_conexao);
 
 			System.DateTime dtmDataAtual;
 			System.DateTime dtmDataAnterior = default(System.DateTime);
@@ -1537,7 +1537,7 @@ namespace prmCotacao
 			//verifica se a data recebida é uma data de cotação
 			if (pstrPeriodo == "DIARIO") {
 
-				dtmDataAtual = objCotacao.CotacaoDataExistir(pdtmData, strTabelaCotacao) ? pdtmData : objCotacao.CotacaoAnteriorDataConsultar(pdtmData, strTabelaCotacao);
+				dtmDataAtual = _cotacaoData.CotacaoDataExistir(pdtmData, strTabelaCotacao) ? pdtmData : objCotacao.CotacaoAnteriorDataConsultar(pdtmData, strTabelaCotacao);
 
 
 			} else
@@ -1562,12 +1562,12 @@ namespace prmCotacao
 					//Os filtros referentes ao volume negociado são informados em dias.
 					//Quando as cotações são semanais, tem que verificar quantos dias tem na semana e multiplicar
 					//os valores informados pelo número de dias
-					cRS objRS = new cRS(objConexao);
+					cRS objRS = new cRS(_conexao);
 
 					//Dim strQuery As String
 
 
-				    FuncoesBd funcoesBd = objConexao.ObterFormatadorDeCampo();
+				    FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
 					//primeiro busca a data final da cotação semanal
 					objRS.ExecuteQuery(" SELECT Max(datafinal) As datafinal" + " FROM cotacao_semanal " + " WHERE Data = " + funcoesBd.CampoDateFormatar(dtmDataAtual));

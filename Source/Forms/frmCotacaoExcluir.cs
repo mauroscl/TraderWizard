@@ -162,9 +162,9 @@ namespace TraderWizard
 			Array.Sort(arrData);
 
 
-		    var objCotacao = new ServicoDeCotacao(objConexao);
+		    var atualizadorDeCotacao = new AtualizadorDeCotacao();
 
-			cEnum.enumRetorno intRetorno = objCotacao.CotacaoExcluir(arrData, true);
+			cEnum.enumRetorno intRetorno = atualizadorDeCotacao.CotacaoExcluir(arrData, true);
 
 			switch (intRetorno) {
 

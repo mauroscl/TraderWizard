@@ -59,18 +59,18 @@ namespace TraderWizard
 
 			BeginInvoke(callBack,  new object[]{Cursors.WaitCursor} );
 
-		    var objCotacao = new ServicoDeCotacao(objConexao);
+		    var atualizadorDeCotacao = new AtualizadorDeCotacao();
 
 			if (intTipo == EnumAtualizacaoDiariaTipo.Online) {
-				objCotacao.CotacaoPeriodoAtualizar(pdtmDataInicial, pdtmDataFinal, pstrCodigo, pblnCalcularDados);
+				atualizadorDeCotacao.CotacaoPeriodoAtualizar(pdtmDataInicial, pdtmDataFinal, pstrCodigo, pblnCalcularDados);
 
 
 			} else if (intTipo == EnumAtualizacaoDiariaTipo.Historica) {
-				objCotacao.CotacaoHistoricaPeriodoAtualizar(pdtmDataInicial, pdtmDataFinal, pblnCalcularDados);
+				atualizadorDeCotacao.CotacaoHistoricaPeriodoAtualizar(pdtmDataInicial, pdtmDataFinal, pblnCalcularDados);
 
 
 			} else if (intTipo == EnumAtualizacaoDiariaTipo.IntraDay) {
-				objCotacao.CotacaoIntraDayAtualizar(pdtmDataInicial, pblnCalcularDados);
+				atualizadorDeCotacao.CotacaoIntraDayAtualizar(pdtmDataInicial, pblnCalcularDados);
 
 			}
 
@@ -175,9 +175,9 @@ namespace TraderWizard
 
 				Cursor = Cursors.WaitCursor;
 
-				var objCotacao = new ServicoDeCotacao(objConexao);
+				var atualizadorDeCotacao = new AtualizadorDeCotacao();
 
-				cEnum.enumRetorno intRetorno = objCotacao.CotacaoHistoricaAnoAtualizar(Convert.ToInt32(txtAno.Text));
+				cEnum.enumRetorno intRetorno = atualizadorDeCotacao.CotacaoHistoricaAnoAtualizar(Convert.ToInt32(txtAno.Text));
 
 				Cursor = Cursors.Default;
 

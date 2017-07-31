@@ -82,17 +82,17 @@ namespace Forms
             var conexao = new Conexao();
 		    try
 		    {
-		        var objCotacao = new ServicoDeCotacao(conexao);
+		        var atualizadorDeIfr = new CalculadorDeIfr();
 
 		        if (periodicidadeDiaria.Checked)
 		        {
-		            blnOkDiario = objCotacao.IFRGeralCalcular(colPeriodos, cEnum.Periodicidade.Diario, Constantes.DataInvalida,
+		            blnOkDiario = atualizadorDeIfr.IFRGeralCalcular(colPeriodos, cEnum.Periodicidade.Diario, Constantes.DataInvalida,
 		                ativosSelecionados);
 		        }
 
 		        if (periodicidadeSemanal.Checked)
 		        {
-		            blnOkSemanal = objCotacao.IFRGeralCalcular(colPeriodos, cEnum.Periodicidade.Semanal,
+		            blnOkSemanal = atualizadorDeIfr.IFRGeralCalcular(colPeriodos, cEnum.Periodicidade.Semanal,
 		                Constantes.DataInvalida, ativosSelecionados);
 		        }
 		    }
