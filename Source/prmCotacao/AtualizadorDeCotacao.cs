@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using DataBase;
@@ -224,6 +225,8 @@ namespace prmCotacao
 
             const char strSeparadorDecimal = ',';
 
+            string[] tiposDeCotacao = { "0202010", "0205010" };
+
 
             cRS objRS = new cRS(_conexao);
 
@@ -296,7 +299,7 @@ namespace prmCotacao
                     bool blnInserir;
                     string strOscilacao;
                     decimal decValorAbertura = default(decimal);
-                    if (strLinhaAux.Substring(0, 4) + strLinhaAux.Substring(69, 3) == "0202010")
+                    if (tiposDeCotacao.Contains(strLinhaAux.Substring(0, 4) + strLinhaAux.Substring(69, 3)) )
                     {
                         //se é a cotação de um papel
                         //e é do mercado à vista.
