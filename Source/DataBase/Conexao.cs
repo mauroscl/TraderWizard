@@ -4,9 +4,9 @@ using System.Data.Common;
 using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.Windows.Forms;
-using prjConfiguracao;
 using TraderWizard.Enumeracoes;
 using System.Diagnostics;
+using Configuracao;
 
 namespace DataBase
 {
@@ -18,11 +18,11 @@ namespace DataBase
 
         public Conexao()
 	    {
-	        _bancoDeDados = cBuscarConfiguracao.ObterBancoDeDados();
+	        _bancoDeDados = BuscarConfiguracao.ObterBancoDeDados();
 
 			try {
 
-				ConnectionString = cBuscarConfiguracao.ObterConnectionStringPadrao(_bancoDeDados);
+				ConnectionString = BuscarConfiguracao.ObterConnectionStringPadrao(_bancoDeDados);
 
 			    if (_bancoDeDados == cEnum.BancoDeDados.SqlServer)
 			    {

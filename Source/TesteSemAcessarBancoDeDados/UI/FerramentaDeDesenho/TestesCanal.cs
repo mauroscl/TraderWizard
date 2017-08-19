@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using prjCandle;
+using prjCandle.Desenho;
 
 namespace TesteSemAcessarBancoDeDados.UI.FerramentaDeDesenho
 {

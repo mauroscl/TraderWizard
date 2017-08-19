@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DataBase.Carregadores;
+using Dominio.Entidades;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using prjDominio.Entidades;
-using prjDTO;
+using DTO;
 using prjModelo.Carregadores;
 using prjServicoNegocio;
 using Services;
+using ServicoNegocio;
 using TesteBase;
 namespace TestProject1
 {

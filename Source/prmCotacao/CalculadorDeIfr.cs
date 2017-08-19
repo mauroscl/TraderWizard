@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Configuracao;
 using DataBase;
 using DataBase.Carregadores;
-using prjConfiguracao;
-using prjDTO;
+using DTO;
 using prjServicoNegocio;
 using Services;
+using ServicoNegocio;
 using TraderWizard.Enumeracoes;
 
 namespace prmCotacao
@@ -220,7 +221,7 @@ namespace prmCotacao
 
             cRS objRS = new cRS(_conexao);
 
-            cCalculadorData objCalculadorData = new cCalculadorData(this._conexao);
+            CalculadorData objCalculadorData = new CalculadorData(this._conexao);
 
             DateTime dtmDataMaxima = objCalculadorData.CotacaoDataMaximaConsultar(pstrCodigo, pstrTabela);
 
@@ -341,7 +342,7 @@ namespace prmCotacao
 
                     //neste caso a data base tem que ser um dia posterior à data final da data calculada
                     //pdtmDataBase = DateAdd(DateInterval.Day, 1, dtmDataFinal)
-                    var objCalculadorData = new cCalculadorData(objConnAux);
+                    var objCalculadorData = new CalculadorData(objConnAux);
                     pdtmDataBase = objCalculadorData.CalcularDataProximoPeriodo(pstrCodigo, dtmDataFinal, pstrTabela);
 
 
@@ -686,7 +687,7 @@ namespace prmCotacao
                 }
 
                 var fileService = new FileService();
-                fileService.Save(cBuscarConfiguracao.ObtemCaminhoPadrao() + strArquivoNome, strLog);
+                fileService.Save(BuscarConfiguracao.ObtemCaminhoPadrao() + strArquivoNome, strLog);
 
             }
 

@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using TraderWizard.Enumeracoes;
 
-namespace prjCandle
+namespace prjCandle.Desenho
 {
     public abstract class Desenho
     {

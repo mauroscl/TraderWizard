@@ -1,7 +1,6 @@
 using System;
 using DataBase.Interfaces;
-using prjDominio.Entidades;
-using prjModelo.Entidades;
+using Dominio.Entidades;
 
 namespace DataBase.Carregadores
 {

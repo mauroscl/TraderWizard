@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using DataBase;
-using prjDominio.Entidades;
+using Dominio.Entidades;
 using prmCotacao;
 using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;

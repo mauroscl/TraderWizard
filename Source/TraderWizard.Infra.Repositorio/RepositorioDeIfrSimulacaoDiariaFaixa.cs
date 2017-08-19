@@ -1,7 +1,6 @@
 ﻿using System;
 using DataBase;
-using prjDominio.Entidades;
-using prjModelo.Entidades;
+using Dominio.Entidades;
 
 namespace TraderWizard.Infra.Repositorio
 {
@@ -14,7 +13,7 @@ namespace TraderWizard.Infra.Repositorio
             _conexao = conexao;
         }
 
-        public bool Salvar(cIFRSimulacaoDiariaFaixa  ifrSimulacaoDiariaFaixa)
+        public bool Salvar(IFRSimulacaoDiariaFaixa  ifrSimulacaoDiariaFaixa)
         {
             var objCommand = new cCommand(_conexao);
 

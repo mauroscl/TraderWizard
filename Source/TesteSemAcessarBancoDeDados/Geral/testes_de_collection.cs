@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dominio.Entidades;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using prjDominio.Entidades;
-using prjModelo.Entidades;
 
 namespace TesteSemAcessarBancoDeDados
 {
@@ -16,9 +15,9 @@ namespace TesteSemAcessarBancoDeDados
 
 		public void VerificaSeEPossivelAlterarObjetoDentroDaCollectionEAlteracaoSerMantida()
 		{
-			List<cIFRSobrevendido> lstLista = new List<cIFRSobrevendido> {
-				new cIFRSobrevendido(1, 5),
-				new cIFRSobrevendido(2, 10)
+			List<IFRSobrevendido> lstLista = new List<IFRSobrevendido> {
+				new IFRSobrevendido(1, 5),
+				new IFRSobrevendido(2, 10)
 			};
 
 		    var cIFRSobrevendido = lstLista.FirstOrDefault(x => x.Id == 1);

@@ -1,5 +1,5 @@
 using System;
-using prjDominio.Entidades;
+using Dominio.Entidades;
 using prjDominio.ValueObjects;
 
 namespace prjDominio.Regras
@@ -8,7 +8,7 @@ namespace prjDominio.Regras
 	public class cObterValorCriterioClassificacaoMedia
 	{
 
-		public static double ObterValor(cValorCriterioClassifMediaVO pobjValorCriterioClassifMediaVO, cCriterioClassifMedia pobjCriterioClassifMedia)
+		public static double ObterValor(ValorCriterioClassifMediaVO pobjValorCriterioClassifMediaVO, CriterioClassifMedia pobjCriterioClassifMedia)
 		{
 
 			if (pobjCriterioClassifMedia is cCriterioClassifMediaMM21) {

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using prjDominio.Entidades;
-using prjModelo.Entidades;
+using Dominio.Entidades;
 //Imports DataBase
 using TraderWizard.Enumeracoes;
 
@@ -14,7 +13,7 @@ namespace prjModelo.Carregadores
 		//Private ReadOnly objConexao As cConexao
 
 
-		private readonly IList<cCriterioClassifMedia> lstTodosCriterios;
+		private readonly IList<CriterioClassifMedia> lstTodosCriterios;
 
 		//Public Sub New(ByVal pobjConexao As cConexao)
 
@@ -23,7 +22,7 @@ namespace prjModelo.Carregadores
 
 		public cCarregadorCriterioClassificacaoMedia()
 		{
-			lstTodosCriterios = new List<cCriterioClassifMedia>();
+			lstTodosCriterios = new List<CriterioClassifMedia>();
 
 			lstTodosCriterios.Add(new cCriterioClassifMediaMM21());
 			lstTodosCriterios.Add(new cCriterioClassifMediaMM49());
@@ -33,12 +32,12 @@ namespace prjModelo.Carregadores
 
 		}
 
-		public IList<cCriterioClassifMedia> CarregaTodos()
+		public IList<CriterioClassifMedia> CarregaTodos()
 		{
 			return lstTodosCriterios;
 		}
 
-		public cCriterioClassifMedia CarregaPorID(cEnum.enumCriterioClassificacaoMedia pintID)
+		public CriterioClassifMedia CarregaPorID(cEnum.enumCriterioClassificacaoMedia pintID)
 		{
 			return lstTodosCriterios.FirstOrDefault(x => x.ID == (decimal) pintID);
 		}

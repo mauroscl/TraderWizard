@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using prjCandle.Desenho;
 using TraderWizard.Enumeracoes;
 
 namespace prjCandle
@@ -91,7 +92,7 @@ namespace prjCandle
         /// true - área contém todo ou parcialmente o desenho
         /// false - área não contém o desenho
         /// </returns>
-        public bool Contem(Desenho desenho)
+        public bool Contem(Desenho.Desenho desenho)
         {
 
             return IndiceEntreOsLimites(desenho.PontoInicial.Indice) || IndiceEntreOsLimites(desenho.PontoFinal.Indice)

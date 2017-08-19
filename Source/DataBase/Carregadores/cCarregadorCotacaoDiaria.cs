@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using DataBase.Interfaces;
-using prjDominio.Entidades;
-using prjDTO;
-using prjModelo.Entidades;
+using Dominio.Entidades;
+using DTO;
 using TraderWizard.Enumeracoes;
 
 namespace DataBase.Carregadores

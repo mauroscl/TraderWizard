@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 
-namespace prjCandle
+namespace prjCandle.Desenho
 {
 
 	public class FibonacciRetracement: Desenho

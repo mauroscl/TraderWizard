@@ -1,7 +1,7 @@
 using System;
 using DataBase;
 using DataBase.Carregadores;
-using prjDominio.Entidades;
+using Dominio.Entidades;
 using TraderWizard.Enumeracoes;
 
 namespace TestProject1
@@ -24,7 +24,7 @@ namespace TestProject1
 			return new Ativo(pstrCodigo, string.Empty);
 		}
 
-		public static cIFRSobrevendido CarregaIFRSobrevendido(Conexao pobjConexao, int pintId)
+		public static IFRSobrevendido CarregaIFRSobrevendido(Conexao pobjConexao, int pintId)
 		{
 
 			cCarregadorIFRSobrevendido objCarregadorIFRSobrevendido = new cCarregadorIFRSobrevendido(pobjConexao);

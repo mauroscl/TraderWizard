@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using prjDominio.Regras;
-using prjDTO;
-using prjModelo.Entidades;
+using DTO;
 
-namespace prjDominio.Entidades
+namespace Dominio.Entidades
 {
 
 	public abstract class Setup

@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using prjDominio.Entidades;
+using Dominio.Entidades;
 using TraderWizard.Enumeracoes;
 
 namespace DataBase.Carregadores
@@ -28,7 +28,7 @@ namespace DataBase.Carregadores
 		/// <param name="pdtmData"></param>
 		/// <remarks></remarks>
 
-		private void CalcularUltimaData(string pstrCodigo, Setup pobjSetup, cClassifMedia pobjCM, cCriterioClassifMedia pobjCriterioCM, cIFRSobrevendido pobjIFRSobrevendido, DateTime pdtmData)
+		private void CalcularUltimaData(string pstrCodigo, Setup pobjSetup, ClassifMedia pobjCM, CriterioClassifMedia pobjCriterioCM, IFRSobrevendido pobjIFRSobrevendido, DateTime pdtmData)
 		{
 			dtmDataSolicitacao = pdtmData;
 
@@ -56,14 +56,14 @@ namespace DataBase.Carregadores
 
 		}
 
-		public IList<cIFRSimulacaoDiariaFaixa> CarregaUltimaFaixaAteDataPorCriterioClassificacaoMedia(string pstrCodigo, Setup pobjSetup, cClassifMedia pobjCM, cCriterioClassifMedia pobjCriterioCM, cIFRSobrevendido pobjIFRSobrevendido, DateTime pdtmData)
+		public IList<IFRSimulacaoDiariaFaixa> CarregaUltimaFaixaAteDataPorCriterioClassificacaoMedia(string pstrCodigo, Setup pobjSetup, ClassifMedia pobjCM, CriterioClassifMedia pobjCriterioCM, IFRSobrevendido pobjIFRSobrevendido, DateTime pdtmData)
 		{
 
 			if (dtmUltimaData != pdtmData) {
 				CalcularUltimaData(pstrCodigo, pobjSetup, pobjCM, pobjCriterioCM, pobjIFRSobrevendido, pdtmData);
 			}
 
-			IList<cIFRSimulacaoDiariaFaixa> objListaRetorno = new List<cIFRSimulacaoDiariaFaixa>();
+			IList<IFRSimulacaoDiariaFaixa> objListaRetorno = new List<IFRSimulacaoDiariaFaixa>();
 
 			cRS objRS = new cRS(objConexao);
 
@@ -82,7 +82,7 @@ namespace DataBase.Carregadores
 
 
 			while (!objRS.EOF) {
-				objListaRetorno.Add(new cIFRSimulacaoDiariaFaixa(Convert.ToInt64(objRS.Field("ID")), pstrCodigo, pobjSetup, pobjCM, pobjCriterioCM, Convert.ToInt32(objRS.Field("NumTentativas_Minimo")), Convert.ToDouble(objRS.Field("Valor_Minimo")), Convert.ToDouble(objRS.Field("Valor_Maximo"))));
+				objListaRetorno.Add(new IFRSimulacaoDiariaFaixa(Convert.ToInt64(objRS.Field("ID")), pstrCodigo, pobjSetup, pobjCM, pobjCriterioCM, Convert.ToInt32(objRS.Field("NumTentativas_Minimo")), Convert.ToDouble(objRS.Field("Valor_Minimo")), Convert.ToDouble(objRS.Field("Valor_Maximo"))));
 
 				objRS.MoveNext();
 
@@ -94,7 +94,7 @@ namespace DataBase.Carregadores
 
 		}
 
-		public bool ExisteFaixaParaCriterio(string pstrCodigo, Setup pobjSetup, cClassifMedia pobjCM, cIFRSobrevendido pobjIFRSobrevendido, DateTime pdtmData)
+		public bool ExisteFaixaParaCriterio(string pstrCodigo, Setup pobjSetup, ClassifMedia pobjCM, IFRSobrevendido pobjIFRSobrevendido, DateTime pdtmData)
 		{
 		    cRS objRS = new cRS(objConexao);
 

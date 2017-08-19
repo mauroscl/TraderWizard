@@ -1,11 +1,12 @@
 using System;
 using System.Linq;
 using DataBase.Carregadores;
+using Dominio.Entidades;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using prjDominio.Entidades;
 using prjDominio.VOBuilders;
 using prjModelo.Carregadores;
 using prjServicoNegocio;
+using ServicoNegocio;
 using TesteBase;
 using TraderWizard.Enumeracoes;
 
@@ -67,18 +68,18 @@ namespace TestProject1
 		public void QuandoDeveGerarEntradaTemQueRetornarSomatorioDeCriteriosIgualAZero()
 		{
 			CarregadorSimulacaoIFRDiario objCarregadorSimulacaoDiaria = new CarregadorSimulacaoIFRDiario(objConexao);
-			cIFRSimulacaoDiaria objSimulacao = objCarregadorSimulacaoDiaria.CarregaPorDataEntradaEfetiva(FuncoesGerais.RetornaAtivo("RENT3"), FuncoesGerais.CarregarSetup(cEnum.enumSetup.IFRSemFiltroRP), new DateTime(2011, 5, 23));
+			IFRSimulacaoDiaria objSimulacao = objCarregadorSimulacaoDiaria.CarregaPorDataEntradaEfetiva(FuncoesGerais.RetornaAtivo("RENT3"), FuncoesGerais.CarregarSetup(cEnum.enumSetup.IFRSemFiltroRP), new DateTime(2011, 5, 23));
 
 			var objIFRSobrevendido = FuncoesGerais.CarregaIFRSobrevendido(objConexao, 1);
 			var objDetalhe = objSimulacao.Detalhes.Where(d => d.IFRSobreVendido.Equals(objIFRSobrevendido)).Single();
 
-			cSimulacaoDiariaVOBuilder objSimulacaoDiariaVOBuilder = new cSimulacaoDiariaVOBuilder();
+			SimulacaoDiariaVOBuilder objSimulacaoDiariaVOBuilder = new SimulacaoDiariaVOBuilder();
 			var objSimulacaoDiariaVO = objSimulacaoDiariaVOBuilder.Build(objDetalhe);
 
-			cValorCriterioClassifMediaVOBuilder objValorCriterioClassifMediaVOBuilder = new cValorCriterioClassifMediaVOBuilder();
+			ValorCriterioClassifMediaVOBuilder objValorCriterioClassifMediaVOBuilder = new ValorCriterioClassifMediaVOBuilder();
 			var objValorCriterioClassifMediaVO = objValorCriterioClassifMediaVOBuilder.Build(objDetalhe.IFRSimulacaoDiaria);
 
-			var objVerifica = new cVerificaSeDeveGerarEntrada(objConexao);
+			var objVerifica = new VerificaSeDeveGerarEntrada(objConexao);
 
 			var intRetorno = objVerifica.Verificar(objSimulacaoDiariaVO, objValorCriterioClassifMediaVO, null);
 

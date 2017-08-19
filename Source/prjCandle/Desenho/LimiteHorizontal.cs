@@ -1,4 +1,4 @@
-﻿namespace prjCandle
+﻿namespace prjCandle.Desenho
 {
     public class LimiteHorizontal
     {

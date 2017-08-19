@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using DataBase.Carregadores;
+using Dominio.Entidades;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using prjDominio.Entidades;
-using prjDTO;
+using DTO;
 using prjModelo.Carregadores;
-using prjModelo.Entidades;
 using TesteBase;
 using TraderWizard.Enumeracoes;
 

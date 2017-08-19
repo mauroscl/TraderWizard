@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace prjCandle
+namespace prjCandle.Desenho
 {
 
 	public class LinhaTendencia:Linha

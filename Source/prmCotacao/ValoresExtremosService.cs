@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using DataBase;
 using DataBase.Carregadores;
 using prjDominio.Regras;
-using prjDTO;
+using DTO;
 using TraderWizard.Enumeracoes;
 
 namespace prmCotacao

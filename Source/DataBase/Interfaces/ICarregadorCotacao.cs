@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using prjDominio.Entidades;
-using prjDTO;
+using Dominio.Entidades;
+using DTO;
 using TraderWizard.Enumeracoes;
 
 namespace DataBase.Interfaces

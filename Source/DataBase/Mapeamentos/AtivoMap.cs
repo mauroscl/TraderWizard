@@ -1,5 +1,5 @@
-﻿using FluentNHibernate.Mapping;
-using prjDominio.Entidades;
+﻿using Dominio.Entidades;
+using FluentNHibernate.Mapping;
 
 namespace DataBase.Mapeamentos
 {

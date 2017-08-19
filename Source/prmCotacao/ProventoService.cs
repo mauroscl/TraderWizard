@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using Configuracao;
 using DataBase;
-using prjConfiguracao;
 using prjServicoNegocio;
 using Services;
+using ServicoNegocio;
 using TraderWizard.Enumeracoes;
 
 namespace prmCotacao
@@ -64,7 +65,7 @@ namespace prmCotacao
 
             string strTipoProvento = null;
 
-            var objCalculadorData = new cCalculadorData(_conexao);
+            var objCalculadorData = new CalculadorData(_conexao);
 
             //prepara os dados da tabela temporária
             objCommand.BeginTrans();
@@ -383,7 +384,7 @@ namespace prmCotacao
 
             objRS.Fechar();
 
-            string caminhoDoArquivo = cBuscarConfiguracao.ObtemCaminhoPadrao() + "Log_Proventos\\Log_Proventos_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".txt";
+            string caminhoDoArquivo = BuscarConfiguracao.ObtemCaminhoPadrao() + "Log_Proventos\\Log_Proventos_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".txt";
 
             IFileService fileService = new FileService();
             fileService.Save(caminhoDoArquivo, conteudoDoArquivoDeLog);
@@ -418,7 +419,7 @@ namespace prmCotacao
 
             cCommand objCommand = new cCommand(_conexao);
 
-            cCalculadorData objCalculadorData = new cCalculadorData(_conexao);
+            CalculadorData objCalculadorData = new CalculadorData(_conexao);
 
 
             objCommand.BeginTrans();

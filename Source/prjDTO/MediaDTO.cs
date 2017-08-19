@@ -1,6 +1,6 @@
 using System;
 using System.Drawing;
-namespace prjDTO
+namespace DTO
 {
 
 	public class MediaDTO

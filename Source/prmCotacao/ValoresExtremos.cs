@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using prjDTO;
+using DTO;
 
 namespace prmCotacao
 {

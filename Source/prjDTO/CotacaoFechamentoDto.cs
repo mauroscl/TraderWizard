@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace prjDTO
+namespace DTO
 {
     public class CotacaoFechamentoDto
     {

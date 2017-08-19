@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataBase;
-using prjModelo.Entidades;
+using Dominio.Entidades;
 
 namespace TraderWizard.Infra.Repositorio
 {
@@ -17,7 +17,7 @@ namespace TraderWizard.Infra.Repositorio
             _conexao = conexao;
         }
 
-        public void Salvar(cIFRSimulacaoDiariaFaixaResumo resumo)
+        public void Salvar(IFRSimulacaoDiariaFaixaResumo resumo)
         {
             cCommand objCommand = new cCommand(_conexao);
 

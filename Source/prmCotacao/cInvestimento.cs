@@ -1,9 +1,9 @@
 using System.Windows.Forms;
 using System;
 using System.Data;
+using Configuracao;
 using DataBase;
 using pWeb;
-using prjConfiguracao;
 
 namespace prmCotacao
 {
@@ -34,7 +34,7 @@ namespace prmCotacao
 
 				string strCaminhoPadrao = null;
 
-                strCaminhoPadrao = cBuscarConfiguracao.ObtemCaminhoPadrao();
+                strCaminhoPadrao = BuscarConfiguracao.ObtemCaminhoPadrao();
 
 				objWeb.DownloadWithProxy("http://www.bmfbovespa.com.br/Pregao-Online/ExecutaAcaoAjax.asp?CodigoPapel=" + strAtivo, strCaminhoPadrao + "temp", "cotacao.xml");
 

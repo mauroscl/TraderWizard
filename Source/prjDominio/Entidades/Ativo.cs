@@ -1,6 +1,4 @@
-using System;
-
-namespace prjDominio.Entidades
+namespace Dominio.Entidades
 {
 	public class Ativo
     {

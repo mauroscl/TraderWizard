@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using prjCandle;
+using prjCandle.Desenho;
 
 namespace TesteSemAcessarBancoDeDados.UI.FerramentaDeDesenho
 {

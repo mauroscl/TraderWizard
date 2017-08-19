@@ -2,8 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using DataBase;
-using prjDominio.Entidades;
-using prjModelo.Entidades;
+using Dominio.Entidades;
 using TraderWizard.Infra.Repositorio;
 
 namespace Forms

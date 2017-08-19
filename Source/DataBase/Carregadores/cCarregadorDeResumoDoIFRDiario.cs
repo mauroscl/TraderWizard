@@ -1,7 +1,7 @@
 using System;
 using DataBase;
+using Dominio.Entidades;
 using prjDominio.ValueObjects;
-using prjModelo.Entidades;
 
 namespace prjModelo.Carregadores
 {
@@ -16,7 +16,7 @@ namespace prjModelo.Carregadores
 			objConexao = pobjConexao;
 		}
 
-		public cIFRSimulacaoDiariaFaixaResumo Carregar(SimulacaoDiariaVO pobjSimulacaoDiariaVO)
+		public IFRSimulacaoDiariaFaixaResumo Carregar(SimulacaoDiariaVO pobjSimulacaoDiariaVO)
 		{
 
 			cRS objRS = new cRS(objConexao);
@@ -43,11 +43,11 @@ namespace prjModelo.Carregadores
 
 			objRS.ExecuteQuery(strSQL);
 
-			cIFRSimulacaoDiariaFaixaResumo objRetorno = null;
+			IFRSimulacaoDiariaFaixaResumo objRetorno = null;
 
 
 			if (objRS.DadosExistir) {
-				objRetorno = new cIFRSimulacaoDiariaFaixaResumo(pobjSimulacaoDiariaVO.Ativo, pobjSimulacaoDiariaVO.Setup, pobjSimulacaoDiariaVO.ClassificacaoMedia, pobjSimulacaoDiariaVO.IFRSobrevendido, pobjSimulacaoDiariaVO.DataEntradaEfetiva);
+				objRetorno = new IFRSimulacaoDiariaFaixaResumo(pobjSimulacaoDiariaVO.Ativo, pobjSimulacaoDiariaVO.Setup, pobjSimulacaoDiariaVO.ClassificacaoMedia, pobjSimulacaoDiariaVO.IFRSobrevendido, pobjSimulacaoDiariaVO.DataEntradaEfetiva);
 
 				objRetorno.NumTradesComFiltro = Convert.ToInt32(objRS.Field("NumTradesComFiltro"));
 				objRetorno.NumAcertosComFiltro = Convert.ToInt32(objRS.Field("NumAcertosComFiltro"));

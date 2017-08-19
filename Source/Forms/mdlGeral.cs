@@ -1,7 +1,7 @@
 using System;
 using System.Windows.Forms;
 using DataBase;
-using prjDominio.Entidades;
+using Dominio.Entidades;
 using TraderWizard.Enumeracoes;
 
 namespace TraderWizard
@@ -41,13 +41,13 @@ namespace TraderWizard
 			try {
 				pcmbProventoTipo.Items.Clear();
 
-				pcmbProventoTipo.Items.Add(new cProventoTipo((int) cEnum.enumProventoTipo.Dividendo, "Dividendo"));
+				pcmbProventoTipo.Items.Add(new ProventoTipo((int) cEnum.enumProventoTipo.Dividendo, "Dividendo"));
 
-				pcmbProventoTipo.Items.Add(new cProventoTipo((int) cEnum.enumProventoTipo.JurosCapitalProprio, "Juros sobre Capital Próprio"));
+				pcmbProventoTipo.Items.Add(new ProventoTipo((int) cEnum.enumProventoTipo.JurosCapitalProprio, "Juros sobre Capital Próprio"));
 
-				pcmbProventoTipo.Items.Add(new cProventoTipo((int) cEnum.enumProventoTipo.Rendimento, "Rendimento"));
+				pcmbProventoTipo.Items.Add(new ProventoTipo((int) cEnum.enumProventoTipo.Rendimento, "Rendimento"));
 
-				pcmbProventoTipo.Items.Add(new cProventoTipo((int) cEnum.enumProventoTipo.RestCapDin, "Rest. Cap. Din."));
+				pcmbProventoTipo.Items.Add(new ProventoTipo((int) cEnum.enumProventoTipo.RestCapDin, "Rest. Cap. Din."));
 
 				pcmbProventoTipo.SelectedIndex = 0;
 
@@ -62,7 +62,7 @@ namespace TraderWizard
 		public static cEnum.enumProventoTipo ComboProventoTipoCodigoRetornar(ComboBox pcmbProventoTipo)
 		{
 
-			var objProventoTipo = (cProventoTipo)pcmbProventoTipo.SelectedItem;
+			var objProventoTipo = (ProventoTipo)pcmbProventoTipo.SelectedItem;
 			return objProventoTipo.GetEnumProventoTipo;
 
 		}

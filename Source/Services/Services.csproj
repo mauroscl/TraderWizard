@@ -43,7 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="cArquivoXML.cs" />
+    <Compile Include="ArquivoXML.cs" />
     <Compile Include="ServicoDeCotacaoDeAtivo.cs" />
     <Compile Include="FileService.cs" />
     <Compile Include="IFileService.cs" />
@@ -54,13 +54,13 @@
       <Project>{CC20BB02-78E9-487E-A9EC-6BFC64D2B0CB}</Project>
       <Name>DataBase</Name>
     </ProjectReference>
-    <ProjectReference Include="..\prjDominio\prjDominio.csproj">
+    <ProjectReference Include="..\prjDominio\Dominio.csproj">
       <Project>{9DAFFBC6-2218-40FF-BDF9-86774B91DA7A}</Project>
-      <Name>prjDominio</Name>
+      <Name>Dominio</Name>
     </ProjectReference>
-    <ProjectReference Include="..\prjDTO\prjDTO.csproj">
+    <ProjectReference Include="..\prjDTO\DTO.csproj">
       <Project>{bd01a0c5-77d7-4faa-a662-38ea575ded34}</Project>
-      <Name>prjDTO</Name>
+      <Name>DTO</Name>
     </ProjectReference>
     <ProjectReference Include="..\TraderWizard.Enumeracoes\TraderWizard.Enumeracoes.csproj">
       <Project>{AA04D3D2-F5CE-4D2E-A9AF-A304638AC603}</Project>

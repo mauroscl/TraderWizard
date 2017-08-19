@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using DataBase.Interfaces;
-using prjDTO;
+using DTO;
 
 namespace DataBase.Carregadores
 {

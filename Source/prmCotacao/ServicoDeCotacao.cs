@@ -2,13 +2,14 @@
 using System.Windows.Forms;
 using System;
 using System.Collections.Generic;
+using Configuracao;
 using DataBase.Carregadores;
 using prjDominio.Regras;
 using prjServicoNegocio;
 using Services;
 using DataBase;
-using prjDTO;
-using prjConfiguracao;
+using DTO;
+using ServicoNegocio;
 using TraderWizard.Enumeracoes;
 
 namespace prmCotacao
@@ -805,7 +806,7 @@ namespace prmCotacao
 			    var dtmDataFinal = new DateTime();
 			    if (_cotacaoData.NumPeriodosDataInicialCalcular(pstrCodigo, pintNumPeriodos, true, ref dtmDataInicial, ref dtmDataFinal, pstrTabela,-1 , objConnAux))
 				{
-				    var calculadorData = new cCalculadorData(_conexao);
+				    var calculadorData = new CalculadorData(_conexao);
 
 				    DateTime proximoPeriodo = calculadorData.CalcularDataProximoPeriodo(pstrCodigo, dtmDataInicial, pstrTabela);
 
@@ -818,7 +819,7 @@ namespace prmCotacao
 					MediaAtualizar(pstrCodigo, dtmDataFinal, pintNumPeriodos, strTabelaMedia, dblMmExpAnterior, "MME", objConnAux);
 
 					//Calcula a data da próxima cotação conforme a periodicidade do cálculo.
-					cCalculadorData objCalculadorData = new cCalculadorData(objConnAux);
+					CalculadorData objCalculadorData = new CalculadorData(objConnAux);
 
 					//Se a data base retornar DATAINVALIDA significa que a média aritmética que foi calculada anteriormente é exata a do número de periodos
 					//que estamos calculando e nesse caso não tem mais nenhuma média para calcular.
@@ -1148,7 +1149,7 @@ namespace prmCotacao
 			    string strArquivoNome = pstrPeriodoDuracao == "DIARIO" ? "Log_MMExp_Diario.txt" : "Log_MMExp_Semanal.txt";
 
 			    var fileService = new FileService();
-                fileService.Save(cBuscarConfiguracao.ObtemCaminhoPadrao() + strArquivoNome, strLog);
+                fileService.Save(BuscarConfiguracao.ObtemCaminhoPadrao() + strArquivoNome, strLog);
 
 			}
 
@@ -1373,7 +1374,7 @@ namespace prmCotacao
 			cCommand objCommand = new cCommand(objConnAux);
 			cRS objRS = new cRS(objConnAux);
 
-			cCalculadorData objCalculadorData = new cCalculadorData(objConnAux);
+			CalculadorData objCalculadorData = new CalculadorData(objConnAux);
 
 			objCommand.BeginTrans();
 
@@ -1581,7 +1582,7 @@ namespace prmCotacao
 
 			if (!string.IsNullOrEmpty(strLog)) {
 			    var fileService = new FileService();
-                fileService.Save(cBuscarConfiguracao.ObtemCaminhoPadrao() + "Log_Cotacao_Semanal.txt",strLog);
+                fileService.Save(BuscarConfiguracao.ObtemCaminhoPadrao() + "Log_Cotacao_Semanal.txt",strLog);
 			}
 
 			objRS.Fechar();

@@ -4,8 +4,9 @@ using System.Windows.Forms;
 using prjServicoNegocio;
 using prmCotacao;
 using DataBase;
-using prjDTO;
+using DTO;
 using System.Threading;
+using ServicoNegocio;
 using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;
 
@@ -123,7 +124,7 @@ namespace TraderWizard
 
 					}
 
-					var objCalculadorData = new cCalculadorData(objConexao);
+					var objCalculadorData = new CalculadorData(objConexao);
 
 					//verifica se a data é um dia útil. Se não for, não permite a execução
 
@@ -235,9 +236,9 @@ namespace TraderWizard
 		{
 			mCotacao.ComboAtivoPreencher(cmbAtivo, objConexao,"", false);
 
-			var objCalculadorData = new cCalculadorData(objConexao);
+			var objCalculadorData = new CalculadorData(objConexao);
 
-			cSugerirAtualizacaoCotacaoDTO sugestao = objCalculadorData.SugerirAtualizarCotacao();
+			SugerirAtualizacaoCotacaoDTO sugestao = objCalculadorData.SugerirAtualizarCotacao();
 
 
 			if ((sugestao != null)) {

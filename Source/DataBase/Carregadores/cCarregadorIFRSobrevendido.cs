@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using prjDominio.Entidades;
+using Dominio.Entidades;
 
 namespace DataBase.Carregadores
 {
@@ -15,7 +15,7 @@ namespace DataBase.Carregadores
 			objConexao = pobjConexao;
 		}
 
-		public cIFRSobrevendido CarregaPorValorMaximo(double pdblValorMaximo)
+		public IFRSobrevendido CarregaPorValorMaximo(double pdblValorMaximo)
 		{
 
 			cRS objRS = new cRS(objConexao);
@@ -28,11 +28,11 @@ namespace DataBase.Carregadores
 
 			objRS.ExecuteQuery(strSQL);
 
-			cIFRSobrevendido objRetorno = null;
+			IFRSobrevendido objRetorno = null;
 
 
 			if (!objRS.EOF) {
-				objRetorno = new cIFRSobrevendido(Convert.ToInt32(objRS.Field("ID")), pdblValorMaximo);
+				objRetorno = new IFRSobrevendido(Convert.ToInt32(objRS.Field("ID")), pdblValorMaximo);
 
 			}
 
@@ -43,7 +43,7 @@ namespace DataBase.Carregadores
 		}
 
 
-		public IList<cIFRSobrevendido> CarregarTodos()
+		public IList<IFRSobrevendido> CarregarTodos()
 		{
 
 			cRS objRS = new cRS(objConexao);
@@ -55,11 +55,11 @@ namespace DataBase.Carregadores
 
 			objRS.ExecuteQuery(strSQL);
 
-			IList<cIFRSobrevendido> lstRetorno = new List<cIFRSobrevendido>();
+			IList<IFRSobrevendido> lstRetorno = new List<IFRSobrevendido>();
 
 
 			while (!objRS.EOF) {
-				lstRetorno.Add(new cIFRSobrevendido(Convert.ToInt32(objRS.Field("ID")), Convert.ToDouble(objRS.Field("ValorMaximo"))));
+				lstRetorno.Add(new IFRSobrevendido(Convert.ToInt32(objRS.Field("ID")), Convert.ToDouble(objRS.Field("ValorMaximo"))));
 
 				objRS.MoveNext();
 
@@ -77,7 +77,7 @@ namespace DataBase.Carregadores
 		/// <param name="pdblValor"></param>
 		/// <returns></returns>
 		/// <remarks></remarks>
-		public IList<cIFRSobrevendido> CarregaPorValor(double pdblValor)
+		public IList<IFRSobrevendido> CarregaPorValor(double pdblValor)
 		{
 
 			cRS objRS = new cRS(objConexao);
@@ -90,11 +90,11 @@ namespace DataBase.Carregadores
 
 			objRS.ExecuteQuery(strSQL);
 
-			IList<cIFRSobrevendido> lstRetorno = new List<cIFRSobrevendido>();
+			IList<IFRSobrevendido> lstRetorno = new List<IFRSobrevendido>();
 
 
 			while (!objRS.EOF) {
-				lstRetorno.Add(new cIFRSobrevendido(Convert.ToInt32(objRS.Field("ID")), Convert.ToDouble(objRS.Field("ValorMaximo"))));
+				lstRetorno.Add(new IFRSobrevendido(Convert.ToInt32(objRS.Field("ID")), Convert.ToDouble(objRS.Field("ValorMaximo"))));
 
 				objRS.MoveNext();
 
@@ -106,9 +106,9 @@ namespace DataBase.Carregadores
 
 		}
 
-		public cIFRSobrevendido CarregaPorID(int pintID)
+		public IFRSobrevendido CarregaPorID(int pintID)
 		{
-			cIFRSobrevendido functionReturnValue = null;
+			IFRSobrevendido functionReturnValue = null;
 
 			cRS objRS = new cRS(objConexao);
 
@@ -120,7 +120,7 @@ namespace DataBase.Carregadores
 
 			objRS.ExecuteQuery(strSQL);
 
-			functionReturnValue = new cIFRSobrevendido(pintID, Convert.ToDouble(objRS.Field("ValorMaximo")));
+			functionReturnValue = new IFRSobrevendido(pintID, Convert.ToDouble(objRS.Field("ValorMaximo")));
 
 			objRS.Fechar();
 			return functionReturnValue;

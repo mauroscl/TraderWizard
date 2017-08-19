@@ -1,9 +1,8 @@
 using System;
 using DataBase.Interfaces;
-using prjDominio.Entidades;
-using prjDTO;
+using Dominio.Entidades;
+using DTO;
 using prjModelo.Carregadores;
-using prjModelo.Entidades;
 
 namespace DataBase.Carregadores
 {

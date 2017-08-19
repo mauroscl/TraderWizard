@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace prjCandle
+namespace prjCandle.Desenho
 {
     public class LinhaHorizontal: Linha
     {

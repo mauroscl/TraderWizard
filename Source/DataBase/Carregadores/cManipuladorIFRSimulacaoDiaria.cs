@@ -1,7 +1,6 @@
 using System;
-using prjDominio.Entidades;
+using Dominio.Entidades;
 using prjModelo.Carregadores;
-using prjModelo.Entidades;
 
 namespace DataBase.Carregadores
 {
@@ -14,13 +13,13 @@ namespace DataBase.Carregadores
 		}
 
 
-		public override void Adicionar(cModelo pobjModelo, string pstrComando)
+		public override void Adicionar(Modelo pobjModelo, string pstrComando)
 		{
 			Operacoes.Add(new OperacaoDeBancoDeDados(pobjModelo, pstrComando));
 
 			cManipuladorIFRSimulacaoDiariaDetalhe objManipuladorDetalhe = new cManipuladorIFRSimulacaoDiariaDetalhe(Conexao);
 
-			var objSimulacao = (cIFRSimulacaoDiaria)pobjModelo;
+			var objSimulacao = (IFRSimulacaoDiaria)pobjModelo;
 
 
 			foreach (cIFRSimulacaoDiariaDetalhe objDetalhe in objSimulacao.Detalhes) {
@@ -32,9 +31,9 @@ namespace DataBase.Carregadores
 
 		}
 
-		public override string GeraInsert(cModelo pobjModelo)
+		public override string GeraInsert(Modelo pobjModelo)
 		{
-		    cIFRSimulacaoDiaria objItem = (cIFRSimulacaoDiaria)pobjModelo;
+		    IFRSimulacaoDiaria objItem = (IFRSimulacaoDiaria)pobjModelo;
 
             FuncoesBd FuncoesBd = Conexao.ObterFormatadorDeCampo();
 
@@ -85,7 +84,7 @@ namespace DataBase.Carregadores
 
 		}
 
-		public override string GeraUpdate(cModelo pobjModelo)
+		public override string GeraUpdate(Modelo pobjModelo)
 		{
 
 			throw new NotImplementedException();

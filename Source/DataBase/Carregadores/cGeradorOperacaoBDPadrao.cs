@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using prjDominio.Entidades;
+using Dominio.Entidades;
 using prjModelo.Carregadores;
 
 namespace DataBase.Carregadores
@@ -19,7 +19,7 @@ namespace DataBase.Carregadores
 			GeradoresFilhos = new List<cGeradorOperacaoBDPadrao>();
 		}
 
-		public virtual void Adicionar(cModelo pobjModelo, string pstrComando)
+		public virtual void Adicionar(Modelo pobjModelo, string pstrComando)
 		{
 			Operacoes.Add(new OperacaoDeBancoDeDados(pobjModelo, pstrComando));
 		}
@@ -29,9 +29,9 @@ namespace DataBase.Carregadores
 			GeradoresFilhos.Add(pobjItem);
 		}
 
-		public abstract string GeraInsert(cModelo pobjModelo);
+		public abstract string GeraInsert(Modelo pobjModelo);
 
-		public abstract string GeraUpdate(cModelo pobjModelo);
+		public abstract string GeraUpdate(Modelo pobjModelo);
 
 		public bool Executar()
 		{

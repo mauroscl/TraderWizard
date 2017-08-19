@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using prjDTO;
+using DTO;
 using TraderWizard.Extensoes;
 
 namespace TraderWizard

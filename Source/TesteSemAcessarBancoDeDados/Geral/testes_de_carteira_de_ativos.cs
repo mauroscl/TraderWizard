@@ -1,5 +1,5 @@
+using Dominio.Entidades;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using prjDominio.Entidades;
 
 namespace TesteSemAcessarBancoDeDados
 {
@@ -38,7 +38,7 @@ namespace TesteSemAcessarBancoDeDados
 		[TestMethod()]
 		public void QuandoAtivoEstaNaCarteiraDeveRetornaTRUE()
 		{
-			cCarteira objCarteira = FuncoesGerais.RetornaCarteiraPadrao();
+			Carteira objCarteira = FuncoesGerais.RetornaCarteiraPadrao();
 			var objAtivoProcurado = FuncoesGerais.GeraAtivo("BBAS3");
 			Assert.IsTrue(objCarteira.AtivoEstaNaCarteira(objAtivoProcurado));
 		}
@@ -46,7 +46,7 @@ namespace TesteSemAcessarBancoDeDados
 		[TestMethod()]
 		public void QuandoAtivoNaoEstaNaCarteiraDeveRetornaFALSE()
 		{
-			cCarteira objCarteira = FuncoesGerais.RetornaCarteiraPadrao();
+			Carteira objCarteira = FuncoesGerais.RetornaCarteiraPadrao();
 			var objAtivoProcurado = FuncoesGerais.GeraAtivo("MMXM3");
 			Assert.IsFalse(objCarteira.AtivoEstaNaCarteira(objAtivoProcurado));
 		}

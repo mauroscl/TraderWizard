@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
-using prjDominio.Entidades;
-using prjModelo.Entidades;
+using Dominio.Entidades;
 
 namespace DataBase.Carregadores
 {
@@ -19,7 +18,7 @@ namespace DataBase.Carregadores
 			Conexao = pobjConexao;
 			//objRepIFRSimulacao = New RepIFRSimulacaoFaixa(pobjConexao)
 		}
-		public IList<cIFRSimulacaoDiariaDetalhe> CarregarTodosDeUmaSimulacao(cIFRSimulacaoDiaria pobjIFRSimulacaoDiaria)
+		public IList<cIFRSimulacaoDiariaDetalhe> CarregarTodosDeUmaSimulacao(IFRSimulacaoDiaria pobjIFRSimulacaoDiaria)
 		{
             FuncoesBd funcoesBd = Conexao.ObterFormatadorDeCampo();
 

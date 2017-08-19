@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using DataBase.Carregadores;
-using prjDominio.Entidades;
-using prjModelo.Entidades;
 using prjModelo.Carregadores;
 using DataBase;
+using Dominio.Entidades;
 using TraderWizard.Enumeracoes;
 
 namespace ServicosDeInterface
@@ -12,7 +11,7 @@ namespace ServicosDeInterface
 	public class GeradorToolTip
 	{
 
-		public static string GerarToolTipRelatorioSetupEntrada(string pstrCodigo, cEnum.enumSetup pintIdSetup, cIFRSobrevendido pobjIfrSobrevendido, 
+		public static string GerarToolTipRelatorioSetupEntrada(string pstrCodigo, cEnum.enumSetup pintIdSetup, IFRSobrevendido pobjIfrSobrevendido, 
             cEnum.enumClassifMedia pintIdClassificaoMedia, cEnum.enumCriterioClassificacaoMedia pintIdCriterioClassificacaoMedia, DateTime pdtmData)
 		{
 
@@ -24,10 +23,10 @@ namespace ServicosDeInterface
 			cCarregadorIFRDiarioFaixa objCarregadorIFRDiarioFaixa = new cCarregadorIFRDiarioFaixa(objConexao);
 
 			Setup objSetup = objCarregadorSetup.CarregaPorID(pintIdSetup);
-			cClassifMedia objCM = objCarregadorCM.CarregaPorID(pintIdClassificaoMedia);
-			cCriterioClassifMedia objCriterioCM = objCarregadorCriterioCM.CarregaPorID(pintIdCriterioClassificacaoMedia);
+			ClassifMedia objCM = objCarregadorCM.CarregaPorID(pintIdClassificaoMedia);
+			CriterioClassifMedia objCriterioCM = objCarregadorCriterioCM.CarregaPorID(pintIdCriterioClassificacaoMedia);
 
-			IList<cIFRSimulacaoDiariaFaixa> lstFaixas = objCarregadorIFRDiarioFaixa.CarregaUltimaFaixaAteDataPorCriterioClassificacaoMedia(pstrCodigo, objSetup, objCM, objCriterioCM, pobjIfrSobrevendido, pdtmData);
+			IList<IFRSimulacaoDiariaFaixa> lstFaixas = objCarregadorIFRDiarioFaixa.CarregaUltimaFaixaAteDataPorCriterioClassificacaoMedia(pstrCodigo, objSetup, objCM, objCriterioCM, pobjIfrSobrevendido, pdtmData);
 
 			objConexao.FecharConexao();
 
@@ -35,7 +34,7 @@ namespace ServicosDeInterface
 
 
 		    for (int intI = 0; intI <= lstFaixas.Count - 1; intI++) {
-				cIFRSimulacaoDiariaFaixa objFaixa = lstFaixas[intI];
+				IFRSimulacaoDiariaFaixa objFaixa = lstFaixas[intI];
 
 				if (strDescricao != string.Empty) {
 					strDescricao += Environment.NewLine;

@@ -1,4 +1,4 @@
-﻿namespace prjDTO
+﻿namespace DTO
 {
     public class AtivoSelecao
     {

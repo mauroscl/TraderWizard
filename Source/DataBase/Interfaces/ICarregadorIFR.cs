@@ -1,5 +1,4 @@
-using prjDominio.Entidades;
-using prjModelo.Entidades;
+using Dominio.Entidades;
 
 namespace DataBase.Interfaces
 {

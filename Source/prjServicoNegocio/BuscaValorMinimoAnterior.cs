@@ -1,8 +1,7 @@
-﻿using prjDominio.Entidades;
-using prjModelo.Entidades;
+﻿using Dominio.Entidades;
 using Services;
 
-namespace prjServicoNegocio
+namespace ServicoNegocio
 {
 
 	public class BuscaCotacaoValorMinimoAnterior
@@ -18,7 +17,7 @@ namespace prjServicoNegocio
 	    public CotacaoAbstract Buscar(CotacaoAbstract pobjCotacao)
 		{
 
-            var objAjustarCotacao = new cAjustarCotacao(_servicoDeCotacaoDeAtivo);
+            var objAjustarCotacao = new AjustarCotacao(_servicoDeCotacaoDeAtivo);
 
             CotacaoAbstract objCotacaoDoValorMinimoAnterior = objAjustarCotacao.ConverterCotacaoParaData((CotacaoDiaria)_servicoDeCotacaoDeAtivo.CotacaoAnterior(pobjCotacao), pobjCotacao.Data);
 

@@ -1,5 +1,5 @@
 using System;
-using prjDominio.Entidades;
+using Dominio.Entidades;
 
 namespace DataBase.Carregadores
 {

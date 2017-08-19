@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Forms;
 using DataBase;
-using prjDTO;
+using DTO;
 using prjServicoNegocio;
 using prmCotacao;
+using ServicoNegocio;
 using TraderWizard.Enumeracoes;
 
 namespace TraderWizard
@@ -76,7 +77,7 @@ namespace TraderWizard
 
 			Cursor = Cursors.WaitCursor;
 
-			var objSetupIFR2SimularDTO = new cSetupIFR2SimularDTO();
+			var objSetupIFR2SimularDTO = new SetupIFR2SimularDto();
 
 			int intI;
 
@@ -211,7 +212,7 @@ namespace TraderWizard
 
 		private void ListAtivosPreencher()
 		{
-			var objCalculadorData = new cCalculadorData(objConexao);
+			var objCalculadorData = new CalculadorData(objConexao);
 
 			DateTime dtmDataUltimaCotacao = objCalculadorData.ObtemDataDaUltimaCotacao();
 

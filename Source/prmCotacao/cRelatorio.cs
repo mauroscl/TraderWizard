@@ -3,15 +3,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DataBase.Carregadores;
-using prjDominio.Entidades;
 using prjDominio.Regras;
 using prjDominio.ValueObjects;
-using prjModelo.Entidades;
 using prjModelo.Carregadores;
 using DataBase;
-using prjDTO;
+using Dominio.Entidades;
+using DTO;
 using prjServicoNegocio;
 using Services;
+using ServicoNegocio;
 using TraderWizard.Enumeracoes;
 
 namespace prmCotacao
@@ -726,7 +726,7 @@ namespace prmCotacao
 		/// <param name="pstrValorRealizacaoFinalRet"></param>
 		/// <remarks></remarks>
 
-		public void CalcularValoresRealizacao(string pstrCodigo, Setup pobjSetup, cClassifMedia pobjCM, cIFRSobrevendido pobjIFRSobrevendido, IList<cIFRSimulacaoDiariaFaixa> plstFaixas, decimal pdecValorEntrada, DateTime pdtmDataEntrada, ref string pstrValorRealizacaoParcialRet, ref string pstrValorRealizacaoFinalRet)
+		public void CalcularValoresRealizacao(string pstrCodigo, Setup pobjSetup, ClassifMedia pobjCM, IFRSobrevendido pobjIFRSobrevendido, IList<IFRSimulacaoDiariaFaixa> plstFaixas, decimal pdecValorEntrada, DateTime pdtmDataEntrada, ref string pstrValorRealizacaoParcialRet, ref string pstrValorRealizacaoFinalRet)
 		{
 		    string strWhere = String.Empty;
 
@@ -743,7 +743,7 @@ namespace prmCotacao
 			strWhere += " AND Data_Saida <= " + FuncoesBd.CampoFormatar(pdtmDataEntrada);
 
 
-			foreach (cIFRSimulacaoDiariaFaixa objIFRFaixa in plstFaixas) {
+			foreach (IFRSimulacaoDiariaFaixa objIFRFaixa in plstFaixas) {
 				strWhere += " AND EXISTS " + Environment.NewLine;
 				strWhere += "(" + Environment.NewLine;
 				strWhere += '\t' + " SELECT 1 " + Environment.NewLine;
@@ -805,7 +805,7 @@ namespace prmCotacao
 
 			cCarregadorDeResumoDoIFRDiario objCarregadorResumo = new cCarregadorDeResumoDoIFRDiario(_conexao);
 
-			cIFRSimulacaoDiariaFaixaResumo objResumo = objCarregadorResumo.Carregar(pobjSimulacaoDiariaVO);
+			IFRSimulacaoDiariaFaixaResumo objResumo = objCarregadorResumo.Carregar(pobjSimulacaoDiariaVO);
 
 
 			if (objResumo != null) {
@@ -935,7 +935,7 @@ namespace prmCotacao
 			//lstAtivos = {"INPR3", "AGEN11", "BRTO4", "AEDU3", "BBDC4", "CYRE3"}
 
 
-			cSetupIFR2SimularDTO objSetupIFRSimularDTO = new cSetupIFR2SimularDTO();
+			SetupIFR2SimularDto objSetupIFRSimularDTO = new SetupIFR2SimularDto();
 
 			objSetupIFRSimularDTO.IFRTipo = cEnum.enumIFRTipo.SemFiltro;
 			objSetupIFRSimularDTO.MediaTipo = cEnum.enumMediaTipo.Exponencial;
@@ -971,7 +971,7 @@ namespace prmCotacao
 		}
 
 
-		public bool SimularIFRDiarioParaListaDeAtivos(IList<string> plstAtivos, cSetupIFR2SimularDTO pobjSetupIFRSimularDTO)
+		public bool SimularIFRDiarioParaListaDeAtivos(IList<string> plstAtivos, SetupIFR2SimularDto pobjSetupIFRSimularDTO)
 		{
 
 
@@ -994,9 +994,9 @@ namespace prmCotacao
 			    for (int intI = 0; intI <= plstAtivos.Count - 1; intI++) {
 					string strCodigoAtivo = plstAtivos[intI];
 
-					cSetupIFR2SimularCodigoDTO objSetupIFR2SimularCodigoDTO = new cSetupIFR2SimularCodigoDTO(pobjSetupIFRSimularDTO, strCodigoAtivo);
+					SetupIFR2SimularCodigoDto objSetupIFR2SimularCodigoDTO = new SetupIFR2SimularCodigoDto(pobjSetupIFRSimularDTO, strCodigoAtivo);
 
-					cSimuladorIFRDiario objSimuladorIFRDiario = new cSimuladorIFRDiario(objSetupIFR2SimularCodigoDTO);
+					SimuladorIFRDiario objSimuladorIFRDiario = new SimuladorIFRDiario(objSetupIFR2SimularCodigoDTO);
 
 					//System.Threading.WaitCallback objCallBack = new System.Threading.WaitCallback(objSimuladorIFRDiario.SetupIFR2Simular);
                     System.Threading.WaitCallback objCallBack = objSimuladorIFRDiario.SetupIFR2Simular;
@@ -1047,7 +1047,7 @@ namespace prmCotacao
 		/// <param name="pdecValorTotal">Filtro pelo valor total em moeda negociado</param>
 		/// <returns></returns>
 		/// <remarks></remarks>
-		private string RelatIFR2SemFiltroDiarioPersonalizadoGerar(Setup pobjSetup, DateTime pdtmDataAtual, decimal pdecValorCapital, decimal pdecValorPerdaManejo, cIFRSobrevendido pobjIFRSobrevendido, double pdblIFR2LimiteSuperior = 5, double pdblTitulosTotal = -1, Int32 pintNegociosTotal = -1, decimal pdecValorTotal = -1)
+		private string RelatIFR2SemFiltroDiarioPersonalizadoGerar(Setup pobjSetup, DateTime pdtmDataAtual, decimal pdecValorCapital, decimal pdecValorPerdaManejo, IFRSobrevendido pobjIFRSobrevendido, double pdblIFR2LimiteSuperior = 5, double pdblTitulosTotal = -1, Int32 pintNegociosTotal = -1, decimal pdecValorTotal = -1)
 		{
 
             FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
@@ -1194,9 +1194,9 @@ namespace prmCotacao
 
 			objRS.ExecuteQuery(strSQL);
 
-		    IList<cIFRSimulacaoDiariaFaixa> lstFaixas = new List<cIFRSimulacaoDiariaFaixa>();
+		    IList<IFRSimulacaoDiariaFaixa> lstFaixas = new List<IFRSimulacaoDiariaFaixa>();
 
-		    cValorCriterioClassifMediaVO objValorCriterioCMVO = new cValorCriterioClassifMediaVO();
+		    ValorCriterioClassifMediaVO objValorCriterioCMVO = new ValorCriterioClassifMediaVO();
 
 		    dynamic objCarregadorCarteira = new CarregadorCarteira(_conexao);
 			dynamic objCarteiraAtiva = objCarregadorCarteira.CarregaAtiva(pobjIFRSobrevendido);
@@ -1223,13 +1223,13 @@ namespace prmCotacao
                 servicoDeCotacaoDeAtivo.CotacoesDiarias.Add(objCotacaoDiaria);
 
 				//Calcula a classificação da média
-                cClassifMedia objClassifMedia = servicoDeCotacaoDeAtivo.ObterClassificacaoDeMediaNaData(pdtmDataAtual);
+                ClassifMedia objClassifMedia = servicoDeCotacaoDeAtivo.ObterClassificacaoDeMediaNaData(pdtmDataAtual);
 
 				//Calcula o número de tentativas
 				int intNumTentativas = NumTentativasCalcular((string) objRS.Field("Codigo"), Convert.ToInt64(objRS.Field("Sequencial")), pobjIFRSobrevendido.ValorMaximo);
 
 				//Verifica se atende a todos os critérios
-				var objVerificaSeDeveGerarEntrada = new cVerificaSeDeveGerarEntrada(_conexao);
+				var objVerificaSeDeveGerarEntrada = new VerificaSeDeveGerarEntrada(_conexao);
 
 				objValorCriterioCMVO.PercentualMM21 = Convert.ToDouble(objRS.Field("Percentual_MME21"));
 				objValorCriterioCMVO.PercentualMM49 = Convert.ToDouble(objRS.Field("Percentual_MME49"));
@@ -1512,7 +1512,7 @@ namespace prmCotacao
 		/// <returns>A query que deve ser executada para retornar os dados do relatório</returns>
 		/// <remarks></remarks>
 		public string RelatListagemCalcular(System.DateTime pdtmData, cEnum.enumSetup pintSetup, string pstrPeriodo, bool pblnAlijamentoCalcular, decimal pdecCapitalTotal, decimal pdecPercentualManejo, decimal pdecPercentualRealizacaoParcial = -1, double pdblIFR2LimiteSuperior = -1, bool pblnAcimaMME49 = true, double pdblTitulosTotal = -1,
-		Int32 pintNegociosTotal = -1, decimal pdecValorTotal = -1, cIFRSobrevendido pobjIFRSobrevendido = null)
+		Int32 pintNegociosTotal = -1, decimal pdecValorTotal = -1, IFRSobrevendido pobjIFRSobrevendido = null)
 		{
 			string functionReturnValue;
 

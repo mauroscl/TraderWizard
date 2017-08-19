@@ -109,9 +109,9 @@
       <Project>{90CF8CCF-C0C3-45E8-ACCA-00E354837E5F}</Project>
       <Name>Desenho</Name>
     </ProjectReference>
-    <ProjectReference Include="..\prjDominio\prjDominio.csproj">
+    <ProjectReference Include="..\prjDominio\Dominio.csproj">
       <Project>{9DAFFBC6-2218-40FF-BDF9-86774B91DA7A}</Project>
-      <Name>prjDominio</Name>
+      <Name>Dominio</Name>
     </ProjectReference>
     <ProjectReference Include="..\TraderWizard.Extensoes\TraderWizard.Extensoes.csproj">
       <Project>{D6DB2ACC-0F07-406A-B105-8E509FCA45F6}</Project>

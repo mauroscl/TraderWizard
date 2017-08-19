@@ -2,8 +2,7 @@ using DataBase;
 using DataBase.Carregadores;
 using Forms.Properties;
 using prjCandle;
-using prjDominio.Entidades;
-using prjDTO;
+using DTO;
 using prmCotacao;
 using System;
 using System.Collections.Generic;
@@ -11,6 +10,8 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Dominio.Entidades;
+using prjCandle.Desenho;
 using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;
 using TraderWizard.Infra.Repositorio;
@@ -48,7 +49,7 @@ namespace TraderWizard
         //código do ativo que está impresso na tela
         private string strCodigoAtivo;
 
-        private cCandle[] arrCandle = { };
+        private Candle[] arrCandle = { };
 
         private PointF[] arrIFRPonto = { };
         private Rectangle[] arrVolumeRectangle = { };
@@ -824,7 +825,7 @@ namespace TraderWizard
                             //instância o candle com as propriedades em escala decimal, antes de passar para a escala logarítmica,
                             //caso o gráfico seja impresso em escala logarítmica.
 
-                            cCandle objCandle = new cCandle(Convert.ToDateTime(objRSList.Field("Data")),
+                            Candle objCandle = new Candle(Convert.ToDateTime(objRSList.Field("Data")),
                                 decValorAbertura, decValorFechamento, decValorMaximo, decValorMinimo,
                                 Convert.ToDecimal(objRSList.Field("Oscilacao")), blnMMExpDesenhar);
 
@@ -2075,7 +2076,7 @@ namespace TraderWizard
                 //pelo largura dos candles (corpo + espaçamento), que é indicando pela propriedade intLargura
                 //Tem que descontar um do resultado porque o array é base 0.
 
-                cCandle candle = arrCandle[intPosicaoArray];
+                Candle candle = arrCandle[intPosicaoArray];
 
                 if (candle.RectAreaTotal.Contains(intX, intY))
                 {

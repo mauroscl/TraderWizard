@@ -2,7 +2,7 @@ using System;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
-using prjConfiguracao;
+using Configuracao;
 using prmCotacao;
 using DataBase;
 using pWeb;
@@ -48,7 +48,7 @@ namespace TraderWizard
 			try {
 				
 				string strCaminhoPadrao = null;
-                strCaminhoPadrao = cBuscarConfiguracao.ObtemCaminhoPadrao();
+                strCaminhoPadrao = BuscarConfiguracao.ObtemCaminhoPadrao();
 
 				objWeb.DownloadWithProxy(pstrURL, strCaminhoPadrao + "temp", "cotacao.xml");
 

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using DataBase;
-using prjDominio.Entidades;
-using prjModelo.Entidades;
+using Dominio.Entidades;
 
 namespace TraderWizard.Infra.Repositorio
 {

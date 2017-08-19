@@ -9,7 +9,7 @@ namespace prjCandle
         protected readonly AreaDeDesenho AreaDeDesenho;
         private int _cliquesRealizados;
         protected IList<PontoDoDesenho> Pontos { get; private set; }
-        public Desenho DesenhoGerado { get;  protected set; }
+        public Desenho.Desenho DesenhoGerado { get;  protected set; }
         protected cEnum.EstadoDoDesenho EstadoDoDesenho
         {
             get

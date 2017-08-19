@@ -6,7 +6,7 @@ using System.Windows.Forms;
 using DataBase;
 using DataBase.Carregadores;
 using DataBase.Interfaces;
-using prjDTO;
+using DTO;
 using prmCotacao;
 using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;

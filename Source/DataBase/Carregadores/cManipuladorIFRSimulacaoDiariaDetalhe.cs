@@ -1,6 +1,5 @@
 using System;
-using prjDominio.Entidades;
-using prjModelo.Entidades;
+using Dominio.Entidades;
 
 namespace DataBase.Carregadores
 {
@@ -12,7 +11,7 @@ namespace DataBase.Carregadores
 		{
 		}
 
-		public override string GeraInsert(cModelo pobjModelo)
+		public override string GeraInsert(Modelo pobjModelo)
 		{
 		    cIFRSimulacaoDiariaDetalhe objItem = (cIFRSimulacaoDiariaDetalhe)pobjModelo;
 
@@ -35,7 +34,7 @@ namespace DataBase.Carregadores
 
 		}
 
-		public override string GeraUpdate(cModelo pobjModelo)
+		public override string GeraUpdate(Modelo pobjModelo)
 		{
 		    cIFRSimulacaoDiariaDetalhe objItem = (cIFRSimulacaoDiariaDetalhe)pobjModelo;
 

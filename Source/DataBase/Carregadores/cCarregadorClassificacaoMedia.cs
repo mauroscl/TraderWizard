@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using prjDominio.Entidades;
-using prjModelo.Entidades;
+using Dominio.Entidades;
 using TraderWizard.Enumeracoes;
 
 namespace prjModelo.Carregadores
@@ -11,11 +10,11 @@ namespace prjModelo.Carregadores
 	{
 
 
-		private readonly IList<cClassifMedia> lstTodasClassificacoes;
+		private readonly IList<ClassifMedia> lstTodasClassificacoes;
 
 		public cCarregadorClassificacaoMedia()
 		{
-			lstTodasClassificacoes = new List<cClassifMedia>
+			lstTodasClassificacoes = new List<ClassifMedia>
 			                             {
 			                                 new cClassifMediaAltaAlinhada(),
 			                                 new cClassifMediaAltaDesalinhada(),
@@ -26,12 +25,12 @@ namespace prjModelo.Carregadores
 			                             };
 		}
 
-		public IList<cClassifMedia> CarregaTodos()
+		public IList<ClassifMedia> CarregaTodos()
 		{
 			return lstTodasClassificacoes;
 		}
 
-		public cClassifMedia CarregaPorID(cEnum.enumClassifMedia pintID)
+		public ClassifMedia CarregaPorID(cEnum.enumClassifMedia pintID)
 		{
 			return lstTodasClassificacoes.FirstOrDefault(x => x.ID == (decimal) pintID);
 		}

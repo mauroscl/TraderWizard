@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
+using Dominio.Entidades;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NHibernate;
 using NHibernate.Linq;
-using prjDominio.Entidades;
 using StructureMap;
 using TesteBase;
 

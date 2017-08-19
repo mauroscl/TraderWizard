@@ -120,17 +120,17 @@
       <Project>{AA04D3D2-F5CE-4D2E-A9AF-A304638AC603}</Project>
       <Name>TraderWizard.Enumeracoes</Name>
     </ProjectReference>
-    <ProjectReference Include="..\prjConfiguracao\prjConfiguracao.csproj">
+    <ProjectReference Include="..\prjConfiguracao\Configuracao.csproj">
       <Project>{B9DCD706-44A1-4B5F-BF93-5C0A3F9BD6D5}</Project>
-      <Name>prjConfiguracao</Name>
+      <Name>Configuracao</Name>
     </ProjectReference>
-    <ProjectReference Include="..\prjDominio\prjDominio.csproj">
+    <ProjectReference Include="..\prjDominio\Dominio.csproj">
       <Project>{9DAFFBC6-2218-40FF-BDF9-86774B91DA7A}</Project>
-      <Name>prjDominio</Name>
+      <Name>Dominio</Name>
     </ProjectReference>
-    <ProjectReference Include="..\prjDTO\prjDTO.csproj">
+    <ProjectReference Include="..\prjDTO\DTO.csproj">
       <Project>{BD01A0C5-77D7-4FAA-A662-38EA575DED34}</Project>
-      <Name>prjDTO</Name>
+      <Name>DTO</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

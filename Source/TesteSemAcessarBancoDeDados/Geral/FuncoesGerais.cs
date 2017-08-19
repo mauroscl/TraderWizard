@@ -1,7 +1,7 @@
 using System;
+using Dominio.Entidades;
 using prjCandle;
-using prjDominio.Entidades;
-using prjModelo.Entidades;
+using prjCandle.Desenho;
 using TraderWizard.Enumeracoes;
 
 namespace TesteSemAcessarBancoDeDados
@@ -25,14 +25,14 @@ namespace TesteSemAcessarBancoDeDados
 			return new CotacaoDiaria(GeraAtivoPadrao(), DateTime.Now);
 		}
 
-		private static cIFRSobrevendido RetornaIFRSobrevendido()
+		private static IFRSobrevendido RetornaIFRSobrevendido()
 		{
-			return new cIFRSobrevendido(1, 5);
+			return new IFRSobrevendido(1, 5);
 		}
 
-		public static cCarteira RetornaCarteiraPadrao()
+		public static Carteira RetornaCarteiraPadrao()
 		{
-			var objRetorno = new cCarteira(1, "Teste", RetornaIFRSobrevendido(), true, DateTime.Now.Date);
+			var objRetorno = new Carteira(1, "Teste", RetornaIFRSobrevendido(), true, DateTime.Now.Date);
 			objRetorno.AdicionaAtivo(GeraAtivoPadrao());
 			objRetorno.AdicionaAtivo(GeraAtivo("BBAS3"));
 			return objRetorno;

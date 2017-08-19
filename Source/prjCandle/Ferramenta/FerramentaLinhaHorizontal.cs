@@ -1,4 +1,6 @@
-﻿namespace prjCandle
+﻿using prjCandle.Desenho;
+
+namespace prjCandle
 {
     public class FerramentaLinhaHorizontal: FerramentaDeDesenho
     {

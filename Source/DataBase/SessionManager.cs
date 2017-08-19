@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Reflection;
+using Configuracao;
 using DataBase.Mapeamentos;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
@@ -9,7 +10,6 @@ using NHibernate.Cfg;
 using NHibernate.Validator.Cfg;
 using NHibernate.Validator.Cfg.Loquacious;
 using NHibernate.Validator.Engine;
-using prjConfiguracao;
 using StructureMap;
 using StructureMap.Pipeline;
 
@@ -24,7 +24,7 @@ namespace DataBase
         public static void ConfigureDataAccess()
         {
             //Chama o configurador do nhibernate utilizando o structuremap para fazer a injeção de dependencia
-            ObjectFactory.Configure(i => ConfigureDataAccess(i, cBuscarConfiguracao.ObterConfiguracaoDoNHibernate()));
+            ObjectFactory.Configure(i => ConfigureDataAccess(i, BuscarConfiguracao.ObterConfiguracaoDoNHibernate()));
             //verifica se tudo foi configurado com sucesso
             ObjectFactory.AssertConfigurationIsValid();
 

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.8
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dominio", "Dominio", "{58730C71-9E62-4304-B244-DC2776BCDF02}"
 EndProject
@@ -32,19 +32,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TraderWizard.Enumeracoes", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataBase", "DataBase\DataBase.csproj", "{CC20BB02-78E9-487E-A9EC-6BFC64D2B0CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "prjConfiguracao", "prjConfiguracao\prjConfiguracao.csproj", "{B9DCD706-44A1-4B5F-BF93-5C0A3F9BD6D5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Configuracao", "prjConfiguracao\Configuracao.csproj", "{B9DCD706-44A1-4B5F-BF93-5C0A3F9BD6D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "prjDTO", "prjDTO\prjDTO.csproj", "{BD01A0C5-77D7-4FAA-A662-38EA575DED34}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTO", "prjDTO\DTO.csproj", "{BD01A0C5-77D7-4FAA-A662-38EA575DED34}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Desenho", "prjCandle\Desenho.csproj", "{90CF8CCF-C0C3-45E8-ACCA-00E354837E5F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pWeb", "pWeb\pWeb.csproj", "{A902DC79-0E9C-4C2D-894E-8301DB0D9849}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "pWeb\Web.csproj", "{A902DC79-0E9C-4C2D-894E-8301DB0D9849}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "prjDominio", "prjDominio\prjDominio.csproj", "{9DAFFBC6-2218-40FF-BDF9-86774B91DA7A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dominio", "prjDominio\Dominio.csproj", "{9DAFFBC6-2218-40FF-BDF9-86774B91DA7A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "prjServicoNegocio", "prjServicoNegocio\prjServicoNegocio.csproj", "{E03891F1-F42B-4141-B2AF-FA405D710B22}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicoNegocio", "prjServicoNegocio\ServicoNegocio.csproj", "{E03891F1-F42B-4141-B2AF-FA405D710B22}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "prmCotacao", "prmCotacao\prmCotacao.csproj", "{33BF35FD-D037-46C7-BC26-024AA54481EC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cotacao", "prmCotacao\Cotacao.csproj", "{33BF35FD-D037-46C7-BC26-024AA54481EC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicosDeInterface", "ServicosDeInterface\ServicosDeInterface.csproj", "{D0B52B8A-8A9C-4E34-B324-745E7A126573}"
 EndProject
@@ -281,6 +281,9 @@ Global
 		{8BAE22CC-832B-4151-8B2F-222403B12F8B} = {6BC89F85-F0C8-4751-94BE-8E8E6F52B90B}
 		{ABD88985-5583-4D96-9E41-7AB3842DC1F9} = {6BC89F85-F0C8-4751-94BE-8E8E6F52B90B}
 		{D6DB2ACC-0F07-406A-B105-8E509FCA45F6} = {3D792207-A703-4B62-A243-05E90D68BE47}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {06BEBEAF-32E1-474F-9288-88B026D572BD}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Cotacao.vsmdi

@@ -258,9 +258,9 @@
       <Project>{CC20BB02-78E9-487E-A9EC-6BFC64D2B0CB}</Project>
       <Name>DataBase</Name>
     </ProjectReference>
-    <ProjectReference Include="..\prjServicoNegocio\prjServicoNegocio.csproj">
+    <ProjectReference Include="..\prjServicoNegocio\ServicoNegocio.csproj">
       <Project>{E03891F1-F42B-4141-B2AF-FA405D710B22}</Project>
-      <Name>prjServicoNegocio</Name>
+      <Name>ServicoNegocio</Name>
     </ProjectReference>
     <ProjectReference Include="..\TraderWizard.Enumeracoes\TraderWizard.Enumeracoes.csproj">
       <Project>{AA04D3D2-F5CE-4D2E-A9AF-A304638AC603}</Project>
@@ -274,25 +274,25 @@
       <Project>{90CF8CCF-C0C3-45E8-ACCA-00E354837E5F}</Project>
       <Name>Desenho</Name>
     </ProjectReference>
-    <ProjectReference Include="..\prjConfiguracao\prjConfiguracao.csproj">
+    <ProjectReference Include="..\prjConfiguracao\Configuracao.csproj">
       <Project>{B9DCD706-44A1-4B5F-BF93-5C0A3F9BD6D5}</Project>
-      <Name>prjConfiguracao</Name>
+      <Name>Configuracao</Name>
     </ProjectReference>
-    <ProjectReference Include="..\prjDominio\prjDominio.csproj">
+    <ProjectReference Include="..\prjDominio\Dominio.csproj">
       <Project>{9DAFFBC6-2218-40FF-BDF9-86774B91DA7A}</Project>
-      <Name>prjDominio</Name>
+      <Name>Dominio</Name>
     </ProjectReference>
-    <ProjectReference Include="..\prjDTO\prjDTO.csproj">
+    <ProjectReference Include="..\prjDTO\DTO.csproj">
       <Project>{BD01A0C5-77D7-4FAA-A662-38EA575DED34}</Project>
-      <Name>prjDTO</Name>
+      <Name>DTO</Name>
     </ProjectReference>
-    <ProjectReference Include="..\prmCotacao\prmCotacao.csproj">
+    <ProjectReference Include="..\prmCotacao\Cotacao.csproj">
       <Project>{33BF35FD-D037-46C7-BC26-024AA54481EC}</Project>
-      <Name>prmCotacao</Name>
+      <Name>Cotacao</Name>
     </ProjectReference>
-    <ProjectReference Include="..\pWeb\pWeb.csproj">
+    <ProjectReference Include="..\pWeb\Web.csproj">
       <Project>{A902DC79-0E9C-4C2D-894E-8301DB0D9849}</Project>
-      <Name>pWeb</Name>
+      <Name>Web</Name>
     </ProjectReference>
     <ProjectReference Include="..\ServicosDeInterface\ServicosDeInterface.csproj">
       <Project>{D0B52B8A-8A9C-4E34-B324-745E7A126573}</Project>

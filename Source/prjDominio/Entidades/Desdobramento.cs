@@ -1,6 +1,6 @@
 using System;
 
-namespace prjDominio.Entidades
+namespace Dominio.Entidades
 {
 
 	public abstract class Desdobramento

@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using prjDTO;
-using prjModelo.Entidades;
+using DTO;
 
-namespace prjDominio.Entidades
+namespace Dominio.Entidades
 {
 	public abstract class CotacaoAbstract
     {

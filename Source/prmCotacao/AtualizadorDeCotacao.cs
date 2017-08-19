@@ -4,13 +4,14 @@ using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Configuracao;
 using DataBase;
 using Ionic.Zip;
-using prjConfiguracao;
 using prjDominio.Regras;
 using prjServicoNegocio;
 using pWeb;
 using Services;
+using ServicoNegocio;
 using TraderWizard.Enumeracoes;
 
 namespace prmCotacao
@@ -59,7 +60,7 @@ namespace prmCotacao
 
             DateTime dtmDataUltimaCotacao = Constantes.DataInvalida;
 
-            var objCalculadorData = new cCalculadorData(_conexao);
+            var objCalculadorData = new CalculadorData(_conexao);
 
             //enquanto a data inicial for menor que a data final.
 
@@ -548,7 +549,7 @@ namespace prmCotacao
 
         private bool ArquivoDataBaixar(DateTime pdtmData, out IList<string> pcolLinhaRet)
         {
-            string strPathZip = cBuscarConfiguracao.ObtemCaminhoPadrao();
+            string strPathZip = BuscarConfiguracao.ObtemCaminhoPadrao();
 
             strPathZip = strPathZip + "Arquivos";
 
@@ -602,7 +603,7 @@ namespace prmCotacao
 
             //nome dado ao arquivo zip que for baixado
 
-            string strPathZip = cBuscarConfiguracao.ObtemCaminhoPadrao();
+            string strPathZip = BuscarConfiguracao.ObtemCaminhoPadrao();
 
             strPathZip = strPathZip + "Arquivos";
 
@@ -688,7 +689,7 @@ namespace prmCotacao
 
             //nome dado ao arquivo zip que for baixado
 
-            string strPathZip = cBuscarConfiguracao.ObtemCaminhoPadrao();
+            string strPathZip = BuscarConfiguracao.ObtemCaminhoPadrao();
 
             strPathZip = strPathZip + "Arquivos";
 
@@ -765,7 +766,7 @@ namespace prmCotacao
 
             DateTime dtmData_Ultima_Cotacao = Constantes.DataInvalida;
 
-            cCalculadorData objCalculadorData = new cCalculadorData(_conexao);
+            CalculadorData objCalculadorData = new CalculadorData(_conexao);
 
             //enquanto a data inicial for menor que a data final.
 
@@ -1072,7 +1073,7 @@ namespace prmCotacao
 
             objRS.ExecuteQuery(" select Codigo " + " from Ativo " + " where Codigo not in " + "(" + " select Codigo " + " from Ativos_Desconsiderados" + ")");
 
-            int intNumeroDeAtivosCotacaoIntraday = cBuscarConfiguracao.NumeroDeAtivosCotacaoIntraday();
+            int intNumeroDeAtivosCotacaoIntraday = BuscarConfiguracao.NumeroDeAtivosCotacaoIntraday();
 
 
             while (!objRS.EOF)
@@ -1123,7 +1124,7 @@ namespace prmCotacao
             double dblTitulosTotal = 0;
             double dblValorTotal = 0;
 
-            string strCaminhoPadrao = cBuscarConfiguracao.ObtemCaminhoPadrao();
+            string strCaminhoPadrao = BuscarConfiguracao.ObtemCaminhoPadrao();
 
             foreach (string strAtivosLoop in colAtivos)
             {
@@ -1132,7 +1133,7 @@ namespace prmCotacao
 
                 if (objWebLocal.DownloadWithProxy(strUrl, strCaminhoPadrao + "temp", "cotacao.xml"))
                 {
-                    var objArquivoXml = new cArquivoXML(strCaminhoPadrao + "temp\\cotacao.xml");
+                    var objArquivoXml = new ArquivoXml(strCaminhoPadrao + "temp\\cotacao.xml");
 
 
                     if (!objArquivoXml.Abrir())

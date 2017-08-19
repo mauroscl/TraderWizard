@@ -1,5 +1,5 @@
 using System;
-using prjDominio.Entidades;
+using Dominio.Entidades;
 
 namespace DataBase.Carregadores
 {
@@ -11,9 +11,9 @@ namespace DataBase.Carregadores
 		{
 		}
 
-		public cCarteira CarregaAtiva(cIFRSobrevendido pobjIFRSobrevendido)
+		public Carteira CarregaAtiva(IFRSobrevendido pobjIFRSobrevendido)
 		{
-			cCarteira functionReturnValue = null;
+			Carteira functionReturnValue = null;
 
 			var strSQL = "SELECT IdCarteira, Descricao, Ativo, Data_Inicio, Data_Fim " + Environment.NewLine;
 			strSQL += " FROM Carteira " + Environment.NewLine;
@@ -26,7 +26,7 @@ namespace DataBase.Carregadores
 
 
 			if (objRS.DadosExistir) {
-				var objRetorno = new cCarteira(Convert.ToInt32(objRS.Field("IdCarteira")), Convert.ToString(objRS.Field("Descricao"))
+				var objRetorno = new Carteira(Convert.ToInt32(objRS.Field("IdCarteira")), Convert.ToString(objRS.Field("Descricao"))
                     , pobjIFRSobrevendido, true, Convert.ToDateTime(objRS.Field("Data_Inicio")), Convert.ToDateTime(objRS.Field("Data_Fim")));
 
 				objRS.Fechar();

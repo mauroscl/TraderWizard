@@ -1,6 +1,5 @@
 using System;
-using prjDominio.Entidades;
-using prjModelo.Entidades;
+using Dominio.Entidades;
 
 namespace DataBase.Carregadores
 {
@@ -17,7 +16,7 @@ namespace DataBase.Carregadores
 
 		}
 
-		public bool VerificaPorClassificacaoMedia(string pstrCodigo, cClassifMedia pobjCM, cIFRSobrevendido pobjIFRSobrevendido)
+		public bool VerificaPorClassificacaoMedia(string pstrCodigo, ClassifMedia pobjCM, IFRSobrevendido pobjIFRSobrevendido)
 		{
 		    cRS objRS = new cRS(Conexao);
 

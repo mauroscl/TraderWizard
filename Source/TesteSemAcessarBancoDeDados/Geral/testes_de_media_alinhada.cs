@@ -1,6 +1,6 @@
 using System.Collections.Generic;
+using Dominio.Entidades;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using prjDominio.Entidades;
 using prjDominio.Regras;
 
 namespace TesteSemAcessarBancoDeDados

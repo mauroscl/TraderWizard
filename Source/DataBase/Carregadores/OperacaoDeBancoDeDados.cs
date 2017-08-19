@@ -1,4 +1,4 @@
-using prjDominio.Entidades;
+using Dominio.Entidades;
 
 namespace DataBase.Carregadores
 {
@@ -7,9 +7,9 @@ namespace DataBase.Carregadores
 
 		public string Comando { get; set; }
 
-		public cModelo Modelo { get; set; }
+		public Modelo Modelo { get; set; }
 
-		public OperacaoDeBancoDeDados(cModelo pobjModelo, string pstrComando)
+		public OperacaoDeBancoDeDados(Modelo pobjModelo, string pstrComando)
 		{
 			Modelo = pobjModelo;
 			Comando = pstrComando;

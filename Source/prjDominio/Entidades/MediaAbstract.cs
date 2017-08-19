@@ -1,7 +1,7 @@
 using System;
-using prjDTO;
+using DTO;
 
-namespace prjDominio.Entidades
+namespace Dominio.Entidades
 {
 
 	public abstract class MediaAbstract

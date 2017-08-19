@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using DataBase.Carregadores;
-using prjDominio.Entidades;
 using prjDominio.Regras;
-using prjDTO;
+using DTO;
 using prjModelo;
 using prjModelo.Carregadores;
-using prjModelo.Entidades;
 using DataBase;
+using Dominio.Entidades;
 using Services;
+using ServicoNegocio;
 
 namespace prjServicoNegocio
 {
@@ -21,8 +21,8 @@ namespace prjServicoNegocio
 		private readonly Setup objSetup;
 		private readonly Ativo objAtivo;
 
-		private readonly IList<cIFRSobrevendido> lstIFRSobrevendido;
-		public SimuladorDeTrade(Conexao pobjConexao, Setup pobjSetup, Ativo pobjAtivo, IList<cIFRSobrevendido> plstIFRSobrevendido)
+		private readonly IList<IFRSobrevendido> lstIFRSobrevendido;
+		public SimuladorDeTrade(Conexao pobjConexao, Setup pobjSetup, Ativo pobjAtivo, IList<IFRSobrevendido> plstIFRSobrevendido)
 		{
 			objConexao = pobjConexao;
 
@@ -165,7 +165,7 @@ namespace prjServicoNegocio
 		}
 
 
-		public cIFRSimulacaoDiaria Simular(CotacaoDiaria pobjCotacaoDeInicioDaSimulacao)
+		public IFRSimulacaoDiaria Simular(CotacaoDiaria pobjCotacaoDeInicioDaSimulacao)
 		{
 		    //Indica se houve entrada efetiva na operação. Somente utilizada nas operações com filtro.
 			//Nas operações sem filtro a entrada sempre ocorre, pois não há necessidade de confirmação
@@ -201,7 +201,7 @@ namespace prjServicoNegocio
 			lstMediasParaCarregar.Add(new MediaDTO("E", 200, "VALOR"));
 			lstMediasParaCarregar.Add(new MediaDTO("A", 13, "IFR2"));
 
-		    var objCalculadorData = new cCalculadorData(objConexao);
+		    var objCalculadorData = new CalculadorData(objConexao);
 
 			CotacaoDiaria objCotacaoDeAcionamentoDoSetup = pobjCotacaoDeInicioDaSimulacao.Clonar();
 
@@ -482,10 +482,10 @@ namespace prjServicoNegocio
 
 		    if (!blnEntradaEfetiva) return null;
 
-		    var simulacaoDiaria = new cIFRSimulacaoDiaria(/*objConexao, */objAtivo, objSetup, objCotacaoDeAcionamentoDoSetup, objCotacaoDeEntrada, objCotacaoDoValorMaximo, 
+		    var simulacaoDiaria = new IFRSimulacaoDiaria(/*objConexao, */objAtivo, objSetup, objCotacaoDeAcionamentoDoSetup, objCotacaoDeEntrada, objCotacaoDoValorMaximo, 
                 objCotacaoDeSaida, objInformacoesDoTradeDTO/*, lstIFRSobrevendido*/);
 
-            var objCalculadorDetalhe = new cCalculadorIFRSimulacaoDiariaDetalhe(objConexao,servicoDeCotacaoDeAtivo);
+            var objCalculadorDetalhe = new CalculadorIFRSimulacaoDiariaDetalhe(objConexao,servicoDeCotacaoDeAtivo);
             objCalculadorDetalhe.CalcularDetalhes(simulacaoDiaria, lstIFRSobrevendido);
 
 		    servicoDeCotacaoDeAtivo.AdicionarSimulacao(simulacaoDiaria);

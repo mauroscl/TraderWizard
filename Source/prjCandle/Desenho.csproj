@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>prjCandle</RootNamespace>
-    <AssemblyName>prjCandle</AssemblyName>
+    <AssemblyName>Candle</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -54,7 +54,7 @@
     <Compile Include="Ferramenta\FerramentaLinhaTendencia.cs" />
     <Compile Include="Ferramenta\PontoDoDesenho.cs" />
     <Compile Include="Desenho\Canal.cs" />
-    <Compile Include="Desenho\cCandle.cs" />
+    <Compile Include="Desenho\Candle.cs" />
     <Compile Include="Desenho\FibonacciRetracement.cs" />
     <Compile Include="Desenho\Indicador.cs" />
     <Compile Include="Desenho\Linha.cs" />

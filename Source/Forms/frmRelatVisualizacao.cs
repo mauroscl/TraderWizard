@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
-using prjDominio.Entidades;
 using prjModelo.Carregadores;
 using DataBase;
+using Dominio.Entidades;
 using frwTela;
 using prmCotacao;
 using ServicosDeInterface;
@@ -47,7 +47,7 @@ namespace TraderWizard
 
 			cCarregadorCriterioClassificacaoMedia objCarregadorCriterioCM = new cCarregadorCriterioClassificacaoMedia();
 
-			IList<cCriterioClassifMedia> lstCriterios = objCarregadorCriterioCM.CarregaTodos();
+			IList<CriterioClassifMedia> lstCriterios = objCarregadorCriterioCM.CarregaTodos();
 
 
 
@@ -57,14 +57,14 @@ namespace TraderWizard
 
 				if (intSomatorioCriterios == 0) {
 					//todos os critérios OK.
-					foreach (cCriterioClassifMedia objCriterioCM in lstCriterios) {
+					foreach (CriterioClassifMedia objCriterioCM in lstCriterios) {
 						objDataGridView.Rows[intI].Cells[objCriterioCM.CampoRelatorio].Style = objCorVerde;
 						objDataGridView.Rows[intI].Cells["Codigo"].Style = objCorVerde;
 					}
 
 				} else if (intSomatorioCriterios > 0) {
 
-					foreach (cCriterioClassifMedia objCriterioCM in lstCriterios) {
+					foreach (CriterioClassifMedia objCriterioCM in lstCriterios) {
 						if ((intSomatorioCriterios & objCriterioCM.Peso) == 0) {
 							objDataGridView.Rows[intI].Cells[objCriterioCM.CampoRelatorio].Style = objCorVerde;
 						//objDataGridView.Rows(intI).Cells.Item(objCriterioCM.CampoRelatorio).Value = objDataGridView.Rows(intI).Cells.Item(objCriterioCM.CampoRelatorio).Value & " *"
@@ -462,11 +462,11 @@ namespace TraderWizard
 
 			this.Cursor = Cursors.WaitCursor;
 
-			cIFRSobrevendido objIFRSobrevendido = null;
+			IFRSobrevendido objIFRSobrevendido = null;
 
 
 			if (intSetup == cEnum.enumSetup.IFRSemFiltroRP) {
-				objIFRSobrevendido = (cIFRSobrevendido)cmbIFRFiltro.SelectedItem;
+				objIFRSobrevendido = (IFRSobrevendido)cmbIFRFiltro.SelectedItem;
 
 			}
 
@@ -484,12 +484,12 @@ namespace TraderWizard
 		{
 			cCarregadorIFRSobrevendido objCarregador = new cCarregadorIFRSobrevendido(this.objConexao);
 
-			IList<cIFRSobrevendido> lstLista = objCarregador.CarregarTodos();
+			IList<IFRSobrevendido> lstLista = objCarregador.CarregarTodos();
 
 			cmbIFRFiltro.Items.Clear();
 
 
-			foreach (cIFRSobrevendido objItem in lstLista) {
+			foreach (IFRSobrevendido objItem in lstLista) {
 				cmbIFRFiltro.Items.Add(objItem);
 
 			}
@@ -584,7 +584,7 @@ namespace TraderWizard
 					strCodigo = strCodigo.Substring(0, intIndex + 1);
 				}
 
-				e.ToolTipText = GeradorToolTip.GerarToolTipRelatorioSetupEntrada(strCodigo, cEnum.enumSetup.IFRSemFiltroRP, (cIFRSobrevendido)cmbIFRFiltro.SelectedItem
+				e.ToolTipText = GeradorToolTip.GerarToolTipRelatorioSetupEntrada(strCodigo, cEnum.enumSetup.IFRSemFiltroRP, (IFRSobrevendido)cmbIFRFiltro.SelectedItem
                     , (cEnum.enumClassifMedia) Enum.Parse(typeof(cEnum.enumClassifMedia),(string) objDataGridView.Rows[e.RowIndex].Cells["ID_CM"].Value) , intIDCriterioCM, dtmDataDeGeracaoDoRelatorio);
 
 			}

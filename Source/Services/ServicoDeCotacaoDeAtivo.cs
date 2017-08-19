@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using DataBase;
 using DataBase.Carregadores;
-using prjDominio.Entidades;
-using prjDTO;
+using Dominio.Entidades;
+using DTO;
 using prjModelo.Carregadores;
 using prjModelo.DomainServices;
-using prjModelo.Entidades;
 using TraderWizard.Enumeracoes;
 
 namespace Services
@@ -24,14 +23,14 @@ namespace Services
 	        _ativo = ativo;
 			_conexao = pobjConexao;
 			CotacoesDiarias = new List<CotacaoDiaria>();
-			lstSimulacoes = new SortedList<DateTime, cIFRSimulacaoDiaria>();
+			lstSimulacoes = new SortedList<DateTime, IFRSimulacaoDiaria>();
 			Desdobramentos = new List<Desdobramento>();
 		}
 
 		public IList<CotacaoDiaria> CotacoesDiarias { get; set; }
-		private SortedList<DateTime, cIFRSimulacaoDiaria> lstSimulacoes { get; set; }
+		private SortedList<DateTime, IFRSimulacaoDiaria> lstSimulacoes { get; set; }
 
-		public SortedList<DateTime, cIFRSimulacaoDiaria> Simulacoes {
+		public SortedList<DateTime, IFRSimulacaoDiaria> Simulacoes {
 			get { return lstSimulacoes; }
 		}
 
@@ -50,7 +49,7 @@ namespace Services
 		}
 
 
-		private void _AdicionarSimulacao(cIFRSimulacaoDiaria pobjSimulacao)
+		private void _AdicionarSimulacao(IFRSimulacaoDiaria pobjSimulacao)
 		{
 
 			if (!Simulacoes.Values.Any(s => s.Equals(pobjSimulacao))) {
@@ -59,7 +58,7 @@ namespace Services
 			}
 		}
 
-		public void AdicionarSimulacao(cIFRSimulacaoDiaria pobjSimulacao)
+		public void AdicionarSimulacao(IFRSimulacaoDiaria pobjSimulacao)
 		{
 			_AdicionarSimulacao(pobjSimulacao);
 		}
@@ -150,7 +149,7 @@ namespace Services
 
 		}
 
-		public cClassifMedia ObterClassificacaoDeMediaNaData(DateTime pdtmData)
+		public ClassifMedia ObterClassificacaoDeMediaNaData(DateTime pdtmData)
 		{
 
 			var objCotacaoDiaria = CotacoesDiarias.FirstOrDefault(x => x.Data == pdtmData);
@@ -182,7 +181,7 @@ namespace Services
 		}
 
 
-		public void CarregarUltimasSimulacoes(Setup pobjSetup, IList<cIFRSobrevendido> plstIFRSobrevendido, DateTime pdtmDataReferencia)
+		public void CarregarUltimasSimulacoes(Setup pobjSetup, IList<IFRSobrevendido> plstIFRSobrevendido, DateTime pdtmDataReferencia)
 		{
 			var objCarregador = new CarregadorSimulacaoIFRDiario(_conexao);
 
@@ -193,14 +192,14 @@ namespace Services
 
 			//percorre todos os ifrsobrevendido 
 
-			foreach (cIFRSobrevendido objIfrSobrevendido in lstIFRSobrevendidoAux) {
+			foreach (IFRSobrevendido objIfrSobrevendido in lstIFRSobrevendidoAux) {
 				//se o ifr sobrevendido ainda não está na lista tenta buscar a última simulação que contenha este ifr anterior à data de referência.
 
 				if (!Simulacoes.Any(x => x.Value.DataEntradaEfetiva < pdtmDataReferencia && x.Value.Detalhes.Any(y => y.IFRSobreVendido.Equals(objIfrSobrevendido)))) {
 					var lstSimulacao = objCarregador.CarregarUltimasSimulacoesPorIFRSobrevendido(_ativo, pobjSetup, objIfrSobrevendido, pdtmDataReferencia);
 
 
-					foreach (cIFRSimulacaoDiaria objSimulacao in lstSimulacao) {
+					foreach (IFRSimulacaoDiaria objSimulacao in lstSimulacao) {
 						_AdicionarSimulacao(objSimulacao);
 
 					}
@@ -227,7 +226,7 @@ namespace Services
 			return Desdobramentos.Where(x => x.Data == pdtmData).ToList();
 		}
 
-        public cIFRSimulacaoDiaria BuscaSimulacaoAnterior(cIFRSobrevendido pobjIFRSobrevendido, DateTime dataEntradaEfetiva)
+        public IFRSimulacaoDiaria BuscaSimulacaoAnterior(IFRSobrevendido pobjIFRSobrevendido, DateTime dataEntradaEfetiva)
         {
 
             return (from s in Simulacoes from d in s.Value.Detalhes
