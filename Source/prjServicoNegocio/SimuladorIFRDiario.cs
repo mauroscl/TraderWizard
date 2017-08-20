@@ -33,15 +33,15 @@ namespace ServicoNegocio
 
 		private void CarregarSetup()
 		{
-			cCarregadorSetup objCarregadorSetup = new cCarregadorSetup();
+			CarregadorSetup objCarregadorSetup = new CarregadorSetup();
 
 			if (objSetupIFR2SimularCodigoDTO.IFRTipo == cEnum.enumIFRTipo.ComFiltro) {
-                objSetup = objCarregadorSetup.CarregaPorID(cEnum.enumSetup.IFRComFiltro);
+                objSetup = objCarregadorSetup.CarregaPorId(cEnum.enumSetup.IFRComFiltro);
 			} else if (objSetupIFR2SimularCodigoDTO.IFRTipo == cEnum.enumIFRTipo.SemFiltro) {
 				if (objSetupIFR2SimularCodigoDTO.SubirStopApenasAposRealizacaoParcial) {
-                    objSetup = objCarregadorSetup.CarregaPorID(cEnum.enumSetup.IFRSemFiltroRP);
+                    objSetup = objCarregadorSetup.CarregaPorId(cEnum.enumSetup.IFRSemFiltroRP);
 				} else {
-                    objSetup = objCarregadorSetup.CarregaPorID(cEnum.enumSetup.IFRSemFiltro);
+                    objSetup = objCarregadorSetup.CarregaPorId(cEnum.enumSetup.IFRSemFiltro);
 				}
 			}
 		}
@@ -84,7 +84,7 @@ namespace ServicoNegocio
 
 
 		    if (objSetupIFR2SimularCodigoDTO.ExcluirSimulacoesAnteriores) {
-				cRemovedorSimulacaoIFRDiario objRemoverSimulacaoIFRDiario = new cRemovedorSimulacaoIFRDiario(objConexao);
+				RemovedorSimulacaoIFRDiario objRemoverSimulacaoIFRDiario = new RemovedorSimulacaoIFRDiario(objConexao);
 				objRemoverSimulacaoIFRDiario.ExcluirSimulacoesAnteriores(objSetupIFR2SimularCodigoDTO.Codigo, objSetup);
 
 			}
@@ -134,7 +134,7 @@ namespace ServicoNegocio
 
 
 			if (objSetup.RealizarCalculosAdicionais) {
-				cCarregadorIFRSobrevendido objCarregadorIFRSobrevendido = new cCarregadorIFRSobrevendido(objConexao);
+				CarregadorIFRSobrevendido objCarregadorIFRSobrevendido = new CarregadorIFRSobrevendido(objConexao);
 
 				lstIFRSobrevendido = objCarregadorIFRSobrevendido.CarregarTodos();
 

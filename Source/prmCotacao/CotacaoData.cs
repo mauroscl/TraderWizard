@@ -2,15 +2,17 @@ using System;
 using DataBase;
 using TraderWizard.Enumeracoes;
 
-namespace prmCotacao
+namespace Cotacao
 {
     public class CotacaoData
     {
         private readonly Conexao _conexao;
+        private readonly FuncoesBd _funcoesBd;
 
         public CotacaoData()
         {
             this._conexao = new Conexao();
+            this._funcoesBd = this._conexao.ObterFormatadorDeCampo();
 
         }
 
@@ -70,7 +72,7 @@ namespace prmCotacao
         {
             cRS objRs = pobjConexao == null ? new cRS(_conexao) : new cRS(pobjConexao);
 
-            objRs.ExecuteQuery(" select min(Data) as Data " + " from Cotacao " + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo));
+            objRs.ExecuteQuery(" select min(Data) as Data " + " from Cotacao " + " where Codigo = " + _funcoesBd.CampoStringFormatar(pstrCodigo));
 
             DateTime dtmDataAux = Convert.ToDateTime(objRs.Field("Data"));
 
@@ -176,7 +178,7 @@ namespace prmCotacao
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
             objRS.ExecuteQuery("SELECT DataFinal " + Environment.NewLine + " FROM Cotacao_Semanal " + Environment.NewLine +
-                               " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + Environment.NewLine +
+                               " WHERE Codigo = " + _funcoesBd.CampoStringFormatar(pstrCodigo) + Environment.NewLine +
                                " AND Data = " + funcoesBd.CampoDateFormatar(pdtmPrimeiroDiaSemana));
 
             DateTime dataDoUltimoDiaDaSemana = (DateTime)objRS.Field("DataFinal");
@@ -275,7 +277,8 @@ namespace prmCotacao
 
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
-            objRsData.ExecuteQuery("SELECT Data_Anterior" + " FROM Cotacao_Anterior" + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " AND Data = " + funcoesBd.CampoDateFormatar(pdtmDataBase) + " AND Periodo = " + FuncoesBd.CampoStringFormatar(strPeriodo));
+            objRsData.ExecuteQuery("SELECT Data_Anterior" + " FROM Cotacao_Anterior" + " WHERE Codigo = " + _funcoesBd.CampoStringFormatar(pstrCodigo) + " AND Data = " + funcoesBd.CampoDateFormatar(pdtmDataBase) +
+                " AND Periodo = " + _funcoesBd.CampoStringFormatar(strPeriodo));
 
 
             if (objRsData.DadosExistir)
@@ -289,7 +292,7 @@ namespace prmCotacao
                 objRsData.Fechar();
 
                 //Busca a data imediatamente anterior que tem uma cotação para o ativo recebido por parâmetro.
-                objRsData.ExecuteQuery(" select max(Data) as Data " + " from " + pstrTabela + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data < " + funcoesBd.CampoDateFormatar(pdtmDataBase));
+                objRsData.ExecuteQuery(" select max(Data) as Data " + " from " + pstrTabela + " where Codigo = " + _funcoesBd.CampoStringFormatar(pstrCodigo) + " and Data < " + funcoesBd.CampoDateFormatar(pdtmDataBase));
 
                 functionReturnValue = Convert.ToDateTime(objRsData.Field("Data", Constantes.DataInvalida));
 
@@ -334,7 +337,7 @@ namespace prmCotacao
 
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
-            string strCodigoFormatado = FuncoesBd.CampoStringFormatar(pstrCodigo);
+            string strCodigoFormatado = _funcoesBd.CampoStringFormatar(pstrCodigo);
 
             int intNumPeriodosFinal;
 
@@ -453,7 +456,7 @@ namespace prmCotacao
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
             //calcula o número de períodos em que há cotações para o papel no intervalo de datas recebido.
-            string strQuery = " Select count(1) as Contador " + " from " + pstrTabela + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + funcoesBd.CampoDateFormatar(pdtmDataInicial) + " and Data <= " + funcoesBd.CampoDateFormatar(pdtmDataFinal);
+            string strQuery = " Select count(1) as Contador " + " from " + pstrTabela + " where Codigo = " + _funcoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + funcoesBd.CampoDateFormatar(pdtmDataInicial) + " and Data <= " + funcoesBd.CampoDateFormatar(pdtmDataFinal);
 
             if (pintNumPeriodosTabelaDados != -1)
             {

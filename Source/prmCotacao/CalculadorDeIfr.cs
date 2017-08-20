@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Configuracao;
+using Cotacao;
 using DataBase;
 using DataBase.Carregadores;
 using DTO;
@@ -45,7 +46,10 @@ namespace prmCotacao
 
             //******ALTERADO POR MAURO, 19/12/2009
             //******ARMAZENAMENTO DO IFR EM TABELA PRÓPRIA PARA O IFR DIÁRIO E PARA O IFR SEMANAL
-            string strQuery = " INSERT INTO " + pstrTabela + "(Codigo, Data, NumPeriodos, MediaBaixa, MediaAlta, Valor) " + " VALUES " + "(" + FuncoesBd.CampoStringFormatar(pstrCodigo) + ", " + funcoesBd.CampoDateFormatar(pdtmData) + ", " + pintPeriodo.ToString() + ", " + FuncoesBd.CampoDecimalFormatar((decimal?)pdblMediaBaixa) + ", " + FuncoesBd.CampoDecimalFormatar((decimal?)pdblMediaAlta) + ", " + FuncoesBd.CampoDecimalFormatar((decimal?)pdblIFR) + ")";
+            string strQuery = " INSERT INTO " + pstrTabela + "(Codigo, Data, NumPeriodos, MediaBaixa, MediaAlta, Valor) " + " VALUES " + 
+                "(" + funcoesBd.CampoStringFormatar(pstrCodigo) + ", " + funcoesBd.CampoDateFormatar(pdtmData) + ", " + pintPeriodo + ", " + 
+                funcoesBd.CampoDecimalFormatar((decimal?)pdblMediaBaixa) + ", " + funcoesBd.CampoDecimalFormatar((decimal?)pdblMediaAlta) + ", " + 
+                funcoesBd.CampoDecimalFormatar((decimal?)pdblIFR) + ")";
 
             objCommand.Execute(strQuery);
         }
@@ -64,7 +68,7 @@ namespace prmCotacao
 
             double dblIFR;
 
-            cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(objRS.Conexao);
+            CarregadorSplit objCarregadorSplit = new CarregadorSplit(objRS.Conexao);
 
             //busca os splits do ativo no período, ordenado pelo último split.
             //Tem que começar a buscar um dia após 
@@ -124,7 +128,8 @@ namespace prmCotacao
                 FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
                 //calcula a média do valor de fechamento nos ultimos pintNumPeriodos com cotação positiva
-                string strQuery = " select ROUND(SUM(Diferenca)/" + pintNumPeriodos + ",6) as MediaPositiva " + " from " + pstrTabela + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + funcoesBd.CampoDateFormatar(pdtmDataInicial) + " and Data <= " + funcoesBd.CampoDateFormatar(pdtmDataFinal) + " and Diferenca > 0 ";
+                string strQuery = " select ROUND(SUM(Diferenca)/" + pintNumPeriodos + ",6) as MediaPositiva " + " from " + pstrTabela + 
+                    " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + funcoesBd.CampoDateFormatar(pdtmDataInicial) + " and Data <= " + funcoesBd.CampoDateFormatar(pdtmDataFinal) + " and Diferenca > 0 ";
 
                 objRS.ExecuteQuery(strQuery);
 
@@ -134,7 +139,8 @@ namespace prmCotacao
 
                 //calcula a média do valor de fechamento nos ultimos pintNumPeriodos com cotação negativa.
                 //ANTES DE SOMAR CONVERTE O VALOR PARA O VALOR ABSOLUTO, POIS A DIFERENÇA NESTES CASOS ESTÁ COM SINAL NEGATIVO
-                strQuery = " select ROUND(SUM(ABS(Diferenca)) / " + pintNumPeriodos + ",6) as MediaNegativa " + " from " + pstrTabela + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + funcoesBd.CampoDateFormatar(pdtmDataInicial) + " and Data <= " + funcoesBd.CampoDateFormatar(pdtmDataFinal) + " and Diferenca < 0 ";
+                strQuery = " select ROUND(SUM(ABS(Diferenca)) / " + pintNumPeriodos + ",6) as MediaNegativa " + " from " + pstrTabela + 
+                    " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + funcoesBd.CampoDateFormatar(pdtmDataInicial) + " and Data <= " + funcoesBd.CampoDateFormatar(pdtmDataFinal) + " and Diferenca < 0 ";
 
                 objRS.ExecuteQuery(strQuery);
 
@@ -229,7 +235,7 @@ namespace prmCotacao
 
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
-            objRS.ExecuteQuery(" select MediaBaixa, MediaAlta " + " from " + strTabelaIFR + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data = " + funcoesBd.CampoDateFormatar(dtmDataMaxima) + " and NumPeriodos = 14 ");
+            objRS.ExecuteQuery(" select MediaBaixa, MediaAlta " + " from " + strTabelaIFR + " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " and Data = " + funcoesBd.CampoDateFormatar(dtmDataMaxima) + " and NumPeriodos = 14 ");
 
             double pdblMediaBaixaAtualRet = 0.0;
             double pdblMediaAltaAtualRet = 0.0;
@@ -262,7 +268,7 @@ namespace prmCotacao
         {
             Conexao objConnAux = new Conexao();
 
-            cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(objConnAux);
+            CarregadorSplit objCarregadorSplit = new CarregadorSplit(objConnAux);
 
             cCommand objCommand = new cCommand(objConnAux);
 
@@ -609,8 +615,8 @@ namespace prmCotacao
                 else
                 {
 
-                    string sustenidoFormatado = FuncoesBd.CampoStringFormatar("#");
-                    strWhere += funcoesBd.IndiceDaSubString(funcoesBd.ConcatenarStrings(new[] { sustenidoFormatado, "Codigo", sustenidoFormatado }), FuncoesBd.CampoStringFormatar(pstrAtivos)) + " > 0";
+                    string sustenidoFormatado = funcoesBd.CampoStringFormatar("#");
+                    strWhere += funcoesBd.IndiceDaSubString(funcoesBd.ConcatenarStrings(new[] { sustenidoFormatado, "Codigo", sustenidoFormatado }), funcoesBd.CampoStringFormatar(pstrAtivos)) + " > 0";
                 }
 
             }

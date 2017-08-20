@@ -3,16 +3,16 @@ using System.Linq;
 using Dominio.Entidades;
 using TraderWizard.Enumeracoes;
 
-namespace prjModelo.Carregadores
+namespace DataBase.Carregadores
 {
 
-	public class cCarregadorClassificacaoMedia
+	public class CarregadorClassificacaoMedia
 	{
 
 
 		private readonly IList<ClassifMedia> lstTodasClassificacoes;
 
-		public cCarregadorClassificacaoMedia()
+		public CarregadorClassificacaoMedia()
 		{
 			lstTodasClassificacoes = new List<ClassifMedia>
 			                             {

@@ -5,7 +5,6 @@ using DataBase.Carregadores;
 using prjDominio.Regras;
 using DTO;
 using prjModelo;
-using prjModelo.Carregadores;
 using DataBase;
 using Dominio.Entidades;
 using Services;
@@ -490,7 +489,7 @@ namespace prjServicoNegocio
 
 		    servicoDeCotacaoDeAtivo.AdicionarSimulacao(simulacaoDiaria);
 
-		    var objManipuladorSimulacao = new cManipuladorIFRSimulacaoDiaria(objConexao);
+		    var objManipuladorSimulacao = new ManipuladorIFRSimulacaoDiaria(objConexao);
 
 		    objManipuladorSimulacao.Adicionar(simulacaoDiaria, "INSERT");
 

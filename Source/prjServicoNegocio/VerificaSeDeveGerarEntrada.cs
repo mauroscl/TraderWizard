@@ -3,7 +3,6 @@ using DataBase;
 using DataBase.Carregadores;
 using Dominio.Entidades;
 using prjDominio.ValueObjects;
-using prjModelo.Carregadores;
 
 namespace ServicoNegocio
 {
@@ -34,7 +33,7 @@ namespace ServicoNegocio
 
 			int intSomatorioCriterios = 0;
 
-			cCarregadorCriterioClassificacaoMedia objCarregadorCriterioCM = new cCarregadorCriterioClassificacaoMedia();
+			CarregadorCriterioClassificacaoMedia objCarregadorCriterioCM = new CarregadorCriterioClassificacaoMedia();
 
 			IList<CriterioClassifMedia> lstCriterioCM = objCarregadorCriterioCM.CarregaTodos();
 

@@ -2,7 +2,6 @@ using System;
 using DataBase.Interfaces;
 using Dominio.Entidades;
 using DTO;
-using prjModelo.Carregadores;
 
 namespace DataBase.Carregadores
 {
@@ -22,16 +21,16 @@ namespace DataBase.Carregadores
 		{
 		    cRS objRS = new cRS(Conexao);
 
-            FuncoesBd  FuncoesBd = Conexao.ObterFormatadorDeCampo();
+            FuncoesBd  funcoesBd = Conexao.ObterFormatadorDeCampo();
 
-		    string strSQL = "SELECT Valor " + Environment.NewLine;
-			strSQL = strSQL + " FROM Media_Diaria " + Environment.NewLine;
-			strSQL = strSQL + " WHERE Codigo = " + FuncoesBd.CampoFormatar(pobjCotacaoDiaria.Ativo.Codigo);
-			strSQL = strSQL + " AND Data = " + FuncoesBd.CampoFormatar(pobjCotacaoDiaria.Data);
-			strSQL = strSQL + " AND Tipo = " + FuncoesBd.CampoFormatar(pobjMediaDTO.CampoTipoBd);
-			strSQL = strSQL + " AND NumPeriodos = " + FuncoesBd.CampoFormatar(pobjMediaDTO.NumPeriodos);
+		    string strSql = "SELECT Valor " + Environment.NewLine;
+			strSql = strSql + " FROM Media_Diaria " + Environment.NewLine;
+			strSql = strSql + " WHERE Codigo = " + funcoesBd.CampoFormatar(pobjCotacaoDiaria.Ativo.Codigo);
+			strSql = strSql + " AND Data = " + funcoesBd.CampoFormatar(pobjCotacaoDiaria.Data);
+			strSql = strSql + " AND Tipo = " + funcoesBd.CampoFormatar(pobjMediaDTO.CampoTipoBd);
+			strSql = strSql + " AND NumPeriodos = " + funcoesBd.CampoFormatar(pobjMediaDTO.NumPeriodos);
 
-			objRS.ExecuteQuery(strSQL);
+			objRS.ExecuteQuery(strSql);
 
 			MediaAbstract functionReturnValue = new MediaDiaria(pobjCotacaoDiaria, pobjMediaDTO.Tipo, pobjMediaDTO.NumPeriodos, Convert.ToDouble(objRS.Field("Valor")));
 

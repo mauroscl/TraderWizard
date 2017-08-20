@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using DataBase.Carregadores;
-using prjModelo.Carregadores;
 using DataBase;
 using Dominio.Entidades;
 using TraderWizard.Enumeracoes;
@@ -17,12 +16,12 @@ namespace ServicosDeInterface
 
 			Conexao objConexao = new Conexao();
 
-			cCarregadorSetup objCarregadorSetup = new cCarregadorSetup();
-			cCarregadorClassificacaoMedia objCarregadorCM = new cCarregadorClassificacaoMedia();
-			cCarregadorCriterioClassificacaoMedia objCarregadorCriterioCM = new cCarregadorCriterioClassificacaoMedia();
-			cCarregadorIFRDiarioFaixa objCarregadorIFRDiarioFaixa = new cCarregadorIFRDiarioFaixa(objConexao);
+			CarregadorSetup objCarregadorSetup = new CarregadorSetup();
+			CarregadorClassificacaoMedia objCarregadorCM = new CarregadorClassificacaoMedia();
+			CarregadorCriterioClassificacaoMedia objCarregadorCriterioCM = new CarregadorCriterioClassificacaoMedia();
+			CarregadorIFRDiarioFaixa objCarregadorIFRDiarioFaixa = new CarregadorIFRDiarioFaixa(objConexao);
 
-			Setup objSetup = objCarregadorSetup.CarregaPorID(pintIdSetup);
+			Setup objSetup = objCarregadorSetup.CarregaPorId(pintIdSetup);
 			ClassifMedia objCM = objCarregadorCM.CarregaPorID(pintIdClassificaoMedia);
 			CriterioClassifMedia objCriterioCM = objCarregadorCriterioCM.CarregaPorID(pintIdCriterioClassificacaoMedia);
 

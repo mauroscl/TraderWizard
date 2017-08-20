@@ -4,10 +4,10 @@ using Dominio.Entidades;
 namespace DataBase.Carregadores
 {
 
-	public class cManipuladorIFRSimulacaoDiariaDetalhe : cGeradorOperacaoBDPadrao
+	public class ManipuladorIFRSimulacaoDiariaDetalhe : GeradorOperacaoBDPadrao
 	{
 
-		public cManipuladorIFRSimulacaoDiariaDetalhe(Conexao pobjConexao) : base(pobjConexao)
+		public ManipuladorIFRSimulacaoDiariaDetalhe(Conexao pobjConexao) : base(pobjConexao)
 		{
 		}
 

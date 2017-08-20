@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Dominio.Entidades;
-using prjModelo.Carregadores;
 using TraderWizard.Enumeracoes;
 
 namespace DataBase.Carregadores
@@ -16,15 +15,15 @@ namespace DataBase.Carregadores
 
 		private string GerarQuery(Ativo pobjAtivo, Setup pobjSetup, string pstrWhereAdicional, int? pintTop, string pstrOrderBy)
 		{
-            FuncoesBd FuncoesBd = Conexao.ObterFormatadorDeCampo();
+            FuncoesBd funcoesBd = Conexao.ObterFormatadorDeCampo();
 
 		    string strSQL = "SELECT " + (pintTop.HasValue ? "TOP  " + pintTop : string.Empty);
 			strSQL += " S.ID_CM, S.Sequencial, S.Data_Entrada_Efetiva, S.Valor_Entrada_Original, S.Valor_Entrada_Ajustado, " + Environment.NewLine;
 			strSQL += "S.Valor_IFR_Minimo, S.Valor_Maximo, S.Percentual_Maximo, S.Data_Saida, S.Percentual_Saida, S.Percentual_MME21, " + Environment.NewLine;
 			strSQL += "S.Percentual_MME49, S.Percentual_MME200, S.Valor_Stop_Loss_Inicial, S.Verdadeiro " + Environment.NewLine;
 			strSQL += " FROM IFR_Simulacao_Diaria S " + Environment.NewLine;
-			strSQL += " WHERE S.Codigo = " + FuncoesBd.CampoFormatar(pobjAtivo.Codigo);
-			strSQL += " AND S.ID_Setup = " + FuncoesBd.CampoFormatar(pobjSetup.Id);
+			strSQL += " WHERE S.Codigo = " + funcoesBd.CampoFormatar(pobjAtivo.Codigo);
+			strSQL += " AND S.ID_Setup = " + funcoesBd.CampoFormatar(pobjSetup.Id);
 			strSQL += pstrWhereAdicional;
 
 			if (pstrOrderBy != string.Empty) {
@@ -57,7 +56,7 @@ namespace DataBase.Carregadores
 			objRetorno.ValorStopLossInicial = Convert.ToDecimal(pcolLinha["Valor_Stop_Loss_Inicial"]);
 			objRetorno.Verdadeiro = Convert.ToBoolean(pcolLinha["Verdadeiro"]);
 
-			var objCarregadorClassifMedia = new cCarregadorClassificacaoMedia();
+			var objCarregadorClassifMedia = new CarregadorClassificacaoMedia();
             objRetorno.ClassificacaoMedia = objCarregadorClassifMedia.CarregaPorID((cEnum.enumClassifMedia)Enum.Parse(typeof(cEnum.enumClassifMedia), Convert.ToString( pcolLinha["ID_CM"])));
 
 			return objRetorno;
@@ -77,7 +76,7 @@ namespace DataBase.Carregadores
 			if (objRS.DadosExistir) {
 				var objRetorno = ConstruirObjetoDaSimulacao(pobjAtivo, pobjSetup, objRS.RetornaLinhaAtual());
 
-				cCarregadorIFRSimulacaoDiariaDetalhe objCarregadorDetalhe = new cCarregadorIFRSimulacaoDiariaDetalhe(Conexao);
+				CarregadorIFRSimulacaoDiariaDetalhe objCarregadorDetalhe = new CarregadorIFRSimulacaoDiariaDetalhe(Conexao);
 
 				objRetorno.Detalhes = objCarregadorDetalhe.CarregarTodosDeUmaSimulacao(objRetorno);
 
@@ -107,7 +106,7 @@ namespace DataBase.Carregadores
 			while (!objRS.EOF) {
 				var objRetorno = ConstruirObjetoDaSimulacao(pobjAtivo, pobjSetup, objRS.RetornaLinhaAtual());
 
-				cCarregadorIFRSimulacaoDiariaDetalhe objCarregadorDetalhe = new cCarregadorIFRSimulacaoDiariaDetalhe(Conexao);
+				CarregadorIFRSimulacaoDiariaDetalhe objCarregadorDetalhe = new CarregadorIFRSimulacaoDiariaDetalhe(Conexao);
 
 				objRetorno.Detalhes = objCarregadorDetalhe.CarregarTodosDeUmaSimulacao(objRetorno);
 
@@ -125,15 +124,16 @@ namespace DataBase.Carregadores
 
 		public IFRSimulacaoDiaria CarregarMelhorEntradaPorAgrupadorDeTentativas(Ativo pobjAtivo, Setup pobjSetup, IFRSobrevendido pobjIFRSobrevendido, UInt32 pintAgrupadorDeTentativas)
 		{
+		    FuncoesBd funcoesBd = Conexao.ObterFormatadorDeCampo();
 		    string strWhereAdicional = " AND EXISTS ( " + Environment.NewLine;
 			strWhereAdicional += '\t' + " SELECT 1 " + Environment.NewLine;
 			strWhereAdicional += '\t' + " FROM IFR_Simulacao_Diaria_Detalhe D " + Environment.NewLine;
 			strWhereAdicional += '\t' + " WHERE D.Codigo = S.Codigo " + Environment.NewLine;
 			strWhereAdicional += '\t' + " AND D.ID_Setup = S.ID_Setup " + Environment.NewLine;
 			strWhereAdicional += '\t' + " AND D.Data_Entrada_Efetiva = S.Data_Entrada_Efetiva " + Environment.NewLine;
-			strWhereAdicional += '\t' + " AND D.ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.Id) + Environment.NewLine;
-			strWhereAdicional += '\t' + " AND D.MelhorEntrada = " + FuncoesBd.CampoFormatar(true) + Environment.NewLine;
-			strWhereAdicional += '\t' + " AND D.AgrupadorTentativas = " + FuncoesBd.CampoFormatar(pintAgrupadorDeTentativas);
+			strWhereAdicional += '\t' + " AND D.ID_IFR_Sobrevendido = " + funcoesBd.CampoFormatar(pobjIFRSobrevendido.Id) + Environment.NewLine;
+			strWhereAdicional += '\t' + " AND D.MelhorEntrada = " + funcoesBd.CampoFormatar(true) + Environment.NewLine;
+			strWhereAdicional += '\t' + " AND D.AgrupadorTentativas = " + funcoesBd.CampoFormatar(pintAgrupadorDeTentativas);
 			strWhereAdicional += ")" + Environment.NewLine;
 
 			var strSQL = GerarQuery(pobjAtivo, pobjSetup, strWhereAdicional, null, string.Empty);

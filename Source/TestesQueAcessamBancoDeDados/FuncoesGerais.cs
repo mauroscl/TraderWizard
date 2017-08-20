@@ -13,9 +13,9 @@ namespace TestProject1
 		public static Setup CarregarSetup(cEnum.enumSetup pintIDSetup)
 		{
 
-			cCarregadorSetup objCarregadorSetup = new cCarregadorSetup();
+			CarregadorSetup objCarregadorSetup = new CarregadorSetup();
 
-			return objCarregadorSetup.CarregaPorID(pintIDSetup);
+			return objCarregadorSetup.CarregaPorId(pintIDSetup);
 
 		}
 
@@ -27,7 +27,7 @@ namespace TestProject1
 		public static IFRSobrevendido CarregaIFRSobrevendido(Conexao pobjConexao, int pintId)
 		{
 
-			cCarregadorIFRSobrevendido objCarregadorIFRSobrevendido = new cCarregadorIFRSobrevendido(pobjConexao);
+			CarregadorIFRSobrevendido objCarregadorIFRSobrevendido = new CarregadorIFRSobrevendido(pobjConexao);
 
 			return objCarregadorIFRSobrevendido.CarregaPorID(pintId);
 

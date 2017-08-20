@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using DataBase.Carregadores;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using prjModelo.Carregadores;
 using TesteBase;
 namespace TestProject1
 {
@@ -61,7 +60,7 @@ namespace TestProject1
 
 		public void QuandoCarregarPorIdTemQueRetornarIFRSobrevendidoComMesmoId()
 		{
-			var objCarregadorIFRSobrevendido = new cCarregadorIFRSobrevendido(objConexao);
+			var objCarregadorIFRSobrevendido = new CarregadorIFRSobrevendido(objConexao);
 
 			var objIFRSobrevendido = objCarregadorIFRSobrevendido.CarregaPorID(1);
 
@@ -73,7 +72,7 @@ namespace TestProject1
 
 		public void QuandoCarregarTodosTemQueRetornarUmaListaComTodosIFRSobrevendido()
 		{
-			var objCarregadorIFRSobrevendido = new cCarregadorIFRSobrevendido(objConexao);
+			var objCarregadorIFRSobrevendido = new CarregadorIFRSobrevendido(objConexao);
 
 			var lstIFrSobrevendido = objCarregadorIFRSobrevendido.CarregarTodos();
 
@@ -85,7 +84,7 @@ namespace TestProject1
 
 		public void QuandoCarregarPorValorMaximoTemQueRetornarOIFRSobrevendidoReferenteAoValorMaximoPassado()
 		{
-			var objCarregadorIFRSobrevendido = new cCarregadorIFRSobrevendido(objConexao);
+			var objCarregadorIFRSobrevendido = new CarregadorIFRSobrevendido(objConexao);
 
 			var objIFRSobrevendido = objCarregadorIFRSobrevendido.CarregaPorValorMaximo(10);
 
@@ -97,7 +96,7 @@ namespace TestProject1
 
 		public void QuandoCarregarPorValorTemQueRetornarUmaListaComTodosIFRSobrevendidoQueSeEncaixamNoValor()
 		{
-			var objCarregadorIFRSobrevendido = new cCarregadorIFRSobrevendido(objConexao);
+			var objCarregadorIFRSobrevendido = new CarregadorIFRSobrevendido(objConexao);
 
 			var lstIFRSobrevendido = objCarregadorIFRSobrevendido.CarregaPorValor(7.5);
 

@@ -1,7 +1,7 @@
 using DataBase;
+using DataBase.Carregadores;
 using Dominio.Entidades;
 using prjDominio.ValueObjects;
-using prjModelo.Carregadores;
 
 namespace ServicoNegocio
 {
@@ -21,7 +21,7 @@ namespace ServicoNegocio
 		public bool Verificar(SimulacaoDiariaVO pobjSimulacaoDiariaVO)
 		{
 
-			var objCarregador = new cCarregadorDeResumoDoIFRDiario(_conexao);
+			var objCarregador = new CarregadorDeResumoDoIFRDiario(_conexao);
 
 			IFRSimulacaoDiariaFaixaResumo objResumo = objCarregador.Carregar(pobjSimulacaoDiariaVO);
 

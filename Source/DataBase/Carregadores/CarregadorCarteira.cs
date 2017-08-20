@@ -14,11 +14,12 @@ namespace DataBase.Carregadores
 		public Carteira CarregaAtiva(IFRSobrevendido pobjIFRSobrevendido)
 		{
 			Carteira functionReturnValue = null;
+		    FuncoesBd funcoesBd = Conexao.ObterFormatadorDeCampo();
 
 			var strSQL = "SELECT IdCarteira, Descricao, Ativo, Data_Inicio, Data_Fim " + Environment.NewLine;
 			strSQL += " FROM Carteira " + Environment.NewLine;
-			strSQL += " WHERE ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.Id) + Environment.NewLine;
-			strSQL += " AND Ativo = " + FuncoesBd.CampoFormatar(true);
+			strSQL += " WHERE ID_IFR_Sobrevendido = " + funcoesBd.CampoFormatar(pobjIFRSobrevendido.Id) + Environment.NewLine;
+			strSQL += " AND Ativo = " + funcoesBd.CampoFormatar(true);
 
 			var objRS = new cRS(Conexao);
 
@@ -33,7 +34,7 @@ namespace DataBase.Carregadores
 
 				strSQL = "SELECT Codigo " + Environment.NewLine;
 				strSQL += " FROM Carteira_Ativo " + Environment.NewLine;
-				strSQL += " WHERE IdCarteira = " + FuncoesBd.CampoFormatar(objRetorno.IdCarteira);
+				strSQL += " WHERE IdCarteira = " + funcoesBd.CampoFormatar(objRetorno.IdCarteira);
 
 				objRS.ExecuteQuery(strSQL);
 

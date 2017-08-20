@@ -162,7 +162,7 @@ namespace DataBase
                 case cEnum.BancoDeDados.SqlServer:
                     return new FuncoesBdSqlServer();
                 default:
-                    return new FuncoesBd();
+                    throw new Exception("banco inválido");
 	        }
 	    }
 

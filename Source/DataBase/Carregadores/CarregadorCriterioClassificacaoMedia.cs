@@ -1,13 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Dominio.Entidades;
-//Imports DataBase
 using TraderWizard.Enumeracoes;
 
-namespace prjModelo.Carregadores
+namespace DataBase.Carregadores
 {
 
-	public class cCarregadorCriterioClassificacaoMedia
+	public class CarregadorCriterioClassificacaoMedia
 	{
 
 		//Private ReadOnly objConexao As cConexao
@@ -20,7 +19,7 @@ namespace prjModelo.Carregadores
 		//objConexao = pobjConexao
 
 
-		public cCarregadorCriterioClassificacaoMedia()
+		public CarregadorCriterioClassificacaoMedia()
 		{
 			lstTodosCriterios = new List<CriterioClassifMedia>();
 

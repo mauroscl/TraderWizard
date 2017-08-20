@@ -106,7 +106,9 @@ namespace DataBase
 
             string strOperacao = String.Empty;
 
-			try {
+			try
+			{
+			    FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
 				foreach (cCampoDB objCampoDB_loopVariable in _campos.Values) {
 					objCampoDB = objCampoDB_loopVariable;
@@ -126,7 +128,7 @@ namespace DataBase
 					strCampos = strCampos + objCampoDB.Campo;
 
 
-					strValoresINSERT = strValoresINSERT + FuncoesBd.CampoStringFormatar(objCampoDB.Valor);
+					strValoresINSERT = strValoresINSERT + funcoesBd.CampoStringFormatar(objCampoDB.Valor);
 
 					//TRATAMENTO PARA O UPDATE. TEM QUE SEPARAR OS CAMPOS EM CHAVE
 					//E OS CAMPOS QUE SERÃO ATUALIZADOS.
@@ -138,7 +140,7 @@ namespace DataBase
 
 						}
 
-						strWhere = strWhere + objCampoDB.Campo + " = " + FuncoesBd.CampoStringFormatar(objCampoDB.Valor);
+						strWhere = strWhere + objCampoDB.Campo + " = " + funcoesBd.CampoStringFormatar(objCampoDB.Valor);
 
 
 					} else {
@@ -148,7 +150,7 @@ namespace DataBase
 
 						}
 
-						strValoresUPDATE = strValoresUPDATE + objCampoDB.Campo + " = " + FuncoesBd.CampoStringFormatar(objCampoDB.Valor);
+						strValoresUPDATE = strValoresUPDATE + objCampoDB.Campo + " = " + funcoesBd.CampoStringFormatar(objCampoDB.Valor);
 
 					}
 					//FIM DO TRATAMENTO PARA O UPDATE
@@ -210,7 +212,9 @@ namespace DataBase
 
 			cRS objRS = new cRS(_conexao);
 
-			try {
+		    FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
+
+		    try {
 
 				foreach (cCampoDB objCampoDB in _campos.Values) {
 
@@ -220,7 +224,7 @@ namespace DataBase
 							strWhere = strWhere + " and ";
 						}
 
-						strWhere = strWhere + objCampoDB.Campo + " = " + FuncoesBd.CampoStringFormatar(objCampoDB.Valor);
+						strWhere = strWhere + objCampoDB.Campo + " = " + funcoesBd.CampoStringFormatar(objCampoDB.Valor);
 
 
 					} else {

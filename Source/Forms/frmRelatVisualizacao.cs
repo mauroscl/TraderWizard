@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
-using prjModelo.Carregadores;
+using Cotacao;
 using DataBase;
 using Dominio.Entidades;
 using frwTela;
@@ -45,7 +45,7 @@ namespace TraderWizard
 			objCorVermelho.ForeColor = Color.Red;
 			objCorVermelho.SelectionForeColor = Color.Red;
 
-			cCarregadorCriterioClassificacaoMedia objCarregadorCriterioCM = new cCarregadorCriterioClassificacaoMedia();
+			CarregadorCriterioClassificacaoMedia objCarregadorCriterioCM = new CarregadorCriterioClassificacaoMedia();
 
 			IList<CriterioClassifMedia> lstCriterios = objCarregadorCriterioCM.CarregaTodos();
 
@@ -482,7 +482,7 @@ namespace TraderWizard
 
 		private void frmRelatVisualizacao_Load(object sender, System.EventArgs e)
 		{
-			cCarregadorIFRSobrevendido objCarregador = new cCarregadorIFRSobrevendido(this.objConexao);
+			CarregadorIFRSobrevendido objCarregador = new CarregadorIFRSobrevendido(this.objConexao);
 
 			IList<IFRSobrevendido> lstLista = objCarregador.CarregarTodos();
 

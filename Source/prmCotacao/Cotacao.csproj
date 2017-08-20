@@ -56,7 +56,7 @@
     <Compile Include="ProventoService.cs" />
     <Compile Include="SequencialService.cs" />
     <Compile Include="ServicoDeCotacao.cs" />
-    <Compile Include="cInvestimento.cs" />
+    <Compile Include="Investimento.cs" />
     <Compile Include="cRelatorio.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValoresExtremos.cs" />

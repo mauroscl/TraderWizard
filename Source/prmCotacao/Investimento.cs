@@ -1,20 +1,21 @@
-using System.Windows.Forms;
 using System;
 using System.Data;
+using System.Windows.Forms;
 using Configuracao;
 using DataBase;
+using prmCotacao;
 using pWeb;
 
-namespace prmCotacao
+namespace Cotacao
 {
 
-	public class cInvestimento
+	public class Investimento
 	{
 
 		private DataTable dtbCotacao;
 
 		private readonly Conexao _conexao;
-		public cInvestimento(Conexao pobjConexao)
+		public Investimento(Conexao pobjConexao)
 		{
 			_conexao = pobjConexao;
 		}

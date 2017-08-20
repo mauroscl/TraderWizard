@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using DataBase;
+using DataBase.Carregadores;
 using Dominio.Entidades;
 using DTO;
 using prjDominio.ValueObjects;
-using prjModelo.Carregadores;
 using prjModelo.DomainServices;
 using TraderWizard.Infra.Repositorio;
 
@@ -315,7 +315,7 @@ namespace ServicoNegocio
 			try {
 			    IList<IFRSimulacaoDiariaFaixa> lstFaixasTotal = new List<IFRSimulacaoDiariaFaixa>();
 
-				var objCarregadorCriterioCM = new cCarregadorCriterioClassificacaoMedia();
+				var objCarregadorCriterioCM = new CarregadorCriterioClassificacaoMedia();
 
 			    IList<CriterioClassifMedia> lstCriterioCM = objCarregadorCriterioCM.CarregaTodos();
 

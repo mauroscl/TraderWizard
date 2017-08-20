@@ -1,22 +1,21 @@
 using System.Collections.Generic;
 using Dominio.Entidades;
-using prjModelo.Carregadores;
 
 namespace DataBase.Carregadores
 {
 
-	public abstract class cGeradorOperacaoBDPadrao
+	public abstract class GeradorOperacaoBDPadrao
 	{
 
 		public Conexao Conexao { get; set; }
 		public IList<OperacaoDeBancoDeDados> Operacoes { get; set; }
-		protected IList<cGeradorOperacaoBDPadrao> GeradoresFilhos { get; set; }
+		protected IList<GeradorOperacaoBDPadrao> GeradoresFilhos { get; set; }
 
-		public cGeradorOperacaoBDPadrao(Conexao pobjConexao)
+		public GeradorOperacaoBDPadrao(Conexao pobjConexao)
 		{
 			Conexao = pobjConexao;
 			Operacoes = new List<OperacaoDeBancoDeDados>();
-			GeradoresFilhos = new List<cGeradorOperacaoBDPadrao>();
+			GeradoresFilhos = new List<GeradorOperacaoBDPadrao>();
 		}
 
 		public virtual void Adicionar(Modelo pobjModelo, string pstrComando)
@@ -24,7 +23,7 @@ namespace DataBase.Carregadores
 			Operacoes.Add(new OperacaoDeBancoDeDados(pobjModelo, pstrComando));
 		}
 
-		public void AdicionarGeradorFilho(cGeradorOperacaoBDPadrao pobjItem)
+		public void AdicionarGeradorFilho(GeradorOperacaoBDPadrao pobjItem)
 		{
 			GeradoresFilhos.Add(pobjItem);
 		}
@@ -58,7 +57,7 @@ namespace DataBase.Carregadores
 			}
 
 
-			foreach (cGeradorOperacaoBDPadrao objGerador in GeradoresFilhos) {
+			foreach (GeradorOperacaoBDPadrao objGerador in GeradoresFilhos) {
 				objGerador.Executar();
 
 			}

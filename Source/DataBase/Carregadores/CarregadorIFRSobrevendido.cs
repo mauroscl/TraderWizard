@@ -5,28 +5,28 @@ using Dominio.Entidades;
 namespace DataBase.Carregadores
 {
 
-	public class cCarregadorIFRSobrevendido
+	public class CarregadorIFRSobrevendido
 	{
 
 
-		private readonly Conexao objConexao;
-		public cCarregadorIFRSobrevendido(Conexao pobjConexao)
+		private readonly Conexao _conexao;
+	    private readonly FuncoesBd _funcoesBd;
+		public CarregadorIFRSobrevendido(Conexao pobjConexao)
 		{
-			objConexao = pobjConexao;
+			_conexao = pobjConexao;
+		    _funcoesBd = pobjConexao.ObterFormatadorDeCampo();
 		}
 
 		public IFRSobrevendido CarregaPorValorMaximo(double pdblValorMaximo)
 		{
 
-			cRS objRS = new cRS(objConexao);
+			cRS objRS = new cRS(_conexao);
 
-			string strSQL = null;
+		    var strSql = "SELECT ID " + Environment.NewLine;
+			strSql = strSql + " FROM IFR_Sobrevendido " + Environment.NewLine;
+			strSql = strSql + " WHERE ValorMaximo = " + _funcoesBd.CampoFormatar(pdblValorMaximo);
 
-			strSQL = "SELECT ID " + Environment.NewLine;
-			strSQL = strSQL + " FROM IFR_Sobrevendido " + Environment.NewLine;
-			strSQL = strSQL + " WHERE ValorMaximo = " + FuncoesBd.CampoFormatar(pdblValorMaximo);
-
-			objRS.ExecuteQuery(strSQL);
+			objRS.ExecuteQuery(strSql);
 
 			IFRSobrevendido objRetorno = null;
 
@@ -46,7 +46,7 @@ namespace DataBase.Carregadores
 		public IList<IFRSobrevendido> CarregarTodos()
 		{
 
-			cRS objRS = new cRS(objConexao);
+			cRS objRS = new cRS(_conexao);
 
 			string strSQL = null;
 
@@ -80,15 +80,13 @@ namespace DataBase.Carregadores
 		public IList<IFRSobrevendido> CarregaPorValor(double pdblValor)
 		{
 
-			cRS objRS = new cRS(objConexao);
+			cRS objRS = new cRS(_conexao);
 
-			string strSQL = null;
+		    var strSql = "SELECT ID, ValorMaximo " + Environment.NewLine;
+			strSql = strSql + " FROM IFR_Sobrevendido " + Environment.NewLine;
+			strSql = strSql + " WHERE ValorMaximo >= " + _funcoesBd.CampoFormatar(pdblValor);
 
-			strSQL = "SELECT ID, ValorMaximo " + Environment.NewLine;
-			strSQL = strSQL + " FROM IFR_Sobrevendido " + Environment.NewLine;
-			strSQL = strSQL + " WHERE ValorMaximo >= " + FuncoesBd.CampoFormatar(pdblValor);
-
-			objRS.ExecuteQuery(strSQL);
+			objRS.ExecuteQuery(strSql);
 
 			IList<IFRSobrevendido> lstRetorno = new List<IFRSobrevendido>();
 
@@ -108,19 +106,15 @@ namespace DataBase.Carregadores
 
 		public IFRSobrevendido CarregaPorID(int pintID)
 		{
-			IFRSobrevendido functionReturnValue = null;
+		    cRS objRS = new cRS(_conexao);
 
-			cRS objRS = new cRS(objConexao);
+		    var strSql = "SELECT ValorMaximo " + Environment.NewLine;
+			strSql = strSql + " FROM IFR_Sobrevendido " + Environment.NewLine;
+			strSql = strSql + " WHERE ID = " + _funcoesBd.CampoFormatar(pintID);
 
-			string strSQL = null;
+			objRS.ExecuteQuery(strSql);
 
-			strSQL = "SELECT ValorMaximo " + Environment.NewLine;
-			strSQL = strSQL + " FROM IFR_Sobrevendido " + Environment.NewLine;
-			strSQL = strSQL + " WHERE ID = " + FuncoesBd.CampoFormatar(pintID);
-
-			objRS.ExecuteQuery(strSQL);
-
-			functionReturnValue = new IFRSobrevendido(pintID, Convert.ToDouble(objRS.Field("ValorMaximo")));
+			var functionReturnValue = new IFRSobrevendido(pintID, Convert.ToDouble(objRS.Field("ValorMaximo")));
 
 			objRS.Fechar();
 			return functionReturnValue;

@@ -5,7 +5,6 @@ using DataBase;
 using DataBase.Carregadores;
 using Dominio.Entidades;
 using DTO;
-using prjModelo.Carregadores;
 using prjModelo.DomainServices;
 using TraderWizard.Enumeracoes;
 
@@ -212,7 +211,7 @@ namespace Services
 
 		public void CarregarTodosDesdobramentos()
 		{
-			var objCarregadorSplit = new cCarregadorSplit(_conexao);
+			var objCarregadorSplit = new CarregadorSplit(_conexao);
 			Desdobramentos = objCarregadorSplit.CarregarTodos(_ativo);
 		}
 

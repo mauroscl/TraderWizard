@@ -1,14 +1,13 @@
 using System;
 using Dominio.Entidades;
-using prjModelo.Carregadores;
 
 namespace DataBase.Carregadores
 {
 
-	public class cManipuladorIFRSimulacaoDiaria : cGeradorOperacaoBDPadrao
+	public class ManipuladorIFRSimulacaoDiaria : GeradorOperacaoBDPadrao
 	{
 
-		public cManipuladorIFRSimulacaoDiaria(Conexao pobjConexao) : base(pobjConexao)
+		public ManipuladorIFRSimulacaoDiaria(Conexao pobjConexao) : base(pobjConexao)
 		{
 		}
 
@@ -17,7 +16,7 @@ namespace DataBase.Carregadores
 		{
 			Operacoes.Add(new OperacaoDeBancoDeDados(pobjModelo, pstrComando));
 
-			cManipuladorIFRSimulacaoDiariaDetalhe objManipuladorDetalhe = new cManipuladorIFRSimulacaoDiariaDetalhe(Conexao);
+			ManipuladorIFRSimulacaoDiariaDetalhe objManipuladorDetalhe = new ManipuladorIFRSimulacaoDiariaDetalhe(Conexao);
 
 			var objSimulacao = (IFRSimulacaoDiaria)pobjModelo;
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Configuracao;
+using Cotacao;
 using DataBase;
 using prjServicoNegocio;
 using Services;
@@ -82,16 +83,16 @@ namespace prmCotacao
 
             objCommand.Execute("UPDATE PROVENTOS_TEMP SET " + Environment.NewLine +
                                " DATA_APROVACAO = " + funcoesBd.CampoDateFormatar(new DateTime(1899, 12, 30)) + " + cDate(DATA_APROVACAO) " + Environment.NewLine +
-                               " WHERE DATA_APROVACAO <> " + FuncoesBd.CampoStringFormatar("ESTATUTÁRIO") + Environment.NewLine +
+                               " WHERE DATA_APROVACAO <> " + funcoesBd.CampoStringFormatar("ESTATUTÁRIO") + Environment.NewLine +
                                " And len(DATA_APROVACAO) <> 10 " + Environment.NewLine +
                                " And " + funcoesBd.IndiceDaSubString(funcoesBd.CampoFormatar("/"), "DATA_APROVACAO") + " = 0 ");
 
 
             objCommand.Execute("UPDATE PROVENTOS_TEMP SET " + Environment.NewLine +
                                "DATA_ULTIMO_PRECO_COM = " + funcoesBd.CampoDateFormatar(new DateTime(1899, 12, 30)) + " + cDate(DATA_ULTIMO_PRECO_COM) " + Environment.NewLine +
-                               "WHERE DATA_ULTIMO_PRECO_COM <> " + FuncoesBd.CampoStringFormatar("PREÇO TEÓRICO") + Environment.NewLine +
+                               "WHERE DATA_ULTIMO_PRECO_COM <> " + funcoesBd.CampoStringFormatar("PREÇO TEÓRICO") + Environment.NewLine +
                                " And len(DATA_ULTIMO_PRECO_COM) <> 10 " + Environment.NewLine +
-                               " And DATA_ULTIMO_PRECO_COM <> " + FuncoesBd.CampoStringFormatar(" ") + Environment.NewLine +
+                               " And DATA_ULTIMO_PRECO_COM <> " + funcoesBd.CampoStringFormatar(" ") + Environment.NewLine +
                                " And " + funcoesBd.IndiceDaSubString(funcoesBd.CampoFormatar("/"), "DATA_ULTIMO_PRECO_COM") + " = 0 ");
 
             objCommand.Execute(" UPDATE PROVENTOS_TEMP SET " + " ULTIMO_DIA_COM = " +
@@ -174,7 +175,9 @@ namespace prmCotacao
                         dtmDataInicioRecalculo = Constantes.DataInvalida;
 
                         //se é um ativo novo comparado com o ativo anterior
-                        objRSAtivo.ExecuteQuery("SELECT Codigo " + Environment.NewLine + " FROM Ativo " + Environment.NewLine + " WHERE Descricao = " + FuncoesBd.CampoStringFormatar(objRS.Field("Nome_Pregao") + " " + objRS.Field("Tipo_Acao")) + Environment.NewLine + " OR Descricao = " + FuncoesBd.CampoStringFormatar((string)objRS.Field("Nome_Pregao") + (string)objRS.Field("Tipo_Acao")));
+                        objRSAtivo.ExecuteQuery("SELECT Codigo " + Environment.NewLine + " FROM Ativo " + Environment.NewLine + 
+                            " WHERE Descricao = " + funcoesBd.CampoStringFormatar(objRS.Field("Nome_Pregao") + " " + objRS.Field("Tipo_Acao")) + Environment.NewLine + 
+                            " OR Descricao = " + funcoesBd.CampoStringFormatar((string)objRS.Field("Nome_Pregao") + (string)objRS.Field("Tipo_Acao")));
 
 
                         if (objRSAtivo.DadosExistir)
@@ -273,17 +276,17 @@ namespace prmCotacao
                             }
 
                             //Verifica se o provento já está cadastrado
-                            objRSAtivo.ExecuteQuery("SELECT COUNT(1) AS Contador " + Environment.NewLine + " FROM Split " + Environment.NewLine + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(strCodigoAtual) + Environment.NewLine + " AND Data = " + funcoesBd.CampoDateFormatar(dtmDataExProvento) + Environment.NewLine + " AND Tipo = " + FuncoesBd.CampoStringFormatar(strTipoProvento));
+                            objRSAtivo.ExecuteQuery("SELECT COUNT(1) AS Contador " + Environment.NewLine + " FROM Split " + Environment.NewLine + " WHERE Codigo = " + funcoesBd.CampoStringFormatar(strCodigoAtual) + Environment.NewLine + " AND Data = " + funcoesBd.CampoDateFormatar(dtmDataExProvento) + Environment.NewLine + " AND Tipo = " + funcoesBd.CampoStringFormatar(strTipoProvento));
 
 
                             if (Convert.ToInt32(objRSAtivo.Field("Contador")) == 0)
                             {
                                 //Se o provento ainda não está cadastrado, cadastra-o.
-                                strQuery = "INSERT INTO Split " + Environment.NewLine + "(Codigo, Data, Tipo, QuantidadeAnterior, QuantidadePosterior)" + Environment.NewLine + " VALUES " + Environment.NewLine + "(" + FuncoesBd.CampoStringFormatar(strCodigoAtual) + ", " + funcoesBd.CampoDateFormatar(dtmDataExProvento) + ", " + FuncoesBd.CampoStringFormatar(strTipoProvento);
+                                strQuery = "INSERT INTO Split " + Environment.NewLine + "(Codigo, Data, Tipo, QuantidadeAnterior, QuantidadePosterior)" + Environment.NewLine + " VALUES " + Environment.NewLine + "(" + funcoesBd.CampoStringFormatar(strCodigoAtual) + ", " + funcoesBd.CampoDateFormatar(dtmDataExProvento) + ", " + funcoesBd.CampoStringFormatar(strTipoProvento);
 
                                 double dblQuantidadeAnterior = Convert.ToDouble(objRS.Field("Ultimo_Preco_Com")) - Convert.ToDouble(objRS.Field("Valor_Provento"));
 
-                                strQuery = strQuery + ", " + FuncoesBd.CampoFloatFormatar(dblQuantidadeAnterior) + ", " + FuncoesBd.CampoFloatFormatar(Convert.ToDouble(objRS.Field("Ultimo_Preco_Com"))) + ")";
+                                strQuery = strQuery + ", " + funcoesBd.CampoFloatFormatar(dblQuantidadeAnterior) + ", " + funcoesBd.CampoFloatFormatar(Convert.ToDouble(objRS.Field("Ultimo_Preco_Com"))) + ")";
 
                                 objCommand.Execute(strQuery);
 
@@ -315,7 +318,10 @@ namespace prmCotacao
                         //copia os dados do provento da tabela temporária para a tabela definitiva.
                         //copia somente para os registros que estão sendo processados no momento utilizando
                         //como campos chaves: Nome_Pregao, Tipo_Acao, Tipo_Provento, Ultimo_Dia_Com, Ultimo_Preco_Com
-                        objCommand.Execute("INSERT INTO Proventos " + Environment.NewLine + "(Nome_Pregao, Tipo_Acao, Data_Aprovacao, Valor_Provento, Provento_1_1000 " + ", Tipo_Provento, Ultimo_Dia_Com, Data_Ultimo_Preco_Com, Ultimo_Preco_Com " + ", Preco_1_1000, Perc_Provento_Preco, Importado) " + Environment.NewLine + " SELECT Nome_Pregao, Tipo_Acao, Data_Aprovacao, Valor_Provento, Provento_1_1000 " + ", Tipo_Provento, Ultimo_Dia_Com, Data_Ultimo_Preco_Com " + ", Ultimo_Preco_Com, Preco_1_1000, Perc_Provento_Preco" + ", " + (blnImportado ? "1" : "0") + Environment.NewLine + " FROM Proventos_Temp PT " + Environment.NewLine + " WHERE " + strWhere + " AND Nome_Pregao = " + FuncoesBd.CampoStringFormatar(strUltimoNomePregao) + Environment.NewLine + " AND Tipo_Acao = " + FuncoesBd.CampoStringFormatar(strUltimoTipoAcao) + Environment.NewLine + " AND Tipo_Provento = " + FuncoesBd.CampoStringFormatar((string)objRS.Field("Tipo_Provento")) + Environment.NewLine + " AND Ultimo_Dia_Com = " + FuncoesBd.CampoStringFormatar((string)objRS.Field("Ultimo_Dia_Com")) + " AND Ultimo_Preco_Com = " + FuncoesBd.CampoFloatFormatar(Convert.ToDouble(objRS.Field("Ultimo_Preco_Com"))));
+                        objCommand.Execute("INSERT INTO Proventos " + Environment.NewLine + "(Nome_Pregao, Tipo_Acao, Data_Aprovacao, Valor_Provento, Provento_1_1000 " + ", Tipo_Provento, Ultimo_Dia_Com, Data_Ultimo_Preco_Com, Ultimo_Preco_Com " + ", Preco_1_1000, Perc_Provento_Preco, Importado) " + Environment.NewLine + " SELECT Nome_Pregao, Tipo_Acao, Data_Aprovacao, Valor_Provento, Provento_1_1000 " + ", Tipo_Provento, Ultimo_Dia_Com, Data_Ultimo_Preco_Com " + ", Ultimo_Preco_Com, Preco_1_1000, Perc_Provento_Preco" + ", " + (blnImportado ? "1" : "0") + Environment.NewLine + " FROM Proventos_Temp PT " + Environment.NewLine + 
+                            " WHERE " + strWhere + " AND Nome_Pregao = " + funcoesBd.CampoStringFormatar(strUltimoNomePregao) + Environment.NewLine + " AND Tipo_Acao = " + funcoesBd.CampoStringFormatar(strUltimoTipoAcao) + Environment.NewLine + " AND Tipo_Provento = " + funcoesBd.CampoStringFormatar((string)objRS.Field("Tipo_Provento")) + Environment.NewLine + 
+                            " AND Ultimo_Dia_Com = " + funcoesBd.CampoStringFormatar((string)objRS.Field("Ultimo_Dia_Com")) + " AND Ultimo_Preco_Com = " + 
+                            funcoesBd.CampoFloatFormatar(Convert.ToDouble(objRS.Field("Ultimo_Preco_Com"))));
 
                     }
                     //If strCodigoAtual <> vbNullString Then
@@ -354,7 +360,10 @@ namespace prmCotacao
                     {
                         //se o último papel é um papel não encontrado copia todos os registros deste papel
                         //da tabela Proventos_Temp para a tabela Proventos com o campo Importado = 0.
-                        objCommand.Execute("INSERT INTO Proventos " + Environment.NewLine + "(Nome_Pregao, Tipo_Acao, Data_Aprovacao, Valor_Provento, Provento_1_1000 " + ", Tipo_Provento, Ultimo_Dia_Com, Data_Ultimo_Preco_Com, Ultimo_Preco_Com " + ", Preco_1_1000, Perc_Provento_Preco, Importado) " + Environment.NewLine + " SELECT Nome_Pregao, Tipo_Acao, Data_Aprovacao, Valor_Provento, Provento_1_1000 " + ", Tipo_Provento, Ultimo_Dia_Com, Data_Ultimo_Preco_Com " + ", Ultimo_Preco_Com, Preco_1_1000, Perc_Provento_Preco, 0" + Environment.NewLine + " FROM Proventos_Temp PT " + Environment.NewLine + " WHERE " + strWhere + " AND Nome_Pregao = " + FuncoesBd.CampoStringFormatar(strUltimoNomePregao) + Environment.NewLine + " AND Tipo_Acao = " + FuncoesBd.CampoStringFormatar(strUltimoTipoAcao) + Environment.NewLine);
+                        objCommand.Execute("INSERT INTO Proventos " + Environment.NewLine + "(Nome_Pregao, Tipo_Acao, Data_Aprovacao, Valor_Provento, Provento_1_1000 " + ", Tipo_Provento, Ultimo_Dia_Com, Data_Ultimo_Preco_Com, Ultimo_Preco_Com " + ", Preco_1_1000, Perc_Provento_Preco, Importado) " + Environment.NewLine + " SELECT Nome_Pregao, Tipo_Acao, Data_Aprovacao, Valor_Provento, Provento_1_1000 " + ", Tipo_Provento, Ultimo_Dia_Com, Data_Ultimo_Preco_Com " + ", Ultimo_Preco_Com, Preco_1_1000, Perc_Provento_Preco, 0" + Environment.NewLine +
+                            " FROM Proventos_Temp PT " + Environment.NewLine + " WHERE " + strWhere + " AND Nome_Pregao = " + 
+                            funcoesBd.CampoStringFormatar(strUltimoNomePregao) + Environment.NewLine + 
+                            " AND Tipo_Acao = " + funcoesBd.CampoStringFormatar(strUltimoTipoAcao) + Environment.NewLine);
 
                     }
 
@@ -451,46 +460,47 @@ namespace prmCotacao
 
                 case cEnum.enumProventoTipo.Dividendo:
 
-                    strProventoTipoAbreviatura = FuncoesBd.CampoStringFormatar("DIV");
-                    strProventoTipoDescricao = FuncoesBd.CampoStringFormatar("DIVIDENDO");
+                    strProventoTipoAbreviatura = funcoesBd.CampoStringFormatar("DIV");
+                    strProventoTipoDescricao = funcoesBd.CampoStringFormatar("DIVIDENDO");
 
                     break;
                 case cEnum.enumProventoTipo.JurosCapitalProprio:
 
-                    strProventoTipoAbreviatura = FuncoesBd.CampoStringFormatar("JCP");
-                    strProventoTipoDescricao = FuncoesBd.CampoStringFormatar("JRS CAP PRÓPRIO");
+                    strProventoTipoAbreviatura = funcoesBd.CampoStringFormatar("JCP");
+                    strProventoTipoDescricao = funcoesBd.CampoStringFormatar("JRS CAP PRÓPRIO");
 
                     break;
                 case cEnum.enumProventoTipo.Rendimento:
 
-                    strProventoTipoAbreviatura = FuncoesBd.CampoStringFormatar("REND");
-                    strProventoTipoDescricao = FuncoesBd.CampoStringFormatar("RENDIMENTO");
+                    strProventoTipoAbreviatura = funcoesBd.CampoStringFormatar("REND");
+                    strProventoTipoDescricao = funcoesBd.CampoStringFormatar("RENDIMENTO");
 
                     break;
                 case cEnum.enumProventoTipo.RestCapDin:
 
-                    strProventoTipoAbreviatura = FuncoesBd.CampoStringFormatar("RCDIN");
-                    strProventoTipoDescricao = FuncoesBd.CampoStringFormatar("REST CAP DIN");
+                    strProventoTipoAbreviatura = funcoesBd.CampoStringFormatar("RCDIN");
+                    strProventoTipoDescricao = funcoesBd.CampoStringFormatar("REST CAP DIN");
 
                     break;
                 default:
 
-                    strProventoTipoAbreviatura = FuncoesBd.CampoStringFormatar(String.Empty);
-                    strProventoTipoDescricao = FuncoesBd.CampoStringFormatar(String.Empty);
+                    strProventoTipoAbreviatura = funcoesBd.CampoStringFormatar(String.Empty);
+                    strProventoTipoDescricao = funcoesBd.CampoStringFormatar(String.Empty);
 
                     break;
             }
 
             double dblQuantidadeAnterior = Convert.ToDouble(decUltimoPrecoCom) - Convert.ToDouble(pdecValorPorAcao);
 
-            string strQuery = "INSERT INTO Split " + Environment.NewLine + "(Codigo, Data, Tipo, QuantidadeAnterior, QuantidadePosterior)" + Environment.NewLine + " VALUES " + Environment.NewLine + "(" + FuncoesBd.CampoStringFormatar(pstrCodigo) + ", " + funcoesBd.CampoDateFormatar(pdtmDataEx) + ", " + strProventoTipoAbreviatura + ", " + FuncoesBd.CampoFloatFormatar(dblQuantidadeAnterior) + ", " + FuncoesBd.CampoFloatFormatar(Convert.ToDouble(decUltimoPrecoCom)) + ")";
+            string strQuery = "INSERT INTO Split " + Environment.NewLine + "(Codigo, Data, Tipo, QuantidadeAnterior, QuantidadePosterior)" + Environment.NewLine + " VALUES " + Environment.NewLine + 
+                "(" + funcoesBd.CampoStringFormatar(pstrCodigo) + ", " + funcoesBd.CampoDateFormatar(pdtmDataEx) + ", " + strProventoTipoAbreviatura + ", " + funcoesBd.CampoFloatFormatar(dblQuantidadeAnterior) + ", " + funcoesBd.CampoFloatFormatar(Convert.ToDouble(decUltimoPrecoCom)) + ")";
 
             objCommand.Execute(strQuery);
 
             cRS objRS = new cRS(_conexao);
 
             //consulta a descrição do ativo
-            strQuery = "SELECT Descricao " + Environment.NewLine + "FROM Ativo " + Environment.NewLine + "WHERE Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo);
+            strQuery = "SELECT Descricao " + Environment.NewLine + "FROM Ativo " + Environment.NewLine + "WHERE Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo);
 
             objRS.ExecuteQuery(strQuery);
 
@@ -500,7 +510,9 @@ namespace prmCotacao
 
             objRS.Fechar();
 
-            strQuery = "INSERT INTO Proventos " + Environment.NewLine + "(Nome_Pregao, Tipo_Acao, Data_Aprovacao, Valor_Provento, Provento_1_1000 " + ", Tipo_Provento, Ultimo_Dia_Com, Data_Ultimo_Preco_Com, Ultimo_Preco_Com " + ", Preco_1_1000, Perc_Provento_Preco, Importado) " + Environment.NewLine + " VALUES " + Environment.NewLine + "(" + FuncoesBd.CampoStringFormatar(strNomePregao) + ", " + FuncoesBd.CampoStringFormatar(strTipoAcao) + ", " + FuncoesBd.CampoStringFormatar(pdtmDataAprovacao.ToString("dd/MM/yyyy")) + ", " + FuncoesBd.CampoFloatFormatar(Convert.ToDouble(pdecValorPorAcao)) + ", 1, " + strProventoTipoDescricao + ", " + FuncoesBd.CampoStringFormatar(dtmUltimoDiaCom.ToString("dd/MM/yyyy")) + ", " + FuncoesBd.CampoStringFormatar(dtmDataUltimoPrecoCom.ToString("dd/MM/yyyy")) + ", " + FuncoesBd.CampoFloatFormatar(Convert.ToDouble(decUltimoPrecoCom)) + ", 1" + ", " + FuncoesBd.CampoStringFormatar((pdecValorPorAcao / decUltimoPrecoCom * 100M).ToString("0##.##")) + ", 1)";
+            strQuery = "INSERT INTO Proventos " + Environment.NewLine + "(Nome_Pregao, Tipo_Acao, Data_Aprovacao, Valor_Provento, Provento_1_1000 " + ", Tipo_Provento, Ultimo_Dia_Com, Data_Ultimo_Preco_Com, Ultimo_Preco_Com " + ", Preco_1_1000, Perc_Provento_Preco, Importado) " + Environment.NewLine + " VALUES " + Environment.NewLine +
+                "(" + funcoesBd.CampoStringFormatar(strNomePregao) + ", " + funcoesBd.CampoStringFormatar(strTipoAcao) + ", " + funcoesBd.CampoStringFormatar(pdtmDataAprovacao.ToString("dd/MM/yyyy")) + ", " + funcoesBd.CampoFloatFormatar(Convert.ToDouble(pdecValorPorAcao)) + ", 1, " + strProventoTipoDescricao + ", " 
+                + funcoesBd.CampoStringFormatar(dtmUltimoDiaCom.ToString("dd/MM/yyyy")) + ", " + funcoesBd.CampoStringFormatar(dtmDataUltimoPrecoCom.ToString("dd/MM/yyyy")) + ", " + funcoesBd.CampoFloatFormatar(Convert.ToDouble(decUltimoPrecoCom)) + ", 1" + ", " + funcoesBd.CampoStringFormatar((pdecValorPorAcao / decUltimoPrecoCom * 100M).ToString("0##.##")) + ", 1)";
 
             objCommand.Execute(strQuery);
 
@@ -546,7 +558,7 @@ namespace prmCotacao
 
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
-            objRsData.ExecuteQuery(" select min(Data) as Data " + " from Cotacao " + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data > " + funcoesBd.CampoDateFormatar(pdtmDataBase));
+            objRsData.ExecuteQuery(" select min(Data) as Data " + " from Cotacao " + " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " and Data > " + funcoesBd.CampoDateFormatar(pdtmDataBase));
 
             DateTime functionReturnValue = Convert.ToDateTime(objRsData.Field("Data", Constantes.DataInvalida));
 
@@ -558,8 +570,8 @@ namespace prmCotacao
         private DateTime AtivoPrimeiraCotacaoDataConsultar(string pstrCodigo)
         {
             cRS objRS = new cRS(_conexao);
-
-            objRS.ExecuteQuery("SELECT MIN(Data) AS Data " + Environment.NewLine + "FROM Cotacao " + Environment.NewLine + "WHERE Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo));
+            FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
+            objRS.ExecuteQuery("SELECT MIN(Data) AS Data " + Environment.NewLine + "FROM Cotacao " + Environment.NewLine + "WHERE Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo));
 
             var functionReturnValue = Convert.ToDateTime(objRS.Field("Data"));
 

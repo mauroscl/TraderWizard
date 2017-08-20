@@ -27,12 +27,12 @@ namespace DataBase.Carregadores
 
 		    string strSelect = "SELECT C.Data, Sequencial, ValorAbertura, ValorMinimo, ValorMaximo, ValorFechamento";
 
-            FuncoesBd FuncoesBd = Conexao.ObterFormatadorDeCampo();
+            FuncoesBd funcoesBd = Conexao.ObterFormatadorDeCampo();
 
 		    string strFrom = "Cotacao C " + Environment.NewLine;
 
-		    string strWhere = " WHERE C.Codigo = " + FuncoesBd.CampoFormatar(pobjAtivo.Codigo) + Environment.NewLine;
-			strWhere += " AND C.Data BETWEEN " + FuncoesBd.CampoFormatar(pdtmDataInicial) + " AND " + FuncoesBd.CampoFormatar(pdtmDataFinal) + Environment.NewLine;
+		    string strWhere = " WHERE C.Codigo = " + funcoesBd.CampoFormatar(pobjAtivo.Codigo) + Environment.NewLine;
+			strWhere += " AND C.Data BETWEEN " + funcoesBd.CampoFormatar(pdtmDataInicial) + " AND " + funcoesBd.CampoFormatar(pdtmDataFinal) + Environment.NewLine;
 
 
 		    foreach (MediaDTO objMediaDTO in plstMedias) {
@@ -45,10 +45,10 @@ namespace DataBase.Carregadores
 				string strTabelaMedia = "(" + Environment.NewLine;
 				strTabelaMedia += '\t' + "SELECT Codigo, Data, Valor" + Environment.NewLine;
 				strTabelaMedia += '\t' + " FROM Media_Diaria " + strAliasTabelaMedia + Environment.NewLine;
-				strTabelaMedia += '\t' + " WHERE Tipo = " + FuncoesBd.CampoStringFormatar(objMediaDTO.CampoTipoBd) + Environment.NewLine;
-				strTabelaMedia += '\t' + " AND NumPeriodos = " + FuncoesBd.CampoFormatar(objMediaDTO.NumPeriodos) + Environment.NewLine;
-				strTabelaMedia += '\t' + " AND Codigo = " + FuncoesBd.CampoStringFormatar(pobjAtivo.Codigo) + Environment.NewLine;
-				strTabelaMedia += '\t' + " AND Data BETWEEN " + FuncoesBd.CampoFormatar(pdtmDataInicial) + " AND " + FuncoesBd.CampoFormatar(pdtmDataFinal) + Environment.NewLine;
+				strTabelaMedia += '\t' + " WHERE Tipo = " + funcoesBd.CampoStringFormatar(objMediaDTO.CampoTipoBd) + Environment.NewLine;
+				strTabelaMedia += '\t' + " AND NumPeriodos = " + funcoesBd.CampoFormatar(objMediaDTO.NumPeriodos) + Environment.NewLine;
+				strTabelaMedia += '\t' + " AND Codigo = " + funcoesBd.CampoStringFormatar(pobjAtivo.Codigo) + Environment.NewLine;
+				strTabelaMedia += '\t' + " AND Data BETWEEN " + funcoesBd.CampoFormatar(pdtmDataInicial) + " AND " + funcoesBd.CampoFormatar(pdtmDataFinal) + Environment.NewLine;
 				strTabelaMedia += ") AS " + strAliasTabelaMedia + Environment.NewLine;
 
 				strFrom = "(" + strFrom + "LEFT JOIN " + strTabelaMedia;
@@ -133,22 +133,22 @@ namespace DataBase.Carregadores
 		}
 
 	    public IList<CotacaoDiaria> CarregaComIFRSobrevendidoSemSimulacao(Ativo pobjAtivo, Setup pobjSetup, double pdblValorMaximoIFRSobrevendido, cEnum.enumMediaTipo pintMediaTipo)
-		{
-
-			string strSQL = GeradorQuery.BackTestingIFRSemFiltroEntradaQueryGerar(pobjAtivo.Codigo, "DIARIO", "TODOS", pdblValorMaximoIFRSobrevendido, 1, pintMediaTipo, true);
+	    {
+	        FuncoesBd funcoesBd = Conexao.ObterFormatadorDeCampo();
+	        string strSql = GeradorQuery.BackTestingIFRSemFiltroEntradaQueryGerar(pobjAtivo.Codigo, "DIARIO", "TODOS", pdblValorMaximoIFRSobrevendido, 1, pintMediaTipo, funcoesBd, true);
 
 			//Somente utiliza este filtro quando a tabela envolvida for a tabela do IFR diário
-			strSQL += " AND NOT EXISTS " + Environment.NewLine;
-			strSQL += "(";
-			strSQL += '\t' + " SELECT 1 " + Environment.NewLine;
-			strSQL += '\t' + " FROM IFR_Simulacao_Diaria S " + Environment.NewLine;
-			strSQL += '\t' + " WHERE C.Codigo = S.Codigo " + Environment.NewLine;
-			strSQL += '\t' + " AND C.Data = S.Data_Entrada_Efetiva " + Environment.NewLine;
-			strSQL += '\t' + " AND S.ID_Setup = " + FuncoesBd.CampoFormatar(pobjSetup.Id) + Environment.NewLine;
-			strSQL += ")";
+			strSql += " AND NOT EXISTS " + Environment.NewLine;
+			strSql += "(";
+			strSql += '\t' + " SELECT 1 " + Environment.NewLine;
+			strSql += '\t' + " FROM IFR_Simulacao_Diaria S " + Environment.NewLine;
+			strSql += '\t' + " WHERE C.Codigo = S.Codigo " + Environment.NewLine;
+			strSql += '\t' + " AND C.Data = S.Data_Entrada_Efetiva " + Environment.NewLine;
+			strSql += '\t' + " AND S.ID_Setup = " + funcoesBd.CampoFormatar(pobjSetup.Id) + Environment.NewLine;
+			strSql += ")";
 
 			//inclui ordenamento por data.
-			strSQL += " ORDER BY C.Data ";
+			strSql += " ORDER BY C.Data ";
 
 			cRS objRS = new cRS(Conexao);
 
@@ -156,7 +156,7 @@ namespace DataBase.Carregadores
 
 	        string strTipoMedia = MediaTipoCalcular(pintMediaTipo);
 
-			objRS.ExecuteQuery(strSQL);
+			objRS.ExecuteQuery(strSql);
 
 
 			while (!objRS.EOF) {

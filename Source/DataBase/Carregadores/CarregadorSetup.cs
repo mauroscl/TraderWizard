@@ -6,13 +6,13 @@ using TraderWizard.Enumeracoes;
 namespace DataBase.Carregadores
 {
 
-	public class cCarregadorSetup
+	public class CarregadorSetup
 	{
 
 
 		private readonly IList<Setup> lstTodosSetups;
 
-		public cCarregadorSetup()
+		public CarregadorSetup()
 		{
 			lstTodosSetups = new List<Setup>();
 
@@ -22,10 +22,10 @@ namespace DataBase.Carregadores
 
 		}
 
-		public Setup CarregaPorID(cEnum.enumSetup pintIDSetup)
+		public Setup CarregaPorId(cEnum.enumSetup idSetup)
 		{
 
-			return lstTodosSetups.FirstOrDefault(x => x.Id == (int) pintIDSetup);
+			return lstTodosSetups.FirstOrDefault(x => x.Id == (int) idSetup);
 
 		}
 

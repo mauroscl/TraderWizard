@@ -3,6 +3,7 @@ using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 using Configuracao;
+using Cotacao;
 using prmCotacao;
 using DataBase;
 using pWeb;
@@ -147,7 +148,7 @@ namespace TraderWizard
 		private void FundoAtualizar()
 		{
 
-			cInvestimento objInvestimento = new cInvestimento(objConexao);
+			Investimento objInvestimento = new Investimento(objConexao);
 
 			decimal decPETR3MediaAtual = default(decimal);
 			decimal decPETR4MediaAtual = default(decimal);

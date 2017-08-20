@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Configuracao;
+using Cotacao;
 using DataBase;
 using Ionic.Zip;
 using prjDominio.Regras;
@@ -483,10 +484,10 @@ namespace prmCotacao
                             .Append("(Codigo, Data, DataFinal, ValorAbertura, ValorFechamento, ValorMinimo, ValorMedio, ValorMaximo, Oscilacao, Negocios_Total, Titulos_Total, Valor_Total, Sequencial) ")
                             .Append(" VALUES ")
                             .AppendFormat("({0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12})",
-                                FuncoesBd.CampoStringFormatar(strCodigoAtivo), dataFormatada, dataFormatada, FuncoesBd.CampoDecimalFormatar(decValorAbertura),
-                                FuncoesBd.CampoDecimalFormatar(decValorFechamento), FuncoesBd.CampoDecimalFormatar(decValorMinimo), FuncoesBd.CampoDecimalFormatar(decValorMedio),
-                                FuncoesBd.CampoDecimalFormatar(decValorMaximo), FuncoesBd.CampoDecimalFormatar(decOscilacao),
-                                lngNegociosTotal, lngTitulosTotal, FuncoesBd.CampoDecimalFormatar(decValorTotal), lngSequencial);
+                                funcoesBd.CampoStringFormatar(strCodigoAtivo), dataFormatada, dataFormatada, funcoesBd.CampoDecimalFormatar(decValorAbertura),
+                                funcoesBd.CampoDecimalFormatar(decValorFechamento), funcoesBd.CampoDecimalFormatar(decValorMinimo), funcoesBd.CampoDecimalFormatar(decValorMedio),
+                                funcoesBd.CampoDecimalFormatar(decValorMaximo), funcoesBd.CampoDecimalFormatar(decOscilacao),
+                                lngNegociosTotal, lngTitulosTotal, funcoesBd.CampoDecimalFormatar(decValorTotal), lngSequencial);
 
                         objCommand.Execute(insertBuilder.ToString());
 
@@ -943,11 +944,11 @@ namespace prmCotacao
                             var dataFormatada = funcoesBd.CampoDateFormatar(dtmCotacaoData);
                             string strQuery = " insert into Cotacao " + "(Codigo, Data, DataFinal, ValorAbertura, ValorFechamento " + ", ValorMinimo, ValorMedio, ValorMaximo " +
                                               ", Negocios_Total, Titulos_Total, Valor_Total, Sequencial) " + " values "
-                                              + "(" + FuncoesBd.CampoStringFormatar(strCodigoAtivo) + "," + dataFormatada + "," + dataFormatada + ","
-                                              + FuncoesBd.CampoDecimalFormatar(decValorAbertura) + "," + FuncoesBd.CampoDecimalFormatar(decValorFechamento)
-                                              + "," + FuncoesBd.CampoDecimalFormatar(decValorMinimo) + "," + FuncoesBd.CampoDecimalFormatar(decValorMedio)
-                                              + "," + FuncoesBd.CampoDecimalFormatar(decValorMaximo) + "," + lngNegociosTotal + "," + lngTitulosTotal + ","
-                                              + FuncoesBd.CampoDecimalFormatar(decValorTotal) + "," + lngSequencial + ")";
+                                              + "(" + funcoesBd.CampoStringFormatar(strCodigoAtivo) + "," + dataFormatada + "," + dataFormatada + ","
+                                              + funcoesBd.CampoDecimalFormatar(decValorAbertura) + "," + funcoesBd.CampoDecimalFormatar(decValorFechamento)
+                                              + "," + funcoesBd.CampoDecimalFormatar(decValorMinimo) + "," + funcoesBd.CampoDecimalFormatar(decValorMedio)
+                                              + "," + funcoesBd.CampoDecimalFormatar(decValorMaximo) + "," + lngNegociosTotal + "," + lngTitulosTotal + ","
+                                              + funcoesBd.CampoDecimalFormatar(decValorTotal) + "," + lngSequencial + ")";
 
                             pobjCommand.Execute(strQuery);
 
@@ -1172,7 +1173,7 @@ namespace prmCotacao
                             {
                                 //QUANDO A COTAÇAO É INTRADAY, COMO NÃO TEMOS DADOS DE VOLUME,
                                 //UTILIZA OS DADOS DA COTAÇÃO ANTERIOR.
-                                objRS.ExecuteQuery("SELECT Titulos_Total, Negocios_Total, Valor_Total " + " FROM Cotacao " + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(strCodigo) + " AND Data = " + funcoesBd.CampoDateFormatar(dtmCotacaoAnteriorData));
+                                objRS.ExecuteQuery("SELECT Titulos_Total, Negocios_Total, Valor_Total " + " FROM Cotacao " + " WHERE Codigo = " + funcoesBd.CampoStringFormatar(strCodigo) + " AND Data = " + funcoesBd.CampoDateFormatar(dtmCotacaoAnteriorData));
 
                                 dblNegociosTotal = Convert.ToDouble(objRS.Field("Negocios_Total"));
 
@@ -1187,7 +1188,7 @@ namespace prmCotacao
                             //calcula o sequencial do ativo
                             long lngSequencial = _sequencialService.SequencialCalcular(strCodigo, "Cotacao", objCommand.Conexao);
 
-                            string strQuery = " insert into Cotacao " + "(Codigo, Data, ValorAbertura, ValorFechamento " + ", ValorMinimo, ValorMedio, ValorMaximo, Oscilacao " + ", Titulos_Total, Negocios_Total, Valor_Total, Sequencial) " + " values " + "(" + FuncoesBd.CampoStringFormatar(strCodigo) + "," + funcoesBd.CampoDateFormatar(dtmData) + "," + FuncoesBd.CampoDecimalFormatar(decValorAbertura) + "," + FuncoesBd.CampoDecimalFormatar(decValorFechamento) + "," + FuncoesBd.CampoDecimalFormatar(decValorMinimo) + "," + FuncoesBd.CampoDecimalFormatar(decValorMedio) + "," + FuncoesBd.CampoDecimalFormatar(decValorMaximo) + "," + FuncoesBd.CampoDecimalFormatar(decOscilacao) + "," + FuncoesBd.CampoFloatFormatar(dblTitulosTotal) + "," + FuncoesBd.CampoFloatFormatar(dblNegociosTotal) + "," + FuncoesBd.CampoFloatFormatar(dblValorTotal) + "," + lngSequencial.ToString() + ")";
+                            string strQuery = " insert into Cotacao " + "(Codigo, Data, ValorAbertura, ValorFechamento " + ", ValorMinimo, ValorMedio, ValorMaximo, Oscilacao " + ", Titulos_Total, Negocios_Total, Valor_Total, Sequencial) " + " values " + "(" + funcoesBd.CampoStringFormatar(strCodigo) + "," + funcoesBd.CampoDateFormatar(dtmData) + "," + funcoesBd.CampoDecimalFormatar(decValorAbertura) + "," + funcoesBd.CampoDecimalFormatar(decValorFechamento) + "," + funcoesBd.CampoDecimalFormatar(decValorMinimo) + "," + funcoesBd.CampoDecimalFormatar(decValorMedio) + "," + funcoesBd.CampoDecimalFormatar(decValorMaximo) + "," + funcoesBd.CampoDecimalFormatar(decOscilacao) + "," + funcoesBd.CampoFloatFormatar(dblTitulosTotal) + "," + funcoesBd.CampoFloatFormatar(dblNegociosTotal) + "," + funcoesBd.CampoFloatFormatar(dblValorTotal) + "," + lngSequencial + ")";
 
                             objCommand.Execute(strQuery);
 

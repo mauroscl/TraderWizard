@@ -29,7 +29,7 @@ namespace prjServicoNegocio
 		public void Calcular(cIFRSimulacaoDiariaDetalhe pobjSimulacaoDiariaDetalhe, bool pblnGerouNovoAgrupadorDeTentativas)
 		{
 
-			var objManipuladorDetalhe = new cManipuladorIFRSimulacaoDiariaDetalhe(_conexao);
+			var objManipuladorDetalhe = new ManipuladorIFRSimulacaoDiariaDetalhe(_conexao);
 
 			//detalhes anteriores (já foram persistidos) que terão a flag de melhor entrada alteradas.
 			cIFRSimulacaoDiariaDetalhe objDetalheAlterado;

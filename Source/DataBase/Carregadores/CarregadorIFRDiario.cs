@@ -20,15 +20,15 @@ namespace DataBase.Carregadores
 		{
 		    cRS objRS = new cRS(Conexao);
 
-		    FuncoesBd FuncoesBd = Conexao.ObterFormatadorDeCampo();
+		    FuncoesBd funcoesBd = Conexao.ObterFormatadorDeCampo();
 
-			string strSQL = "SELECT Valor " + Environment.NewLine;
-			strSQL += " FROM IFR_Diario " + Environment.NewLine;
-			strSQL += " WHERE Codigo = " + FuncoesBd.CampoFormatar(pobjCotacaoDiaria.Ativo.Codigo);
-			strSQL += " AND Data = " + FuncoesBd.CampoFormatar(pobjCotacaoDiaria.Data);
-			strSQL += " AND NumPeriodos = " + FuncoesBd.CampoFormatar(pintNumPeriodos);
+			string strSql = "SELECT Valor " + Environment.NewLine;
+			strSql += " FROM IFR_Diario " + Environment.NewLine;
+			strSql += " WHERE Codigo = " + funcoesBd.CampoFormatar(pobjCotacaoDiaria.Ativo.Codigo);
+			strSql += " AND Data = " + funcoesBd.CampoFormatar(pobjCotacaoDiaria.Data);
+			strSql += " AND NumPeriodos = " + funcoesBd.CampoFormatar(pintNumPeriodos);
 
-			objRS.ExecuteQuery(strSQL);
+			objRS.ExecuteQuery(strSql);
 
 			cIFR functionReturnValue = new cIFRDiario(pobjCotacaoDiaria, pintNumPeriodos, Convert.ToDouble(objRS.Field("Valor")));
 

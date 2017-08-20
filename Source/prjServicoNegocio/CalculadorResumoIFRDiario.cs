@@ -5,7 +5,6 @@ using DataBase;
 using DataBase.Carregadores;
 using Dominio.Entidades;
 using prjDominio.ValueObjects;
-using prjModelo.Carregadores;
 using TraderWizard.Infra.Repositorio;
 
 namespace ServicoNegocio
@@ -35,22 +34,22 @@ namespace ServicoNegocio
 			    IFRSimulacaoDiariaFaixaResumo objRetorno = new IFRSimulacaoDiariaFaixaResumo(_ativo, _setup, pobjCalculoResumoFaixaVO.ClassifMedia, pobjIFRSobrevendido, pobjCalculoResumoFaixaVO.DataSaida);
 
 
-				cCarregadorCriterioClassificacaoMedia objCarregadorCriterioClassifMedia = new cCarregadorCriterioClassificacaoMedia();
+				CarregadorCriterioClassificacaoMedia objCarregadorCriterioClassifMedia = new CarregadorCriterioClassificacaoMedia();
 
 				IList<CriterioClassifMedia> criteriosDeClassificacao = objCarregadorCriterioClassifMedia.CarregaTodos();
 
 			    FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
 			    string strWherePadrao = " WHERE Codigo = " + funcoesBd.CampoFormatar(_ativo.Codigo) + Environment.NewLine;
-				strWherePadrao += " AND ID_Setup = " + FuncoesBd.CampoFormatar(_setup.Id) + Environment.NewLine;
-				strWherePadrao += " AND ID_CM = " + FuncoesBd.CampoFormatar(pobjCalculoResumoFaixaVO.ClassifMedia.ID) + Environment.NewLine;
+				strWherePadrao += " AND ID_Setup = " + funcoesBd.CampoFormatar(_setup.Id) + Environment.NewLine;
+				strWherePadrao += " AND ID_CM = " + funcoesBd.CampoFormatar(pobjCalculoResumoFaixaVO.ClassifMedia.ID) + Environment.NewLine;
 				strWherePadrao += " AND Valor_IFR_Minimo <= " + pobjIFRSobrevendido.ValorMaximo + Environment.NewLine;
 				strWherePadrao += " AND Data_Saida <= " + funcoesBd.CampoFormatar(pobjCalculoResumoFaixaVO.DataSaida) + Environment.NewLine;
 
 
 				//Calcula o Número de Trades total e certos, sem utilizar filtro
 				string strSQL = "SELECT COUNT(1) AS NumTrades ";
-				strSQL = strSQL + " , SUM(IIF(Verdadeiro = " + FuncoesBd.CampoFormatar(true) + " , 1, 0 )) AS NumAcertos " + Environment.NewLine;
+				strSQL = strSQL + " , SUM(IIF(Verdadeiro = " + funcoesBd.CampoFormatar(true) + " , 1, 0 )) AS NumAcertos " + Environment.NewLine;
 				strSQL = strSQL + " FROM IFR_Simulacao_Diaria D " + Environment.NewLine;
 				strSQL = strSQL + strWherePadrao;
 
@@ -66,7 +65,7 @@ namespace ServicoNegocio
 					return true;
 				}
 
-			    cCarregadorIFRDiarioFaixa objCarradorFaixa = new cCarregadorIFRDiarioFaixa(_conexao);
+			    CarregadorIFRDiarioFaixa objCarradorFaixa = new CarregadorIFRDiarioFaixa(_conexao);
 
 				//Verifica se já existe faixa para o critério. Vai existir quando já houver alguma entrada que é MELHOR ENTRADA
 
@@ -86,7 +85,8 @@ namespace ServicoNegocio
 								strSQLFaixa += " OR ";
 							}
 
-							strSQLFaixa += '\t' + " ((" + objCriterioCM.CampoBD + ") BETWEEN " + FuncoesBd.CampoFormatar(objIFRSimulacaoDiariaFaixa.ValorMinimo) + " AND " + FuncoesBd.CampoFormatar(objIFRSimulacaoDiariaFaixa.ValorMaximo) + ")" + Environment.NewLine;
+							strSQLFaixa += '\t' + " ((" + objCriterioCM.CampoBD + ") BETWEEN " + funcoesBd.CampoFormatar(objIFRSimulacaoDiariaFaixa.ValorMinimo) +
+                                " AND " + funcoesBd.CampoFormatar(objIFRSimulacaoDiariaFaixa.ValorMaximo) + ")" + Environment.NewLine;
 
 						}
 

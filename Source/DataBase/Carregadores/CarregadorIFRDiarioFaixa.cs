@@ -5,14 +5,14 @@ using TraderWizard.Enumeracoes;
 
 namespace DataBase.Carregadores
 {
-	public class cCarregadorIFRDiarioFaixa
+	public class CarregadorIFRDiarioFaixa
 	{
 
 		private readonly Conexao objConexao;
 		private DateTime dtmDataSolicitacao;
 
 		private DateTime dtmUltimaData;
-		public cCarregadorIFRDiarioFaixa(Conexao pobjConexao)
+		public CarregadorIFRDiarioFaixa(Conexao pobjConexao)
 		{
 			objConexao = pobjConexao;
 		}
@@ -39,13 +39,13 @@ namespace DataBase.Carregadores
 		    string strSql = "SELECT MAX(Data) AS Data " + Environment.NewLine;
 			strSql += " FROM IFR_Simulacao_Diaria_Faixa F1 " + Environment.NewLine;
 			strSql += " WHERE Codigo = " + funcoesBd.CampoFormatar(pstrCodigo) + Environment.NewLine;
-			strSql += " AND ID_CM = " + FuncoesBd.CampoFormatar(pobjCM.ID) + Environment.NewLine;
-			strSql += " AND ID_Setup = " + FuncoesBd.CampoFormatar(pobjSetup.Id) + Environment.NewLine;
-			strSql += " AND ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.Id);
+			strSql += " AND ID_CM = " + funcoesBd.CampoFormatar(pobjCM.ID) + Environment.NewLine;
+			strSql += " AND ID_Setup = " + funcoesBd.CampoFormatar(pobjSetup.Id) + Environment.NewLine;
+			strSql += " AND ID_IFR_Sobrevendido = " + funcoesBd.CampoFormatar(pobjIFRSobrevendido.Id);
 			strSql += " AND Data <= " + funcoesBd.CampoFormatar(dtmDataSolicitacao);
 
 			if ((pobjCriterioCM != null)) {
-				strSql += " AND ID_Criterio_CM = " + FuncoesBd.CampoFormatar(pobjCriterioCM.ID);
+				strSql += " AND ID_Criterio_CM = " + funcoesBd.CampoFormatar(pobjCriterioCM.ID);
 			}
 
 			objRS.ExecuteQuery(strSql);
@@ -72,10 +72,10 @@ namespace DataBase.Carregadores
 		    string strSql = "SELECT ID, Valor_Minimo, Valor_Maximo, NumTentativas_Minimo " + Environment.NewLine;
 			strSql = strSql + " FROM IFR_Simulacao_Diaria_Faixa F1 " + Environment.NewLine;
 			strSql = strSql + " WHERE Codigo = " + funcoesBd.CampoFormatar(pstrCodigo) + Environment.NewLine;
-			strSql = strSql + " AND ID_CM = " + FuncoesBd.CampoFormatar(pobjCM.ID) + Environment.NewLine;
-			strSql = strSql + " AND ID_Setup = " + FuncoesBd.CampoFormatar(pobjSetup.Id) + Environment.NewLine;
-			strSql = strSql + " AND ID_Criterio_CM = " + FuncoesBd.CampoFormatar(pobjCriterioCM.ID);
-			strSql = strSql + " AND ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.Id);
+			strSql = strSql + " AND ID_CM = " + funcoesBd.CampoFormatar(pobjCM.ID) + Environment.NewLine;
+			strSql = strSql + " AND ID_Setup = " + funcoesBd.CampoFormatar(pobjSetup.Id) + Environment.NewLine;
+			strSql = strSql + " AND ID_Criterio_CM = " + funcoesBd.CampoFormatar(pobjCriterioCM.ID);
+			strSql = strSql + " AND ID_IFR_Sobrevendido = " + funcoesBd.CampoFormatar(pobjIFRSobrevendido.Id);
 			strSql = strSql + " AND Data = " + funcoesBd.CampoFormatar(dtmUltimaData);
 
 			objRS.ExecuteQuery(strSql);
@@ -107,9 +107,9 @@ namespace DataBase.Carregadores
 			string strSql = "SELECT COUNT(1) AS Contador " + Environment.NewLine;
 			strSql = strSql + " FROM IFR_Simulacao_Diaria_Faixa F1 " + Environment.NewLine;
 			strSql = strSql + " WHERE Codigo = " + funcoesBd.CampoFormatar(pstrCodigo) + Environment.NewLine;
-			strSql = strSql + " AND ID_CM = " + FuncoesBd.CampoFormatar(pobjCM.ID) + Environment.NewLine;
-			strSql = strSql + " AND ID_Setup = " + FuncoesBd.CampoFormatar(pobjSetup.Id) + Environment.NewLine;
-			strSql = strSql + " AND ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.Id);
+			strSql = strSql + " AND ID_CM = " + funcoesBd.CampoFormatar(pobjCM.ID) + Environment.NewLine;
+			strSql = strSql + " AND ID_Setup = " + funcoesBd.CampoFormatar(pobjSetup.Id) + Environment.NewLine;
+			strSql = strSql + " AND ID_IFR_Sobrevendido = " + funcoesBd.CampoFormatar(pobjIFRSobrevendido.Id);
 			strSql = strSql + " AND Data = " + funcoesBd.CampoFormatar(dtmUltimaData);
 
 			objRS.ExecuteQuery(strSql);

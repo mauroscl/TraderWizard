@@ -4,19 +4,14 @@ using Dominio.Entidades;
 
 namespace DataBase.Carregadores
 {
-	//Imports Repositorio.Interface
-	//Imports Repositorio.Implementacao
-
-	public class cCarregadorIFRSimulacaoDiariaDetalhe
+	public class CarregadorIFRSimulacaoDiariaDetalhe
 	{
 
-		private Conexao Conexao { get; set; }
-		//Private Property objRepIFRSimulacao As IRepIFRSimulacaoFaixa
+		private Conexao Conexao { get; }
 
-		public cCarregadorIFRSimulacaoDiariaDetalhe(Conexao pobjConexao)
+		public CarregadorIFRSimulacaoDiariaDetalhe(Conexao pobjConexao)
 		{
 			Conexao = pobjConexao;
-			//objRepIFRSimulacao = New RepIFRSimulacaoFaixa(pobjConexao)
 		}
 		public IList<cIFRSimulacaoDiariaDetalhe> CarregarTodosDeUmaSimulacao(IFRSimulacaoDiaria pobjIFRSimulacaoDiaria)
 		{
@@ -25,7 +20,7 @@ namespace DataBase.Carregadores
 		    string strSql = "SELECT ID_IFR_Sobrevendido, NumTentativas, MelhorEntrada, Data_Entrada_Efetiva, SomatorioCriterios, AgrupadorTentativas " + Environment.NewLine;
 			strSql = strSql + " FROM IFR_Simulacao_Diaria_Detalhe " + Environment.NewLine;
 			strSql = strSql + " WHERE Codigo = " + funcoesBd.CampoFormatar(pobjIFRSimulacaoDiaria.Ativo.Codigo) + Environment.NewLine;
-			strSql = strSql + " AND ID_Setup = " + FuncoesBd.CampoFormatar(pobjIFRSimulacaoDiaria.Setup.Id) + Environment.NewLine;
+			strSql = strSql + " AND ID_Setup = " + funcoesBd.CampoFormatar(pobjIFRSimulacaoDiaria.Setup.Id) + Environment.NewLine;
 			strSql = strSql + " AND Data_Entrada_Efetiva = " + funcoesBd.CampoFormatar(pobjIFRSimulacaoDiaria.DataEntradaEfetiva);
 
 			cRS objRS = new cRS(Conexao);
@@ -34,7 +29,7 @@ namespace DataBase.Carregadores
 
 			objRS.ExecuteQuery(strSql);
 
-			cCarregadorIFRSobrevendido objCarregadorIFRSobrevendido = new cCarregadorIFRSobrevendido(Conexao);
+			CarregadorIFRSobrevendido objCarregadorIFRSobrevendido = new CarregadorIFRSobrevendido(Conexao);
 
 
 			while (!objRS.EOF) {

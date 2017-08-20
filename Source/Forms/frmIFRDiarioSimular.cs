@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Forms;
+using Cotacao;
 using DataBase;
 using DTO;
 using prjServicoNegocio;

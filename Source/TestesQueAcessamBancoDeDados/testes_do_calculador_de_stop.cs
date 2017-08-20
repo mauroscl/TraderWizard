@@ -3,7 +3,6 @@ using DataBase.Carregadores;
 using Dominio.Entidades;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DTO;
-using prjModelo.Carregadores;
 using TesteBase;
 using TraderWizard.Enumeracoes;
 
@@ -94,8 +93,8 @@ namespace TestProject1
 
 			var objCotacao = objCarregadorCotacao.CarregarPorPeriodo(new Ativo("CSNA3", string.Empty), new System.DateTime(2011, 5, 11), new System.DateTime(2011, 5, 11), string.Empty, lstMediasDTO, true);
 
-			cCarregadorSetup objCarregadorSetup = new cCarregadorSetup();
-			var objSetup = objCarregadorSetup.CarregaPorID(cEnum.enumSetup.IFRSemFiltroRP);
+			CarregadorSetup objCarregadorSetup = new CarregadorSetup();
+			var objSetup = objCarregadorSetup.CarregaPorId(cEnum.enumSetup.IFRSemFiltroRP);
 
 			var objInformacoesDoTradeDTO = RetornaInformacoesDoTradeDTOPadrao();
 			objInformacoesDoTradeDTO.ValorDoStopLoss = 22.45M;

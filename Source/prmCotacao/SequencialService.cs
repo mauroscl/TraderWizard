@@ -34,7 +34,7 @@ namespace prmCotacao
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
             //BUSCA AS COTAÇÕES ORDENADAS POR DATA
-            objRS.ExecuteQuery(" SELECT Data " + " FROM " + pstrTabela + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " ORDER BY Data ");
+            objRS.ExecuteQuery(" SELECT Data " + " FROM " + pstrTabela + " WHERE Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " ORDER BY Data ");
 
             //INICIALIZA O SEQUENCIAL EM 1
             long lngSequencial = 1;
@@ -43,7 +43,7 @@ namespace prmCotacao
             while (!objRS.EOF)
             {
                 //ATUALIZA O SEQUENCIAL
-                objCommand.Execute(" UPDATE " + pstrTabela + " SET " + "Sequencial = " + lngSequencial.ToString() + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " AND Data = " + funcoesBd.CampoDateFormatar(Convert.ToDateTime(objRS.Field("Data"))));
+                objCommand.Execute(" UPDATE " + pstrTabela + " SET " + "Sequencial = " + lngSequencial.ToString() + " WHERE Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " AND Data = " + funcoesBd.CampoDateFormatar(Convert.ToDateTime(objRS.Field("Data"))));
 
                 //INCREMENTA PARA A PRÓXIMA ITERAÇÃO
                 lngSequencial = lngSequencial + 1;
@@ -149,9 +149,10 @@ namespace prmCotacao
         {
 
             cRS objRs = pobjConexao == null ? new cRS(_conexao) : new cRS(pobjConexao);
+            FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
             //busca o maior sequencial utilizado
-            objRs.ExecuteQuery(" SELECT MAX(Sequencial) AS Sequencial " + " FROM " + pstrTabela + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo));
+            objRs.ExecuteQuery(" SELECT MAX(Sequencial) AS Sequencial " + " FROM " + pstrTabela + " WHERE Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo));
 
             long functionReturnValue = Convert.ToInt64(objRs.Field("Sequencial", 0));
 

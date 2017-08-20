@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using DataBase.Carregadores;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using prjModelo.Carregadores;
 using TesteBase;
 namespace TestProject1
 {

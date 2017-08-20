@@ -31,7 +31,7 @@ namespace ServicoNegocio
 		public IFRSimulacaoDiariaFaixa CriterioVerificar(SimulacaoDiariaVO pobjSimulacaoDiariaVO, ValorCriterioClassifMediaVO pobjValorCriterioClassifMediaVO, CriterioClassifMedia pobjCriterioCM, ref bool pblnNumTentativasOK)
 		{
 
-			var objCarregadorFaixa = new cCarregadorIFRDiarioFaixa(_conexao);
+			var objCarregadorFaixa = new CarregadorIFRDiarioFaixa(_conexao);
 
 			IFRSimulacaoDiariaFaixa objRetorno = null;
 

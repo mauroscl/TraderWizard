@@ -2267,11 +2267,12 @@ namespace TraderWizard
         private void IndicadorCarregar()
         {
             cRS objRS = new cRS(_conexao);
+            FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
             objRS.ExecuteQuery(" select Tipo, NumPeriodos, Cor " + Environment.NewLine +
                                " from Configuracao_Indicador " + Environment.NewLine + " where Tipo = " +
-                               FuncoesBd.CampoStringFormatar("MME") + Environment.NewLine + " or Tipo = " +
-                               FuncoesBd.CampoStringFormatar("MMA") + Environment.NewLine +
+                               funcoesBd.CampoStringFormatar("MME") + Environment.NewLine + " or Tipo = " +
+                               funcoesBd.CampoStringFormatar("MMA") + Environment.NewLine +
                                " ORDER BY NumPeriodos, Tipo");
 
             if (objRS.DadosExistir)
@@ -2702,7 +2703,7 @@ namespace TraderWizard
                 colSplit.Clear();
             }
 
-            cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(this._conexao);
+            CarregadorSplit objCarregadorSplit = new CarregadorSplit(this._conexao);
 
             //busca os splits do papel em ordem decrescente
             objCarregadorSplit.SplitConsultar(strCodigoAtivo, dtmDataMinima, "D", ref objRsSplit, dtmDataMaximaSplit,

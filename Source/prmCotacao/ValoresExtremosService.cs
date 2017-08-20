@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Cotacao;
 using DataBase;
 using DataBase.Carregadores;
 using prjDominio.Regras;
@@ -78,7 +79,7 @@ namespace prmCotacao
                 //Calcula o número de registros que serão desenhados do IFR de 2 períodos 
                 strQuery = " SELECT COUNT(1) AS ContadorIFR" +
                            " FROM " + strTabelaIFR +
-                           " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(configuracaoDeVisualizacao.CodigoAtivo) +
+                           " WHERE Codigo = " + funcoesBd.CampoStringFormatar(configuracaoDeVisualizacao.CodigoAtivo) +
                            " AND NumPeriodos = " + configuracaoDeVisualizacao.IFRNumPeriodos +
                            " AND Data >= " + funcoesBd.CampoDateFormatar(configuracaoDeVisualizacao.DataInicial) +
                            " AND Data <= " + funcoesBd.CampoDateFormatar(configuracaoDeVisualizacao.DataFinal);
@@ -206,7 +207,7 @@ namespace prmCotacao
             //do primeiro dia de gráfico não tem valores para serem convertidos.
             //***Ordena os splits em ordem DECRESCENTE de data.
 
-            cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(_conexao);
+            CarregadorSplit objCarregadorSplit = new CarregadorSplit(_conexao);
 
             bool blnSplitExistir = objCarregadorSplit.SplitConsultar(configuracaoDeVisualizacao.CodigoAtivo, configuracaoDeVisualizacao.DataInicial.AddDays(1), "D", ref objRSListSplit, Constantes.DataInvalida);
 

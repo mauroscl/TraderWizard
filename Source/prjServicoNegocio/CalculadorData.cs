@@ -126,12 +126,12 @@ namespace ServicoNegocio
 		{
 		    cRS objRS = new cRS(_conexao);
 
-            FuncoesBd FuncoesBd  = _conexao.ObterFormatadorDeCampo();
+            FuncoesBd funcoesBd  = _conexao.ObterFormatadorDeCampo();
 
 		    string strSQL = "SELECT TOP 1 Data " + Environment.NewLine;
 			strSQL = strSQL + "FROM " + pstrTabelaCotacao + Environment.NewLine;
-			strSQL = strSQL + " WHERE Codigo = " + FuncoesBd.CampoFormatar(pstrCodigo) + Environment.NewLine;
-			strSQL = strSQL + " AND Data > " + FuncoesBd.CampoFormatar(pdtmDataAtual);
+			strSQL = strSQL + " WHERE Codigo = " + funcoesBd.CampoFormatar(pstrCodigo) + Environment.NewLine;
+			strSQL = strSQL + " AND Data > " + funcoesBd.CampoFormatar(pdtmDataAtual);
 			strSQL = strSQL + " ORDER BY Data ";
 
 			objRS.ExecuteQuery(strSQL);
@@ -198,7 +198,9 @@ namespace ServicoNegocio
 		{
 		    cRS objRS = new cRS(this._conexao);
 
-			objRS.ExecuteQuery(" select max(Data) as Data " + " from " + pstrTabela + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo));
+		    var funcoesBd = this._conexao.ObterFormatadorDeCampo();
+
+			objRS.ExecuteQuery(" select max(Data) as Data " + " from " + pstrTabela + " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo));
 
 			DateTime functionReturnValue = Convert.ToDateTime(objRS.Field("Data"));
 

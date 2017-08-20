@@ -4,7 +4,6 @@ using DataBase.Carregadores;
 using Dominio.Entidades;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using prjDominio.VOBuilders;
-using prjModelo.Carregadores;
 using prjServicoNegocio;
 using ServicoNegocio;
 using TesteBase;

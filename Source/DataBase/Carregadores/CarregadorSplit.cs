@@ -6,12 +6,12 @@ using TraderWizard.Enumeracoes;
 namespace DataBase.Carregadores
 {
 
-	public class cCarregadorSplit
+	public class CarregadorSplit
 	{
 
 
 		private readonly Conexao _conexao;
-		public cCarregadorSplit(Conexao pobjConexao)
+		public CarregadorSplit(Conexao pobjConexao)
 		{
 			_conexao = pobjConexao;
 		}

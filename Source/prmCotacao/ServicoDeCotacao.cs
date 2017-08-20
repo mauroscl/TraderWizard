@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using System;
 using System.Collections.Generic;
 using Configuracao;
+using Cotacao;
 using DataBase.Carregadores;
 using prjDominio.Regras;
 using prjServicoNegocio;
@@ -23,6 +24,7 @@ namespace prmCotacao
 	    private readonly CotacaoData _cotacaoData;
 	    private readonly GeradorQuery _geradorQuery;
 	    private readonly CalculadorDeIfr _atualizadorDeIfr;
+	    private readonly FuncoesBd _funcoesBd;
 
 	    //private readonly bool _localDataBaseConnection;
 
@@ -33,9 +35,10 @@ namespace prmCotacao
             new MediaDTO("A", 200, "VALOR")
         };
 
-	    public ServicoDeCotacao(Conexao pobjConexao)
+	    public ServicoDeCotacao(Conexao conexao)
 		{
-		    _conexao = pobjConexao;
+		    _conexao = conexao;
+		    _funcoesBd = conexao.ObterFormatadorDeCampo();
             _sequencialService = new SequencialService();
             _cotacaoData = new CotacaoData();
             _geradorQuery = new GeradorQuery(_conexao.ObterFormatadorDeCampo());
@@ -60,7 +63,7 @@ namespace prmCotacao
 		{
 		    cRS objRS = new cRS(_conexao);
 
-		    string strQuery = " select ValorMedio " + " from Cotacao " + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " order by Data desc ";
+		    string strQuery = " select ValorMedio " + " from Cotacao " + " where Codigo = " + _funcoesBd.CampoStringFormatar(pstrCodigo) + " order by Data desc ";
 
 			objRS.ExecuteQuery(strQuery);
 
@@ -91,9 +94,7 @@ namespace prmCotacao
 
 		    cRS objRS = pobjConexao == null ? new cRS(_conexao) : new cRS(pobjConexao);
 
-            FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
-
-		    string strQuery = " select ValorAbertura, ValorFechamento " + " from " + pstrTabela + " where Data = " + funcoesBd.CampoDateFormatar(pdtmData) + " and Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo);
+		    string strQuery = " select ValorAbertura, ValorFechamento " + " from " + pstrTabela + " where Data = " + _funcoesBd.CampoDateFormatar(pdtmData) + " and Codigo = " + _funcoesBd.CampoStringFormatar(pstrCodigo);
 
 			objRS.ExecuteQuery(strQuery);
 
@@ -187,7 +188,7 @@ namespace prmCotacao
 
 		    var conexaoSplit = new Conexao();
 
-		    var objCarregadorSplit = new cCarregadorSplit(conexaoSplit);
+		    var objCarregadorSplit = new CarregadorSplit(conexaoSplit);
 
 			//busca todos os ativos do período.
 			//utiliza o group by que parece ser mais eficiente que o distinct
@@ -227,8 +228,8 @@ namespace prmCotacao
 			    }
 			    else
 			    {
-			        string sustenidoFormatado = FuncoesBd.CampoStringFormatar("#");
-			        strWhere += funcoesBd.IndiceDaSubString(funcoesBd.ConcatenarStrings(new[] {sustenidoFormatado, "Codigo", sustenidoFormatado}),FuncoesBd.CampoStringFormatar(pstrAtivos)) + " > 0";
+			        string sustenidoFormatado = funcoesBd.CampoStringFormatar("#");
+			        strWhere += funcoesBd.IndiceDaSubString(funcoesBd.ConcatenarStrings(new[] {sustenidoFormatado, "Codigo", sustenidoFormatado}),_funcoesBd.CampoStringFormatar(pstrAtivos)) + " > 0";
 			    }
 
 			}
@@ -277,7 +278,7 @@ namespace prmCotacao
 					//busca as cotações do ativo ordenado por data crescente
 					//a partir da cotação anterior à data inicial recebida por parâmetro 
 					//(se for recebida uma data válida)
-					strQuery = " select Data, ValorFechamento " + " from Cotacao " + " where Codigo = " + FuncoesBd.CampoStringFormatar(strCodigo);
+					strQuery = " select Data, ValorFechamento " + " from Cotacao " + " where Codigo = " + _funcoesBd.CampoStringFormatar(strCodigo);
 
 
 					if (dtmCalculoDataInicial != Constantes.DataInvalida) {
@@ -359,15 +360,15 @@ namespace prmCotacao
 
 
 							//atualiza o registro com a oscilacao
-							strQuery = " UPDATE Cotacao SET " + " Diferenca = " + FuncoesBd.CampoDecimalFormatar(cotacao.ValorDeFechamento - decCotacaoAnterior);
+							strQuery = " UPDATE Cotacao SET " + " Diferenca = " + funcoesBd.CampoDecimalFormatar(cotacao.ValorDeFechamento - decCotacaoAnterior);
 
 
 							if (pblnPercentualCalcular) {
-								strQuery = strQuery + ", Oscilacao = " + FuncoesBd.CampoDecimalFormatar(decOscilacao);
+								strQuery = strQuery + ", Oscilacao = " + funcoesBd.CampoDecimalFormatar(decOscilacao);
 
 							}
 
-							strQuery = strQuery + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(strCodigo) + " AND Data = " + funcoesBd.CampoDateFormatar(cotacao.DataInicial);
+							strQuery = strQuery + " WHERE Codigo = " + funcoesBd.CampoStringFormatar(strCodigo) + " AND Data = " + funcoesBd.CampoDateFormatar(cotacao.DataInicial);
 
 							objCommand.Execute(strQuery);
 
@@ -426,7 +427,7 @@ namespace prmCotacao
 
 			cRS objRSCotacao = new cRS(objConnAux);
 
-			cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(objConnAux);
+			CarregadorSplit objCarregadorSplit = new CarregadorSplit(objConnAux);
 
 		    cRSList objRssListSplit = null;
 
@@ -511,7 +512,7 @@ namespace prmCotacao
 
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
-			objRS.ExecuteQuery(" select sum(" + pstrCampo + ") as total " + " from " + pstrTabela + " where codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and data >= " + funcoesBd.CampoDateFormatar(pdtmDataInicial) + " and data <= " + funcoesBd.CampoDateFormatar(pdtmDataFinal));
+			objRS.ExecuteQuery(" select sum(" + pstrCampo + ") as total " + " from " + pstrTabela + " where codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " and data >= " + funcoesBd.CampoDateFormatar(pdtmDataInicial) + " and data <= " + funcoesBd.CampoDateFormatar(pdtmDataFinal));
 
 			decimal functionReturnValue = Convert.ToDecimal(objRS.Field("total"));
 
@@ -584,7 +585,7 @@ namespace prmCotacao
 
                 DateTime dtmDataFinalBuscaSplit = pstrTabela.ToUpper() == "COTACAO_SEMANAL" ? _cotacaoData.AtivoCotacaoSemanalUltimoDiaSemanaCalcular(pstrCodigo, pdtmDataFinal) : pdtmDataFinal;
 
-				var objCarregadorSplit = new cCarregadorSplit(objRS.Conexao);
+				var objCarregadorSplit = new CarregadorSplit(objRS.Conexao);
 
 				//busca os splits do ativo no período, ordenado pelo último split.
 				//Tem que começar a buscar um dia após 
@@ -652,7 +653,7 @@ namespace prmCotacao
 				//se não tem split calcula a média no próprio banco.
 				string strQuery = " select avg(" + funcoesBd.ConverterParaPontoFlutuante(strCampo)  + ") as Media " + 
                     " from " + pstrTabela + 
-                    " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + 
+                    " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + 
                     " and Data >= " + funcoesBd.CampoDateFormatar(pdtmDataInicial) + 
                     " and Data <= " + funcoesBd.CampoDateFormatar(pdtmDataFinal);
 
@@ -715,7 +716,8 @@ namespace prmCotacao
 
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
-			string strQuery = " INSERT INTO " + pstrTabela + "(Codigo, Data, NumPeriodos, Tipo, Valor)" + " VALUES " + "(" + FuncoesBd.CampoStringFormatar(pstrCodigo) + ", " + funcoesBd.CampoDateFormatar(pdtmData) + ", " + pintNumPeriodos.ToString() + ", " + FuncoesBd.CampoStringFormatar(pstrMediaTipo) + ", " + FuncoesBd.CampoFloatFormatar(pdblMedia) + ")";
+			string strQuery = " INSERT INTO " + pstrTabela + "(Codigo, Data, NumPeriodos, Tipo, Valor)" + " VALUES " +
+                "(" + funcoesBd.CampoStringFormatar(pstrCodigo) + ", " + funcoesBd.CampoDateFormatar(pdtmData) + ", " + pintNumPeriodos + ", " + funcoesBd.CampoStringFormatar(pstrMediaTipo) + ", " + funcoesBd.CampoFloatFormatar(pdblMedia) + ")";
 
 			objCommand.Execute(strQuery);
 		}
@@ -776,7 +778,7 @@ namespace prmCotacao
 
 				if (dtmCotacaoAnteriorData != Constantes.DataInvalida) {
 
-					objRS.ExecuteQuery(" select Valor " + " from " + strTabelaMedia + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data = " + funcoesBd.CampoDateFormatar(dtmCotacaoAnteriorData) + " and NumPeriodos = " + pintNumPeriodos.ToString() + " and Tipo = " + FuncoesBd.CampoStringFormatar("MME"));
+					objRS.ExecuteQuery(" select Valor " + " from " + strTabelaMedia + " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " and Data = " + funcoesBd.CampoDateFormatar(dtmCotacaoAnteriorData) + " and NumPeriodos = " + pintNumPeriodos + " and Tipo = " + funcoesBd.CampoStringFormatar("MME"));
 
 					if (Convert.ToDecimal(objRS.Field("Valor", 0)) > 0) {
 						dblMmExpAnterior = Convert.ToDouble(objRS.Field("Valor"));
@@ -813,7 +815,8 @@ namespace prmCotacao
 				    //calcula a média simples no periodo, que será usado como primeira média
 					dblMmExpAnterior = MediaAritmeticaCalcular(pstrCodigo, dtmDataInicial, dtmDataFinal, proximoPeriodo, pintNumPeriodos, pstrTabela, "VALOR", objConnAux);
 
-					objCommand.Execute(" DELETE " + " FROM " + strTabelaMedia + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + funcoesBd.CampoDateFormatar(dtmDataFinal) + " and Tipo = " + FuncoesBd.CampoStringFormatar("MME") + " and NumPeriodos = " + pintNumPeriodos.ToString());
+					objCommand.Execute(" DELETE " + " FROM " + strTabelaMedia + " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + funcoesBd.CampoDateFormatar(dtmDataFinal) +
+                        " and Tipo = " + _funcoesBd.CampoStringFormatar("MME") + " and NumPeriodos = " + pintNumPeriodos);
 
 					//atualiza a média na tabela 
 					MediaAtualizar(pstrCodigo, dtmDataFinal, pintNumPeriodos, strTabelaMedia, dblMmExpAnterior, "MME", objConnAux);
@@ -838,7 +841,8 @@ namespace prmCotacao
 				if (!blnPeriodoCalcular) {
 					//EXCLUI OS DADOS A PARTIR DA DATA BASE DO CÁLCULO, POIS ESTES DADOS SERÃO RECALCULADOS.
 					//NÃO EXCLUI SE O PERÍODO FOI CALCULADO. NESTE CASO JÁ FOI EXCLUÍDO ANTERIORMENTE.
-					objCommand.Execute(" DELETE " + " FROM " + strTabelaMedia + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + funcoesBd.CampoDateFormatar(pdtmDataBase) + " and Tipo = " + FuncoesBd.CampoStringFormatar("MME") + " and NumPeriodos = " + pintNumPeriodos.ToString());
+					objCommand.Execute(" DELETE " + " FROM " + strTabelaMedia + " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + funcoesBd.CampoDateFormatar(pdtmDataBase) + 
+                        " and Tipo = " + funcoesBd.CampoStringFormatar("MME") + " and NumPeriodos = " + pintNumPeriodos.ToString());
 
 				}
 
@@ -852,7 +856,7 @@ namespace prmCotacao
 
 				}
 
-				strQuery = strQuery + " from " + pstrTabela + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + funcoesBd.CampoDateFormatar(pdtmDataBase) + " order by Data ";
+				strQuery = strQuery + " from " + pstrTabela + " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + funcoesBd.CampoDateFormatar(pdtmDataBase) + " order by Data ";
 
 				objRS.ExecuteQuery(strQuery);
 
@@ -875,7 +879,7 @@ namespace prmCotacao
 			    }
                 objRS.Fechar();
 
-				cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(objConnAux);
+				CarregadorSplit objCarregadorSplit = new CarregadorSplit(objConnAux);
 
 				//busca todos os splits a partir da data base em ordem ascendente
 				objCarregadorSplit.SplitConsultar(pstrCodigo, pdtmDataBase, "A", ref objRsSplit, Constantes.DataInvalida);
@@ -1057,8 +1061,8 @@ namespace prmCotacao
 			    }
 			    else
 			    {
-                    string sustenidoFormatado = FuncoesBd.CampoStringFormatar("#");
-                    strWhere += funcoesBd.IndiceDaSubString(funcoesBd.ConcatenarStrings(new[] { sustenidoFormatado, "Codigo", sustenidoFormatado }), FuncoesBd.CampoStringFormatar(pstrAtivos)) + " > 0";
+                    string sustenidoFormatado = funcoesBd.CampoStringFormatar("#");
+                    strWhere += funcoesBd.IndiceDaSubString(funcoesBd.ConcatenarStrings(new[] { sustenidoFormatado, "Codigo", sustenidoFormatado }), funcoesBd.CampoStringFormatar(pstrAtivos)) + " > 0";
 			        
 			    }
 
@@ -1175,7 +1179,7 @@ namespace prmCotacao
 		    //indica se tem splits na semana do cálculo
 			bool blnSplitSemana = false;
 
-		    cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(pobjConnAux);
+		    CarregadorSplit objCarregadorSplit = new CarregadorSplit(pobjConnAux);
 
 			//busca os splits. 
 			bool blnSplitExistir = objCarregadorSplit.SplitConsultar(pstrCodigo, pdtmDataSegundaFeira, "D", ref objRsSplit, pdtmDataSextaFeira);
@@ -1184,7 +1188,7 @@ namespace prmCotacao
 
 			if (blnSplitExistir) {
 				//busca a primeira data da semana que tem cotação
-				objRS.ExecuteQuery(" select min(Data) as DataInicial " + " from Cotacao " + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + funcoesBd.CampoDateFormatar(pdtmDataSegundaFeira) + " and Data <= " + funcoesBd.CampoDateFormatar(pdtmDataSextaFeira));
+				objRS.ExecuteQuery(" select min(Data) as DataInicial " + " from Cotacao " + " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + funcoesBd.CampoDateFormatar(pdtmDataSegundaFeira) + " and Data <= " + funcoesBd.CampoDateFormatar(pdtmDataSextaFeira));
 
 				DateTime dtmDataPrimeiraCotacaoSemana = Convert.ToDateTime(objRS.Field("DataInicial"));
 
@@ -1265,7 +1269,7 @@ namespace prmCotacao
                     ", sum(Titulos_Total) as Titulos_Total, sum(Valor_Total) as Valor_Total " + 
                     ", count(1) as Contador " + 
                     " from Cotacao " + 
-                    " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + 
+                    " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + 
                     " and Data >= " + funcoesBd.CampoDateFormatar(pdtmDataSegundaFeira) + 
                     " and Data <= " + funcoesBd.CampoDateFormatar(pdtmDataSextaFeira));
 
@@ -1327,27 +1331,27 @@ namespace prmCotacao
 		        objCommand.Execute(" INSERT INTO Cotacao_Semanal " + "(Codigo, Data, DataFinal, ValorAbertura, ValorMinimo, ValorMaximo, ValorFechamento " + 
 		                           ", Diferenca, Oscilacao, Negocios_Total, Titulos_Total, Valor_Total, Sequencial) " + 
 		                           " values " + 
-		                           "( " + FuncoesBd.CampoStringFormatar(pstrCodigo) + ", " + funcoesBd.CampoDateFormatar(dataInicial) + ", " +
-		                           funcoesBd.CampoDateFormatar(dataFinal) + ", " + FuncoesBd.CampoDecimalFormatar(decValorAbertura) + ", " 
-		                           + FuncoesBd.CampoDecimalFormatar(valorMinimo) + ", " + 
-		                           FuncoesBd.CampoDecimalFormatar(valorMaximo) + ", " + FuncoesBd.CampoDecimalFormatar(decValorFechamento) + ", " + 
-		                           FuncoesBd.CampoDecimalFormatar(decDiferenca) + ", " + FuncoesBd.CampoDecimalFormatar(decOscilacao) + ", " + 
-		                           FuncoesBd.CampoFloatFormatar(negociosTotal) + ", " + FuncoesBd.CampoFloatFormatar(titulosTotal) + 
-		                           ", " + FuncoesBd.CampoFloatFormatar(valorTotal) + ", " + lngSequencial + ")");
+		                           "( " + funcoesBd.CampoStringFormatar(pstrCodigo) + ", " + funcoesBd.CampoDateFormatar(dataInicial) + ", " +
+		                           funcoesBd.CampoDateFormatar(dataFinal) + ", " + funcoesBd.CampoDecimalFormatar(decValorAbertura) + ", " 
+		                           + funcoesBd.CampoDecimalFormatar(valorMinimo) + ", " + 
+		                           funcoesBd.CampoDecimalFormatar(valorMaximo) + ", " + funcoesBd.CampoDecimalFormatar(decValorFechamento) + ", " + 
+		                           funcoesBd.CampoDecimalFormatar(decDiferenca) + ", " + funcoesBd.CampoDecimalFormatar(decOscilacao) + ", " + 
+		                           funcoesBd.CampoFloatFormatar(negociosTotal) + ", " + funcoesBd.CampoFloatFormatar(titulosTotal) + 
+		                           ", " + funcoesBd.CampoFloatFormatar(valorTotal) + ", " + lngSequencial + ")");
 		    }
 		    else {
 		        objCommand.Execute(" UPDATE Cotacao_Semanal SET " + 
 		                           " DataFinal = " + funcoesBd.CampoDateFormatar(dataFinal) + 
-		                           ", ValorAbertura = " + FuncoesBd.CampoDecimalFormatar(decValorAbertura) + 
-		                           ", ValorMinimo = " + FuncoesBd.CampoDecimalFormatar(valorMinimo) + 
-		                           ", ValorMaximo = " + FuncoesBd.CampoDecimalFormatar(valorMaximo) + 
-		                           ", ValorFechamento = " + FuncoesBd.CampoDecimalFormatar(decValorFechamento) + 
-		                           ", Diferenca = " + FuncoesBd.CampoDecimalFormatar(decDiferenca) + 
-		                           ", Oscilacao = " + FuncoesBd.CampoDecimalFormatar(decOscilacao) + 
-		                           ", Negocios_Total = " + FuncoesBd.CampoFloatFormatar(negociosTotal) + 
-		                           ", Titulos_Total = " + FuncoesBd.CampoFloatFormatar(titulosTotal) + 
-		                           ", Valor_Total = " + FuncoesBd.CampoFloatFormatar(valorTotal) + 
-		                           " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + 
+		                           ", ValorAbertura = " + funcoesBd.CampoDecimalFormatar(decValorAbertura) + 
+		                           ", ValorMinimo = " + funcoesBd.CampoDecimalFormatar(valorMinimo) + 
+		                           ", ValorMaximo = " + funcoesBd.CampoDecimalFormatar(valorMaximo) + 
+		                           ", ValorFechamento = " + funcoesBd.CampoDecimalFormatar(decValorFechamento) + 
+		                           ", Diferenca = " + funcoesBd.CampoDecimalFormatar(decDiferenca) + 
+		                           ", Oscilacao = " + funcoesBd.CampoDecimalFormatar(decOscilacao) + 
+		                           ", Negocios_Total = " + funcoesBd.CampoFloatFormatar(negociosTotal) + 
+		                           ", Titulos_Total = " + funcoesBd.CampoFloatFormatar(titulosTotal) + 
+		                           ", Valor_Total = " + funcoesBd.CampoFloatFormatar(valorTotal) + 
+		                           " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + 
 		                           " and Data = " + funcoesBd.CampoDateFormatar(dataInicial));
 
 		    }
@@ -1395,7 +1399,7 @@ namespace prmCotacao
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
 			//EXCLUI OS DADOS A PARTIR DA PRIMEIRA SEGUNDA-FEIRA, POIS ESTES DADOS SERÃO RECALCULADOS.
-			objCommand.Execute(" DELETE " + " FROM Cotacao_Semanal " + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) +
+			objCommand.Execute(" DELETE " + " FROM Cotacao_Semanal " + " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) +
                 " and Data >= " + funcoesBd.CampoDateFormatar(dtmDataSegundaFeira));
 
 			decimal decCotacaoAnterior = default(decimal);
@@ -1414,7 +1418,7 @@ namespace prmCotacao
 				decCotacaoAnterior = 0;
 			}
 
-		    objRS.ExecuteQuery(" select count(1) as contador " + " from Cotacao_Semanal " + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + funcoesBd.CampoDateFormatar(dtmDataSegundaFeira) + " and Data <= " + funcoesBd.CampoDateFormatar(dtmDataSextaFeira));
+		    objRS.ExecuteQuery(" select count(1) as contador " + " from Cotacao_Semanal " + " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + funcoesBd.CampoDateFormatar(dtmDataSegundaFeira) + " and Data <= " + funcoesBd.CampoDateFormatar(dtmDataSextaFeira));
 
             //indica se a operação no banco de dados deve ser um INSERT ou um UPDATE.
             string strOperacaoBd = Convert.ToInt32(objRS.Field("Contador")) > 0 ? "UPDATE" : "INSERT";
@@ -1461,7 +1465,7 @@ namespace prmCotacao
 
 			DateTime dtmDataSegundaFeira = _cotacaoData.PrimeiraSemanaDataCalcular(pdtmDataBase);
 
-			cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(objConnAux);
+			CarregadorSplit objCarregadorSplit = new CarregadorSplit(objConnAux);
 
 			//busca os splits
 			objCarregadorSplit.SplitConsultar(pstrCodigo, dtmDataSegundaFeira, "A", ref objRSSplit,Constantes.DataInvalida);
@@ -1550,8 +1554,8 @@ namespace prmCotacao
 
                 else
                 {
-                    string sustenidoFormatado = FuncoesBd.CampoStringFormatar("#");
-                    strQuery += funcoesBd.IndiceDaSubString(funcoesBd.ConcatenarStrings(new[] { sustenidoFormatado, "Codigo", sustenidoFormatado }), FuncoesBd.CampoStringFormatar(pstrAtivos)) + " > 0";
+                    string sustenidoFormatado = funcoesBd.CampoStringFormatar("#");
+                    strQuery += funcoesBd.IndiceDaSubString(funcoesBd.ConcatenarStrings(new[] { sustenidoFormatado, "Codigo", sustenidoFormatado }), funcoesBd.CampoStringFormatar(pstrAtivos)) + " > 0";
                 }
 
 			}
@@ -1862,7 +1866,8 @@ namespace prmCotacao
 
 			foreach (MediaDTO mediaDto in plstMediasSelecionadas) {
 				//BUSCA A MAIOR DATA EM QUE JÁ EXISTE MÉDIA PARA O ATIVO RECEBIDO POR PARÂMETRO
-				string strQuery = " select MAX(Data) as Data " + " FROM " + strTabelaMedia + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and NumPeriodos = " + mediaDto.NumPeriodos + " and Tipo = " + FuncoesBd.CampoStringFormatar((mediaDto.Tipo == "E" ? "MME" : "MMA"));
+				string strQuery = " select MAX(Data) as Data " + " FROM " + strTabelaMedia + " WHERE Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " and NumPeriodos = " + mediaDto.NumPeriodos + 
+                    " and Tipo = " + funcoesBd.CampoStringFormatar((mediaDto.Tipo == "E" ? "MME" : "MMA"));
 
 				objRS.ExecuteQuery(strQuery);
 
@@ -1874,7 +1879,7 @@ namespace prmCotacao
 
 					//se encontrou uma data, verifica se  tem cotação após esta data. 
 					//Só precisa calcular a média, se possuir cotação
-					objRS.ExecuteQuery(" select max(Data) as Data " + " from " + strTabelaCotacao + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data > " + funcoesBd.CampoDateFormatar(dtmDataInicial));
+					objRS.ExecuteQuery(" select max(Data) as Data " + " from " + strTabelaCotacao + " WHERE Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " and Data > " + funcoesBd.CampoDateFormatar(dtmDataInicial));
 
                     var dataPosterior = Convert.ToDateTime(objRS.Field("Data", Constantes.DataInvalida));
 
@@ -2022,7 +2027,7 @@ namespace prmCotacao
 
                 var subQuery = " select top " + pintNumPeriodos + " Data " + 
                     "FROM " + strTabelaDados + 
-                    " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data <= " + funcoesBd.CampoDateFormatar(pdtmDataFinal);
+                    " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " and Data <= " + funcoesBd.CampoDateFormatar(pdtmDataFinal);
 
 				if (intNumPeriodosTabelaDados != -1) {
                     subQuery += " and NumPeriodos = " + intNumPeriodosTabelaDados;
@@ -2077,7 +2082,7 @@ namespace prmCotacao
 
 		    //executa o recordset de datas iniciais
 
-			strQuery = "select Data " + " from " + strTabelaDados + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + funcoesBd.CampoDateFormatar(dtmDataInicial);
+			strQuery = "select Data " + " from " + strTabelaDados + " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + funcoesBd.CampoDateFormatar(dtmDataInicial);
 
 
 			if (intNumPeriodosTabelaDados != -1) {
@@ -2101,7 +2106,8 @@ namespace prmCotacao
             objRsDataInicial.Fechar();
 
 			//executa o recordset de datas iniciais
-			strQuery = "select Data " + " from " + strTabelaDados + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + funcoesBd.CampoDateFormatar(pdtmDataFinal);
+			strQuery = "select Data " + " from " + strTabelaDados +
+                " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + funcoesBd.CampoDateFormatar(pdtmDataFinal);
 
 
 			if (intNumPeriodosTabelaDados != -1) {
@@ -2125,7 +2131,8 @@ namespace prmCotacao
 
 			//exclui as médias já existentes a partir da primeira data que será calculada,
 			//caso exista
-			objCommand.Execute(" DELETE " + " FROM " + strTabelaMedia + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + funcoesBd.CampoDateFormatar(pdtmDataFinal) + " AND Tipo = " + FuncoesBd.CampoStringFormatar(strMediaTipo) + " AND NumPeriodos = " + pintNumPeriodos);
+			objCommand.Execute(" DELETE " + " FROM " + strTabelaMedia + " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + funcoesBd.CampoDateFormatar(pdtmDataFinal) 
+                + " AND Tipo = " + funcoesBd.CampoStringFormatar(strMediaTipo) + " AND NumPeriodos = " + pintNumPeriodos);
 
 			for (int i= 0; i < datasFinais.Count; i++)
 			{
@@ -2196,11 +2203,11 @@ namespace prmCotacao
 				if (!string.IsNullOrEmpty(strWhere))
 					strWhere = strWhere + " And ";
 
-			    var sustenidoFormatado = FuncoesBd.CampoStringFormatar("#");
+			    var sustenidoFormatado = funcoesBd.CampoStringFormatar("#");
 			    strWhere +=
 			        funcoesBd.IndiceDaSubString(
 			            funcoesBd.ConcatenarStrings(new[] {sustenidoFormatado, "Codigo", sustenidoFormatado}),
-			            FuncoesBd.CampoStringFormatar(pstrAtivos)) + "  > 0 ";
+			            funcoesBd.CampoStringFormatar(pstrAtivos)) + "  > 0 ";
 
 			}
 
@@ -2235,7 +2242,7 @@ namespace prmCotacao
 					//busca da primeira data da semana, pois pdtmDataInicial recebido por parâmetro pode 
 					//uma data de meio de semana
 				    objRsSemanal.ExecuteQuery(" SELECT Data " + "FROM Cotacao_Semanal " + "WHERE Codigo = " +
-				                              FuncoesBd.CampoStringFormatar(cotacaoAnteriorDto.Codigo) + " AND Data <= " +
+				                              funcoesBd.CampoStringFormatar(cotacaoAnteriorDto.Codigo) + " AND Data <= " +
 				                              funcoesBd.CampoDateFormatar(pdtmDataInicial) + " AND DataFinal >= " +
 				                              funcoesBd.CampoDateFormatar(pdtmDataInicial));
 
@@ -2248,8 +2255,8 @@ namespace prmCotacao
 				//Para cada ativo do loop, faz a inserção na tabela Cotacao_Anterior
 		        objCommand.Execute("INSERT INTO Cotacao_Anterior " + "(Codigo, Data, Periodo, Data_Anterior) " +
 		                           "VALUES " +
-		                           "(" + FuncoesBd.CampoStringFormatar(cotacaoAnteriorDto.Codigo) + ", " +
-		                           funcoesBd.CampoDateFormatar(dtmData) + ", " + FuncoesBd.CampoStringFormatar(pstrPeriodo) +
+		                           "(" + funcoesBd.CampoStringFormatar(cotacaoAnteriorDto.Codigo) + ", " +
+		                           funcoesBd.CampoDateFormatar(dtmData) + ", " + funcoesBd.CampoStringFormatar(pstrPeriodo) +
 		                           ", " + funcoesBd.CampoDateFormatar(cotacaoAnteriorDto.Data) + ")");
 
 		    }
@@ -2265,15 +2272,13 @@ namespace prmCotacao
 		/// <summary>
 		/// Busca a data de uma cotação a partir de um número sequencial.
 		/// </summary>
-		/// <param name="pstrCodigo"></param>
-		/// <param name="plngSequencial"></param>
 		/// <returns></returns>
 		/// <remarks></remarks>
 		public DateTime AtivoSequencialDataBuscar(string pstrCodigo, long plngSequencial, string pstrTabelaCotacao)
 		{
 		    cRS objRS = new cRS(_conexao);
 
-			objRS.ExecuteQuery("SELECT Data " + Environment.NewLine + " FROM " + pstrTabelaCotacao + Environment.NewLine + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + Environment.NewLine + " AND Sequencial = " + plngSequencial);
+			objRS.ExecuteQuery("SELECT Data " + Environment.NewLine + " FROM " + pstrTabelaCotacao + Environment.NewLine + " WHERE Codigo = " + _funcoesBd.CampoStringFormatar(pstrCodigo) + Environment.NewLine + " AND Sequencial = " + plngSequencial);
 
 			DateTime data = Convert.ToDateTime(objRS.Field("Data"));
 
@@ -2339,7 +2344,7 @@ namespace prmCotacao
 			//Caso contrário considera todos os tipos.
 			string strSplitTipo = (pstrDado == "VOLUME" ? "DESD" : string.Empty);
 
-			cCarregadorSplit objCarregadorSplit = new cCarregadorSplit(this._conexao);
+			CarregadorSplit objCarregadorSplit = new CarregadorSplit(this._conexao);
 
 			//consulta os splits
 			bool blnSplitExistir = objCarregadorSplit.SplitConsultar(pstrCodigoAtivo, pdtmDataInicial, "D", ref objRSListSplit, pdtmDataMaximaSplit, strSplitTipo);
