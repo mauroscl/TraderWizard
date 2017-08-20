@@ -17,7 +17,7 @@ namespace DataBase.Carregadores
 		public bool ExcluirSimulacoesAnteriores(string pstrCodigo, Setup pobjSetup)
 		{
 
-			cCommand objCommand = new cCommand(Conexao);
+			Command objCommand = new Command(Conexao);
 
             FuncoesBd funcoesBd = Conexao.ObterFormatadorDeCampo();
 

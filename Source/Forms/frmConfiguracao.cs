@@ -26,7 +26,7 @@ namespace TraderWizard
 
         private void DadosSalvar()
         {
-            var objComando = new cCommand(objConexao);
+            var objComando = new Command(objConexao);
 
             string strProxyType = String.Empty;
             string strProxyManualHttp = String.Empty;
@@ -335,7 +335,7 @@ namespace TraderWizard
         private void ParametroSalvar(string pstrParametro, string pstrValor)
         {
 
-            var objDadosDB = new cDadosDB(objConexao, "Configuracao");
+            var objDadosDB = new DadosDb(objConexao, "Configuracao");
 
             objDadosDB.CampoAdicionar("Parametro", true, pstrParametro);
 
@@ -347,7 +347,7 @@ namespace TraderWizard
 
         private void IndicadorCarregar()
         {
-            var objRS = new cRS(objConexao);
+            var objRS = new RS(objConexao);
 
             var funcoesBd = objConexao.ObterFormatadorDeCampo();
 
@@ -357,7 +357,7 @@ namespace TraderWizard
             objRS.ExecuteQuery(query);
 
 
-            while (!objRS.EOF)
+            while (!objRS.Eof)
             {
                 ListViewItem objListViewItem = lstPeriodoSelecionado.Items.Add(Convert.ToString(objRS.Field("NumPeriodos")));
 
@@ -378,7 +378,7 @@ namespace TraderWizard
 
         private void IndicadorSalvar()
         {
-            var objCommand = new cCommand(objConexao);
+            var objCommand = new Command(objConexao);
 
             var funcoesBd = objConexao.ObterFormatadorDeCampo();
 

@@ -662,7 +662,7 @@ namespace Cotacao
 		private int NumTentativasCalcular(string pstrCodigo, long plngSequencialInicial, double pdblValorMaximoIFRSobrevendido)
 		{
 
-			cRS objRS = new cRS(_conexao);
+			RS objRS = new RS(_conexao);
 
 		    dynamic lngSequencialAtual = plngSequencialInicial;
 			bool blnOK = false;
@@ -684,7 +684,7 @@ namespace Cotacao
 				objRS.ExecuteQuery(strSQL);
 
 
-				while ((!objRS.EOF) && (!blnOK)) {
+				while ((!objRS.Eof) && (!blnOK)) {
 
 
 					if (Convert.ToDouble(objRS.Field("Valor")) <= pdblValorMaximoIFRSobrevendido) {
@@ -759,7 +759,7 @@ namespace Cotacao
 
 			strSQL = strSQL + strWhere;
 
-			cRS objRS = new cRS(_conexao);
+			RS objRS = new RS(_conexao);
 
 			objRS.ExecuteQuery(strSQL);
 
@@ -781,7 +781,7 @@ namespace Cotacao
 			decimal decPercentualRealizacaoFinal;
 
 
-			if (!objRS.EOF) {
+			if (!objRS.Eof) {
 				//Se encontrou registro, verifica se o percentual é maior do que o percentual da realização parcial
 				if (Convert.ToDecimal(objRS.Field("Percentual_Realizacao_Final")) > decPercentualRealizacaoParcial) {
 					decPercentualRealizacaoFinal = (decimal) Math.Floor(Convert.ToDouble(objRS.Field("Percentual_Realizacao_Final")));
@@ -916,7 +916,7 @@ namespace Cotacao
 			strSQL += '\t' + " ) " + Environment.NewLine;
 			strSQL += " )" + Environment.NewLine;
 
-			cRS objRS = new cRS(_conexao);
+			RS objRS = new RS(_conexao);
 
 			//Debug.Print(strSQL)
 
@@ -925,7 +925,7 @@ namespace Cotacao
 			IList<string> lstAtivos = new List<string>();
 
 
-			while (!objRS.EOF) {
+			while (!objRS.Eof) {
 				lstAtivos.Add(Convert.ToString(objRS.Field("Codigo")));
 
 				objRS.MoveNext();
@@ -1057,7 +1057,7 @@ namespace Cotacao
 			//Chama função que verifica se existe alguma simulação pendente e pergunta se o usuário que executá-la antes de iniciar o relatório.
 			SetupIFR2SemFiltroDiarioPersonalizadoVerificar(pobjSetup, pdtmDataAtual, pdblTitulosTotal, pintNegociosTotal, pdecValorTotal);
 
-			cCommand objCommand = new cCommand(_conexao);
+			Command objCommand = new Command(_conexao);
 
 			objCommand.BeginTrans();
 
@@ -1066,7 +1066,7 @@ namespace Cotacao
 
 			objCommand.Execute(strSQL);
 
-			cRS objRS = new cRS(_conexao);
+			RS objRS = new RS(_conexao);
 
 
 			strSQL = " SELECT Sequencial, C.Codigo, ValorFechamento ";
@@ -1205,7 +1205,7 @@ namespace Cotacao
 
 		    //Para cada um dos itens que está com IFR sobrevendido.
 
-			while ((!objRS.EOF) && (_conexao.TransStatus)) {
+			while ((!objRS.Eof) && (_conexao.TransStatus)) {
 				lstFaixas.Clear();
 
 				string strValorRealizacaoParcial = string.Empty;
@@ -1564,7 +1564,7 @@ namespace Cotacao
 					//Os filtros referentes ao volume negociado são informados em dias.
 					//Quando as cotações são semanais, tem que verificar quantos dias tem na semana e multiplicar
 					//os valores informados pelo número de dias
-					cRS objRS = new cRS(_conexao);
+					RS objRS = new RS(_conexao);
 
 					//Dim strQuery As String
 

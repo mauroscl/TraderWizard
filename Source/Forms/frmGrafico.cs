@@ -457,7 +457,7 @@ namespace TraderWizard
 
             FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
 
-            cRS objRS = new cRS(_conexao);
+            RS objRS = new RS(_conexao);
 
             ServicoDeCotacao objCotacao = new ServicoDeCotacao(_conexao);
 
@@ -797,7 +797,7 @@ namespace TraderWizard
 
             }
 
-            cRSList objRSList;
+            RSList objRSList;
 
             if (blnCotacaoBuscar || blnVolumeBuscar)
             {
@@ -895,7 +895,7 @@ namespace TraderWizard
 
                 intArrayCandleIndice = intIndiceFinal;
 
-                while (!objRS.EOF)
+                while (!objRS.Eof)
                 {
                     try
                     {
@@ -2251,7 +2251,7 @@ namespace TraderWizard
         private void ParametroConsultar(string pstrParametro, out string pstrValorRet)
         {
 
-            var objDadosDB = new cDadosDB(_conexao, "Configuracao");
+            var objDadosDB = new DadosDb(_conexao, "Configuracao");
 
             objDadosDB.CampoAdicionar("Parametro", true, pstrParametro);
 
@@ -2266,7 +2266,7 @@ namespace TraderWizard
 
         private void IndicadorCarregar()
         {
-            cRS objRS = new cRS(_conexao);
+            RS objRS = new RS(_conexao);
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
             objRS.ExecuteQuery(" select Tipo, NumPeriodos, Cor " + Environment.NewLine +
@@ -2281,7 +2281,7 @@ namespace TraderWizard
                 _mediasSelecionadas = new List<MediaDTO>();
             }
 
-            while (!objRS.EOF)
+            while (!objRS.Eof)
             {
 
                 _mediasSelecionadas.Add(new MediaDTO(((string) objRS.Field("Tipo") == "MME" ? "E" : "A"),
@@ -2691,7 +2691,7 @@ namespace TraderWizard
 
             }
 
-            cRSList objRsSplit = null;
+            RSList objRsSplit = null;
             structSplit objSplit = default(structSplit);
 
             if (colSplit == null)

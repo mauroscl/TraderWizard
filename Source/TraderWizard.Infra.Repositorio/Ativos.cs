@@ -16,7 +16,7 @@ namespace TraderWizard.Infra.Repositorio
 
         public IList<Ativo> Validos()
         {
-            cRS rs = new cRS(_conexao);
+            RS rs = new RS(_conexao);
 
             //busca os ativos da tabela ativo
             rs.ExecuteQuery(" select Codigo, Descricao " + " from Ativo " + " WHERE NOT EXISTS " + "(" + " SELECT 1 " +
@@ -25,7 +25,7 @@ namespace TraderWizard.Infra.Repositorio
 
             var ativos = new List<Ativo>();
 
-            while (! rs.EOF)
+            while (! rs.Eof)
             {
                 ativos.Add(new Ativo(Convert.ToString(rs.Field("Codigo")), Convert.ToString(rs.Field("Descricao"))));
                 rs.MoveNext();

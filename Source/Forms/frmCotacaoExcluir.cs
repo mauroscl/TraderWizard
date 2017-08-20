@@ -28,7 +28,7 @@ namespace TraderWizard
 
 		private void ListDatasPreencher()
 		{
-			cRS objRS = new cRS(objConexao);
+			RS objRS = new RS(objConexao);
 
 			//busca os ativos da tabela ativo
 			objRS.ExecuteQuery(" SELECT Data " + " FROM Cotacao_Intraday " + " UNION " + " SELECT Data " + " FROM Cotacao_Intraday_Ativo " + " ORDER BY Data ");
@@ -36,7 +36,7 @@ namespace TraderWizard
 			lstDataNaoEscolhida.Items.Clear();
 
 
-			while (!objRS.EOF) {
+			while (!objRS.Eof) {
 				lstDataNaoEscolhida.Items.Add(objRS.Field("Data"));
 
 				objRS.MoveNext();

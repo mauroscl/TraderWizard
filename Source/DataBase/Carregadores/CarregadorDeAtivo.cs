@@ -15,12 +15,12 @@ namespace DataBase.Carregadores
                                  "FROM ATIVO " +
                                  "WHERE CODIGO NOT IN (" + subQueryAtivosDesconsiderados + ")";
 
-            var rs = new cRS(this.Conexao);
+            var rs = new RS(this.Conexao);
             rs.ExecuteQuery(query);
 
             var ativos = new List<AtivoSelecao>();
 
-            while (!rs.EOF)
+            while (!rs.Eof)
             {
                 string codigo = Convert.ToString(rs.Field("Codigo"));
                 ativos.Add(new AtivoSelecao

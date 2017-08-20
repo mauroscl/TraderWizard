@@ -5,20 +5,20 @@ using System.Windows.Forms;
 namespace DataBase
 {
 
-	public class cRSList
+	public class RSList
 	{
 
 
-		private readonly Conexao objConexao;
+		private readonly Conexao _conexao;
 		//Lista de queries que devem ser executadas
 
 	    //Posição atual no lstDados.
-		private int lngPosicaoAtual;
+		private int _posicaoAtual;
 		//Lista dos resultados consultados no banco de dados
 
-	    public cRSList(Conexao pobjConexao)
+	    public RSList(Conexao pobjConexao)
 		{
-			objConexao = pobjConexao;
+			_conexao = pobjConexao;
 
 			Queries = new List<string>();
 
@@ -40,7 +40,7 @@ namespace DataBase
 			try {
                 Dados = new List<Dictionary<string, object>>();
 
-				cRS objRS = new cRS(objConexao);
+				RS objRS = new RS(_conexao);
 
 				//Para cada uma das queries da lista.
 
@@ -48,7 +48,7 @@ namespace DataBase
 					objRS.ExecuteQuery(strQuery);
 
 
-					while (!objRS.EOF) {
+					while (!objRS.Eof) {
 
                         Dictionary<string, object> colunas = new Dictionary<string, object>();
 
@@ -67,11 +67,11 @@ namespace DataBase
 				}
 
 				//Inicializa variável que indica a posição atual da lista para o primeiro item.
-				lngPosicaoAtual = 0;
+				_posicaoAtual = 0;
 
 
 			} catch (Exception ex) {
-				objConexao.RollBackTrans();
+				_conexao.RollBackTrans();
 				 MessageBox.Show(ex.Message, "Executar Query",MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
 			}
@@ -79,7 +79,7 @@ namespace DataBase
 		}
 
 		public bool EOF {
-			get { return (lngPosicaoAtual >= Dados.Count); }
+			get { return (_posicaoAtual >= Dados.Count); }
 		}
 
 		public int RecordCount {
@@ -96,9 +96,9 @@ namespace DataBase
 
 
 			try {
-				if (Dados.Count > 0 && lngPosicaoAtual < Dados.Count) {
+				if (Dados.Count > 0 && _posicaoAtual < Dados.Count) {
 					//Se o List tem dados e não ultrapassou a última posição retorna o conteudo do campo
-					return Dados[lngPosicaoAtual].SingleOrDefault(x => x.Key.ToLower() ==  pstrCampo.ToLower()).Value;
+					return Dados[_posicaoAtual].SingleOrDefault(x => x.Key.ToLower() ==  pstrCampo.ToLower()).Value;
 				} else {
 					//Caso contrário retorna o erro.
 					return pobjRetornoErro;
@@ -112,9 +112,9 @@ namespace DataBase
         public Dictionary<string, object> RetornaLinhaAtual()
 		{
 
-			if (Dados.Count > 0 && lngPosicaoAtual < Dados.Count) {
+			if (Dados.Count > 0 && _posicaoAtual < Dados.Count) {
 				//Se o List tem dados e não ultrapassou a última posição retorna o conteudo do campo
-				return Dados[lngPosicaoAtual];
+				return Dados[_posicaoAtual];
 			} else {
 				//Caso contrário retorna o erro.
 				return null;
@@ -133,9 +133,9 @@ namespace DataBase
 		{
 
 			try {
-				if (Dados.Count > 0 && lngPosicaoAtual + 1 < Dados.Count) {
+				if (Dados.Count > 0 && _posicaoAtual + 1 < Dados.Count) {
 					//Se o List tem dados e não ultrapassou a última posição retorna o conteudo do campo
-					return Dados[lngPosicaoAtual + 1][pstrCampo];
+					return Dados[_posicaoAtual + 1][pstrCampo];
 				}
 			    //Caso contrário retorna o erro.
 			    return pobjRetornoErro;
@@ -147,7 +147,7 @@ namespace DataBase
 
 		public void MoveNext()
 		{
-			lngPosicaoAtual = lngPosicaoAtual + 1;
+			_posicaoAtual = _posicaoAtual + 1;
 		}
 
 

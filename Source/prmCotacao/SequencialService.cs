@@ -27,8 +27,8 @@ namespace prmCotacao
         private bool SequencialAtivoPreencher(string pstrCodigo, string pstrTabela)
         {
 
-            cCommand objCommand = new cCommand(_conexao);
-            cRS objRS = new cRS(_conexao);
+            Command objCommand = new Command(_conexao);
+            RS objRS = new RS(_conexao);
             objCommand.BeginTrans();
 
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
@@ -40,7 +40,7 @@ namespace prmCotacao
             long lngSequencial = 1;
 
             //PARA CADA DATA ONDE HÁ COTACAO  
-            while (!objRS.EOF)
+            while (!objRS.Eof)
             {
                 //ATUALIZA O SEQUENCIAL
                 objCommand.Execute(" UPDATE " + pstrTabela + " SET " + "Sequencial = " + lngSequencial.ToString() + " WHERE Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " AND Data = " + funcoesBd.CampoDateFormatar(Convert.ToDateTime(objRS.Field("Data"))));
@@ -70,7 +70,7 @@ namespace prmCotacao
         private bool SequencialPeriodicidadePreencher(string pstrPeriodicidade)
         {
 
-            cRS objRS = new cRS(_conexao);
+            RS objRS = new RS(_conexao);
 
             bool blnOK = true;
 
@@ -96,7 +96,7 @@ namespace prmCotacao
 
             //PARA CADA ATIVO...
 
-            while ((!objRS.EOF) && blnOK)
+            while ((!objRS.Eof) && blnOK)
             {
                 //CHAMA FUNÇÃO PARA ATUALIZAR SEQUENCIAL NAS COTAÇÕES DIÁRIAS
 
@@ -148,7 +148,7 @@ namespace prmCotacao
         private long AtivoSequencialMaximoBuscar(string pstrCodigo, string pstrTabela, Conexao pobjConexao = null)
         {
 
-            cRS objRs = pobjConexao == null ? new cRS(_conexao) : new cRS(pobjConexao);
+            RS objRs = pobjConexao == null ? new RS(_conexao) : new RS(pobjConexao);
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
             //busca o maior sequencial utilizado

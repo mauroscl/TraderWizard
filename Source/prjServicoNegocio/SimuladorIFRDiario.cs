@@ -79,7 +79,7 @@ namespace ServicoNegocio
 
 			Trace.WriteLine("Iniciando simulacao: " + objSetupIFR2SimularCodigoDTO.Codigo);
 
-			cRS objRSAux = new cRS(objConexao);
+			RS objRSAux = new RS(objConexao);
 			//RS auxiliar, pode ser utilizado quando for necessário executar uma query.
 
 

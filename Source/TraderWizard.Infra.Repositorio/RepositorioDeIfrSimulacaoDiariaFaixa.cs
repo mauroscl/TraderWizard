@@ -15,7 +15,7 @@ namespace TraderWizard.Infra.Repositorio
 
         public bool Salvar(IFRSimulacaoDiariaFaixa  ifrSimulacaoDiariaFaixa)
         {
-            var objCommand = new cCommand(_conexao);
+            var objCommand = new Command(_conexao);
 
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 

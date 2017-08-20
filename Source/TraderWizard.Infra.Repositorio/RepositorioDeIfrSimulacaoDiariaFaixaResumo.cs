@@ -19,7 +19,7 @@ namespace TraderWizard.Infra.Repositorio
 
         public void Salvar(IFRSimulacaoDiariaFaixaResumo resumo)
         {
-            cCommand objCommand = new cCommand(_conexao);
+            Command objCommand = new Command(_conexao);
 
             //Somente salva se houve algum trade com ou sem filtro.
 

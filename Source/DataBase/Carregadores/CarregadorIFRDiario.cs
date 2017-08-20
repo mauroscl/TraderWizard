@@ -18,7 +18,7 @@ namespace DataBase.Carregadores
 
 		public cIFR CarregarPorData(CotacaoDiaria pobjCotacaoDiaria, int pintNumPeriodos)
 		{
-		    cRS objRS = new cRS(Conexao);
+		    RS objRS = new RS(Conexao);
 
 		    FuncoesBd funcoesBd = Conexao.ObterFormatadorDeCampo();
 

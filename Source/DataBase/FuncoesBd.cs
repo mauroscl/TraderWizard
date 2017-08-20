@@ -41,9 +41,9 @@ namespace DataBase
         //deseja-se usar os outros campos com valor fixo
 
         //Retorno: A nova chave para a tabela
-        public long CodigoChaveGerar(string pstrTabela, string pstrCampo, cCommand pobjCommand, string pstrWhere = "")
+        public long CodigoChaveGerar(string pstrTabela, string pstrCampo, Command pobjCommand, string pstrWhere = "")
         {
-            cRS objRS = new cRS(pobjCommand.Conexao);
+            RS objRS = new RS(pobjCommand.Conexao);
 
             string strQuery = " select max( " + pstrCampo + ") as NovoCodigo " + " from " + pstrTabela;
 

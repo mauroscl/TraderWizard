@@ -119,10 +119,10 @@ namespace DataBase.Carregadores
 
 		}
 
-		public bool SplitConsultar(string pstrCodigo, DateTime pdtmDataInicial, string pstrOrdem, ref cRSList pobjRSListRet, DateTime pdtmDataFinal, string pstrTipo = "")
+		public bool SplitConsultar(string pstrCodigo, DateTime pdtmDataInicial, string pstrOrdem, ref RSList pobjRSListRet, DateTime pdtmDataFinal, string pstrTipo = "")
 		{
 
-			cRSList objRSList = new cRSList(_conexao);
+			RSList objRSList = new RSList(_conexao);
 
 		    string strQuery = QuerySplitGerar(pstrCodigo, pdtmDataInicial, pstrOrdem, pdtmDataFinal, pstrTipo);
 
@@ -146,13 +146,13 @@ namespace DataBase.Carregadores
 			strSql += "WHERE Codigo = " + FuncoesBd.CampoFormatar(pobjAtivo.Codigo);
 			strSql += "ORDER BY Data ";
 
-			cRS objRS = new cRS(_conexao);
+			RS objRS = new RS(_conexao);
 
 			objRS.ExecuteQuery(strSql);
 
 			var lstRetorno = new List<Desdobramento>();
 
-		    while (!objRS.EOF) {
+		    while (!objRS.Eof) {
 				DateTime dtmData = Convert.ToDateTime(objRS.Field("Data"));
 				string strTipo = Convert.ToString(objRS.Field("Tipo"));
 				double dblQuantidadeAnterior = Convert.ToDouble(objRS.Field("QuantidadeAnterior"));

@@ -94,7 +94,7 @@ namespace ServicoNegocio
 			//verifica se o dia da semana está entre segunda-feira e sexta-feira
 
 			if ((pdtmData.DayOfWeek != DayOfWeek.Sunday) && (pdtmData.DayOfWeek != DayOfWeek.Saturday)) {
-				cRS objRS = new cRS(_conexao);
+				RS objRS = new RS(_conexao);
 
 				//se está entre segunda e sexta verifica se a data não está cadastrada na tabela de feriados
 				objRS.ExecuteQuery(" select 1" + " from Feriado " + " where Data = " + FuncoesBd.CampoDateFormatar(pdtmData));
@@ -124,7 +124,7 @@ namespace ServicoNegocio
 		/// <remarks></remarks>
 		public DateTime CalcularDataProximoPeriodo(string pstrCodigo, DateTime pdtmDataAtual, string pstrTabelaCotacao)
 		{
-		    cRS objRS = new cRS(_conexao);
+		    RS objRS = new RS(_conexao);
 
             FuncoesBd funcoesBd  = _conexao.ObterFormatadorDeCampo();
 
@@ -145,7 +145,7 @@ namespace ServicoNegocio
 
 		public DateTime ObtemDataDaUltimaCotacao()
 		{
-		    cRS objRS = new cRS(_conexao);
+		    RS objRS = new RS(_conexao);
 
 			//busca a data da última cotação armazenada
 
@@ -196,7 +196,7 @@ namespace ServicoNegocio
 		/// <remarks>A função é pública porque é utilizada também pela classe cRelatorio</remarks>
 		public DateTime CotacaoDataMaximaConsultar(string pstrCodigo, string pstrTabela)
 		{
-		    cRS objRS = new cRS(this._conexao);
+		    RS objRS = new RS(this._conexao);
 
 		    var funcoesBd = this._conexao.ObterFormatadorDeCampo();
 

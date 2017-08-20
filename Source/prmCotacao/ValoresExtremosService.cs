@@ -34,7 +34,7 @@ namespace prmCotacao
         private ValoresExtremos ValoresExtremosUnitarioCalcular(ConfiguracaoDeVisualizacao configuracaoDeVisualizacao, double pdblOperador,
             double pdblOperadorInvertido)
         {
-            cRS objRS = new cRS(_conexao);
+            RS objRS = new RS(_conexao);
 
             string strTabelaCotacao = string.Empty;
             string strTabelaMedia = string.Empty;
@@ -192,7 +192,7 @@ namespace prmCotacao
         /// </summary>
         public ValoresExtremos ValoresExtremosCalcular(ConfiguracaoDeVisualizacao configuracaoDeVisualizacao)
         {
-            cRSList objRSListSplit = null;
+            RSList objRSListSplit = null;
 
             double dblOperador = 1;
             double dblOperadorInvertido = 1;

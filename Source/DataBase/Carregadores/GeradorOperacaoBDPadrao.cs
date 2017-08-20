@@ -34,7 +34,7 @@ namespace DataBase.Carregadores
 
 		public bool Executar()
 		{
-		    cCommand objCommand = new cCommand(this.Conexao);
+		    Command objCommand = new Command(this.Conexao);
 
 			foreach (OperacaoDeBancoDeDados item in this.Operacoes) {
 			    string strComando;

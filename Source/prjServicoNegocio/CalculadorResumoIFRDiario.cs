@@ -29,7 +29,7 @@ namespace ServicoNegocio
 
 
 			try {
-				cRS objRS = new cRS(_conexao);
+				RS objRS = new RS(_conexao);
 
 			    IFRSimulacaoDiariaFaixaResumo objRetorno = new IFRSimulacaoDiariaFaixaResumo(_ativo, _setup, pobjCalculoResumoFaixaVO.ClassifMedia, pobjIFRSobrevendido, pobjCalculoResumoFaixaVO.DataSaida);
 

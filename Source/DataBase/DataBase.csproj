@@ -87,15 +87,15 @@
     <Compile Include="Carregadores\OperacaoDeBancoDeDados.cs" />
     <Compile Include="Carregadores\RemovedorSimulacaoIFRDiario.cs" />
     <Compile Include="Carregadores\VerificaSePossuiFaixaDoIFR.cs" />
-    <Compile Include="cCampoDB.cs" />
-    <Compile Include="cCommand.cs" />
+    <Compile Include="CampoDB.cs" />
+    <Compile Include="Command.cs" />
     <Compile Include="Conexao.cs" />
-    <Compile Include="cDadosDB.cs" />
+    <Compile Include="DadosDB.cs" />
     <Compile Include="FuncoesBdAccess.cs" />
     <Compile Include="FuncoesBdSqlServer.cs" />
     <Compile Include="GeradorQuery.cs" />
-    <Compile Include="cRS.cs" />
-    <Compile Include="cRSList.cs" />
+    <Compile Include="RS.cs" />
+    <Compile Include="RSList.cs" />
     <Compile Include="frmInformacao.cs">
       <SubType>Form</SubType>
     </Compile>

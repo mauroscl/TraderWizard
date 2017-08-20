@@ -13,7 +13,7 @@ namespace TraderWizard
 		public static bool ParametroConsultar(Conexao pobjConexao, string pstrParametro, out string pstrValorRet)
 		{
 
-			cDadosDB objDadosDB = new cDadosDB(pobjConexao, "Configuracao");
+			DadosDb objDadosDB = new DadosDb(pobjConexao, "Configuracao");
 
 			objDadosDB.CampoAdicionar("Parametro", true, pstrParametro);
 

@@ -18,7 +18,7 @@ namespace DataBase.Carregadores
 
 		public bool VerificaPorClassificacaoMedia(string pstrCodigo, ClassifMedia pobjCM, IFRSobrevendido pobjIFRSobrevendido)
 		{
-		    cRS objRS = new cRS(Conexao);
+		    RS objRS = new RS(Conexao);
 
             FuncoesBd FuncoesBd = Conexao.ObterFormatadorDeCampo();
 

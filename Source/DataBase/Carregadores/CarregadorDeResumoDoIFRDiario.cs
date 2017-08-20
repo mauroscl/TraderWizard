@@ -18,7 +18,7 @@ namespace DataBase.Carregadores
 		public IFRSimulacaoDiariaFaixaResumo Carregar(SimulacaoDiariaVO pobjSimulacaoDiariaVO)
 		{
 
-			cRS objRS = new cRS(_conexao);
+			RS objRS = new RS(_conexao);
 
 		    FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 

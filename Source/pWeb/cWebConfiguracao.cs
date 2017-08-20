@@ -90,7 +90,7 @@ namespace pWeb
 		public bool ParametroConsultar(string pstrParametro, ref string pstrValorRet)
 		{
 
-			cDadosDB objDadosDB = new cDadosDB(objConexao, "Configuracao");
+			DadosDb objDadosDB = new DadosDb(objConexao, "Configuracao");
 
 			objDadosDB.CampoAdicionar("Parametro", true, pstrParametro);
 

@@ -20,7 +20,7 @@ namespace DataBase.Carregadores
 		public IFRSobrevendido CarregaPorValorMaximo(double pdblValorMaximo)
 		{
 
-			cRS objRS = new cRS(_conexao);
+			RS objRS = new RS(_conexao);
 
 		    var strSql = "SELECT ID " + Environment.NewLine;
 			strSql = strSql + " FROM IFR_Sobrevendido " + Environment.NewLine;
@@ -31,7 +31,7 @@ namespace DataBase.Carregadores
 			IFRSobrevendido objRetorno = null;
 
 
-			if (!objRS.EOF) {
+			if (!objRS.Eof) {
 				objRetorno = new IFRSobrevendido(Convert.ToInt32(objRS.Field("ID")), pdblValorMaximo);
 
 			}
@@ -46,7 +46,7 @@ namespace DataBase.Carregadores
 		public IList<IFRSobrevendido> CarregarTodos()
 		{
 
-			cRS objRS = new cRS(_conexao);
+			RS objRS = new RS(_conexao);
 
 			string strSQL = null;
 
@@ -58,7 +58,7 @@ namespace DataBase.Carregadores
 			IList<IFRSobrevendido> lstRetorno = new List<IFRSobrevendido>();
 
 
-			while (!objRS.EOF) {
+			while (!objRS.Eof) {
 				lstRetorno.Add(new IFRSobrevendido(Convert.ToInt32(objRS.Field("ID")), Convert.ToDouble(objRS.Field("ValorMaximo"))));
 
 				objRS.MoveNext();
@@ -80,7 +80,7 @@ namespace DataBase.Carregadores
 		public IList<IFRSobrevendido> CarregaPorValor(double pdblValor)
 		{
 
-			cRS objRS = new cRS(_conexao);
+			RS objRS = new RS(_conexao);
 
 		    var strSql = "SELECT ID, ValorMaximo " + Environment.NewLine;
 			strSql = strSql + " FROM IFR_Sobrevendido " + Environment.NewLine;
@@ -91,7 +91,7 @@ namespace DataBase.Carregadores
 			IList<IFRSobrevendido> lstRetorno = new List<IFRSobrevendido>();
 
 
-			while (!objRS.EOF) {
+			while (!objRS.Eof) {
 				lstRetorno.Add(new IFRSobrevendido(Convert.ToInt32(objRS.Field("ID")), Convert.ToDouble(objRS.Field("ValorMaximo"))));
 
 				objRS.MoveNext();
@@ -106,7 +106,7 @@ namespace DataBase.Carregadores
 
 		public IFRSobrevendido CarregaPorID(int pintID)
 		{
-		    cRS objRS = new cRS(_conexao);
+		    RS objRS = new RS(_conexao);
 
 		    var strSql = "SELECT ValorMaximo " + Environment.NewLine;
 			strSql = strSql + " FROM IFR_Sobrevendido " + Environment.NewLine;

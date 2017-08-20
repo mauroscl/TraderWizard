@@ -259,12 +259,12 @@ namespace TraderWizard
 
 			lstAtivosNaoEscolhidos.Items.Clear();
 
-			cRS objRS = new cRS();
+			RS objRS = new RS();
 
 			objRS.ExecuteQuery(strSQL);
 
 
-			while (!objRS.EOF) {
+			while (!objRS.Eof) {
 				lstAtivosNaoEscolhidos.Items.Add(objRS.Field("Descr"));
 
 				objRS.MoveNext();

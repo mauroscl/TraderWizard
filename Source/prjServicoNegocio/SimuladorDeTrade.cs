@@ -47,7 +47,7 @@ namespace prjServicoNegocio
             , string pstrTabelaMedia, ref decimal pdecValorFechamentoRet, ref double? pdblMME21Ret, ref double? pdblMME49Ret)
 		{
 
-			cRS objRS = new cRS(objConexao);
+			RS objRS = new RS(objConexao);
 
 		    //Dim blnEncontrouPositivo As Boolean = False
 			bool blnEncontrouNegativo = false;
@@ -94,7 +94,7 @@ namespace prjServicoNegocio
 
 				//While (Not objRS.EOF) And ((Not blnEncontrouPositivo) Or (Not blnEncontrouNegativo))
 
-				while ((!objRS.EOF) && (!blnEncontrouNegativo)) {
+				while ((!objRS.Eof) && (!blnEncontrouNegativo)) {
 
 					if (Convert.ToDouble(objRS.Field("Oscilacao")) < 0) {
 						//Se encontrou uma oscilação menor do que zero, marca que a mesma foi encontrada.
@@ -143,7 +143,7 @@ namespace prjServicoNegocio
 
 				//If objRS.EOF And ((Not blnEncontrouPositivo) Or (Not blnEncontrouNegativo)) Then
 
-				if (objRS.EOF && (!blnEncontrouNegativo)) {
+				if (objRS.Eof && (!blnEncontrouNegativo)) {
 					//se chegou no fim do RecordSet e não encontrou as oscilações positivas e negativas.
 					//busca as datas do primeiro e último dia do mês anterior
 

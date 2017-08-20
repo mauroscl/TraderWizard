@@ -21,7 +21,7 @@ namespace DataBase.Carregadores
 			strSQL += " WHERE ID_IFR_Sobrevendido = " + funcoesBd.CampoFormatar(pobjIFRSobrevendido.Id) + Environment.NewLine;
 			strSQL += " AND Ativo = " + funcoesBd.CampoFormatar(true);
 
-			var objRS = new cRS(Conexao);
+			var objRS = new RS(Conexao);
 
 			objRS.ExecuteQuery(strSQL);
 
@@ -39,7 +39,7 @@ namespace DataBase.Carregadores
 				objRS.ExecuteQuery(strSQL);
 
 
-				while (!objRS.EOF) {
+				while (!objRS.Eof) {
 					var objAtivo = new Ativo(Convert.ToString(objRS.Field("Codigo")), string.Empty);
 
 					objRetorno.AdicionaAtivo(objAtivo);

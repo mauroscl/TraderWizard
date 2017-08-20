@@ -67,7 +67,7 @@ namespace DataBase.Carregadores
 		{
 			IFRSimulacaoDiaria functionReturnValue;
 
-			cRSList objRS = new cRSList(Conexao);
+			RSList objRS = new RSList(Conexao);
 
 			objRS.AdicionarQuery(pstrSQL);
 			objRS.ExecuteQuery();
@@ -95,7 +95,7 @@ namespace DataBase.Carregadores
 		private IList<IFRSimulacaoDiaria> CarregarLista(Ativo pobjAtivo, Setup pobjSetup, string pstrSQL)
 		{
 
-			cRSList objRS = new cRSList(Conexao);
+			RSList objRS = new RSList(Conexao);
 
 			objRS.AdicionarQuery(pstrSQL);
 			objRS.ExecuteQuery();

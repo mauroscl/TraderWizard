@@ -319,7 +319,7 @@ namespace ServicoNegocio
 
 			    IList<CriterioClassifMedia> lstCriterioCM = objCarregadorCriterioCM.CarregaTodos();
 
-				cRSList objRSTrades = new cRSList(_conexao);
+				RSList objRSTrades = new RSList(_conexao);
 
 				//Busca todos os trades do papel para fazer um único acesso ao banco.
 			    string strSQL = lstCriterioCM.Aggregate(

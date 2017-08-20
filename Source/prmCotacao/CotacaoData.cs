@@ -33,7 +33,7 @@ namespace Cotacao
         public DateTime CotacaoSemanalPrimeiroDiaSemanaCalcular(DateTime pdtmDataBase)
         {
 
-            cRS objRS = new cRS(this._conexao);
+            RS objRS = new RS(this._conexao);
 
             FuncoesBd funcoesBd = this._conexao.ObterFormatadorDeCampo();
 
@@ -70,7 +70,7 @@ namespace Cotacao
         /// <remarks></remarks>
         public DateTime PrimeiraSemanaDataCalcular(string pstrCodigo, Conexao pobjConexao = null)
         {
-            cRS objRs = pobjConexao == null ? new cRS(_conexao) : new cRS(pobjConexao);
+            RS objRs = pobjConexao == null ? new RS(_conexao) : new RS(pobjConexao);
 
             objRs.ExecuteQuery(" select min(Data) as Data " + " from Cotacao " + " where Codigo = " + _funcoesBd.CampoStringFormatar(pstrCodigo));
 
@@ -149,7 +149,7 @@ namespace Cotacao
                 return Constantes.DataInvalida;
             }
 
-            cRS objRS = new cRS(_conexao);
+            RS objRS = new RS(_conexao);
 
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
@@ -173,7 +173,7 @@ namespace Cotacao
         /// <remarks></remarks>
         public DateTime AtivoCotacaoSemanalUltimoDiaSemanaCalcular(string pstrCodigo, DateTime pdtmPrimeiroDiaSemana)
         {
-            cRS objRS = new cRS(_conexao);
+            RS objRS = new RS(_conexao);
 
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
@@ -200,7 +200,7 @@ namespace Cotacao
         /// <remarks></remarks>
         public bool CotacaoDataExistir(DateTime pdtmData, string pstrTabela)
         {
-            cRS objRS = new cRS(_conexao);
+            RS objRS = new RS(_conexao);
 
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
@@ -226,7 +226,7 @@ namespace Cotacao
         /// <remarks></remarks>
         public bool CotacaoDataExistir(DateTime pdtmData, string pstrTabela, string pstrCodigoAtivo)
         {
-            cRS objRS = new cRS(_conexao);
+            RS objRS = new RS(_conexao);
 
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
@@ -256,7 +256,7 @@ namespace Cotacao
         {
             DateTime functionReturnValue;
 
-            var objRsData = pobjConexao == null ? new cRS(_conexao) : new cRS(pobjConexao);
+            var objRsData = pobjConexao == null ? new RS(_conexao) : new RS(pobjConexao);
 
             string strPeriodo;
 
@@ -333,7 +333,7 @@ namespace Cotacao
         {
             string strQuery;
 
-            cRS objRS = pobjConexao == null ? new cRS(_conexao) : new cRS(pobjConexao);
+            RS objRS = pobjConexao == null ? new RS(_conexao) : new RS(pobjConexao);
 
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
@@ -451,7 +451,7 @@ namespace Cotacao
         /// <remarks></remarks>
         public bool IntervaloNumPeriodosVerificar(string pstrCodigo, DateTime pdtmDataInicial, DateTime pdtmDataFinal, int pintNumPeriodos, string pstrTabela, int pintNumPeriodosTabelaDados = -1, Conexao pobjConexao = null)
         {
-            cRS objRs = pobjConexao == null ? new cRS(_conexao) : new cRS(pobjConexao);
+            RS objRs = pobjConexao == null ? new RS(_conexao) : new RS(pobjConexao);
 
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 

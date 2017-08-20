@@ -8,18 +8,18 @@ using TraderWizard.Enumeracoes;
 namespace DataBase
 {
 
-	public class cRS
+	public class RS
 	{
 
 	    public string UltimaQuery { get; private set; }
 
-	    public bool EOF { get; private set; }
+	    public bool Eof { get; private set; }
 
 	    public bool DadosExistir { get; private set; }
 
 	    public bool QueryStatus { get; private set; }
 
-	    public Conexao Conexao { get; private set; }
+	    public Conexao Conexao { get; }
 
 	    public DbDataReader DataReader { get; private set; }
 
@@ -28,7 +28,7 @@ namespace DataBase
 		}
 
 
-		public cRS()
+		public RS()
 		{
 			this.Conexao = new Conexao();
 
@@ -37,7 +37,7 @@ namespace DataBase
 		}
 
 
-		public cRS(Conexao pobjConexao)
+		public RS(Conexao pobjConexao)
 		{
 			this.Conexao = pobjConexao;
 
@@ -49,7 +49,7 @@ namespace DataBase
 		{
 			//inicialização das propriedades
 			this.UltimaQuery = "";
-			EOF = false;
+			Eof = false;
 			DadosExistir = false;
 			QueryStatus = false;
 
@@ -112,7 +112,7 @@ namespace DataBase
 
 						//----fim do código alterado por mauro, 26/07/2009
 						//quando não conseguir mais ler nenhum registro chegou ao fim (EOF).
-						EOF = !DadosExistir;
+						Eof = !DadosExistir;
 
 						blnContinuarExecutando = false;
 
@@ -124,7 +124,7 @@ namespace DataBase
 
                     QueryStatus = false;
                     DadosExistir = false;
-                    EOF = true;
+                    Eof = true;
                     throw;
 
                 }
@@ -207,7 +207,7 @@ namespace DataBase
 
 		    try
 		    {
-		        if ( ! EOF && !DataReader.IsDBNull(pintOrdinal)) {
+		        if ( ! Eof && !DataReader.IsDBNull(pintOrdinal)) {
 		            if (tipo == Type.GetType("System.Boolean", true, true)) {
 		                return DataReader.GetBoolean(pintOrdinal);
 		            }
@@ -256,17 +256,17 @@ namespace DataBase
 
 				if (Conexao.TransStatus) {
 					if ((DataReader != null)) {
-						EOF = !DataReader.Read();
+						Eof = !DataReader.Read();
 					} else {
 						//se o RS não está preenchido, então considera como se tivesse chegado no fim deste
 						//para que a aplicação não fique em loop
-						EOF = true;
+						Eof = true;
 					}
 
 
 				} else {
 					//Se ocorre algum erro de o transstatus estar com erro então considera que chegou ao fim do RS
-					EOF = true;
+					Eof = true;
 
 				}
 

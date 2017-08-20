@@ -61,7 +61,7 @@ namespace prmCotacao
 
 		public decimal UltimaMediaConsultar(string pstrCodigo)
 		{
-		    cRS objRS = new cRS(_conexao);
+		    RS objRS = new RS(_conexao);
 
 		    string strQuery = " select ValorMedio " + " from Cotacao " + " where Codigo = " + _funcoesBd.CampoStringFormatar(pstrCodigo) + " order by Data desc ";
 
@@ -92,7 +92,7 @@ namespace prmCotacao
 		public bool CotacaoConsultar(string pstrCodigo, DateTime pdtmData, string pstrTabela, ref decimal pdecValorFechamentoRet, ref decimal pdecValorAberturaRet, Conexao pobjConexao = null)
 		{
 
-		    cRS objRS = pobjConexao == null ? new cRS(_conexao) : new cRS(pobjConexao);
+		    RS objRS = pobjConexao == null ? new RS(_conexao) : new RS(pobjConexao);
 
 		    string strQuery = " select ValorAbertura, ValorFechamento " + " from " + pstrTabela + " where Data = " + _funcoesBd.CampoDateFormatar(pdtmData) + " and Codigo = " + _funcoesBd.CampoStringFormatar(pstrCodigo);
 
@@ -120,7 +120,7 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		public DateTime CotacaoAnteriorDataConsultar(DateTime pdtmDataBase, string pstrTabela, Conexao pobjConexao = null)
 		{
-		    cRS objRsData = pobjConexao == null ? new cRS(_conexao) : new cRS(pobjConexao);
+		    RS objRsData = pobjConexao == null ? new RS(_conexao) : new RS(pobjConexao);
 
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
@@ -164,13 +164,13 @@ namespace prmCotacao
 
 			}
 
-			cCommand objCommand = null;
+			Command objCommand = null;
 
 			//não passa a conexão global para criar uma nova conexão
-			cRS objRSAtivo = new cRS(_conexao);
-			cRS objRSCotacao = null;
+			RS objRSAtivo = new RS(_conexao);
+			RS objRSCotacao = null;
 
-			cRSList objRSSplit = null;
+			RSList objRSSplit = null;
 
 			Conexao objConnAux = new Conexao();
 
@@ -245,7 +245,7 @@ namespace prmCotacao
 
 			//loop para percorrer todos os códigos de ativos
 
-			while ((!objRSAtivo.EOF) && (blnRetorno)) {
+			while ((!objRSAtivo.Eof) && (blnRetorno)) {
 				//utiliza uma variável para não precisar chamar a função field várias vezes
 				var strCodigo = (string) objRSAtivo.Field("Codigo");
 
@@ -257,11 +257,11 @@ namespace prmCotacao
 
 				} else {
 					if (objRSCotacao == null) {
-						objRSCotacao = new cRS(objConnAux);
+						objRSCotacao = new RS(objConnAux);
 					}
 
 					if (objCommand == null) {
-						objCommand = new cCommand(objConnAux);
+						objCommand = new Command(objConnAux);
 					}
 
 					//inicializa o contador para cada ativo
@@ -292,7 +292,7 @@ namespace prmCotacao
 
 				    IList<CotacaoFechamentoDto> cotacoes = new List<CotacaoFechamentoDto>();
 
-				    while (!objRSCotacao.EOF)
+				    while (!objRSCotacao.Eof)
 				    {
 				        cotacoes.Add(new CotacaoFechamentoDto
 				        {
@@ -423,13 +423,13 @@ namespace prmCotacao
 		{
 		    Conexao objConnAux = new Conexao();
 
-			cCommand objCommand = new cCommand(objConnAux);
+			Command objCommand = new Command(objConnAux);
 
-			cRS objRSCotacao = new cRS(objConnAux);
+			RS objRSCotacao = new RS(objConnAux);
 
 			CarregadorSplit objCarregadorSplit = new CarregadorSplit(objConnAux);
 
-		    cRSList objRssListSplit = null;
+		    RSList objRssListSplit = null;
 
 		    double dblSplitAcumulado = 1;
 
@@ -508,7 +508,7 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		private decimal CotacaoPeriodoCampoSomar(string pstrCodigo, DateTime pdtmDataInicial, DateTime pdtmDataFinal, string pstrTabela, string pstrCampo)
 		{
-		    cRS objRS = new cRS(_conexao);
+		    RS objRS = new RS(_conexao);
 
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
@@ -544,9 +544,9 @@ namespace prmCotacao
 		{
 			double functionReturnValue;
 
-		    cRS objRS = pobjConexao == null ? new cRS(_conexao) : new cRS(pobjConexao);
+		    RS objRS = pobjConexao == null ? new RS(_conexao) : new RS(pobjConexao);
 
-			cRSList objRSListSplit = null;
+			RSList objRSListSplit = null;
 
 			bool blnSplitExistir = false;
 
@@ -710,7 +710,7 @@ namespace prmCotacao
 	    /// <remarks></remarks>
 	    private void MediaAtualizar(string pstrCodigo, DateTime pdtmData, int pintNumPeriodos, string pstrTabela, double pdblMedia, string pstrMediaTipo, Conexao pobjConexao = null)
 		{
-		    cCommand objCommand = pobjConexao == null ? new cCommand(_conexao) : new cCommand(pobjConexao);
+		    Command objCommand = pobjConexao == null ? new Command(_conexao) : new Command(pobjConexao);
 
 		    pstrTabela = pstrTabela.ToUpper();
 
@@ -752,10 +752,10 @@ namespace prmCotacao
 		{
 			Conexao objConnAux = new Conexao();
 
-			cCommand objCommand = new cCommand(objConnAux);
+			Command objCommand = new Command(objConnAux);
 
-			cRS objRS = new cRS(objConnAux);
-			cRSList objRsSplit = null;
+			RS objRS = new RS(objConnAux);
+			RSList objRsSplit = null;
 
 		    pstrTabela = pstrTabela.ToUpper();
 
@@ -862,7 +862,7 @@ namespace prmCotacao
 
 			    var cotacoes = new List<CotacaoFechamentoDto>();
 
-			    while (!objRS.EOF)
+			    while (!objRS.Eof)
 			    {
 			        var cotacaoFechamentoDto = new CotacaoFechamentoDto
 			        {
@@ -994,7 +994,7 @@ namespace prmCotacao
 
 			//**********PARA BUSCAR OS ATIVOS NÃO PODE USAR A MESMA CONEXÃO DA TRANSAÇÃO,
 			//**********POIS SE A TRANSAÇÃO FIZER ROLLBACK PARA UM ATIVO O RECORDSET NÃO IRÁ FUNCIONAR MAIS.
-			cRS objRSAtivo = new cRS();
+			RS objRSAtivo = new RS();
 
 		    bool blnRetorno = true;
 
@@ -1082,7 +1082,7 @@ namespace prmCotacao
 
 		    var ativos = new List<CotacaoDataDto>();
 
-		    while (!objRSAtivo.EOF)
+		    while (!objRSAtivo.Eof)
 		    {
 
 		        var cotacaoDataDto = new CotacaoDataDto
@@ -1168,9 +1168,9 @@ namespace prmCotacao
 
 		private void CotacaoSemanalDadosGerar(string pstrCodigo, DateTime pdtmDataSegundaFeira, DateTime pdtmDataSextaFeira, string pstrOperacaoBD, Conexao pobjConnAux, ref decimal pdecCotacaoAnteriorRet)
 		{
-			cCommand objCommand = new cCommand(pobjConnAux);
-			cRS objRS = new cRS(pobjConnAux);
-			cRSList objRsSplit = null;
+			Command objCommand = new Command(pobjConnAux);
+			RS objRS = new RS(pobjConnAux);
+			RSList objRsSplit = null;
 
 		    double dblSplitRazaoCotacaoAbertura = 0;
 
@@ -1375,8 +1375,8 @@ namespace prmCotacao
 		{
 		    Conexao objConnAux = new Conexao();
 
-			cCommand objCommand = new cCommand(objConnAux);
-			cRS objRS = new cRS(objConnAux);
+			Command objCommand = new Command(objConnAux);
+			RS objRS = new RS(objConnAux);
 
 			CalculadorData objCalculadorData = new CalculadorData(objConnAux);
 
@@ -1456,8 +1456,8 @@ namespace prmCotacao
 
 			Conexao objConnAux = new Conexao();
 
-			cCommand objCommand = new cCommand(objConnAux);
-			cRSList objRSSplit = null;
+			Command objCommand = new Command(objConnAux);
+			RSList objRSSplit = null;
 
 		    decimal decCotacaoAnterior = default(decimal);
 
@@ -1518,7 +1518,7 @@ namespace prmCotacao
 	    private bool CotacaoSemanalRetroativoGeralCalcular(DateTime pdtmData, string pstrAtivos = "", bool pblnCalcularApenasEmSplit = false)
 		{
 
-			var objRS = new cRS();
+			var objRS = new RS();
 
 			string strLog = "";
 
@@ -1565,7 +1565,7 @@ namespace prmCotacao
 			objRS.ExecuteQuery(strQuery);
 
 
-			while (!objRS.EOF) {
+			while (!objRS.Eof) {
 			    bool blnRetorno = pblnCalcularApenasEmSplit ?  
                     CotacaoSemanalUnitRetroativoCalcularSplit((string) objRS.Field("Codigo"), pdtmData) : 
                     CotacaoSemanalUnitRetroativoCalcular((string) objRS.Field("Codigo"), pdtmData);
@@ -1858,7 +1858,7 @@ namespace prmCotacao
 
 			bool blnRetorno = true;
 
-			cRS objRS = new cRS(_conexao);
+			RS objRS = new RS(_conexao);
 
 			var lstMediasSelecionadasAux = new List<MediaDTO>();
 
@@ -1933,9 +1933,9 @@ namespace prmCotacao
 		{
 		    Conexao objConnAux = new Conexao();
 
-			cCommand objCommand = new cCommand(objConnAux);
+			Command objCommand = new Command(objConnAux);
 
-			cRS objRS = new cRS(objConnAux);
+			RS objRS = new RS(objConnAux);
 
 			string strQuery;
 
@@ -2077,8 +2077,8 @@ namespace prmCotacao
 			//sempre utilizando como data da média a data do RS2.
 
 			//se chegou até este ponto, então significa que conseguiu calcular as datas inicial e final.
-			cRS objRsDataInicial = new cRS(objConnAux);
-			cRS objRsDataFinal = new cRS(objConnAux);
+			RS objRsDataInicial = new RS(objConnAux);
+			RS objRsDataFinal = new RS(objConnAux);
 
 		    //executa o recordset de datas iniciais
 
@@ -2097,7 +2097,7 @@ namespace prmCotacao
 
 		    var datasIniciais = new List<DateTime>() ;
 
-            while (!objRsDataInicial.EOF)
+            while (!objRsDataInicial.Eof)
             {
                 datasIniciais.Add(Convert.ToDateTime(objRsDataInicial.Field("Data")));
                 objRsDataInicial.MoveNext();
@@ -2122,7 +2122,7 @@ namespace prmCotacao
 
 		    var datasFinais = new List<DateTime>();
 
-		    while (!objRsDataFinal.EOF)
+		    while (!objRsDataFinal.Eof)
 		    {
                 datasFinais.Add(Convert.ToDateTime(objRsDataFinal.Field("Data")));
 		        objRsDataFinal.MoveNext();
@@ -2158,11 +2158,11 @@ namespace prmCotacao
 
 			Conexao objConexaoAux = new Conexao();
 
-			cCommand objCommand = new cCommand(objConexaoAux);
+			Command objCommand = new Command(objConexaoAux);
 
-			cRS objRS = new cRS(objConexaoAux);
+			RS objRS = new RS(objConexaoAux);
 
-			cRS objRsSemanal = new cRS(objConexaoAux);
+			RS objRsSemanal = new RS(objConexaoAux);
 
 		    //indica o nome da tabela de cotações, de acordo com a duração do período das cotações
 
@@ -2219,7 +2219,7 @@ namespace prmCotacao
 
 		    var cotacoesAnteriores = new List<CotacaoDataDto>();
 
-		    while (!objRS.EOF)
+		    while (!objRS.Eof)
 		    {
                 cotacoesAnteriores.Add(new CotacaoDataDto
                 {
@@ -2276,7 +2276,7 @@ namespace prmCotacao
 		/// <remarks></remarks>
 		public DateTime AtivoSequencialDataBuscar(string pstrCodigo, long plngSequencial, string pstrTabelaCotacao)
 		{
-		    cRS objRS = new cRS(_conexao);
+		    RS objRS = new RS(_conexao);
 
 			objRS.ExecuteQuery("SELECT Data " + Environment.NewLine + " FROM " + pstrTabelaCotacao + Environment.NewLine + " WHERE Codigo = " + _funcoesBd.CampoStringFormatar(pstrCodigo) + Environment.NewLine + " AND Sequencial = " + plngSequencial);
 
@@ -2315,7 +2315,7 @@ namespace prmCotacao
 		string pstrDado = "", string pstrOrderBy = "")
 		{
 
-			cRSList objRSListSplit = null;
+			RSList objRSListSplit = null;
 			var lstQueries = new List<string>();
 
 			string strSql;
@@ -2468,11 +2468,11 @@ namespace prmCotacao
 
 		}
 
-		public cRSList ConsultaExecutar(string pstrCodigoAtivo, DateTime pdtmDataInicial, DateTime pdtmDataFinal, string pstrPeriodicidade, string pstrOrigemDado, DateTime pdtmDataMaximaSplit, bool pblnCotacaoBuscar = false, bool pblnVolumeBuscar = false, string pstrMediaTipo = "", int pintNumPeriodos = -1,
+		public RSList ConsultaExecutar(string pstrCodigoAtivo, DateTime pdtmDataInicial, DateTime pdtmDataFinal, string pstrPeriodicidade, string pstrOrigemDado, DateTime pdtmDataMaximaSplit, bool pblnCotacaoBuscar = false, bool pblnVolumeBuscar = false, string pstrMediaTipo = "", int pintNumPeriodos = -1,
 		string pstrDado = "")
 		{
 
-			cRSList objRSList = new cRSList(_conexao);
+			RSList objRSList = new RSList(_conexao);
 
 			objRSList.Queries = ConsultaQueriesGerar(pstrCodigoAtivo, pdtmDataInicial, pdtmDataFinal, pstrPeriodicidade, pstrOrigemDado, pdtmDataMaximaSplit, pblnCotacaoBuscar, pblnVolumeBuscar, pstrMediaTipo, pintNumPeriodos,
 			pstrDado, "DATA DESC");
@@ -2487,7 +2487,7 @@ namespace prmCotacao
 
 		public void RecalcularIndicadores()
 		{
-			cRSList objRS = new cRSList(_conexao);
+			RSList objRS = new RSList(_conexao);
 
 		    string strSQL = " SELECT CODIGO, Min(DATA)  As DATA " + "FROM " + "(" + " SELECT CODIGO, DATA " + " FROM Split " + " WHERE TIPO Not In('DESD', 'CISAO')" + " And codigo Not In ('BBAS3', 'BBDC4', 'BRAP4', 'CIEL3', 'COCE5', 'CSNA3', 'ELET3', 'FFTL4', 'ITSA4', 'ITUB3', 'ITUB4', 'POMO4', 'TNLP4', 'USIM5', 'VALE3', 'VALE5', 'BVMF3' " + ", 'PINE4', 'TMAR5', 'BEES3', 'PSSA3', 'ITSA3', 'POSI3', 'USIM3', 'PETR3', 'PETR4', 'ETER3', 'TLPP3', 'TLPP4', 'NATU3', 'GETI3', 'GETI4', 'AMAR3', 'VIVO4') " + " And data <= #2011-05-02# " + " GROUP BY CODIGO, DATA " + " HAVING(Count(1) > 1) " + ") " + "GROUP BY CODIGO " + "ORDER BY Min(data) ";
 

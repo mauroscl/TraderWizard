@@ -23,7 +23,7 @@ namespace DataBase.Carregadores
 			strSql = strSql + " AND ID_Setup = " + funcoesBd.CampoFormatar(pobjIFRSimulacaoDiaria.Setup.Id) + Environment.NewLine;
 			strSql = strSql + " AND Data_Entrada_Efetiva = " + funcoesBd.CampoFormatar(pobjIFRSimulacaoDiaria.DataEntradaEfetiva);
 
-			cRS objRS = new cRS(Conexao);
+			RS objRS = new RS(Conexao);
 
 			List<cIFRSimulacaoDiariaDetalhe> lstRetorno = new List<cIFRSimulacaoDiariaDetalhe>();
 
@@ -32,7 +32,7 @@ namespace DataBase.Carregadores
 			CarregadorIFRSobrevendido objCarregadorIFRSobrevendido = new CarregadorIFRSobrevendido(Conexao);
 
 
-			while (!objRS.EOF) {
+			while (!objRS.Eof) {
 				lstRetorno.Add(new cIFRSimulacaoDiariaDetalhe(objCarregadorIFRSobrevendido.CarregaPorID(Convert.ToInt16(objRS.Field("ID_IFR_Sobrevendido"))), Convert.ToByte(objRS.Field("NumTentativas")), Convert.ToBoolean(objRS.Field("MelhorEntrada")), Convert.ToInt16(objRS.Field("SomatorioCriterios")), Convert.ToUInt32(objRS.Field("AgrupadorTentativas")), pobjIFRSimulacaoDiaria));
 
 				objRS.MoveNext();

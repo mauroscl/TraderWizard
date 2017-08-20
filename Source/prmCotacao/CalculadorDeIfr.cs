@@ -40,7 +40,7 @@ namespace prmCotacao
         /// <remarks></remarks>
         private void IFRAtualizar(string pstrCodigo, DateTime pdtmData, int pintPeriodo, string pstrTabela, double pdblIFR, double pdblMediaAlta, double pdblMediaBaixa, Conexao pobjConexao = null)
         {
-            cCommand objCommand = pobjConexao == null ? new cCommand(_conexao) : new cCommand(pobjConexao);
+            Command objCommand = pobjConexao == null ? new Command(_conexao) : new Command(pobjConexao);
 
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
@@ -57,9 +57,9 @@ namespace prmCotacao
         private decimal IFRCalcular(string pstrCodigo, DateTime pdtmDataInicial, DateTime pdtmDataFinal, int pintNumPeriodos, string pstrTabela,
             out double pdblMediaAltaAnteriorRet, out double pdblMediaBaixaAnteriorRet, Conexao pobjConexao = null)
         {
-            cRS objRS = pobjConexao == null ? new cRS(_conexao) : new cRS(pobjConexao);
+            RS objRS = pobjConexao == null ? new RS(_conexao) : new RS(pobjConexao);
 
-            cRSList objRSListSplit = null;
+            RSList objRSListSplit = null;
 
             //contém a razão acumulada de todos os splits do período.
             double dblSplitAcumulado = 1;
@@ -225,7 +225,7 @@ namespace prmCotacao
         public double IFRSimuladoCalcular(string pstrCodigo, string pstrTabela, decimal pdecDiferenca)
         {
 
-            cRS objRS = new cRS(_conexao);
+            RS objRS = new RS(_conexao);
 
             CalculadorData objCalculadorData = new CalculadorData(this._conexao);
 
@@ -270,10 +270,10 @@ namespace prmCotacao
 
             CarregadorSplit objCarregadorSplit = new CarregadorSplit(objConnAux);
 
-            cCommand objCommand = new cCommand(objConnAux);
+            Command objCommand = new Command(objConnAux);
 
-            cRS objRS = new cRS(objConnAux);
-            cRSList objRSSplit = null;
+            RS objRS = new RS(objConnAux);
+            RSList objRSSplit = null;
 
             double dblIFR;
             double dblMediaAltaAnterior = 0;
@@ -397,7 +397,7 @@ namespace prmCotacao
 
                 var cotacoes = new List<CotacaoDiferencaDto>();
 
-                while (!objRS.EOF)
+                while (!objRS.Eof)
                 {
                     var cotacaoDiferencaDto = new CotacaoDiferencaDto
                     {
@@ -538,7 +538,7 @@ namespace prmCotacao
 
             //**********PARA BUSCAR OS ATIVOS NÃO PODE USAR A MESMA CONEXÃO DA TRANSAÇÃO,
             //**********POIS SE A TRANSAÇÃO FIZER ROLLBACK PARA UM ATIVO O RECORDSET NÃO IRÁ FUNCIONAR MAIS.
-            cRS objRSAtivo = new cRS();
+            RS objRSAtivo = new RS();
 
             //Dim objRSCotacao As cRS = New cRS(objConexao)
 
@@ -643,7 +643,7 @@ namespace prmCotacao
 
             var ativos = new List<CotacaoDataDto>();
 
-            while ((!objRSAtivo.EOF))
+            while ((!objRSAtivo.Eof))
             {
                 ativos.Add(new CotacaoDataDto
                 {
@@ -726,7 +726,7 @@ namespace prmCotacao
         /// <remarks></remarks>
         private decimal CotacaoPeriodoDiferencaSomar(string pstrCodigo, DateTime pdtmDataInicial, DateTime pdtmDataFinal, string pstrSinal, string pstrTabela)
         {
-            cRS objRS = new cRS(_conexao);
+            RS objRS = new RS(_conexao);
 
             FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
 

@@ -22,7 +22,7 @@ namespace DataBase.Carregadores
 		public IList<CotacaoDiaria> CarregarPorPeriodo(Ativo pobjAtivo, System.DateTime pdtmDataInicial, System.DateTime pdtmDataFinal, string pstrOrdem, IList<MediaDTO> plstMedias, bool pblnCarregarIFR)
 		{
 
-			cRS objRS = new cRS(Conexao);
+			RS objRS = new RS(Conexao);
 
 
 		    string strSelect = "SELECT C.Data, Sequencial, ValorAbertura, ValorMinimo, ValorMaximo, ValorFechamento";
@@ -82,7 +82,7 @@ namespace DataBase.Carregadores
 			List<CotacaoDiaria> lstRetorno = new List<CotacaoDiaria>();
 
 
-		    while (!objRS.EOF) {
+		    while (!objRS.Eof) {
 				CotacaoDiaria objCotacaoDiaria = new CotacaoDiaria(pobjAtivo, Convert.ToDateTime(objRS.Field("Data")));
 
 				objCotacaoDiaria.Sequencial = Convert.ToInt32(objRS.Field("Sequencial"));
@@ -150,7 +150,7 @@ namespace DataBase.Carregadores
 			//inclui ordenamento por data.
 			strSql += " ORDER BY C.Data ";
 
-			cRS objRS = new cRS(Conexao);
+			RS objRS = new RS(Conexao);
 
 			List<CotacaoDiaria> lstRetorno = new List<CotacaoDiaria>();
 
@@ -159,7 +159,7 @@ namespace DataBase.Carregadores
 			objRS.ExecuteQuery(strSql);
 
 
-			while (!objRS.EOF) {
+			while (!objRS.Eof) {
 				CotacaoDiaria objCotacaoDiaria = new CotacaoDiaria(pobjAtivo, Convert.ToDateTime(objRS.Field("Data_Entrada")));
 
 				objCotacaoDiaria.Sequencial = Convert.ToInt32(objRS.Field("Sequencial"));
@@ -212,7 +212,7 @@ namespace DataBase.Carregadores
 			//inclui ordenamento por data.
 			strSQL += " ORDER BY Dia2.Data ";
 
-			cRS objRS = new cRS(Conexao);
+			RS objRS = new RS(Conexao);
 
 			objRS.ExecuteQuery(strSQL);
 
@@ -223,7 +223,7 @@ namespace DataBase.Carregadores
 			objRS.ExecuteQuery(strSQL);
 
 
-			while (!objRS.EOF) {
+			while (!objRS.Eof) {
 				CotacaoDiaria objCotacaoDiaria = new CotacaoDiaria(pobjAtivo, Convert.ToDateTime(objRS.Field("Data_Entrada")));
 
 				objCotacaoDiaria.Sequencial = Convert.ToInt32(objRS.Field("Sequencial"));

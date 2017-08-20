@@ -31,11 +31,11 @@ namespace prmCotacao
         /// <remarks></remarks>
         public bool ProventoAtualizar(DateTime pdtmDataFinal)
         {
-            cCommand objCommand = new cCommand(_conexao);
+            Command objCommand = new Command(_conexao);
 
-            cRS objRS = new cRS(_conexao);
+            RS objRS = new RS(_conexao);
 
-            cRS objRSAtivo = new cRS(_conexao);
+            RS objRSAtivo = new RS(_conexao);
 
             string strWhere = String.Empty;
 
@@ -155,7 +155,7 @@ namespace prmCotacao
 
             //No loop a seguir podem existir vários registros seguidos para a mesma ação
             //(Nome_Pregao + Tipo_Acao). Por isso a cada iteração tem que verificar se o ativo mudou
-            while ((!objRS.EOF) && (objCommand.TransStatus))
+            while ((!objRS.Eof) && (objCommand.TransStatus))
             {
 
                 var strNomePregao = (string)objRS.Field("Nome_Pregao");
@@ -332,7 +332,7 @@ namespace prmCotacao
                 objRS.MoveNext();
 
                 bool blnExecutar;
-                if (objRS.EOF)
+                if (objRS.Eof)
                 {
                     //assinala que tem que executar para que o último registro não fique sem execução
                     blnExecutar = true;
@@ -426,7 +426,7 @@ namespace prmCotacao
             string strProventoTipoAbreviatura;
             string strProventoTipoDescricao;
 
-            cCommand objCommand = new cCommand(_conexao);
+            Command objCommand = new Command(_conexao);
 
             CalculadorData objCalculadorData = new CalculadorData(_conexao);
 
@@ -497,7 +497,7 @@ namespace prmCotacao
 
             objCommand.Execute(strQuery);
 
-            cRS objRS = new cRS(_conexao);
+            RS objRS = new RS(_conexao);
 
             //consulta a descrição do ativo
             strQuery = "SELECT Descricao " + Environment.NewLine + "FROM Ativo " + Environment.NewLine + "WHERE Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo);
@@ -554,7 +554,7 @@ namespace prmCotacao
         /// <remarks></remarks>
         private DateTime AtivoCotacaoPosteriorDataConsultar(string pstrCodigo, DateTime pdtmDataBase)
         {
-            cRS objRsData = new cRS(_conexao);
+            RS objRsData = new RS(_conexao);
 
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
@@ -569,7 +569,7 @@ namespace prmCotacao
 
         private DateTime AtivoPrimeiraCotacaoDataConsultar(string pstrCodigo)
         {
-            cRS objRS = new cRS(_conexao);
+            RS objRS = new RS(_conexao);
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
             objRS.ExecuteQuery("SELECT MIN(Data) AS Data " + Environment.NewLine + "FROM Cotacao " + Environment.NewLine + "WHERE Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo));
 

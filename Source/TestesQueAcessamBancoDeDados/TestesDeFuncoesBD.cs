@@ -25,7 +25,7 @@ namespace TestProject1
         [TestMethod]
         public void ConsigoConsultarOAtivoPadrao()
         {
-            var dadosDB = new cDadosDB(objConexao, "Configuracao");
+            var dadosDB = new DadosDb(objConexao, "Configuracao");
 
             dadosDB.CampoAdicionar("Parametro", true, "AtivoPadrao");
 

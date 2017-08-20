@@ -6,7 +6,7 @@ namespace DataBase
 {
 
 
-	public class cDadosDB
+	public class DadosDb
 	{
 
 
@@ -21,9 +21,9 @@ namespace DataBase
 		//collection de item a serem salvos no banco de dados.
 		//cada item é uma estrutura do tipo frwInterface.structDadosDB
 
-		private Dictionary<string, cCampoDB> _campos;
+		private Dictionary<string, CampoDb> _campos;
 
-		public cDadosDB(Conexao pobjConexao, string pstrTabela)
+		public DadosDb(Conexao pobjConexao, string pstrTabela)
 		{
 			_conexao = pobjConexao;
 
@@ -31,7 +31,7 @@ namespace DataBase
 
 			//colRegistro = New Collection
 
-            _campos = new Dictionary<string, cCampoDB>();
+            _campos = new Dictionary<string, CampoDb>();
 
 		}
 
@@ -54,7 +54,7 @@ namespace DataBase
 
 
 		    try {
-				var campoDb = new cCampoDB(pstrCampo, pblnChave, pstrValor);
+				var campoDb = new CampoDb(pstrCampo, pblnChave, pstrValor);
 
                 _campos.Add(pstrCampo, campoDb);
 
@@ -73,16 +73,14 @@ namespace DataBase
 
 		private bool RegistroExistir(string pstrWhere)
 		{
-			bool functionReturnValue = false;
-
-			cRS objRS = new cRS(_conexao);
+		    RS objRS = new RS(_conexao);
 
 			objRS.ExecuteQuery(" SELECT 1 " + " FROM " + _tabela + " WHERE " + pstrWhere);
 
-			functionReturnValue = objRS.DadosExistir;
+			var existemDados = objRS.DadosExistir;
 
 			objRS.Fechar();
-			return functionReturnValue;
+			return existemDados;
 
 		}
 
@@ -90,11 +88,9 @@ namespace DataBase
 		{
 			bool functionReturnValue;
 
-			cCommand objCommand = new cCommand(_conexao);
+			Command objCommand = new Command(_conexao);
 
-			cCampoDB objCampoDB;
-
-			string strQuery = String.Empty;
+		    string strQuery = String.Empty;
 
             string strCampos = String.Empty;
 
@@ -110,8 +106,8 @@ namespace DataBase
 			{
 			    FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
-				foreach (cCampoDB objCampoDB_loopVariable in _campos.Values) {
-					objCampoDB = objCampoDB_loopVariable;
+				foreach (CampoDb objCampoDB_loopVariable in _campos.Values) {
+					var objCampoDB = objCampoDB_loopVariable;
 
 					if (strValoresINSERT != String.Empty) {
 						strValoresINSERT = strValoresINSERT + ", ";
@@ -210,13 +206,13 @@ namespace DataBase
 
 			string strWhere = String.Empty;
 
-			cRS objRS = new cRS(_conexao);
+			RS objRS = new RS(_conexao);
 
 		    FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
 		    try {
 
-				foreach (cCampoDB objCampoDB in _campos.Values) {
+				foreach (CampoDb objCampoDB in _campos.Values) {
 
 					if (objCampoDB.Chave) {
 						//campos chave vão para o WHERE
@@ -246,7 +242,7 @@ namespace DataBase
 
 				//atualiza o valor do campo na collection de dados.
 
-                foreach (KeyValuePair<string, cCampoDB> objCampoDB in _campos)
+                foreach (KeyValuePair<string, CampoDb> objCampoDB in _campos)
                 {
 
 					if (!objCampoDB.Value.Chave) {

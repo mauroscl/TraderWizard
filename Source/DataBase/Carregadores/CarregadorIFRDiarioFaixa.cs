@@ -32,7 +32,7 @@ namespace DataBase.Carregadores
 		{
 			dtmDataSolicitacao = pdtmData;
 
-			cRS objRS = new cRS(objConexao);
+			RS objRS = new RS(objConexao);
 
             FuncoesBd funcoesBd = objConexao.ObterFormatadorDeCampo();
 
@@ -65,7 +65,7 @@ namespace DataBase.Carregadores
 
 			IList<IFRSimulacaoDiariaFaixa> objListaRetorno = new List<IFRSimulacaoDiariaFaixa>();
 
-			cRS objRS = new cRS(objConexao);
+			RS objRS = new RS(objConexao);
 
             FuncoesBd funcoesBd = objConexao.ObterFormatadorDeCampo();
 
@@ -81,7 +81,7 @@ namespace DataBase.Carregadores
 			objRS.ExecuteQuery(strSql);
 
 
-			while (!objRS.EOF) {
+			while (!objRS.Eof) {
 				objListaRetorno.Add(new IFRSimulacaoDiariaFaixa(Convert.ToInt64(objRS.Field("ID")), pstrCodigo, pobjSetup, pobjCM, pobjCriterioCM, Convert.ToInt32(objRS.Field("NumTentativas_Minimo")), Convert.ToDouble(objRS.Field("Valor_Minimo")), Convert.ToDouble(objRS.Field("Valor_Maximo"))));
 
 				objRS.MoveNext();
@@ -96,7 +96,7 @@ namespace DataBase.Carregadores
 
 		public bool ExisteFaixaParaCriterio(string pstrCodigo, Setup pobjSetup, ClassifMedia pobjCM, IFRSobrevendido pobjIFRSobrevendido, DateTime pdtmData)
 		{
-		    cRS objRS = new cRS(objConexao);
+		    RS objRS = new RS(objConexao);
 
 		    if (dtmUltimaData != pdtmData) {
 				CalcularUltimaData(pstrCodigo, pobjSetup, pobjCM, null, pobjIFRSobrevendido, pdtmData);

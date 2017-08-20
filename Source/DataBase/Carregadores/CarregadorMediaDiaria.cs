@@ -19,7 +19,7 @@ namespace DataBase.Carregadores
 
 		public MediaAbstract CarregarPorData(CotacaoDiaria pobjCotacaoDiaria, MediaDTO pobjMediaDTO)
 		{
-		    cRS objRS = new cRS(Conexao);
+		    RS objRS = new RS(Conexao);
 
             FuncoesBd  funcoesBd = Conexao.ObterFormatadorDeCampo();
 

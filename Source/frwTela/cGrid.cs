@@ -20,7 +20,7 @@ namespace frwTela
 
 	    public bool Atualizar(DataSet ds)
 		{
-	        cRS objRS = new cRS(_conexao);
+	        RS objRS = new RS(_conexao);
 			cColuna objColuna = null;
 
 
@@ -84,7 +84,7 @@ namespace frwTela
 
 
 	            // le todas as linhas do DataReader
-	            while (!objRS.EOF)
+	            while (!objRS.Eof)
 	            {
 	                // le a linha do DataReader para um array
 	                objRS.GetValues(arrData);

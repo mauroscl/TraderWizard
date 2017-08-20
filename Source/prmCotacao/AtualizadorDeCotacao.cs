@@ -170,14 +170,14 @@ namespace prmCotacao
         private string AtivosDesconsideradosListar()
         {
 
-            cRS objRS = new cRS(_conexao);
+            RS objRS = new RS(_conexao);
 
             string strLista = String.Empty;
 
             objRS.ExecuteQuery(" select Codigo " + " from Ativos_Desconsiderados");
 
 
-            while (!objRS.EOF)
+            while (!objRS.Eof)
             {
                 strLista = strLista + "#" + objRS.Field("Codigo");
 
@@ -208,7 +208,7 @@ namespace prmCotacao
         /// <remarks></remarks>
         private cEnum.enumRetorno CotacaoDataAtualizar(DateTime pdtmData, string pstrCodigoUnico)
         {
-            cCommand objCommand = new cCommand(_conexao);
+            Command objCommand = new Command(_conexao);
 
             IList<string> colLinha;
 
@@ -230,7 +230,7 @@ namespace prmCotacao
             string[] tiposDeCotacao = { "0202010", "0205010" };
 
 
-            cRS objRS = new cRS(_conexao);
+            RS objRS = new RS(_conexao);
 
             //utilizado para calcular o sequencial do ativo.
 
@@ -598,7 +598,7 @@ namespace prmCotacao
         private cEnum.enumRetorno CotacaoHistoricaDataAtualizar(DateTime pdtmData)
         {
 
-            cCommand objCommand = new cCommand(_conexao);
+            Command objCommand = new Command(_conexao);
 
             IList<string> colLinha;
 
@@ -613,7 +613,7 @@ namespace prmCotacao
 
             string strArquivoTextoDestino = "COTAHIST_D" + pdtmData.ToString("ddMMyyyy") + ".TXT";
 
-            cRS objRS = new cRS(_conexao);
+            RS objRS = new RS(_conexao);
 
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
@@ -680,11 +680,11 @@ namespace prmCotacao
         public cEnum.enumRetorno CotacaoHistoricaAnoAtualizar(int pintAno)
         {
 
-            cCommand objCommand = new cCommand(_conexao);
+            Command objCommand = new Command(_conexao);
 
             //objConexao = objCommand.Conexao
 
-            cRS objRS = new cRS(_conexao);
+            RS objRS = new RS(_conexao);
 
             IList<string> colLinha;
 
@@ -863,7 +863,7 @@ namespace prmCotacao
         /// <param name="pobjCommand"></param>
         /// <returns>status da transação</returns>
         /// <remarks></remarks>
-        private void CotacoesImportar(IList<string> pcolLinha, cCommand pobjCommand)
+        private void CotacoesImportar(IList<string> pcolLinha, Command pobjCommand)
         {
             int intI;
 
@@ -975,7 +975,7 @@ namespace prmCotacao
         private void TabelaResumoAtualizar(DateTime pdtmDataUltimaCotacao, DateTime pdtmDataUltimoProvento)
         {
 
-            cCommand objCommand = new cCommand(_conexao);
+            Command objCommand = new Command(_conexao);
 
             string strQuery = String.Empty;
 
@@ -1034,9 +1034,9 @@ namespace prmCotacao
         {
             string strAtivos = String.Empty;
 
-            cCommand objCommand = new cCommand(_conexao);
+            Command objCommand = new Command(_conexao);
 
-            cRS objRS = new cRS(_conexao);
+            RS objRS = new RS(_conexao);
 
             IList<string> colAtivos = new List<string>();
 
@@ -1077,7 +1077,7 @@ namespace prmCotacao
             int intNumeroDeAtivosCotacaoIntraday = BuscarConfiguracao.NumeroDeAtivosCotacaoIntraday();
 
 
-            while (!objRS.EOF)
+            while (!objRS.Eof)
             {
                 //Gera os códigos separados por "|"
 
@@ -1269,9 +1269,9 @@ namespace prmCotacao
         {
             cEnum.enumRetorno functionReturnValue;
 
-            cCommand objCommand = new cCommand(_conexao);
+            Command objCommand = new Command(_conexao);
 
-            cRS objRS = new cRS(_conexao);
+            RS objRS = new RS(_conexao);
 
             objCommand.BeginTrans();
 
@@ -1351,7 +1351,7 @@ namespace prmCotacao
                         ativosBuilder.Append(separadorDeAtivos);
                     }
 
-                    while (!objRS.EOF)
+                    while (!objRS.Eof)
                     {
 
                         ativosBuilder.Append(objRS.Field("Codigo"))
