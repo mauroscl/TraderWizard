@@ -5,10 +5,9 @@ using System.Windows.Forms;
 using DataBase;
 using DataBase.Carregadores;
 using Dominio.Entidades;
+using Dominio.Regras;
 using DTO;
-using prjDominio.Regras;
 using prjDominio.ValueObjects;
-using prmCotacao;
 using Services;
 using ServicoNegocio;
 using TraderWizard.Enumeracoes;
@@ -1534,7 +1533,7 @@ namespace Cotacao
 			decimal decValorPerdaManejo = pdecCapitalTotal * pdecPercentualManejo / 100;
 
 		    var cotacaoData = new CotacaoData();
-            cCalculadorTabelas.TabelasCalcular(pstrPeriodo, ref strTabelaCotacao, ref strTabelaMedia, ref strTabelaIFR);
+            CalculadorTabelas.TabelasCalcular(pstrPeriodo, ref strTabelaCotacao, ref strTabelaMedia, ref strTabelaIFR);
 
 			//verifica se a data recebida é uma data de cotação
 			if (pstrPeriodo == "DIARIO") {

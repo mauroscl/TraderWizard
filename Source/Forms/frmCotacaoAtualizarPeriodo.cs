@@ -1,11 +1,10 @@
 using Forms;
 using System;
 using System.Windows.Forms;
-using prjServicoNegocio;
-using prmCotacao;
 using DataBase;
 using DTO;
 using System.Threading;
+using Cotacao;
 using ServicoNegocio;
 using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;

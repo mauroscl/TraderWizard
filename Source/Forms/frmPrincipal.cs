@@ -1,9 +1,9 @@
 using System;
 using System.Windows.Forms;
+using Cotacao;
 using DataBase;
 using Forms;
 using Forms.Properties;
-using prmCotacao;
 
 namespace TraderWizard
 {

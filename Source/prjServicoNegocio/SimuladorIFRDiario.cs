@@ -7,7 +7,6 @@ using DataBase.Carregadores;
 using Dominio.Entidades;
 using prjDominio.ValueObjects;
 using DTO;
-using prjServicoNegocio;
 using Services;
 using TraderWizard.Enumeracoes;
 

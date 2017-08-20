@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using Cotacao;
 using DataBase;
 using DataBase.Carregadores;
-using prjDominio.Regras;
+using Dominio.Regras;
 using DTO;
 using TraderWizard.Enumeracoes;
 
-namespace prmCotacao
+namespace Cotacao
 {
     public class ValoresExtremosService
     {
@@ -40,7 +39,7 @@ namespace prmCotacao
             string strTabelaMedia = string.Empty;
             string strTabelaIFR = string.Empty;
 
-            cCalculadorTabelas.TabelasCalcular(configuracaoDeVisualizacao.Periodicidade, ref strTabelaCotacao, ref strTabelaMedia, ref strTabelaIFR);
+            CalculadorTabelas.TabelasCalcular(configuracaoDeVisualizacao.Periodicidade, ref strTabelaCotacao, ref strTabelaMedia, ref strTabelaIFR);
 
             string strQuery = _geradorQuery.ConsultaUnitariaGerar(configuracaoDeVisualizacao.CodigoAtivo, configuracaoDeVisualizacao.DataInicial, configuracaoDeVisualizacao.DataFinal
                 , strTabelaCotacao, pdblOperador, pdblOperadorInvertido, "EXTREMOS");

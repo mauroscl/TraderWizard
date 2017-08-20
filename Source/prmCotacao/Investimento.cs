@@ -3,8 +3,7 @@ using System.Data;
 using System.Windows.Forms;
 using Configuracao;
 using DataBase;
-using prmCotacao;
-using pWeb;
+using WebAccess;
 
 namespace Cotacao
 {
@@ -24,7 +23,7 @@ namespace Cotacao
 		{
 			bool functionReturnValue = false;
 
-			cWeb objWeb = new cWeb(_conexao);
+			Web objWeb = new Web(_conexao);
 
 			DataSet dtsCotacao = new DataSet();
 

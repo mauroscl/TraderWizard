@@ -3,7 +3,6 @@ using System.Linq;
 using DataBase;
 using Dominio.Entidades;
 using prjDominio.ValueObjects;
-using prjServicoNegocio;
 
 namespace ServicoNegocio
 {
@@ -11,16 +10,16 @@ namespace ServicoNegocio
 	public class CalculadorFaixasEResumoIFRDiario
 	{
 
-		private readonly Conexao objConexao;
-		private readonly Ativo objAtivo;
+		private readonly Conexao _conexao;
+		private readonly Ativo _ativo;
 
-		private readonly Setup objSetup;
+		private readonly Setup _setup;
 
 		public CalculadorFaixasEResumoIFRDiario(Conexao pobjConexao, Ativo pobjAtivo, Setup pobjSetup)
 		{
-			objConexao = pobjConexao;
-			objAtivo = pobjAtivo;
-			objSetup = pobjSetup;
+			_conexao = pobjConexao;
+			_ativo = pobjAtivo;
+			_setup = pobjSetup;
 		}
 
 
@@ -28,9 +27,9 @@ namespace ServicoNegocio
 		{
 			IList<IFRSobrevendido> lstIFRSobrevendidoParaCalcular = plstTodosIFRSobrevendido.Where(x => pobjCalculoFaixaResumoVO.ValorMenorIFR <= x.ValorMaximo).ToList();
 
-			CalculadorFaixasIFRDiario objCalculadorFaixas = new CalculadorFaixasIFRDiario(objConexao, objAtivo, objSetup);
+			CalculadorFaixasIFRDiario objCalculadorFaixas = new CalculadorFaixasIFRDiario(_conexao, _ativo, _setup);
 
-			CalculadorResumoIFRDiario objCalcularResumo = new CalculadorResumoIFRDiario(objConexao, objSetup, objAtivo);
+			CalculadorResumoIFRDiario objCalcularResumo = new CalculadorResumoIFRDiario(_conexao, _setup, _ativo);
 
 
 			foreach (IFRSobrevendido objIfrSobrevendido in lstIFRSobrevendidoParaCalcular) {

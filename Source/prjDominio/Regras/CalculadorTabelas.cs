@@ -1,8 +1,8 @@
 using System;
 
-namespace prjDominio.Regras
+namespace Dominio.Regras
 {
-	public class cCalculadorTabelas
+	public class CalculadorTabelas
 	{
 
 		/// <summary>

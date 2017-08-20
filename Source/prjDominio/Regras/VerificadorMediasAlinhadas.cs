@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Dominio.Entidades;
 
-namespace prjDominio.Regras
+namespace Dominio.Regras
 {
 
-	public class cVerificadorMediasAlinhadas
+	public class VerificadorMediasAlinhadas
 	{
 
 		public static bool Verificar(ref IList<MediaAbstract> plstMedias)

@@ -1,25 +1,25 @@
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Linq;
-using DataBase;
+using System.Net;
 using System.Windows.Forms;
+using DataBase;
 using Services;
 
-namespace pWeb
+namespace WebAccess
 {
 
-	public class cWeb
+	public class Web
 	{
-		private cWebConfiguracao objWebConfiguracao;
+		private WebConfiguracao objWebConfiguracao;
 	    private readonly IFileService _fileService;
 
-		public cWeb(Conexao pobjConexao)
+		public Web(Conexao pobjConexao)
 		{
 			//intancia a classe de configuração.
 			//durante a instanciação já são buscadas as configurações cadastradas
 			//nos parâmetros do sistema.
-			objWebConfiguracao = new cWebConfiguracao(true, pobjConexao);
+			objWebConfiguracao = new WebConfiguracao(true, pobjConexao);
             _fileService = new FileService();
 
 		}

@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DataBase.Carregadores;
-using prjDominio.Regras;
-using DTO;
-using prjModelo;
 using DataBase;
+using DataBase.Carregadores;
 using Dominio.Entidades;
+using Dominio.Regras;
+using DTO;
 using Services;
-using ServicoNegocio;
 
-namespace prjServicoNegocio
+namespace ServicoNegocio
 {
 
 	public class SimuladorDeTrade
@@ -191,7 +189,7 @@ namespace prjServicoNegocio
 			string strTabelaMedia = String.Empty;
 			string strTabelaIFR = String.Empty;
 
-			cCalculadorTabelas.TabelasCalcular("DIARIO", ref strTabelaCotacao, ref strTabelaMedia, ref strTabelaIFR);
+			CalculadorTabelas.TabelasCalcular("DIARIO", ref strTabelaCotacao, ref strTabelaMedia, ref strTabelaIFR);
 
 			List<MediaDTO> lstMediasParaCarregar = new List<MediaDTO>();
 

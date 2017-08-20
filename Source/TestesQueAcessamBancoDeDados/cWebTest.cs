@@ -1,7 +1,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DataBase;
-using pWeb;
 using TesteBase;
+using WebAccess;
+
 namespace TestProject1
 {
 
@@ -64,7 +65,7 @@ namespace TestProject1
 		public void QuandoPassarLinkValidoFuncaoTemQueRetornarQueOLinkEhValido()
 		{
 			Conexao pobjConexao = objConexao;
-			cWeb target = new cWeb(pobjConexao);
+			Web target = new Web(pobjConexao);
 			string pstrURL = "http://www.bmfbovespa.com.br/fechamento-pregao/bdi/bdi0325.zip";
 			bool expected = false;
 			expected = target.VerificarLink(pstrURL);
@@ -76,7 +77,7 @@ namespace TestProject1
 		public void QuandoPassarLinkInvalidoFuncaoTemQueRetornarQueOLinkEhInvalido()
 		{
 			Conexao pobjConexao = objConexao;
-			cWeb target = new cWeb(pobjConexao);
+			Web target = new Web(pobjConexao);
 			string pstrURL = "http://www.bmfbovespa.com.br/fechamento-pregao/bdi/bdi0326.zip";
 			bool expected = false;
 			expected = target.VerificarLink(pstrURL);

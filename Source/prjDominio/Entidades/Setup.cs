@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using prjDominio.Regras;
+using Dominio.Regras;
 using DTO;
 
 namespace Dominio.Entidades
@@ -190,7 +190,7 @@ namespace Dominio.Entidades
 			decimal decNovoValorDoStop;
 
 
-			if (pobjCotacao.ValorFechamento > decMaiorMedia || cVerificadorMediasAlinhadas.Verificar(ref lstMedias)) {
+			if (pobjCotacao.ValorFechamento > decMaiorMedia || VerificadorMediasAlinhadas.Verificar(ref lstMedias)) {
 				//cCotacaoAbstract objCotacaoDoValorMinimoAnterior = BuscaCotacaoValorMinimoAnterior.Buscar(pobjCotacao);
                 decNovoValorDoStop = cotacaoDoValorMinimoAnterior.ValorMinimo - CalcularValorMargem(cotacaoDoValorMinimoAnterior.ValorMinimo);
 

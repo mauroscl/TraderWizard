@@ -1,12 +1,13 @@
 using System;
 using DataBase;
-namespace pWeb
+
+namespace WebAccess
 {
 
-	public class cWebConfiguracao
+	public class WebConfiguracao
 	{
 	    //conexão com o banco de dados
-		private readonly Conexao objConexao;
+		private readonly Conexao _conexao;
 
         public string ProxyTipo { get; private set; }
 
@@ -23,9 +24,9 @@ namespace pWeb
 	    public string Senha { get; private set; }
 
 
-	    public cWebConfiguracao(bool pblnConfiguracaoBuscar, Conexao pobjConexao)
+	    public WebConfiguracao(bool pblnConfiguracaoBuscar, Conexao pobjConexao)
 		{
-			objConexao = pobjConexao;
+			_conexao = pobjConexao;
 
 			if (pblnConfiguracaoBuscar) {
 				ConfiguracoesBuscar();
@@ -78,7 +79,7 @@ namespace pWeb
 
 				ParametroConsultar("ProxyCredencialSenha", ref strValor);
 
-				cCriptografia objCriptografia = new cCriptografia();
+				Criptografia objCriptografia = new Criptografia();
 
 				//a senha é armazenada no banco criptografada. Por isso precisa ser descriptografada
 				Senha = objCriptografia.Descriptograr(strValor);
@@ -90,7 +91,7 @@ namespace pWeb
 		public bool ParametroConsultar(string pstrParametro, ref string pstrValorRet)
 		{
 
-			DadosDb objDadosDB = new DadosDb(objConexao, "Configuracao");
+			DadosDb objDadosDB = new DadosDb(_conexao, "Configuracao");
 
 			objDadosDB.CampoAdicionar("Parametro", true, pstrParametro);
 

@@ -136,9 +136,9 @@
       <Project>{BD01A0C5-77D7-4FAA-A662-38EA575DED34}</Project>
       <Name>DTO</Name>
     </ProjectReference>
-    <ProjectReference Include="..\pWeb\Web.csproj">
+    <ProjectReference Include="..\pWeb\WebAccess.csproj">
       <Project>{A902DC79-0E9C-4C2D-894E-8301DB0D9849}</Project>
-      <Name>Web</Name>
+      <Name>WebAccess</Name>
     </ProjectReference>
     <ProjectReference Include="..\TesteBase\TesteBase.csproj">
       <Project>{C3B553DF-A41A-41B0-A58A-AC0823D2E1F3}</Project>

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dominio.Regras;
 using DTO;
-using prjModelo.DomainServices;
 
 namespace Dominio.Entidades
 {
@@ -56,7 +56,7 @@ namespace Dominio.Entidades
 			Ativo = pobjAtivo;
 			Setup = pobjSetup;
 
-			ClassificacaoMedia = cUtil.ClassifMediaCalcular(pobjCotacaoDeEntrada);
+			ClassificacaoMedia = Util.ClassifMediaCalcular(pobjCotacaoDeEntrada);
 			DataEntradaEfetiva = pobjCotacaoDeEntrada.Data;
 			Sequencial = pobjCotacaoDeEntrada.Sequencial;
 			ValorEntradaOriginal = pobjInformacoesDoTradeDTO.ValorDeEntradaOriginal;

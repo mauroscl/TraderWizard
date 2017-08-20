@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using DTO;
 
-namespace prmCotacao
+namespace Cotacao
 {
     public class ConfiguracaoDeVisualizacao
     {

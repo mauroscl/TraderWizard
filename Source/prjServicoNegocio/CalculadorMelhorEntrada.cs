@@ -3,17 +3,16 @@ using DataBase;
 using DataBase.Carregadores;
 using Dominio.Entidades;
 using Services;
-using ServicoNegocio;
 
-namespace prjServicoNegocio
+namespace ServicoNegocio
 {
 
-	public class cCalculadorMelhorEntrada
+	public class CalculadorMelhorEntrada
 	{
 
 		private readonly Conexao _conexao;
 	    private readonly ServicoDeCotacaoDeAtivo _servicoDeCotacaoDeAtivo;
-		public cCalculadorMelhorEntrada(Conexao pobjConexao, ServicoDeCotacaoDeAtivo servicoDeCotacaoDeAtivo)
+		public CalculadorMelhorEntrada(Conexao pobjConexao, ServicoDeCotacaoDeAtivo servicoDeCotacaoDeAtivo)
 		{
 		    _conexao = pobjConexao;
 		    _servicoDeCotacaoDeAtivo = servicoDeCotacaoDeAtivo;

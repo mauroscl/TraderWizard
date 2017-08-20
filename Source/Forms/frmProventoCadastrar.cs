@@ -1,8 +1,8 @@
 using Forms;
 using System;
 using System.Windows.Forms;
+using Cotacao;
 using DataBase;
-using prmCotacao;
 using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;
 

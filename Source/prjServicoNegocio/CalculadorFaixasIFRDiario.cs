@@ -5,9 +5,9 @@ using System.Windows.Forms;
 using DataBase;
 using DataBase.Carregadores;
 using Dominio.Entidades;
+using Dominio.Regras;
 using DTO;
 using prjDominio.ValueObjects;
-using prjModelo.DomainServices;
 using TraderWizard.Infra.Repositorio;
 
 namespace ServicoNegocio
@@ -108,13 +108,13 @@ namespace ServicoNegocio
 			double dblPontoMinimo = (from itens in lstTradesMelhorEntrada select itens.Valor).Min();
 
 			//ajusta o valor para ficar com final .0 ou .5
-			dblPontoMinimo = cUtil.PontoInferiorCalcular(dblPontoMinimo);
+			dblPontoMinimo = Util.PontoInferiorCalcular(dblPontoMinimo);
 
 			//obtem o ponto máximo  da melhor entrada de todos os trades
 			double dblPontoMaximo = (from itens in lstTradesMelhorEntrada select itens.Valor).Max();
 
 			//ajusta o valor para ficar com final .0 ou .5
-			dblPontoMaximo = cUtil.PontoSuperiorCalcular(dblPontoMaximo);
+			dblPontoMaximo = Util.PontoSuperiorCalcular(dblPontoMaximo);
 
 			FaixaDto objFaixaUnicaDTO = null;
 			objFaixaUnicaDTO = FaixaCalcular(plstTrades, lstTradesMelhorEntrada, dblPontoMinimo, dblPontoMaximo);
@@ -145,7 +145,7 @@ namespace ServicoNegocio
 					if (plstTrades[intI].MelhorEntrada) {
 						//Se é melhor entrada...
 
-						double dblPontoMedioSuperior = cUtil.PontoInferiorCalcular(plstTrades[intI].Valor);
+						double dblPontoMedioSuperior = Util.PontoInferiorCalcular(plstTrades[intI].Valor);
 
 
 						if ((!plstTrades[intI + 1].MelhorEntrada)) {
@@ -178,7 +178,7 @@ namespace ServicoNegocio
 							}
 
 
-							dblPontoMedioInferior = cUtil.PontoSuperiorCalcular(dblPontoMedioInferior.Value);
+							dblPontoMedioInferior = Util.PontoSuperiorCalcular(dblPontoMedioInferior.Value);
 
 
 							if (dblPontoMedioInferior != dblPontoMedioSuperior) {

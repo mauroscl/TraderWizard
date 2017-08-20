@@ -4,8 +4,8 @@ using System.Linq;
 using DataBase;
 using DataBase.Carregadores;
 using Dominio.Entidades;
+using Dominio.Regras;
 using DTO;
-using prjModelo.DomainServices;
 using TraderWizard.Enumeracoes;
 
 namespace Services
@@ -153,7 +153,7 @@ namespace Services
 
 			var objCotacaoDiaria = CotacoesDiarias.FirstOrDefault(x => x.Data == pdtmData);
 
-			return cUtil.ClassifMediaCalcular(objCotacaoDiaria);
+			return Util.ClassifMediaCalcular(objCotacaoDiaria);
 
 		}
 

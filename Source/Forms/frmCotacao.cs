@@ -4,9 +4,9 @@ using System.Drawing;
 using System.Windows.Forms;
 using Configuracao;
 using Cotacao;
-using prmCotacao;
 using DataBase;
-using pWeb;
+using WebAccess;
+
 namespace TraderWizard
 {
 
@@ -39,7 +39,7 @@ namespace TraderWizard
 
 		private void GridAtualizar(string pstrURL)
 		{
-			cWeb objWeb = new cWeb(objConexao);
+			Web objWeb = new Web(objConexao);
 
 		    DataSet objDataSet = new DataSet();
 

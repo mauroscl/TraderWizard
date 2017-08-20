@@ -1,8 +1,8 @@
 using System;
 
-namespace prjDominio.Regras
+namespace Dominio.Regras
 {
-	public class cGeradorNomeArquivo
+	public class GeradorNomeArquivo
 	{
 
 		private static string FormatarComDoisDigitos(int pintNumero)

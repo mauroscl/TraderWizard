@@ -9,12 +9,11 @@ namespace ServicoNegocio
 
 	public class VerificaSeDeveGerarEntrada
 	{
-
-
-		private readonly Conexao objConexao;
+        
+		private readonly Conexao _conexao;
 		public VerificaSeDeveGerarEntrada(Conexao pobjConexao)
 		{
-			objConexao = pobjConexao;
+			_conexao = pobjConexao;
 		}
 
 		/// <summary>
@@ -37,9 +36,8 @@ namespace ServicoNegocio
 
 			IList<CriterioClassifMedia> lstCriterioCM = objCarregadorCriterioCM.CarregaTodos();
 
-			IFRSimulacaoDiariaFaixa objIFRFaixa = null;
-			VerificaSePossuiFaixaDoIFR objVerificaSePossuiFaixa = new VerificaSePossuiFaixaDoIFR(objConexao);
-			VerificaSeValorEstaDentroDaFaixa objVerificaSeValorEstaDentroDaFaixa = new VerificaSeValorEstaDentroDaFaixa(objConexao);
+		    VerificaSePossuiFaixaDoIFR objVerificaSePossuiFaixa = new VerificaSePossuiFaixaDoIFR(_conexao);
+			VerificaSeValorEstaDentroDaFaixa objVerificaSeValorEstaDentroDaFaixa = new VerificaSeValorEstaDentroDaFaixa(_conexao);
 
 
 			if (objVerificaSePossuiFaixa.VerificaPorClassificacaoMedia(pobjSimulacaoDiariaVO.Ativo.Codigo, pobjSimulacaoDiariaVO.ClassificacaoMedia, pobjSimulacaoDiariaVO.IFRSobrevendido)) {
@@ -48,7 +46,7 @@ namespace ServicoNegocio
 
 
 				foreach (CriterioClassifMedia objCriterioCM in lstCriterioCM) {
-					objIFRFaixa = objVerificaSeValorEstaDentroDaFaixa.CriterioVerificar(pobjSimulacaoDiariaVO, pobjValorCriterioClassifMediaVO, objCriterioCM, ref blnNumTentativasOKAux);
+					var objIFRFaixa = objVerificaSeValorEstaDentroDaFaixa.CriterioVerificar(pobjSimulacaoDiariaVO, pobjValorCriterioClassifMediaVO, objCriterioCM, ref blnNumTentativasOKAux);
 
 					if (objIFRFaixa == null) {
 						intSomatorioCriterios += objCriterioCM.Peso;
@@ -74,7 +72,7 @@ namespace ServicoNegocio
 
 				}
 
-			    VerificaSeAtingiuPercentualMinimo objVerificaPercentualMinimo = new VerificaSeAtingiuPercentualMinimo(objConexao);
+			    VerificaSeAtingiuPercentualMinimo objVerificaPercentualMinimo = new VerificaSeAtingiuPercentualMinimo(_conexao);
 
 
 				if (!objVerificaPercentualMinimo.Verificar(pobjSimulacaoDiariaVO)) {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Dominio.Entidades;
+using Dominio.Regras;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using prjDominio.Regras;
 
 namespace TesteSemAcessarBancoDeDados
 {
@@ -22,7 +22,7 @@ namespace TesteSemAcessarBancoDeDados
 			lstMedia.Add(new MediaDiaria(objCotacao, "MME", 49, 15));
 			lstMedia.Add(new MediaDiaria(objCotacao, "MME", 200, 10));
 
-			bool blnRetorno = cVerificadorMediasAlinhadas.Verificar(ref lstMedia);
+			bool blnRetorno = VerificadorMediasAlinhadas.Verificar(ref lstMedia);
 
 			Assert.IsTrue(blnRetorno);
 
@@ -40,7 +40,7 @@ namespace TesteSemAcessarBancoDeDados
 			lstMedia.Add(new MediaDiaria(objCotacao, "MME", 49, 15));
 			lstMedia.Add(new MediaDiaria(objCotacao, "MME", 200, 20));
 
-			bool blnRetorno = cVerificadorMediasAlinhadas.Verificar(ref lstMedia);
+			bool blnRetorno = VerificadorMediasAlinhadas.Verificar(ref lstMedia);
 
 			Assert.IsFalse(blnRetorno);
 

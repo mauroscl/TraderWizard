@@ -82,9 +82,9 @@
       <Project>{BD01A0C5-77D7-4FAA-A662-38EA575DED34}</Project>
       <Name>DTO</Name>
     </ProjectReference>
-    <ProjectReference Include="..\pWeb\Web.csproj">
+    <ProjectReference Include="..\pWeb\WebAccess.csproj">
       <Project>{a902dc79-0e9c-4c2d-894e-8301db0d9849}</Project>
-      <Name>Web</Name>
+      <Name>WebAccess</Name>
     </ProjectReference>
     <ProjectReference Include="..\TraderWizard.Infra.Repositorio\TraderWizard.Infra.Repositorio.csproj">
       <Project>{ABD88985-5583-4D96-9E41-7AB3842DC1F9}</Project>

@@ -1,7 +1,7 @@
 ﻿using System;
 using DataBase;
 
-namespace prmCotacao
+namespace Cotacao
 {
     public class SequencialService
     {

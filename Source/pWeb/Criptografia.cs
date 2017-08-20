@@ -3,10 +3,10 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
 
-namespace pWeb
+namespace WebAccess
 {
 
-	public class cCriptografia
+	public class Criptografia
 	{
 
 		private RSAParameters objPrivateParameters;
@@ -160,7 +160,7 @@ namespace pWeb
 		}
 
 
-		public cCriptografia()
+		public Criptografia()
 		{
 			objPublicParameters = new RSAParameters();
 

@@ -290,9 +290,9 @@
       <Project>{33BF35FD-D037-46C7-BC26-024AA54481EC}</Project>
       <Name>Cotacao</Name>
     </ProjectReference>
-    <ProjectReference Include="..\pWeb\Web.csproj">
+    <ProjectReference Include="..\pWeb\WebAccess.csproj">
       <Project>{A902DC79-0E9C-4C2D-894E-8301DB0D9849}</Project>
-      <Name>Web</Name>
+      <Name>WebAccess</Name>
     </ProjectReference>
     <ProjectReference Include="..\ServicosDeInterface\ServicosDeInterface.csproj">
       <Project>{D0B52B8A-8A9C-4E34-B324-745E7A126573}</Project>

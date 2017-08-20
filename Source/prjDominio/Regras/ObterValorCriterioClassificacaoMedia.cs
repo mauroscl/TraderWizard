@@ -2,10 +2,10 @@ using System;
 using Dominio.Entidades;
 using prjDominio.ValueObjects;
 
-namespace prjDominio.Regras
+namespace Dominio.Regras
 {
 
-	public class cObterValorCriterioClassificacaoMedia
+	public class ObterValorCriterioClassificacaoMedia
 	{
 
 		public static double ObterValor(ValorCriterioClassifMediaVO pobjValorCriterioClassifMediaVO, CriterioClassifMedia pobjCriterioClassifMedia)

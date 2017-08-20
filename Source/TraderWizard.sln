@@ -38,7 +38,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTO", "prjDTO\DTO.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Desenho", "prjCandle\Desenho.csproj", "{90CF8CCF-C0C3-45E8-ACCA-00E354837E5F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "pWeb\Web.csproj", "{A902DC79-0E9C-4C2D-894E-8301DB0D9849}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAccess", "pWeb\WebAccess.csproj", "{A902DC79-0E9C-4C2D-894E-8301DB0D9849}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dominio", "prjDominio\Dominio.csproj", "{9DAFFBC6-2218-40FF-BDF9-86774B91DA7A}"
 EndProject

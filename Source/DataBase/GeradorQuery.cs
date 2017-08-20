@@ -1,5 +1,5 @@
 ﻿using System;
-using prjDominio.Regras;
+using Dominio.Regras;
 using TraderWizard.Enumeracoes;
 
 namespace DataBase
@@ -50,7 +50,7 @@ namespace DataBase
 			string strTabelaIFR = String.Empty;
 
 			//Busca o nome das tabelas
-			cCalculadorTabelas.TabelasCalcular(pstrPeriodicidade, ref strTabelaCotacao, ref strTabelaMedia, ref strTabelaIFR);
+			CalculadorTabelas.TabelasCalcular(pstrPeriodicidade, ref strTabelaCotacao, ref strTabelaMedia, ref strTabelaIFR);
 
 		    string strMediaTipo;
 
@@ -305,7 +305,7 @@ namespace DataBase
 			}
 
 			//Busca o nome das tabelas
-			cCalculadorTabelas.TabelasCalcular(pstrPeriodicidade, ref strTabelaCotacao, ref strTabelaMedia, ref strTabelaIFR);
+			CalculadorTabelas.TabelasCalcular(pstrPeriodicidade, ref strTabelaCotacao, ref strTabelaMedia, ref strTabelaIFR);
 
 		    var strTabela = "(" + strTabelaCotacao + " C" + " INNER JOIN " + strTabelaIFR + " I " + Environment.NewLine + " On C.CODIGO = I.CODIGO " + Environment.NewLine + " And C.DATA = I.DATA" + ")" + Environment.NewLine;
 

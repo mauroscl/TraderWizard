@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using DataBase;
 using Dominio.Entidades;
 using prjDominio.VOBuilders;
-using prjServicoNegocio;
 using Services;
 
 namespace ServicoNegocio
@@ -49,7 +48,7 @@ namespace ServicoNegocio
 
                 var objTentativaVO = objCalculadorTentativas.Calcular(pobjSimulacaoParaCalcular, pobjIFRSobreVendido);
 
-                var objCalcularMelhorEntrada = new cCalculadorMelhorEntrada(_conexao,_servicoDeCotacaoDeAtivo);
+                var objCalcularMelhorEntrada = new CalculadorMelhorEntrada(_conexao,_servicoDeCotacaoDeAtivo);
 
                 var objNovoDetalhe = new cIFRSimulacaoDiariaDetalhe(pobjIFRSobreVendido, objTentativaVO.NumTentativas, 
 			        objTentativaVO.AgrupadorDeTentativas, pobjSimulacaoParaCalcular);

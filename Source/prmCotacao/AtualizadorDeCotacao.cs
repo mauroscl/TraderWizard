@@ -5,17 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Configuracao;
-using Cotacao;
 using DataBase;
+using Dominio.Regras;
 using Ionic.Zip;
-using prjDominio.Regras;
-using prjServicoNegocio;
-using pWeb;
 using Services;
 using ServicoNegocio;
 using TraderWizard.Enumeracoes;
+using WebAccess;
 
-namespace prmCotacao
+namespace Cotacao
 {
     public class AtualizadorDeCotacao
     {
@@ -26,7 +24,7 @@ namespace prmCotacao
         /// </summary>
         /// <remarks></remarks>
 
-        private readonly cWeb _web;
+        private readonly Web _web;
 
         private readonly SequencialService _sequencialService;
         private readonly CotacaoData _cotacaoData;
@@ -36,7 +34,7 @@ namespace prmCotacao
         public AtualizadorDeCotacao()
         {
             this._conexao = new Conexao();
-            this._web = new cWeb(this._conexao);
+            this._web = new Web(this._conexao);
             this._sequencialService = new SequencialService();
             this._cotacaoData = new CotacaoData();
             this._servicoDeCotacao = new ServicoDeCotacao();
@@ -560,10 +558,10 @@ namespace prmCotacao
             fileService.CreateFolder(strPathZip);
 
             //gera o nome do arquivo que deve ser baixado
-            string strArquivoBaixar = cGeradorNomeArquivo.GerarNomeArquivoRemoto(pdtmData);
+            string strArquivoBaixar = GeradorNomeArquivo.GerarNomeArquivoRemoto(pdtmData);
 
             //Nome que será dado ao arquivo baixado :"bdi" + yyyymmdd + ".zip"
-            string strArquivoZipDestino = cGeradorNomeArquivo.GerarNomeArquivoLocal(pdtmData);
+            string strArquivoZipDestino = GeradorNomeArquivo.GerarNomeArquivoLocal(pdtmData);
 
             if (!fileService.FileExists(strPathZip + "\\" + strArquivoZipDestino))
             {
@@ -1116,7 +1114,7 @@ namespace prmCotacao
 
             objRS.Fechar();
 
-            cWeb objWebLocal = new cWeb(_conexao);
+            Web objWebLocal = new Web(_conexao);
 
             DateTime dtmData = pdtmData;
             //Dim strDataAux As String

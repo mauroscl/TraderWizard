@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DTO;
 
-namespace prmCotacao
+namespace Cotacao
 {
     public class ValoresExtremos
     {

@@ -2,7 +2,7 @@
 using DataBase;
 using DataBase.Carregadores;
 using Dominio.Entidades;
-using prjDominio.Regras;
+using Dominio.Regras;
 using prjDominio.ValueObjects;
 
 namespace ServicoNegocio
@@ -39,20 +39,16 @@ namespace ServicoNegocio
 
 			pblnNumTentativasOK = true;
 
-			System.Double dblValorCriterio = cObterValorCriterioClassificacaoMedia.ObterValor(pobjValorCriterioClassifMediaVO, pobjCriterioCM);
+			System.Double dblValorCriterio = ObterValorCriterioClassificacaoMedia.ObterValor(pobjValorCriterioClassifMediaVO, pobjCriterioCM);
 
 
 			foreach (IFRSimulacaoDiariaFaixa objIFRFaixa in lstFaixas) {
 
-				if (dblValorCriterio >= objIFRFaixa.ValorMinimo && dblValorCriterio <= objIFRFaixa.ValorMaximo) {
-					objRetorno = objIFRFaixa;
+				if (dblValorCriterio >= objIFRFaixa.ValorMinimo && dblValorCriterio <= objIFRFaixa.ValorMaximo)
+				{
+				    objRetorno = objIFRFaixa;
 
-					if (pobjSimulacaoDiariaVO.NumTentativas >= objIFRFaixa.NumTentativasMinimo) {
-						pblnNumTentativasOK = true;
-					} else {
-						pblnNumTentativasOK = false;
-					}
-
+				    pblnNumTentativasOK = pobjSimulacaoDiariaVO.NumTentativas >= objIFRFaixa.NumTentativasMinimo;
 				}
 
 			}

@@ -3,8 +3,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using DataBase;
 using Forms;
-using pWeb;
 using TraderWizard.Extensoes;
+using WebAccess;
 
 namespace TraderWizard
 {
@@ -72,7 +72,7 @@ namespace TraderWizard
 
                 ParametroSalvar("ProxyCredencialUsuario", txtUsuario.Text.Trim());
 
-                var objCriptografia = new cCriptografia();
+                var objCriptografia = new Criptografia();
 
                 ParametroSalvar("ProxyCredencialSenha", objCriptografia.Criptografar(txtSenha.Text.Trim()));
                 //ParametroSalvar("ProxyCredencialSenha", Trim(txtSenha.Text))
@@ -137,7 +137,7 @@ namespace TraderWizard
 
         private void DadosCarregar()
         {
-            var objWebConfiguracao = new cWebConfiguracao(true, objConexao);
+            var objWebConfiguracao = new WebConfiguracao(true, objConexao);
 
             string strValor = objWebConfiguracao.ProxyTipo;
 

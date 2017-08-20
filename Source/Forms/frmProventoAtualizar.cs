@@ -1,6 +1,6 @@
 using System;
 using System.Windows.Forms;
-using prmCotacao;
+using Cotacao;
 using DataBase;
 using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;

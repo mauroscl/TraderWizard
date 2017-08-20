@@ -2,16 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using Configuracao;
-using Cotacao;
 using DataBase;
 using DataBase.Carregadores;
 using DTO;
-using prjServicoNegocio;
 using Services;
 using ServicoNegocio;
 using TraderWizard.Enumeracoes;
 
-namespace prmCotacao
+namespace Cotacao
 {
     public class CalculadorDeIfr
     {

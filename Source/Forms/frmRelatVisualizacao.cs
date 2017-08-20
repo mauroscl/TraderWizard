@@ -8,7 +8,6 @@ using Cotacao;
 using DataBase;
 using Dominio.Entidades;
 using frwTela;
-using prmCotacao;
 using ServicosDeInterface;
 using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;

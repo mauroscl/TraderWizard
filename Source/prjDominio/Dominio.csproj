@@ -61,11 +61,11 @@
     <Compile Include="Entidades\ProventoTipo.cs" />
     <Compile Include="Entidades\Setup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Regras\cCalculadorTabelas.cs" />
-    <Compile Include="Regras\cGeradorNomeArquivo.cs" />
-    <Compile Include="Regras\cObterValorCriterioClassificacaoMedia.cs" />
-    <Compile Include="Regras\cUtil.cs" />
-    <Compile Include="Regras\cVerificadorMediasAlinhadas.cs" />
+    <Compile Include="Regras\CalculadorTabelas.cs" />
+    <Compile Include="Regras\GeradorNomeArquivo.cs" />
+    <Compile Include="Regras\ObterValorCriterioClassificacaoMedia.cs" />
+    <Compile Include="Regras\Util.cs" />
+    <Compile Include="Regras\VerificadorMediasAlinhadas.cs" />
     <Compile Include="ValueObjects\CalculoResumoFaixaVO.cs" />
     <Compile Include="ValueObjects\TentativaVO.cs" />
     <Compile Include="ValueObjects\ValorCriterioClassifMediaVO.cs" />

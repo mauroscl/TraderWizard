@@ -5,8 +5,6 @@ using System.Windows.Forms;
 using Cotacao;
 using DataBase;
 using DTO;
-using prjServicoNegocio;
-using prmCotacao;
 using ServicoNegocio;
 using TraderWizard.Enumeracoes;
 

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Configuration;
 using DataBase;
-using prjDominio.Regras;
+using Dominio.Regras;
 using DTO;
-using pWeb;
 using TraderWizard.Enumeracoes;
+using WebAccess;
 
 namespace ServicoNegocio
 {
@@ -168,10 +168,10 @@ namespace ServicoNegocio
 			DateTime dtmDataInicial = DiaUtilSeguinteCalcular(ObtemDataDaUltimaCotacao());
 
 			//Verifica se a data atual já tem cotação
-			cWeb objWeb = new cWeb(_conexao);
+			Web objWeb = new Web(_conexao);
 
             string urlBase = ConfigurationManager.AppSettings["UrlDownloadoArquivoFechamentoPregao"];
-            if (DiaUtilVerificar(DateTime.Now) && objWeb.VerificarLink(urlBase + cGeradorNomeArquivo.GerarNomeArquivoRemoto(DateTime.Now))) {
+            if (DiaUtilVerificar(DateTime.Now) && objWeb.VerificarLink(urlBase + GeradorNomeArquivo.GerarNomeArquivoRemoto(DateTime.Now))) {
 				dtmDataFinal = DateTime.Now;
 			} else {
 				//Calcula o dia útil anterior à data atual

@@ -95,28 +95,24 @@ namespace DataBase
 					//ou ainda se não tem transação aberta.
 				    bool blnExecutar = !Conexao.TransAberta || Conexao.TransStatus;
 
+				    if (!blnExecutar) continue;
+				    intNumeroDeExecucoes = intNumeroDeExecucoes + 1;
 
-				    if (blnExecutar) {
-						intNumeroDeExecucoes = intNumeroDeExecucoes + 1;
+				    DbCommand objOleDbCommand = CriarComando(pstrQuery);
+				    DataReader = objOleDbCommand.ExecuteReader();
+				    QueryStatus = true;
 
-						DbCommand objOleDbCommand = CriarComando(pstrQuery);
-						DataReader = objOleDbCommand.ExecuteReader();
-						QueryStatus = true;
+				    //Chama o método read para o primeiro registro ficar disponível
+				    //Se consegue ler, é porque tem dados
+				    DataReader.Read();
 
-						//Chama o método read para o primeiro registro ficar disponível
-						//Se consegue ler, é porque tem dados
-						//blnDadosExistir = objOleDbDR.Read()
-						DataReader.Read();
+				    DadosExistir = DataReader.HasRows;
 
-						DadosExistir = DataReader.HasRows;
+				    //----fim do código alterado por mauro, 26/07/2009
+				    //quando não conseguir mais ler nenhum registro chegou ao fim (EOF).
+				    Eof = !DadosExistir;
 
-						//----fim do código alterado por mauro, 26/07/2009
-						//quando não conseguir mais ler nenhum registro chegou ao fim (EOF).
-						Eof = !DadosExistir;
-
-						blnContinuarExecutando = false;
-
-					}
+				    blnContinuarExecutando = false;
 				}
 				catch
                 {
@@ -141,7 +137,6 @@ namespace DataBase
 		public object Field(string pstrCampo, object pobjRetornoErro = null)
 		{
 			object functionReturnValue;
-
 
 		    try
 		    {
@@ -334,17 +329,10 @@ namespace DataBase
 
 		public void Fechar()
 		{
-
-			if ((DataReader != null)) {
-				if (!DataReader.IsClosed) {
-					DataReader.Close();
-					//removido por mauro, 17/04/2010
-					//GUIDAtualizar()
-					//fim do código removido por mauro, 17/04/2010
-				}
-
-			}
-
+		    if ((DataReader == null)) return;
+		    if (!DataReader.IsClosed) {
+		        DataReader.Close();
+		    }
 		}
 
 

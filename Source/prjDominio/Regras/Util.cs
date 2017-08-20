@@ -2,10 +2,10 @@ using System;
 using System.Linq;
 using Dominio.Entidades;
 
-namespace prjModelo.DomainServices
+namespace Dominio.Regras
 {
 
-	public class cUtil
+	public class Util
 	{
 
 		/// <summary>

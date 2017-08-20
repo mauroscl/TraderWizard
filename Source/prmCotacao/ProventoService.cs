@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 using Configuracao;
-using Cotacao;
 using DataBase;
-using prjServicoNegocio;
 using Services;
 using ServicoNegocio;
 using TraderWizard.Enumeracoes;
 
-namespace prmCotacao
+namespace Cotacao
 {
     public class ProventoService
     {

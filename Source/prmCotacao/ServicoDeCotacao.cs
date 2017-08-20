@@ -1,19 +1,17 @@
-﻿using System.Linq;
-using System.Windows.Forms;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
 using Configuracao;
-using Cotacao;
-using DataBase.Carregadores;
-using prjDominio.Regras;
-using prjServicoNegocio;
-using Services;
 using DataBase;
+using DataBase.Carregadores;
+using Dominio.Regras;
 using DTO;
+using Services;
 using ServicoNegocio;
 using TraderWizard.Enumeracoes;
 
-namespace prmCotacao
+namespace Cotacao
 {
     public class ServicoDeCotacao
 	{
@@ -2325,7 +2323,7 @@ namespace prmCotacao
 			string strTabelaMedia = string.Empty;
 		    string strTabelaIfr = string.Empty;
 
-			cCalculadorTabelas.TabelasCalcular(pstrPeriodicidade, ref strTabelaCotacao, ref strTabelaMedia, ref strTabelaIfr);
+			CalculadorTabelas.TabelasCalcular(pstrPeriodicidade, ref strTabelaCotacao, ref strTabelaMedia, ref strTabelaIfr);
 
 			if (pstrOrigemDado == "COTACAO") {
 				strTabela = strTabelaCotacao;

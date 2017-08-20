@@ -87,9 +87,9 @@
       <Project>{E03891F1-F42B-4141-B2AF-FA405D710B22}</Project>
       <Name>ServicoNegocio</Name>
     </ProjectReference>
-    <ProjectReference Include="..\pWeb\Web.csproj">
+    <ProjectReference Include="..\pWeb\WebAccess.csproj">
       <Project>{A902DC79-0E9C-4C2D-894E-8301DB0D9849}</Project>
-      <Name>Web</Name>
+      <Name>WebAccess</Name>
     </ProjectReference>
     <ProjectReference Include="..\Services\Services.csproj">
       <Project>{8BAE22CC-832B-4151-8B2F-222403B12F8B}</Project>
