@@ -325,7 +325,7 @@ namespace prmCotacao
 							//fazer a relação de uma para outra.
 
 
-							if (!objRSSplit.EOF) {
+							if (!objRSSplit.Eof) {
 								//*****IMPORTANTE: Alterado de IF para WHILE porque podem ocorrer casos em que na mesma data haja um desdobramento e uma bonificação.
 								//Neste caso o RS de splits vai retornar mais de um registro para a mesma data
 								bool blnContinuarLoop = (cotacao.DataInicial == Convert.ToDateTime(objRSSplit.Field("Data")));
@@ -338,7 +338,7 @@ namespace prmCotacao
 									//move para o próximo registro de split.
 									objRSSplit.MoveNext();
 
-									if (objRSSplit.EOF) {
+									if (objRSSplit.Eof) {
 										blnContinuarLoop = false;
 									} else {
 
@@ -439,7 +439,7 @@ namespace prmCotacao
 
             FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
 
-			while (!objRssListSplit.EOF) {
+			while (!objRssListSplit.Eof) {
 				//fica multiplicando o split. pode haver casos em que tenho mais de um registro para a mesma data
 				dblSplitAcumulado = dblSplitAcumulado * Convert.ToDouble(objRssListSplit.Field("Razao"));
 
@@ -602,7 +602,7 @@ namespace prmCotacao
 		        DateTime dataDoUltimoSplit = Constantes.DataInvalida;
 
 		        DateTime dtmDataInicialSplit;
-		        while (!objRSListSplit.EOF) {
+		        while (!objRSListSplit.Eof) {
 		            DateTime dataDoSplitAtual = Convert.ToDateTime(objRSListSplit.Field("Data"));
 
 		            if (dataDoUltimoSplit != dataDoSplitAtual)
@@ -888,7 +888,7 @@ namespace prmCotacao
 
 				foreach (var cotacaoFechamentoDto in cotacoes) {
 
-					if (!objRsSplit.EOF) {
+					if (!objRsSplit.Eof) {
 						bool blnContinuarLoop;
 
 
@@ -907,7 +907,7 @@ namespace prmCotacao
 								//passa para o próximo registro
 								objRsSplit.MoveNext();
 
-								if (objRsSplit.EOF) {
+								if (objRsSplit.Eof) {
 									blnContinuarLoop = false;
 								} else {
 
@@ -937,7 +937,7 @@ namespace prmCotacao
 								//passa para o próximo registro
 								objRsSplit.MoveNext();
 
-								if (objRsSplit.EOF) {
+								if (objRsSplit.Eof) {
 									blnContinuarLoop = false;
 
 								} else {
@@ -1199,7 +1199,7 @@ namespace prmCotacao
 				//dblSplitRazaoInvertida = 1
 
 
-				while (!objRsSplit.EOF) {
+				while (!objRsSplit.Eof) {
 
 					if (Convert.ToDateTime(objRsSplit.Field("Data")) != dtmDataPrimeiraCotacaoSemana) {
 						//se a data  de pelo menos um dos splits não é a data da primeira cotação da semana, tem que fazer as conversões.
@@ -1472,7 +1472,7 @@ namespace prmCotacao
 
 			//PARA CADA UM DOS SPLITS
 
-			while (!objRSSplit.EOF) {
+			while (!objRSSplit.Eof) {
 				//CALCULA A DATA DA SEGUNDA-FEIRA E DA SEXTA-FEIRA DA SEMANA EM QUE HÁ SPLIT.
 				dtmDataSegundaFeira = _cotacaoData.PrimeiraSemanaDataCalcular(Convert.ToDateTime(objRSSplit.Field("Data")));
 
@@ -2369,9 +2369,9 @@ namespace prmCotacao
 				//pode acontecer de inicialmente a data máxima ser menor do que a data mínima. Isto vai acontecer se a data máximo for menor 
 				//do que a data do split mais recente.
 
-				while ((dtmDataMaxima >= dtmDataMinima) || (!objRSListSplit.EOF)) {
+				while ((dtmDataMaxima >= dtmDataMinima) || (!objRSListSplit.Eof)) {
 
-					if (!objRSListSplit.EOF) {
+					if (!objRSListSplit.Eof) {
 
 						if (pstrPeriodicidade == "SEMANAL") {
 							//quando a cotação é semanal, a data inicial tem que ser a data menor ou igual a data do split,
@@ -2412,7 +2412,7 @@ namespace prmCotacao
 					//If dtmDataMinima <= pdtmDataFinal Then
 
 
-					if (!objRSListSplit.EOF) {
+					if (!objRSListSplit.Eof) {
 						dblOperadorAux = dblOperadorAux * Convert.ToDouble(objRSListSplit.Field("Razao"));
 
 						//A razão invertida só é utilizada no cálculo do volume. 
@@ -2446,7 +2446,7 @@ namespace prmCotacao
 
 						objRSListSplit.MoveNext();
 
-						dtmDataMinima = objRSListSplit.EOF ? pdtmDataInicial : Convert.ToDateTime(objRSListSplit.Field("Data"));
+						dtmDataMinima = objRSListSplit.Eof ? pdtmDataInicial : Convert.ToDateTime(objRSListSplit.Field("Data"));
 
 					}
 
@@ -2495,7 +2495,7 @@ namespace prmCotacao
 			objRS.ExecuteQuery();
 
 
-			while (!objRS.EOF) {
+			while (!objRS.Eof) {
 				DadosRecalcular(true, true, true, true, true, true, true, true, true, true,
 				true, Convert.ToDateTime(objRS.Field("Data")), "#" + Convert.ToString(objRS.Field("Codigo")) + "#");
 

@@ -103,7 +103,7 @@ namespace DataBase.Carregadores
 			List<IFRSimulacaoDiaria> lstRetorno = new List<IFRSimulacaoDiaria>();
 
 
-			while (!objRS.EOF) {
+			while (!objRS.Eof) {
 				var objRetorno = ConstruirObjetoDaSimulacao(pobjAtivo, pobjSetup, objRS.RetornaLinhaAtual());
 
 				CarregadorIFRSimulacaoDiariaDetalhe objCarregadorDetalhe = new CarregadorIFRSimulacaoDiariaDetalhe(Conexao);

@@ -82,7 +82,7 @@ namespace prmCotacao
                 //quando tem script todas as cotaçoes tem que ser convertidas de acordo com o split
 
                 DateTime dtmDataInicialSplit;
-                while (!objRSListSplit.EOF)
+                while (!objRSListSplit.Eof)
                 {
 
                     if (Convert.ToDateTime(objRSListSplit.Field("Data")) != Convert.ToDateTime(objRSListSplit.NextField("Data", Constantes.DataInvalida)))
@@ -418,7 +418,7 @@ namespace prmCotacao
                 foreach (var cotacaoDiferencaDto in cotacoes)
                 {
 
-                    if (!objRSSplit.EOF)
+                    if (!objRSSplit.Eof)
                     {
                         bool blnContinuarLoop;
 
@@ -441,7 +441,7 @@ namespace prmCotacao
                                 //passa para o próximo registro
                                 objRSSplit.MoveNext();
 
-                                if (objRSSplit.EOF)
+                                if (objRSSplit.Eof)
                                 {
                                     blnContinuarLoop = false;
                                 }
@@ -475,7 +475,7 @@ namespace prmCotacao
                                 //passa para o próximo registro
                                 objRSSplit.MoveNext();
 
-                                if (objRSSplit.EOF)
+                                if (objRSSplit.Eof)
                                 {
                                     blnContinuarLoop = false;
 

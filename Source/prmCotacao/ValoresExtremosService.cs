@@ -234,10 +234,10 @@ namespace prmCotacao
             //pode acontecer de inicialmente a data máxima ser menor do que a data mínima. Isto vai acontecer se a data máximo for menor 
             //do que a data do split mais recente.
 
-            while (dtmDataMaxima >= dtmDataMinima || !objRSListSplit.EOF)
+            while (dtmDataMaxima >= dtmDataMinima || !objRSListSplit.Eof)
             {
 
-                if (!objRSListSplit.EOF)
+                if (!objRSListSplit.Eof)
                 {
 
                     if (configuracaoDeVisualizacao.Periodicidade == "SEMANAL")
@@ -281,7 +281,7 @@ namespace prmCotacao
 
                 }
 
-                if (objRSListSplit.EOF) continue;
+                if (objRSListSplit.Eof) continue;
 
                 dblOperadorAux = dblOperadorAux * Convert.ToDouble(objRSListSplit.Field("Razao"));
 
@@ -323,7 +323,7 @@ namespace prmCotacao
 
                 objRSListSplit.MoveNext();
 
-                dtmDataMinima = objRSListSplit.EOF ? configuracaoDeVisualizacao.DataInicial : Convert.ToDateTime(objRSListSplit.Field("Data"));
+                dtmDataMinima = objRSListSplit.Eof ? configuracaoDeVisualizacao.DataInicial : Convert.ToDateTime(objRSListSplit.Field("Data"));
             }
 
             return retorno;

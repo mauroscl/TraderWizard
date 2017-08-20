@@ -808,7 +808,7 @@ namespace TraderWizard
                         strPeriodoDuracao, "COTACAO", Constantes.DataInvalida, blnCotacaoBuscar, blnVolumeBuscar);
 
 
-                    while (!objRSList.EOF)
+                    while (!objRSList.Eof)
                     {
 
                         if (blnCotacaoBuscar)
@@ -953,7 +953,7 @@ namespace TraderWizard
                 intArrayCandleIndice = intIndiceFinal;
 
 
-                while (!objRSList.EOF)
+                while (!objRSList.Eof)
                 {
                     arrCandle[intArrayCandleIndice].VolumeMedio = Convert.ToDouble(objRSList.Field("Valor"));
 
@@ -1141,7 +1141,7 @@ namespace TraderWizard
                     }
 
 
-                    while (!objRSList.EOF)
+                    while (!objRSList.Eof)
                     {
                         //preenche estrutura com os dados da média
                         objstructMediaValor.intPeriodo = objMediaDTO.NumPeriodos;
@@ -2966,7 +2966,7 @@ namespace TraderWizard
 
                 //*************TRATAMENTO DE SPLITS*************
 
-                if (!objRsSplit.EOF)
+                if (!objRsSplit.Eof)
                 {
                     bool blnSplitAdicionar;
 

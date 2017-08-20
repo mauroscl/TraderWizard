@@ -78,31 +78,21 @@ namespace DataBase
 
 		}
 
-		public bool EOF {
-			get { return (_posicaoAtual >= Dados.Count); }
-		}
+		public bool Eof => (_posicaoAtual >= Dados.Count);
 
-		public int RecordCount {
-			get { return Dados.Count; }
-		}
+	    public int RecordCount => Dados.Count;
 
-		public bool DadosExistir {
-			get { return Dados.Count > 0; }
-		}
+	    public bool DadosExistir => Dados.Count > 0;
 
-
-		public object Field(string pstrCampo, object pobjRetornoErro = null)
+	    public object Field(string pstrCampo, object pobjRetornoErro = null)
 		{
-
-
 			try {
 				if (Dados.Count > 0 && _posicaoAtual < Dados.Count) {
 					//Se o List tem dados e não ultrapassou a última posição retorna o conteudo do campo
 					return Dados[_posicaoAtual].SingleOrDefault(x => x.Key.ToLower() ==  pstrCampo.ToLower()).Value;
-				} else {
-					//Caso contrário retorna o erro.
-					return pobjRetornoErro;
 				}
+			    //Caso contrário retorna o erro.
+			    return pobjRetornoErro;
 			} catch (Exception) {
 				return pobjRetornoErro;
 			}
@@ -115,11 +105,9 @@ namespace DataBase
 			if (Dados.Count > 0 && _posicaoAtual < Dados.Count) {
 				//Se o List tem dados e não ultrapassou a última posição retorna o conteudo do campo
 				return Dados[_posicaoAtual];
-			} else {
-				//Caso contrário retorna o erro.
-				return null;
 			}
-
+		    //Caso contrário retorna o erro.
+		    return null;
 		}
 
 		/// <summary>
