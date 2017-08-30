@@ -6,6 +6,7 @@ using DataBase;
 using DataBase.Carregadores;
 using Dominio.Entidades;
 using Dominio.Regras;
+using Dominio.ValueObjects;
 using DTO;
 using prjDominio.ValueObjects;
 using TraderWizard.Infra.Repositorio;
@@ -309,7 +310,7 @@ namespace ServicoNegocio
 		/// </summary>
 		/// <returns></returns>
 		/// <remarks></remarks>
-		public bool CalcularFaixasParaUmaData(IFRSobrevendido pobjIFRSobrevendido, CalculoFaixaResumoVO pobjCalcularFaixaResumoVO)
+		public bool CalcularFaixasParaUmaData(IFRSobrevendido pobjIFRSobrevendido, CalculoFaixaResumo pobjCalcularFaixaResumo)
 		{
 
 			try {
@@ -336,8 +337,8 @@ namespace ServicoNegocio
 				strSQL = strSQL + " AND SD.Data_Entrada_Efetiva = D.Data_Entrada_Efetiva " + Environment.NewLine;
 				strSQL = strSQL + " WHERE SD.Codigo = " + FuncoesBd.CampoFormatar(_ativo.Codigo) + Environment.NewLine;
 				strSQL = strSQL + " AND SD.ID_Setup = " + FuncoesBd.CampoFormatar(_setup.Id) + Environment.NewLine;
-				strSQL = strSQL + " AND SD.ID_CM = " + FuncoesBd.CampoFormatar(pobjCalcularFaixaResumoVO.ClassifMedia.ID) + Environment.NewLine;
-				strSQL = strSQL + " AND Data_Saida <= " + FuncoesBd.CampoFormatar(pobjCalcularFaixaResumoVO.DataSaida) + Environment.NewLine;
+				strSQL = strSQL + " AND SD.ID_CM = " + FuncoesBd.CampoFormatar(pobjCalcularFaixaResumo.ClassifMedia.ID) + Environment.NewLine;
+				strSQL = strSQL + " AND Data_Saida <= " + FuncoesBd.CampoFormatar(pobjCalcularFaixaResumo.DataSaida) + Environment.NewLine;
 				strSQL = strSQL + " AND Valor_IFR_Minimo <= " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.ValorMaximo) + Environment.NewLine;
 				strSQL = strSQL + " AND D.ID_IFR_Sobrevendido = " + FuncoesBd.CampoFormatar(pobjIFRSobrevendido.Id) + Environment.NewLine;
 
@@ -366,7 +367,7 @@ namespace ServicoNegocio
 
 
 							foreach (FaixaDto item in lstFaixasDTO) {
-								lstFaixasTotal.Add(new IFRSimulacaoDiariaFaixa(_ativo.Codigo, _setup, pobjCalcularFaixaResumoVO.ClassifMedia, objCriterioCM, pobjIFRSobrevendido, pobjCalcularFaixaResumoVO.DataSaida, item.NumTentativasMinimo, item.ValorMinimo, item.ValorMaximo));
+								lstFaixasTotal.Add(new IFRSimulacaoDiariaFaixa(_ativo.Codigo, _setup, pobjCalcularFaixaResumo.ClassifMedia, objCriterioCM, pobjIFRSobrevendido, pobjCalcularFaixaResumo.DataSaida, item.NumTentativasMinimo, item.ValorMinimo, item.ValorMaximo));
 
 							}
 

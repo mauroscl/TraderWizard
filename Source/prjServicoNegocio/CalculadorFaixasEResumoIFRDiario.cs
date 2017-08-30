@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DataBase;
 using Dominio.Entidades;
+using Dominio.ValueObjects;
 using prjDominio.ValueObjects;
 
 namespace ServicoNegocio
@@ -23,9 +24,9 @@ namespace ServicoNegocio
 		}
 
 
-		public void Calcular(CalculoFaixaResumoVO pobjCalculoFaixaResumoVO, IList<IFRSobrevendido> plstTodosIFRSobrevendido)
+		public void Calcular(CalculoFaixaResumo pobjCalculoFaixaResumo, IList<IFRSobrevendido> plstTodosIFRSobrevendido)
 		{
-			IList<IFRSobrevendido> lstIFRSobrevendidoParaCalcular = plstTodosIFRSobrevendido.Where(x => pobjCalculoFaixaResumoVO.ValorMenorIFR <= x.ValorMaximo).ToList();
+			IList<IFRSobrevendido> lstIFRSobrevendidoParaCalcular = plstTodosIFRSobrevendido.Where(x => pobjCalculoFaixaResumo.ValorMenorIFR <= x.ValorMaximo).ToList();
 
 			CalculadorFaixasIFRDiario objCalculadorFaixas = new CalculadorFaixasIFRDiario(_conexao, _ativo, _setup);
 
@@ -33,9 +34,9 @@ namespace ServicoNegocio
 
 
 			foreach (IFRSobrevendido objIfrSobrevendido in lstIFRSobrevendidoParaCalcular) {
-				objCalculadorFaixas.CalcularFaixasParaUmaData(objIfrSobrevendido, pobjCalculoFaixaResumoVO);
+				objCalculadorFaixas.CalcularFaixasParaUmaData(objIfrSobrevendido, pobjCalculoFaixaResumo);
 
-				objCalcularResumo.Calcular(objIfrSobrevendido, pobjCalculoFaixaResumoVO);
+				objCalcularResumo.Calcular(objIfrSobrevendido, pobjCalculoFaixaResumo);
 
 			}
 

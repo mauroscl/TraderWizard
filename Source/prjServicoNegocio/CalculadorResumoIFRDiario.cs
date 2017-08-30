@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using DataBase;
 using DataBase.Carregadores;
 using Dominio.Entidades;
+using Dominio.ValueObjects;
 using prjDominio.ValueObjects;
 using TraderWizard.Infra.Repositorio;
 
@@ -24,14 +25,14 @@ namespace ServicoNegocio
 			_setup = pobjSetup;
 		}
 
-		public bool Calcular(IFRSobrevendido pobjIFRSobrevendido, CalculoFaixaResumoVO pobjCalculoResumoFaixaVO)
+		public bool Calcular(IFRSobrevendido pobjIFRSobrevendido, CalculoFaixaResumo pobjCalculoResumoFaixa)
 		{
 
 
 			try {
 				RS objRS = new RS(_conexao);
 
-			    IFRSimulacaoDiariaFaixaResumo objRetorno = new IFRSimulacaoDiariaFaixaResumo(_ativo, _setup, pobjCalculoResumoFaixaVO.ClassifMedia, pobjIFRSobrevendido, pobjCalculoResumoFaixaVO.DataSaida);
+			    IFRSimulacaoDiariaFaixaResumo objRetorno = new IFRSimulacaoDiariaFaixaResumo(_ativo, _setup, pobjCalculoResumoFaixa.ClassifMedia, pobjIFRSobrevendido, pobjCalculoResumoFaixa.DataSaida);
 
 
 				CarregadorCriterioClassificacaoMedia objCarregadorCriterioClassifMedia = new CarregadorCriterioClassificacaoMedia();
@@ -42,9 +43,9 @@ namespace ServicoNegocio
 
 			    string strWherePadrao = " WHERE Codigo = " + funcoesBd.CampoFormatar(_ativo.Codigo) + Environment.NewLine;
 				strWherePadrao += " AND ID_Setup = " + funcoesBd.CampoFormatar(_setup.Id) + Environment.NewLine;
-				strWherePadrao += " AND ID_CM = " + funcoesBd.CampoFormatar(pobjCalculoResumoFaixaVO.ClassifMedia.ID) + Environment.NewLine;
+				strWherePadrao += " AND ID_CM = " + funcoesBd.CampoFormatar(pobjCalculoResumoFaixa.ClassifMedia.ID) + Environment.NewLine;
 				strWherePadrao += " AND Valor_IFR_Minimo <= " + pobjIFRSobrevendido.ValorMaximo + Environment.NewLine;
-				strWherePadrao += " AND Data_Saida <= " + funcoesBd.CampoFormatar(pobjCalculoResumoFaixaVO.DataSaida) + Environment.NewLine;
+				strWherePadrao += " AND Data_Saida <= " + funcoesBd.CampoFormatar(pobjCalculoResumoFaixa.DataSaida) + Environment.NewLine;
 
 
 				//Calcula o Número de Trades total e certos, sem utilizar filtro
@@ -69,11 +70,11 @@ namespace ServicoNegocio
 
 				//Verifica se já existe faixa para o critério. Vai existir quando já houver alguma entrada que é MELHOR ENTRADA
 
-				if (objCarradorFaixa.ExisteFaixaParaCriterio(_ativo.Codigo, _setup, pobjCalculoResumoFaixaVO.ClassifMedia, pobjIFRSobrevendido, pobjCalculoResumoFaixaVO.DataSaida)) {
+				if (objCarradorFaixa.ExisteFaixaParaCriterio(_ativo.Codigo, _setup, pobjCalculoResumoFaixa.ClassifMedia, pobjIFRSobrevendido, pobjCalculoResumoFaixa.DataSaida)) {
 
 					foreach (CriterioClassifMedia objCriterioCM in criteriosDeClassificacao) {
 						//busca lista de faixas (pode ser 1 ou 2) para o critério do classificação de média
-						IList<IFRSimulacaoDiariaFaixa> lstFaixas = objCarradorFaixa.CarregaUltimaFaixaAteDataPorCriterioClassificacaoMedia(_ativo.Codigo, _setup, pobjCalculoResumoFaixaVO.ClassifMedia, objCriterioCM, pobjIFRSobrevendido, pobjCalculoResumoFaixaVO.DataSaida);
+						IList<IFRSimulacaoDiariaFaixa> lstFaixas = objCarradorFaixa.CarregaUltimaFaixaAteDataPorCriterioClassificacaoMedia(_ativo.Codigo, _setup, pobjCalculoResumoFaixa.ClassifMedia, objCriterioCM, pobjIFRSobrevendido, pobjCalculoResumoFaixa.DataSaida);
 
 						string strSQLFaixa = string.Empty;
 

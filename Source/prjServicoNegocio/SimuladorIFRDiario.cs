@@ -5,7 +5,7 @@ using System.Linq;
 using DataBase;
 using DataBase.Carregadores;
 using Dominio.Entidades;
-using prjDominio.ValueObjects;
+using Dominio.ValueObjects;
 using DTO;
 using Services;
 using TraderWizard.Enumeracoes;
@@ -16,7 +16,7 @@ namespace ServicoNegocio
 	public class SimuladorIFRDiario
 	{
 
-		private Conexao objConexao { get; set; }
+		private Conexao Conexao { get; }
 		/// DTO que contém todos os parâmetros necessários para gerar o relatório
 		/// - Codigo: Código do ativo
 		/// - MediaTipo: Indica o tipo de média utilizada nos cálculos (aritmética ou exponencial)
@@ -50,11 +50,11 @@ namespace ServicoNegocio
 		{
 			objSetupIFR2SimularCodigoDTO = pobjSetupIFR2SimularCodigoDTO;
 
-			objConexao = new Conexao();
+			Conexao = new Conexao();
 
 			objAtivo = new Ativo(objSetupIFR2SimularCodigoDTO.Codigo);
 
-            _servicoDeCotacaoDeAtivo = new ServicoDeCotacaoDeAtivo(objAtivo, objConexao);
+            _servicoDeCotacaoDeAtivo = new ServicoDeCotacaoDeAtivo(objAtivo, Conexao);
 
 			CarregarSetup();
 
@@ -78,12 +78,12 @@ namespace ServicoNegocio
 
 			Trace.WriteLine("Iniciando simulacao: " + objSetupIFR2SimularCodigoDTO.Codigo);
 
-			RS objRSAux = new RS(objConexao);
+			RS objRSAux = new RS(Conexao);
 			//RS auxiliar, pode ser utilizado quando for necessário executar uma query.
 
 
 		    if (objSetupIFR2SimularCodigoDTO.ExcluirSimulacoesAnteriores) {
-				RemovedorSimulacaoIFRDiario objRemoverSimulacaoIFRDiario = new RemovedorSimulacaoIFRDiario(objConexao);
+				RemovedorSimulacaoIFRDiario objRemoverSimulacaoIFRDiario = new RemovedorSimulacaoIFRDiario(Conexao);
 				objRemoverSimulacaoIFRDiario.ExcluirSimulacoesAnteriores(objSetupIFR2SimularCodigoDTO.Codigo, objSetup);
 
 			}
@@ -94,13 +94,13 @@ namespace ServicoNegocio
 
 			if (objSetupIFR2SimularCodigoDTO.IFRTipo == cEnum.enumIFRTipo.ComFiltro) {
 
-                FuncoesBd FuncoesBd = objConexao.ObterFormatadorDeCampo();
+                FuncoesBd funcoesBd = Conexao.ObterFormatadorDeCampo();
 
 			    //consulta a data inicial da última operação executada para o papel no setup recebido por parâmetro.
 			    string strQuery = "SELECT MAX(Data) AS Data " + Environment.NewLine + " FROM IFR_Simulacao_Diaria " +
 			                      Environment.NewLine + " WHERE Codigo = " +
-			                      FuncoesBd.CampoFormatar(objSetupIFR2SimularCodigoDTO.Codigo) + Environment.NewLine +
-			                      " AND ID_Setup = " + FuncoesBd.CampoFormatar(objSetup.Id);
+			                      funcoesBd.CampoFormatar(objSetupIFR2SimularCodigoDTO.Codigo) + Environment.NewLine +
+			                      " AND ID_Setup = " + funcoesBd.CampoFormatar(objSetup.Id);
 
 				objRSAux.ExecuteQuery(strQuery);
 
@@ -117,9 +117,9 @@ namespace ServicoNegocio
 
 			}
 
-			List<CalculoFaixaResumoVO> lstDatasParaCalculosAdicionais = new List<CalculoFaixaResumoVO>();
+			List<CalculoFaixaResumo> lstDatasParaCalculosAdicionais = new List<CalculoFaixaResumo>();
 
-		    CalculadorFaixasEResumoIFRDiario objCalculadorDeFaixasEResumo = new CalculadorFaixasEResumoIFRDiario(objConexao, objAtivo, objSetup);
+		    CalculadorFaixasEResumoIFRDiario objCalculadorDeFaixasEResumo = new CalculadorFaixasEResumoIFRDiario(Conexao, objAtivo, objSetup);
 
 			IList<IFRSobrevendido> lstIFRSobrevendido = null;
 
@@ -133,7 +133,7 @@ namespace ServicoNegocio
 
 
 			if (objSetup.RealizarCalculosAdicionais) {
-				CarregadorIFRSobrevendido objCarregadorIFRSobrevendido = new CarregadorIFRSobrevendido(objConexao);
+				CarregadorIFRSobrevendido objCarregadorIFRSobrevendido = new CarregadorIFRSobrevendido(Conexao);
 
 				lstIFRSobrevendido = objCarregadorIFRSobrevendido.CarregarTodos();
 
@@ -142,17 +142,17 @@ namespace ServicoNegocio
 
 			}
 
-			SimuladorDeTrade objSimuladorDeTrade = new SimuladorDeTrade(objConexao, objSetup, objAtivo, lstIFRSobrevendido);
+			SimuladorDeTrade objSimuladorDeTrade = new SimuladorDeTrade(Conexao, objSetup, objAtivo, lstIFRSobrevendido);
 
 			foreach (CotacaoDiaria objCotacaoDeInicioDaSimulacao in lstCotacoesComIfrSobrevendido) {
 
 				if (objSetup.RealizarCalculosAdicionais)
 				{
 				    //deve calcular faixas e resumos para as datas das simulações anteriores até a data desta simulação.
-				    IList<CalculoFaixaResumoVO> lstDatasParaCalcular = lstDatasParaCalculosAdicionais.Where(x => x.DataSaida <= objCotacaoDeInicioDaSimulacao.Data).ToList();
+				    IList<CalculoFaixaResumo> lstDatasParaCalcular = lstDatasParaCalculosAdicionais.Where(x => x.DataSaida <= objCotacaoDeInicioDaSimulacao.Data).ToList();
 
 
-				    foreach (CalculoFaixaResumoVO objCalculoFaixaResumoVO in lstDatasParaCalcular) {
+				    foreach (CalculoFaixaResumo objCalculoFaixaResumoVO in lstDatasParaCalcular) {
 						objCalculadorDeFaixasEResumo.Calcular(objCalculoFaixaResumoVO, lstIFRSobrevendido);
 
 						lstDatasParaCalculosAdicionais.Remove(objCalculoFaixaResumoVO);
@@ -169,7 +169,7 @@ namespace ServicoNegocio
 
 					if ((objCalculoFaixaResumoVOParaAdicionar == null)) {
 						//se ainda não existe cria VO e adiciona na lista
-						objCalculoFaixaResumoVOParaAdicionar = new CalculoFaixaResumoVO(objRetorno.DataSaida, objRetorno.ValorIFR, objRetorno.ClassificacaoMedia);
+						objCalculoFaixaResumoVOParaAdicionar = new CalculoFaixaResumo(objRetorno.DataSaida, objRetorno.ValorIFR, objRetorno.ClassificacaoMedia);
 
 						lstDatasParaCalculosAdicionais.Add(objCalculoFaixaResumoVOParaAdicionar);
 					} else {
@@ -188,11 +188,11 @@ namespace ServicoNegocio
 			//Após percorrer o loop tem que calcular faixa e resumo para as datas que ainda não foram calculadas. pelo menos para a data de saída da última simulação 
 			//pode ser que tenha que calcular, a menos que tenha ocorrido a tentativa de executar uma última simulação que não tenha sido concluída e que tenha feito 
 			//com que o cálculo fosse realizada para a data de saída da última simulação completa
-			foreach (CalculoFaixaResumoVO objCalculoFaixaResumoVO in lstDatasParaCalculosAdicionais) {
+			foreach (CalculoFaixaResumo objCalculoFaixaResumoVO in lstDatasParaCalculosAdicionais) {
 				objCalculadorDeFaixasEResumo.Calcular(objCalculoFaixaResumoVO, lstIFRSobrevendido);
 			}
 
-			objConexao.FecharConexao();
+			Conexao.FecharConexao();
 
 			Trace.WriteLine("Finalizando simulacao: " + objAtivo.Codigo);
 
