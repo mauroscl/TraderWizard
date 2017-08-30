@@ -2,7 +2,7 @@ using System;
 
 namespace Dominio.Regras
 {
-	public class GeradorNomeArquivo
+	public static class GeradorNomeArquivo
 	{
 
 		private static string FormatarComDoisDigitos(int pintNumero)
@@ -16,7 +16,7 @@ namespace Dominio.Regras
 
 		}
 
-		public static string GerarNomeArquivoRemoto(System.DateTime pdtmData)
+		public static string GerarNomeArquivoRemoto(DateTime pdtmData)
 		{
 		    string strDia = FormatarComDoisDigitos(pdtmData.Day);
 
@@ -34,6 +34,11 @@ namespace Dominio.Regras
 			return "bdi" + Convert.ToString(pdtmData.Year) + strMes + strDia + ".zip";
 
 		}
+
+	    public static string GerarNomeArquivoCotacaoHistorica(DateTime data)
+	    {
+	        return $"COTAHIST_D{data:ddMMyyyy}.ZIP";
+        }
 
 
 	}

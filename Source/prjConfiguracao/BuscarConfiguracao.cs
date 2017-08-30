@@ -85,5 +85,27 @@ namespace Configuracao
             }
         }
 
+        public static String ObterUrlBoletimDiario()
+        {
+            var url = ConfigurationManager.AppSettings.Get("UrlBoletimFechamento");
+            if (string.IsNullOrEmpty(url))
+            {
+                throw new Exception("Url do boletim diário não configurada para a aplicação. Verifique o arquivo de configuração.");
+            }
+
+            return url;
+        }
+
+        public static String ObterUrlCotacaoHistorica()
+        {
+            var url = ConfigurationManager.AppSettings.Get("UrlCotacaoHistorica");
+            if (string.IsNullOrEmpty(url))
+            {
+                throw new Exception("Url do boletim diário não configurada para a aplicação. Verifique o arquivo de configuração.");
+            }
+
+            return url;
+        }
+
     }
 }

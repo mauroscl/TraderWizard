@@ -1,11 +1,6 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Drawing;
-using System.Diagnostics;
 using System.Windows.Forms;
-namespace TraderWizard
+
+namespace Forms
 {
 	partial class frmCotacaoAtualizarPeriodo : System.Windows.Forms.Form
 	{
@@ -38,6 +33,7 @@ namespace TraderWizard
             this.btnOK = new System.Windows.Forms.Button();
             this.pnlAtualizacaoDiaria = new System.Windows.Forms.Panel();
             this.CalendarioInicial = new System.Windows.Forms.MonthCalendar();
+            this.CalendarioFinal = new System.Windows.Forms.MonthCalendar();
             this.GroupBox1 = new System.Windows.Forms.GroupBox();
             this.cmbAtivo = new System.Windows.Forms.ComboBox();
             this.lblAtivo = new System.Windows.Forms.Label();
@@ -56,7 +52,6 @@ namespace TraderWizard
             this.txtAno = new System.Windows.Forms.TextBox();
             this.lblAno = new System.Windows.Forms.Label();
             this.chkCalcularDados = new System.Windows.Forms.CheckBox();
-            this.CalendarioFinal = new System.Windows.Forms.MonthCalendar();
             this.Panel1.SuspendLayout();
             this.pnlAtualizacaoDiaria.SuspendLayout();
             this.GroupBox1.SuspendLayout();
@@ -122,6 +117,14 @@ namespace TraderWizard
             this.CalendarioInicial.Visible = false;
             this.CalendarioInicial.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.CalendarioInicial_DateSelected);
             // 
+            // CalendarioFinal
+            // 
+            this.CalendarioFinal.Location = new System.Drawing.Point(236, 31);
+            this.CalendarioFinal.Name = "CalendarioFinal";
+            this.CalendarioFinal.TabIndex = 13;
+            this.CalendarioFinal.Visible = false;
+            this.CalendarioFinal.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.CalendarioFinal_DateSelected);
+            // 
             // GroupBox1
             // 
             this.GroupBox1.Controls.Add(this.cmbAtivo);
@@ -169,22 +172,22 @@ namespace TraderWizard
             // rdbHistorica
             // 
             this.rdbHistorica.AutoSize = true;
+            this.rdbHistorica.Checked = true;
             this.rdbHistorica.Location = new System.Drawing.Point(15, 43);
             this.rdbHistorica.Name = "rdbHistorica";
-            this.rdbHistorica.Size = new System.Drawing.Size(179, 17);
+            this.rdbHistorica.Size = new System.Drawing.Size(66, 17);
             this.rdbHistorica.TabIndex = 1;
-            this.rdbHistorica.Text = "Offline - Arquivos estão baixados";
+            this.rdbHistorica.TabStop = true;
+            this.rdbHistorica.Text = "Histórica";
             this.rdbHistorica.UseVisualStyleBackColor = true;
             // 
             // rdbOnline
             // 
             this.rdbOnline.AutoSize = true;
-            this.rdbOnline.Checked = true;
             this.rdbOnline.Location = new System.Drawing.Point(15, 20);
             this.rdbOnline.Name = "rdbOnline";
             this.rdbOnline.Size = new System.Drawing.Size(136, 17);
             this.rdbOnline.TabIndex = 0;
-            this.rdbOnline.TabStop = true;
             this.rdbOnline.Text = "Online - Baixar arquivos";
             this.rdbOnline.UseVisualStyleBackColor = true;
             this.rdbOnline.CheckedChanged += new System.EventHandler(this.rdbOnline_CheckedChanged);
@@ -305,14 +308,6 @@ namespace TraderWizard
             this.chkCalcularDados.TabIndex = 4;
             this.chkCalcularDados.Text = "Calcular Dados";
             this.chkCalcularDados.UseVisualStyleBackColor = true;
-            // 
-            // CalendarioFinal
-            // 
-            this.CalendarioFinal.Location = new System.Drawing.Point(236, 31);
-            this.CalendarioFinal.Name = "CalendarioFinal";
-            this.CalendarioFinal.TabIndex = 13;
-            this.CalendarioFinal.Visible = false;
-            this.CalendarioFinal.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.CalendarioFinal_DateSelected);
             // 
             // frmCotacaoAtualizarPeriodo
             // 

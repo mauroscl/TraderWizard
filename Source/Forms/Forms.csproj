@@ -67,8 +67,7 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>
-    </ApplicationIcon>
+    <ApplicationIcon>icone_principal.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup />
@@ -319,6 +318,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="icone_principal.ico" />
     <Content Include="Resources\icone_principal.ico" />
     <None Include="icones\zoom_in.png" />
     <Content Include="icones\zoom_out.png" />

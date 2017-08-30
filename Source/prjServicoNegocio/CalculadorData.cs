@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Configuration;
+using Configuracao;
 using DataBase;
 using Dominio.Regras;
 using DTO;
@@ -21,13 +21,20 @@ namespace ServicoNegocio
 
 		}
 
-		/// <summary>
-		/// Calcula a primeira data anterior à data informada, que é um dia útil.
-		/// </summary>
-		/// <param name="pdtmData">Data base para o cálculo</param>
-		/// <returns></returns>
-		/// <remarks></remarks>
-		public DateTime DiaUtilAnteriorCalcular(DateTime pdtmData)
+	    public enum EnumAtualizacaoDiariaTipo
+	    {
+	        Online = 1,
+	        Historica = 2,
+	        IntraDay = 3
+	    }
+
+	    /// <summary>
+        /// Calcula a primeira data anterior à data informada, que é um dia útil.
+        /// </summary>
+        /// <param name="pdtmData">Data base para o cálculo</param>
+        /// <returns></returns>
+        /// <remarks></remarks>
+        public DateTime DiaUtilAnteriorCalcular(DateTime pdtmData)
 		{
 		    bool blnOK;
 
@@ -128,13 +135,13 @@ namespace ServicoNegocio
 
             FuncoesBd funcoesBd  = _conexao.ObterFormatadorDeCampo();
 
-		    string strSQL = "SELECT TOP 1 Data " + Environment.NewLine;
-			strSQL = strSQL + "FROM " + pstrTabelaCotacao + Environment.NewLine;
-			strSQL = strSQL + " WHERE Codigo = " + funcoesBd.CampoFormatar(pstrCodigo) + Environment.NewLine;
-			strSQL = strSQL + " AND Data > " + funcoesBd.CampoFormatar(pdtmDataAtual);
-			strSQL = strSQL + " ORDER BY Data ";
+		    string strSql = "SELECT TOP 1 Data " + Environment.NewLine;
+			strSql = strSql + "FROM " + pstrTabelaCotacao + Environment.NewLine;
+			strSql = strSql + " WHERE Codigo = " + funcoesBd.CampoFormatar(pstrCodigo) + Environment.NewLine;
+			strSql = strSql + " AND Data > " + funcoesBd.CampoFormatar(pdtmDataAtual);
+			strSql = strSql + " ORDER BY Data ";
 
-			objRS.ExecuteQuery(strSQL);
+			objRS.ExecuteQuery(strSql);
 
 			DateTime functionReturnValue = Convert.ToDateTime(objRS.Field("Data", Constantes.DataInvalida));
 
@@ -159,7 +166,7 @@ namespace ServicoNegocio
 
 		}
 
-		public SugerirAtualizacaoCotacaoDTO SugerirAtualizarCotacao()
+		public SugerirAtualizacaoCotacaoDTO SugerirAtualizarCotacao(EnumAtualizacaoDiariaTipo tipo)
 		{
 
 			//data que tem que buscar a próxima cotação.
@@ -170,8 +177,12 @@ namespace ServicoNegocio
 			//Verifica se a data atual já tem cotação
 			Web objWeb = new Web(_conexao);
 
-            string urlBase = ConfigurationManager.AppSettings["UrlDownloadoArquivoFechamentoPregao"];
-            if (DiaUtilVerificar(DateTime.Now) && objWeb.VerificarLink(urlBase + GeradorNomeArquivo.GerarNomeArquivoRemoto(DateTime.Now))) {
+            string urlBase = BuscarConfiguracao.ObterUrlCotacaoHistorica();
+		    string urlCompleta = tipo == EnumAtualizacaoDiariaTipo.Online
+		        ? urlBase + GeradorNomeArquivo.GerarNomeArquivoRemoto(DateTime.Now)
+		        : urlBase + GeradorNomeArquivo.GerarNomeArquivoCotacaoHistorica(DateTime.Now);
+
+            if (DiaUtilVerificar(DateTime.Now) && objWeb.VerificarLink(urlCompleta)) {
 				dtmDataFinal = DateTime.Now;
 			} else {
 				//Calcula o dia útil anterior à data atual
@@ -208,7 +219,5 @@ namespace ServicoNegocio
 			return functionReturnValue;
 
 		}
-
-
 	}
 }

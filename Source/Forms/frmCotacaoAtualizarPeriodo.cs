@@ -1,22 +1,21 @@
-using Forms;
 using System;
+using System.Threading;
 using System.Windows.Forms;
+using Cotacao;
 using DataBase;
 using DTO;
-using System.Threading;
-using Cotacao;
 using ServicoNegocio;
 using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;
 
-namespace TraderWizard
+namespace Forms
 {
 
 	public partial class frmCotacaoAtualizarPeriodo
 	{
 
 
-		private readonly Conexao objConexao;
+		private readonly Conexao _conexao;
 
 		/// <summary>
 		/// 
@@ -34,15 +33,8 @@ namespace TraderWizard
 			InitializeComponent();
 
 			// Add any initialization after the InitializeComponent() call.
-			objConexao = pobjConexao;
+			_conexao = pobjConexao;
 
-		}
-
-		private enum EnumAtualizacaoDiariaTipo
-		{
-			Online = 1,
-			Historica = 2,
-			IntraDay = 3
 		}
 
 		private void AlterCursorDoMouse(Cursor pNovoCursor)
@@ -53,7 +45,7 @@ namespace TraderWizard
 		public delegate void AlterCursorDoMouseCallback(Cursor pNovoCursor);
 
 
-		private void CotacaoDiariaAtualizar(string pstrCodigo, System.DateTime pdtmDataInicial, System.DateTime pdtmDataFinal, bool pblnCalcularDados, EnumAtualizacaoDiariaTipo intTipo)
+		private void CotacaoDiariaAtualizar(string pstrCodigo, DateTime pdtmDataInicial, DateTime pdtmDataFinal, bool pblnCalcularDados, CalculadorData.EnumAtualizacaoDiariaTipo intTipo)
 		{
 			var callBack = new AlterCursorDoMouseCallback(AlterCursorDoMouse);
 
@@ -61,20 +53,28 @@ namespace TraderWizard
 
 		    var atualizadorDeCotacao = new AtualizadorDeCotacao();
 
-			if (intTipo == EnumAtualizacaoDiariaTipo.Online) {
-				atualizadorDeCotacao.CotacaoPeriodoAtualizar(pdtmDataInicial, pdtmDataFinal, pstrCodigo, pblnCalcularDados);
+		    try
+		    {
+		        if (intTipo == CalculadorData.EnumAtualizacaoDiariaTipo.Online) {
+		            atualizadorDeCotacao.CotacaoPeriodoAtualizar(pdtmDataInicial, pdtmDataFinal, pstrCodigo, pblnCalcularDados);
 
 
-			} else if (intTipo == EnumAtualizacaoDiariaTipo.Historica) {
-				atualizadorDeCotacao.CotacaoHistoricaPeriodoAtualizar(pdtmDataInicial, pdtmDataFinal, pblnCalcularDados);
+		        } else if (intTipo == CalculadorData.EnumAtualizacaoDiariaTipo.Historica) {
+		            atualizadorDeCotacao.CotacaoHistoricaPeriodoAtualizar(pdtmDataInicial, pdtmDataFinal, pblnCalcularDados);
 
 
-			} else if (intTipo == EnumAtualizacaoDiariaTipo.IntraDay) {
-				atualizadorDeCotacao.CotacaoIntraDayAtualizar(pdtmDataInicial, pblnCalcularDados);
+		        } else if (intTipo == CalculadorData.EnumAtualizacaoDiariaTipo.IntraDay) {
+		            atualizadorDeCotacao.CotacaoIntraDayAtualizar(pdtmDataInicial, pblnCalcularDados);
 
-			}
+		        }
 
-			BeginInvoke(callBack, new object[] { Cursors.Default });
+
+		    }
+		    catch (Exception e)
+		    {
+		        MessageBox.Show(e.Message, this.Text, MessageBoxButtons.OK);
+		    }
+		    BeginInvoke(callBack, Cursors.Default);
 
 		}
 
@@ -123,7 +123,7 @@ namespace TraderWizard
 
 					}
 
-					var objCalculadorData = new CalculadorData(objConexao);
+					var objCalculadorData = new CalculadorData(_conexao);
 
 					//verifica se a data é um dia útil. Se não for, não permite a execução
 
@@ -139,17 +139,9 @@ namespace TraderWizard
 
 				//Me.Cursor = Cursors.WaitCursor
 
-				EnumAtualizacaoDiariaTipo intAtualizacaoTipo = default(EnumAtualizacaoDiariaTipo);
+				var intAtualizacaoTipo = ObterTipoDeAtualizacao();
 
-				if (rdbOnline.Checked) {
-					intAtualizacaoTipo = EnumAtualizacaoDiariaTipo.Online;
-				} else if (rdbHistorica.Checked) {
-					intAtualizacaoTipo = EnumAtualizacaoDiariaTipo.Historica;
-				} else if (rdbIntraday.Checked) {
-					intAtualizacaoTipo = EnumAtualizacaoDiariaTipo.IntraDay;
-				}
-
-				bool blnCalcularDados = chkCalcularDados.Checked;
+		        bool blnCalcularDados = chkCalcularDados.Checked;
 				string strCodigo = mCotacao.ObterCodigoDoAtivoSelecionado(cmbAtivo);
 
                 //Thread thread = new Thread((ThreadStart)CotacaoDiariaAtualizar(strCodigo, dtmDataInicial, dtmDataFinal, blnCalcularDados, intAtualizacaoTipo));
@@ -215,17 +207,36 @@ namespace TraderWizard
 
 		}
 
-		private void btnCancelar_Click(System.Object sender, EventArgs e)
+	    private CalculadorData.EnumAtualizacaoDiariaTipo ObterTipoDeAtualizacao()
+	    {
+	        CalculadorData.EnumAtualizacaoDiariaTipo intAtualizacaoTipo = default(CalculadorData.EnumAtualizacaoDiariaTipo);
+
+	        if (rdbOnline.Checked)
+	        {
+	            intAtualizacaoTipo = CalculadorData.EnumAtualizacaoDiariaTipo.Online;
+	        }
+	        else if (rdbHistorica.Checked)
+	        {
+	            intAtualizacaoTipo = CalculadorData.EnumAtualizacaoDiariaTipo.Historica;
+	        }
+	        else if (rdbIntraday.Checked)
+	        {
+	            intAtualizacaoTipo = CalculadorData.EnumAtualizacaoDiariaTipo.IntraDay;
+	        }
+	        return intAtualizacaoTipo;
+	    }
+
+	    private void btnCancelar_Click(Object sender, EventArgs e)
 		{
 			Close();
 		}
 
-		private void rdbAtualizacaoDiaria_CheckedChanged(System.Object sender, EventArgs e)
+		private void rdbAtualizacaoDiaria_CheckedChanged(Object sender, EventArgs e)
 		{
 			pnlAtualizacaoDiaria.Enabled = rdbAtualizacaoDiaria.Checked;
 		}
 
-		private void rdbAtualizacaoAnual_CheckedChanged(System.Object sender, EventArgs e)
+		private void rdbAtualizacaoAnual_CheckedChanged(Object sender, EventArgs e)
 		{
 			pnlAtualizacaoAnual.Enabled = rdbAtualizacaoAnual.Checked;
 		}
@@ -233,11 +244,11 @@ namespace TraderWizard
 
 		private void frmCotacaoAtualizarPeriodo_Load(object sender, EventArgs e)
 		{
-			mCotacao.ComboAtivoPreencher(cmbAtivo, objConexao,"", false);
+			mCotacao.ComboAtivoPreencher(cmbAtivo, _conexao,"", false);
 
-			var objCalculadorData = new CalculadorData(objConexao);
+			var objCalculadorData = new CalculadorData(_conexao);
 
-			SugerirAtualizacaoCotacaoDTO sugestao = objCalculadorData.SugerirAtualizarCotacao();
+			SugerirAtualizacaoCotacaoDTO sugestao = objCalculadorData.SugerirAtualizarCotacao(ObterTipoDeAtualizacao());
 
 
 			if ((sugestao != null)) {
@@ -245,7 +256,7 @@ namespace TraderWizard
 				txtDataFinal.Text = sugestao.DataFinal.ToString("dd/MM/yyyy");
 
 				if (sugestao.Tipo == "online") {
-					rdbOnline.Checked = true;
+					rdbHistorica.Checked = true;
 				} else {
 					rdbIntraday.Checked = true;
 				}
@@ -254,14 +265,14 @@ namespace TraderWizard
 
 		}
 
-		private void rdbOnline_CheckedChanged(System.Object sender, EventArgs e)
+		private void rdbOnline_CheckedChanged(Object sender, EventArgs e)
 		{
 			lblAtivo.Visible = rdbOnline.Checked;
 			cmbAtivo.Visible = rdbOnline.Checked;
 		}
 
 
-		private void btnCalendarioInicial_Click(System.Object sender, EventArgs e)
+		private void btnCalendarioInicial_Click(Object sender, EventArgs e)
 		{
 			if (txtDataInicial.Text.IsDate()) {
 				CalendarioInicial.SetDate(Convert.ToDateTime(txtDataInicial.Text));
@@ -271,21 +282,21 @@ namespace TraderWizard
 		}
 
 
-		private void CalendarioInicial_DateSelected(object sender, System.Windows.Forms.DateRangeEventArgs e)
+		private void CalendarioInicial_DateSelected(object sender, DateRangeEventArgs e)
 		{
 			txtDataInicial.Text = CalendarioInicial.SelectionRange.Start.ToString("dd/MM/yyyy");
 			CalendarioInicial.Hide();
 
 		}
 
-		private void CalendarioFinal_DateSelected(System.Object sender, System.Windows.Forms.DateRangeEventArgs e)
+		private void CalendarioFinal_DateSelected(Object sender, DateRangeEventArgs e)
 		{
 			txtDataFinal.Text = CalendarioFinal.SelectionRange.Start.ToString("dd/MM/yyyy");
 			CalendarioFinal.Hide();
 		}
 
 
-		private void btnCalendarioFinal_Click(System.Object sender, EventArgs e)
+		private void btnCalendarioFinal_Click(Object sender, EventArgs e)
 		{
 			if (txtDataFinal.Text.IsDate()) {
 				CalendarioFinal.SetDate(Convert.ToDateTime(txtDataFinal.Text));

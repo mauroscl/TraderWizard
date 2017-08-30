@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -29,7 +28,6 @@ namespace Cotacao
         private readonly SequencialService _sequencialService;
         private readonly CotacaoData _cotacaoData;
         private readonly ServicoDeCotacao _servicoDeCotacao;
-
 
         public AtualizadorDeCotacao()
         {
@@ -565,7 +563,7 @@ namespace Cotacao
 
             if (!fileService.FileExists(strPathZip + "\\" + strArquivoZipDestino))
             {
-                string urlBase = ConfigurationManager.AppSettings["UrlDownloadoArquivoFechamentoPregao"];
+                string urlBase = BuscarConfiguracao.ObterUrlBoletimDiario();
                 if (!_web.DownloadWithProxy(urlBase + strArquivoBaixar, strPathZip, strArquivoZipDestino))
                 {
                     pcolLinhaRet = new List<string>();
@@ -606,10 +604,15 @@ namespace Cotacao
 
             strPathZip = strPathZip + "Arquivos";
 
-            //Nome do arquivo zip baixado :"COTAHIST_D" + ddmmyyyy + ".zip"
+            var url = BuscarConfiguracao.ObterUrlCotacaoHistorica();
+            
             string strArquivoZipDestino = "COTAHIST_D" + pdtmData.ToString("ddMMyyyy") + ".ZIP";
-
             string strArquivoTextoDestino = "COTAHIST_D" + pdtmData.ToString("ddMMyyyy") + ".TXT";
+
+            if (!_web.DownloadWithProxy(url + strArquivoZipDestino, strPathZip, strArquivoZipDestino))
+            {
+                throw new Exception("Não foi possível baixar o arquivo de cotações históricas.");                
+            }
 
             RS objRS = new RS(_conexao);
 
@@ -879,7 +882,7 @@ namespace Cotacao
             //se foi possivel baixar...
             //percorre todas as linhas da collection e nas linhas que forem cotações de ativos insere no banco de dados
 
-            for (intI = 1; intI <= pcolLinha.Count; intI++)
+            for (intI = 1; intI < pcolLinha.Count; intI++)
             {
                 //coloca a linha na variável auxiliar
                 string strLinhaAux = pcolLinha[intI];
@@ -1397,7 +1400,5 @@ namespace Cotacao
             return functionReturnValue;
 
         }
-
-
     }
 }

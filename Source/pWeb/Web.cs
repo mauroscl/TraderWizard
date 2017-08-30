@@ -11,7 +11,7 @@ namespace WebAccess
 
 	public class Web
 	{
-		private WebConfiguracao objWebConfiguracao;
+		private readonly WebConfiguracao _webConfiguracao;
 	    private readonly IFileService _fileService;
 
 		public Web(Conexao pobjConexao)
@@ -19,69 +19,40 @@ namespace WebAccess
 			//intancia a classe de configuração.
 			//durante a instanciação já são buscadas as configurações cadastradas
 			//nos parâmetros do sistema.
-			objWebConfiguracao = new WebConfiguracao(true, pobjConexao);
+			_webConfiguracao = new WebConfiguracao(true, pobjConexao);
             _fileService = new FileService();
 
 		}
 
-
-		/*public bool ArquivoBaixar(string pstrURL, string pstrCaminhoDestino, string pstrArquivoDestino)
+		public bool DownloadWithProxy(string url, string pstrCaminhoDestino, string pstrArquivoDestino)
 		{
-
-
-			try {
-				pWeb.My.MyProject.Computer.Network.DownloadFile(pstrURL, pstrCaminhoDestino + "\\" + pstrArquivoDestino);
-                
-
-				return true;
-
-
-			} catch (Exception ex) {
-                MessageBox.Show(ex.Message + " - URL: " + pstrURL, string.Empty, MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-				return false;
-
-				//Catch exWeb As System.Net.WebException
-
-				//    MsgBox(exWeb.Message, MsgBoxStyle.Critical)
-
-				//    Return False
-
-			}
-
-		}*/
-
-		public bool DownloadWithProxy(string pstrURL, string pstrCaminhoDestino, string pstrArquivoDestino)
-		{
-			bool functionReturnValue;
-
 			WebProxy objWebProxy = null;
 
-			switch (objWebConfiguracao.ProxyTipo) {
+			switch (_webConfiguracao.ProxyTipo) {
 
 				case "PM":
 
 					//PROXY MANUAL
-					objWebProxy = new WebProxy(objWebConfiguracao.ProxyManualHTTP, objWebConfiguracao.ProxyManualPorta);
+					objWebProxy = new WebProxy(_webConfiguracao.ProxyManualHTTP, _webConfiguracao.ProxyManualPorta);
 
 					break;
 				case "PA":
 
 					//PROXY AUTOMÁTICO. Passa o endereço e o proxy é retornado.
-					objWebProxy = new WebProxy(WebRequest.DefaultWebProxy.GetProxy(new Uri(pstrURL)));
+					objWebProxy = new WebProxy(WebRequest.DefaultWebProxy.GetProxy(new Uri(url)));
 
 					break;
 
 			}
 
 
-			if (objWebConfiguracao.CredencialUtilizar && objWebProxy != null) {
-				objWebProxy.Credentials = new NetworkCredential(objWebConfiguracao.Usuario, objWebConfiguracao.Senha, objWebConfiguracao.Dominio);
+			if (_webConfiguracao.CredencialUtilizar && objWebProxy != null) {
+				objWebProxy.Credentials = new NetworkCredential(_webConfiguracao.Usuario, _webConfiguracao.Senha, _webConfiguracao.Dominio);
 
 			}
 
 			// Create a new request to the mentioned URL.                
-			var objHttpWebRequest = (HttpWebRequest)WebRequest.Create(pstrURL);
+			var objHttpWebRequest = (HttpWebRequest)WebRequest.Create(url);
 
 			try {
 				objHttpWebRequest.Proxy = objWebProxy;
@@ -98,7 +69,7 @@ namespace WebAccess
                     int bytesRead;
                     do
                     {
-                        bytesRead = responseStream.Read(buffer, 0, bufferSize);
+                        bytesRead = responseStream?.Read(buffer, 0, bufferSize) ?? throw new Exception("Não foi possível ler o conteúdo do arquivo");
                         bufferTotal = bufferTotal.Concat(buffer.ToList().GetRange(0, bytesRead)).ToList();
 
                     } while (bytesRead > 0);
@@ -109,18 +80,15 @@ namespace WebAccess
 			    objHttpWebResponse.Close();
 
 
-			    functionReturnValue = true;
-
-
 			} catch (Exception ex) {
-                MessageBox.Show(ex.Message + " - URL: " + pstrURL, "Web", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message + " - URL: " + url, "Web", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-				functionReturnValue = false;
+				return false;
 
 
 			} 
 
-			return functionReturnValue;
+			return true;
 
 		}
 
@@ -128,39 +96,39 @@ namespace WebAccess
 		{
 			WebProxy objWebProxy = null;
 
-			switch (objWebConfiguracao.ProxyTipo) {
+			switch (_webConfiguracao.ProxyTipo) {
 
 				case "PM":
 
 					//PROXY MANUAL
-					objWebProxy = new WebProxy(objWebConfiguracao.ProxyManualHTTP, objWebConfiguracao.ProxyManualPorta);
+					objWebProxy = new WebProxy(_webConfiguracao.ProxyManualHTTP, _webConfiguracao.ProxyManualPorta);
 
 					break;
 				case "PA":
 
 					//PROXY AUTOMÁTICO. Passa o endereço e o proxy é retornado.
-					objWebProxy = new WebProxy(HttpWebRequest.DefaultWebProxy.GetProxy(new Uri(pstrUrl)));
+					objWebProxy = new WebProxy(WebRequest.DefaultWebProxy.GetProxy(new Uri(pstrUrl)));
 
 					break;
 			}
 
 
-			if (objWebConfiguracao.CredencialUtilizar) {
-				objWebProxy.Credentials = new NetworkCredential(objWebConfiguracao.Usuario, objWebConfiguracao.Senha, objWebConfiguracao.Dominio);
+			if (_webConfiguracao.CredencialUtilizar) {
+				objWebProxy.Credentials = new NetworkCredential(_webConfiguracao.Usuario, _webConfiguracao.Senha, _webConfiguracao.Dominio);
 
 			}
 
 			// Create a new request to the mentioned URL.                
-			var objHTTPWebRequest = (HttpWebRequest)WebRequest.Create(pstrUrl);
+			var httpWebRequest = (HttpWebRequest)WebRequest.Create(pstrUrl);
 
 			HttpWebResponse objHttpWebResponse = null;
 
             bool functionReturnValue;
 
 			try {
-				objHTTPWebRequest.Proxy = objWebProxy;
+				httpWebRequest.Proxy = objWebProxy;
 
-				objHttpWebResponse = (HttpWebResponse)objHTTPWebRequest.GetResponse();
+				objHttpWebResponse = (HttpWebResponse)httpWebRequest.GetResponse();
 
 				functionReturnValue = (objHttpWebResponse.StatusCode == HttpStatusCode.OK);
 
@@ -169,11 +137,9 @@ namespace WebAccess
 				functionReturnValue = false;
 
 
-			} finally {
-				if ((objHttpWebResponse != null)) {
-					objHttpWebResponse.Close();
-				}
-
+			} finally
+			{
+			    objHttpWebResponse?.Close();
 			}
 			return functionReturnValue;
 

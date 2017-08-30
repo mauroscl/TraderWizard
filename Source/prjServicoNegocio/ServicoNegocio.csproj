@@ -66,6 +66,10 @@
       <Project>{CC20BB02-78E9-487E-A9EC-6BFC64D2B0CB}</Project>
       <Name>DataBase</Name>
     </ProjectReference>
+    <ProjectReference Include="..\prjConfiguracao\Configuracao.csproj">
+      <Project>{B9DCD706-44A1-4B5F-BF93-5C0A3F9BD6D5}</Project>
+      <Name>Configuracao</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Services\Services.csproj">
       <Project>{8BAE22CC-832B-4151-8B2F-222403B12F8B}</Project>
       <Name>Services</Name>
