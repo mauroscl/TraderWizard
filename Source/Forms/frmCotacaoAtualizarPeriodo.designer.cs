@@ -172,22 +172,22 @@ namespace Forms
             // rdbHistorica
             // 
             this.rdbHistorica.AutoSize = true;
-            this.rdbHistorica.Checked = true;
             this.rdbHistorica.Location = new System.Drawing.Point(15, 43);
             this.rdbHistorica.Name = "rdbHistorica";
             this.rdbHistorica.Size = new System.Drawing.Size(66, 17);
             this.rdbHistorica.TabIndex = 1;
-            this.rdbHistorica.TabStop = true;
             this.rdbHistorica.Text = "Histórica";
             this.rdbHistorica.UseVisualStyleBackColor = true;
             // 
             // rdbOnline
             // 
             this.rdbOnline.AutoSize = true;
+            this.rdbOnline.Checked = true;
             this.rdbOnline.Location = new System.Drawing.Point(15, 20);
             this.rdbOnline.Name = "rdbOnline";
             this.rdbOnline.Size = new System.Drawing.Size(136, 17);
             this.rdbOnline.TabIndex = 0;
+            this.rdbOnline.TabStop = true;
             this.rdbOnline.Text = "Online - Baixar arquivos";
             this.rdbOnline.UseVisualStyleBackColor = true;
             this.rdbOnline.CheckedChanged += new System.EventHandler(this.rdbOnline_CheckedChanged);

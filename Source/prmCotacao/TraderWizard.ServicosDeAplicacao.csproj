@@ -8,8 +8,8 @@
     <ProjectGuid>{33BF35FD-D037-46C7-BC26-024AA54481EC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Cotacao</RootNamespace>
-    <AssemblyName>Cotacao</AssemblyName>
+    <RootNamespace>TraderWizard.ServicosDeAplicacao</RootNamespace>
+    <AssemblyName>TraderWizard.ServicosDeAplicacao</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -49,11 +49,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArquivoTextoService.cs" />
     <Compile Include="AtualizadorDeCotacao.cs" />
     <Compile Include="CalculadorDeIfr.cs" />
     <Compile Include="ConfiguracaoDeVisualizacao.cs" />
     <Compile Include="CotacaoData.cs" />
+    <Compile Include="CotacaoImportacao.cs" />
+    <Compile Include="IImportadorCotacao.cs" />
+    <Compile Include="ImportadorBoletimAntigo.cs" />
+    <Compile Include="ImportadorBoletimDiario.cs" />
+    <Compile Include="ImportadorDadosHistoricos.cs" />
     <Compile Include="ProventoService.cs" />
+    <Compile Include="SequencialAtivo.cs" />
     <Compile Include="SequencialService.cs" />
     <Compile Include="ServicoDeCotacao.cs" />
     <Compile Include="Investimento.cs" />

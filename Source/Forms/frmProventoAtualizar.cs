@@ -1,9 +1,9 @@
 using System;
 using System.Windows.Forms;
-using Cotacao;
 using DataBase;
 using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;
+using TraderWizard.ServicosDeAplicacao;
 
 namespace TraderWizard
 {

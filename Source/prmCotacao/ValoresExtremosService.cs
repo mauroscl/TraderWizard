@@ -6,7 +6,7 @@ using Dominio.Regras;
 using DTO;
 using TraderWizard.Enumeracoes;
 
-namespace Cotacao
+namespace TraderWizard.ServicosDeAplicacao
 {
     public class ValoresExtremosService
     {

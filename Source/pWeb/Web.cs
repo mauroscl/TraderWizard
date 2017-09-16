@@ -14,17 +14,23 @@ namespace WebAccess
 		private readonly WebConfiguracao _webConfiguracao;
 	    private readonly IFileService _fileService;
 
-		public Web(Conexao pobjConexao)
+	    public Web()
+	    {
+	        var conexao = new Conexao();
+            _webConfiguracao = new WebConfiguracao(true, conexao);
+	        _fileService = new FileService();
+	    }
+
+        public Web(Conexao pobjConexao)
 		{
 			//intancia a classe de configuração.
 			//durante a instanciação já são buscadas as configurações cadastradas
 			//nos parâmetros do sistema.
 			_webConfiguracao = new WebConfiguracao(true, pobjConexao);
-            _fileService = new FileService();
+		    _fileService = new FileService();
+        }
 
-		}
-
-		public bool DownloadWithProxy(string url, string pstrCaminhoDestino, string pstrArquivoDestino)
+        public bool DownloadWithProxy(string url, string pstrCaminhoDestino, string pstrArquivoDestino)
 		{
 			WebProxy objWebProxy = null;
 

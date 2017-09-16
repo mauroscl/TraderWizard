@@ -29,6 +29,14 @@ namespace Services
             File.Delete(path);  
         }
 
+        public void DeleteAllFiles(string path)
+        {
+            var directoryInfo = new DirectoryInfo(path);
+            //delete files:
+            foreach (FileInfo file in directoryInfo.GetFiles())
+                file.Delete();
+        }
+
         public IList<string> ReadAllLines(string path)
         {
             return File.ReadAllLines(path).ToList();

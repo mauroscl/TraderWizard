@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Forms;
-using Cotacao;
 using DataBase;
 using DataBase.Carregadores;
 using DataBase.Interfaces;
 using DTO;
 using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;
+using TraderWizard.ServicosDeAplicacao;
 
 namespace Forms
 {

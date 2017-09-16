@@ -6,7 +6,7 @@ using Services;
 using ServicoNegocio;
 using TraderWizard.Enumeracoes;
 
-namespace Cotacao
+namespace TraderWizard.ServicosDeAplicacao
 {
     public class ProventoService
     {

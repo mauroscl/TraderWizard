@@ -62,7 +62,6 @@
     <Compile Include="Entidades\Setup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Regras\CalculadorTabelas.cs" />
-    <Compile Include="Regras\GeradorNomeArquivo.cs" />
     <Compile Include="Regras\ObterValorCriterioClassificacaoMedia.cs" />
     <Compile Include="Regras\Util.cs" />
     <Compile Include="Regras\VerificadorMediasAlinhadas.cs" />

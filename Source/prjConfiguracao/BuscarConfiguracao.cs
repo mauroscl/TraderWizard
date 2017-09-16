@@ -85,9 +85,9 @@ namespace Configuracao
             }
         }
 
-        public static String ObterUrlBoletimDiario()
+        public static String ObterUrlBoletimDiario ()
         {
-            var url = ConfigurationManager.AppSettings.Get("UrlBoletimFechamento");
+            var url = ConfigurationManager.AppSettings.Get("UrlBoletimDiario");
             if (string.IsNullOrEmpty(url))
             {
                 throw new Exception("Url do boletim diário não configurada para a aplicação. Verifique o arquivo de configuração.");

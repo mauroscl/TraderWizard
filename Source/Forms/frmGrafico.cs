@@ -9,12 +9,12 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Cotacao;
 using Dominio.Entidades;
 using prjCandle.Desenho;
 using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;
 using TraderWizard.Infra.Repositorio;
+using TraderWizard.ServicosDeAplicacao;
 
 namespace TraderWizard
 {

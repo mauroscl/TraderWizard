@@ -1,12 +1,12 @@
 using System;
 using System.Threading;
 using System.Windows.Forms;
-using Cotacao;
 using DataBase;
 using DTO;
 using ServicoNegocio;
 using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;
+using TraderWizard.ServicosDeAplicacao;
 
 namespace Forms
 {
@@ -55,17 +55,12 @@ namespace Forms
 
 		    try
 		    {
-		        if (intTipo == CalculadorData.EnumAtualizacaoDiariaTipo.Online) {
-		            atualizadorDeCotacao.CotacaoPeriodoAtualizar(pdtmDataInicial, pdtmDataFinal, pstrCodigo, pblnCalcularDados);
-
-
+		        if (intTipo == CalculadorData.EnumAtualizacaoDiariaTipo.BoletimDiario) {
+		            atualizadorDeCotacao.CotacaoPeriodoAtualizar(pdtmDataInicial, pdtmDataFinal, pstrCodigo, pblnCalcularDados, false);
 		        } else if (intTipo == CalculadorData.EnumAtualizacaoDiariaTipo.Historica) {
-		            atualizadorDeCotacao.CotacaoHistoricaPeriodoAtualizar(pdtmDataInicial, pdtmDataFinal, pblnCalcularDados);
-
-
+		            atualizadorDeCotacao.CotacaoPeriodoAtualizar(pdtmDataInicial, pdtmDataFinal, pstrCodigo, pblnCalcularDados, true);
 		        } else if (intTipo == CalculadorData.EnumAtualizacaoDiariaTipo.IntraDay) {
 		            atualizadorDeCotacao.CotacaoIntraDayAtualizar(pdtmDataInicial, pblnCalcularDados);
-
 		        }
 
 
@@ -213,7 +208,7 @@ namespace Forms
 
 	        if (rdbOnline.Checked)
 	        {
-	            intAtualizacaoTipo = CalculadorData.EnumAtualizacaoDiariaTipo.Online;
+	            intAtualizacaoTipo = CalculadorData.EnumAtualizacaoDiariaTipo.BoletimDiario;
 	        }
 	        else if (rdbHistorica.Checked)
 	        {
@@ -251,12 +246,12 @@ namespace Forms
 			SugerirAtualizacaoCotacaoDTO sugestao = objCalculadorData.SugerirAtualizarCotacao(ObterTipoDeAtualizacao());
 
 
-			if ((sugestao != null)) {
+			if (sugestao != null) {
 				txtDataInicial.Text = sugestao.DataInicial.ToString("dd/MM/yyyy");
 				txtDataFinal.Text = sugestao.DataFinal.ToString("dd/MM/yyyy");
 
 				if (sugestao.Tipo == "online") {
-					rdbHistorica.Checked = true;
+					rdbOnline.Checked = true;
 				} else {
 					rdbIntraday.Checked = true;
 				}

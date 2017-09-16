@@ -5,7 +5,7 @@ using Configuracao;
 using DataBase;
 using WebAccess;
 
-namespace Cotacao
+namespace TraderWizard.ServicosDeAplicacao
 {
 
 	public class Investimento

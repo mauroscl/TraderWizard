@@ -1,7 +1,6 @@
 ﻿using System;
 using Configuracao;
 using DataBase;
-using Dominio.Regras;
 using DTO;
 using TraderWizard.Enumeracoes;
 using WebAccess;
@@ -11,7 +10,6 @@ namespace ServicoNegocio
 
 	public class CalculadorData
 	{
-
 
 		private readonly Conexao _conexao;
 
@@ -23,7 +21,7 @@ namespace ServicoNegocio
 
 	    public enum EnumAtualizacaoDiariaTipo
 	    {
-	        Online = 1,
+	        BoletimDiario = 1,
 	        Historica = 2,
 	        IntraDay = 3
 	    }
@@ -62,7 +60,7 @@ namespace ServicoNegocio
 		/// <remarks></remarks>
 		public DateTime DiaUtilSeguinteCalcular(DateTime pdtmData)
 		{
-		    bool blnOK;
+		    bool encontrado;
 
 			DateTime dtmData = pdtmData;
 
@@ -73,9 +71,9 @@ namespace ServicoNegocio
 
 				//chama função que verifica se a data é um dia útil.
 				//considera o dia da semana e se a data é um feriado
-				blnOK = DiaUtilVerificar(dtmData);
+				encontrado = DiaUtilVerificar(dtmData);
 
-			} while (!(blnOK));
+			} while (!(encontrado));
 
 			return dtmData;
 
@@ -97,14 +95,14 @@ namespace ServicoNegocio
 		{
 			bool functionReturnValue;
 
-            FuncoesBd FuncoesBd = _conexao.ObterFormatadorDeCampo();
+            FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 			//verifica se o dia da semana está entre segunda-feira e sexta-feira
 
 			if ((pdtmData.DayOfWeek != DayOfWeek.Sunday) && (pdtmData.DayOfWeek != DayOfWeek.Saturday)) {
 				RS objRS = new RS(_conexao);
 
 				//se está entre segunda e sexta verifica se a data não está cadastrada na tabela de feriados
-				objRS.ExecuteQuery(" select 1" + " from Feriado " + " where Data = " + FuncoesBd.CampoDateFormatar(pdtmData));
+				objRS.ExecuteQuery(" select 1" + " from Feriado " + " where Data = " + funcoesBd.CampoDateFormatar(pdtmData));
 
 				//se a data é um feriado retorna false, pois não é um dia útil.
 				//caso contrário retorna true.
@@ -177,24 +175,22 @@ namespace ServicoNegocio
 			//Verifica se a data atual já tem cotação
 			Web objWeb = new Web(_conexao);
 
-            string urlBase = BuscarConfiguracao.ObterUrlCotacaoHistorica();
-		    string urlCompleta = tipo == EnumAtualizacaoDiariaTipo.Online
-		        ? urlBase + GeradorNomeArquivo.GerarNomeArquivoRemoto(DateTime.Now)
-		        : urlBase + GeradorNomeArquivo.GerarNomeArquivoCotacaoHistorica(DateTime.Now);
+		    string urlCompleta = tipo == EnumAtualizacaoDiariaTipo.BoletimDiario
+		        ? GeradorNomeArquivo.GerarUlrBoletimDiario(DateTime.Now)
+		        : GeradorNomeArquivo.GerarUrlCotacaoHistorica(DateTime.Now);
 
-            if (DiaUtilVerificar(DateTime.Now) && objWeb.VerificarLink(urlCompleta)) {
+		    bool hojeDiaUtil = DiaUtilVerificar(DateTime.Now);
+		    if (hojeDiaUtil && objWeb.VerificarLink(urlCompleta)) {
 				dtmDataFinal = DateTime.Now;
 			} else {
 				//Calcula o dia útil anterior à data atual
 				dtmDataFinal = DiaUtilAnteriorCalcular(DateTime.Now);
 			}
 
-
 			if (dtmDataFinal >= dtmDataInicial) {
 				return new SugerirAtualizacaoCotacaoDTO("online", dtmDataInicial, dtmDataFinal);
-
 			}
-		    return DiaUtilVerificar(DateTime.Now) ? new SugerirAtualizacaoCotacaoDTO("daytrade", DateTime.Now.Date, DateTime.Now.Date) : null;
+		    return hojeDiaUtil ? new SugerirAtualizacaoCotacaoDTO("daytrade", DateTime.Now.Date, DateTime.Now.Date) : null;
 		}
 
 

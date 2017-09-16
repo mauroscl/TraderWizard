@@ -2,7 +2,7 @@ using System;
 using DataBase;
 using TraderWizard.Enumeracoes;
 
-namespace Cotacao
+namespace TraderWizard.ServicosDeAplicacao
 {
     public class CotacaoData
     {

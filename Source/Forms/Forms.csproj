@@ -285,9 +285,9 @@
       <Project>{BD01A0C5-77D7-4FAA-A662-38EA575DED34}</Project>
       <Name>DTO</Name>
     </ProjectReference>
-    <ProjectReference Include="..\prmCotacao\Cotacao.csproj">
+    <ProjectReference Include="..\prmCotacao\TraderWizard.ServicosDeAplicacao.csproj">
       <Project>{33BF35FD-D037-46C7-BC26-024AA54481EC}</Project>
-      <Name>Cotacao</Name>
+      <Name>TraderWizard.ServicosDeAplicacao</Name>
     </ProjectReference>
     <ProjectReference Include="..\pWeb\WebAccess.csproj">
       <Project>{A902DC79-0E9C-4C2D-894E-8301DB0D9849}</Project>

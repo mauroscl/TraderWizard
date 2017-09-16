@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using DTO;
 
-namespace Cotacao
+namespace TraderWizard.ServicosDeAplicacao
 {
     public class ConfiguracaoDeVisualizacao
     {

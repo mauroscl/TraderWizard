@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
-using Cotacao;
 using DataBase;
 using Dominio.Entidades;
 using frwTela;
 using ServicosDeInterface;
 using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;
+using TraderWizard.ServicosDeAplicacao;
 
 namespace TraderWizard
 {

@@ -100,12 +100,9 @@ namespace DataBase
 		        objfrmInformacao.ShowDialog();
 
 
-		    } catch (Exception ex) {
+		    } catch {
 		        RollBackTrans();
-
-		        MessageBox.Show(ex.Message, "Executar Comando", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-
+		        throw;
 		    } finally
 		    {
 		        //último comando executado

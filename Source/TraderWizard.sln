@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.8
+VisualStudioVersion = 15.0.26730.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dominio", "Dominio", "{58730C71-9E62-4304-B244-DC2776BCDF02}"
 EndProject
@@ -44,7 +44,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dominio", "prjDominio\Domin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicoNegocio", "prjServicoNegocio\ServicoNegocio.csproj", "{E03891F1-F42B-4141-B2AF-FA405D710B22}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cotacao", "prmCotacao\Cotacao.csproj", "{33BF35FD-D037-46C7-BC26-024AA54481EC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TraderWizard.ServicosDeAplicacao", "prmCotacao\TraderWizard.ServicosDeAplicacao.csproj", "{33BF35FD-D037-46C7-BC26-024AA54481EC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicosDeInterface", "ServicosDeInterface\ServicosDeInterface.csproj", "{D0B52B8A-8A9C-4E34-B324-745E7A126573}"
 EndProject

@@ -42,11 +42,9 @@ namespace Dominio.Entidades
 
 		}
 
-		public decimal Amplitude {
-			get { return ValorMaximo - ValorMinimo; }
-		}
+		public decimal Amplitude => ValorMaximo - ValorMinimo;
 
-		public override bool Equals(object obj)
+        public override bool Equals(object obj)
 		{
 		    if (ReferenceEquals(null, obj)) return false;
 		    if (ReferenceEquals(this, obj)) return true;
@@ -103,7 +101,7 @@ namespace Dominio.Entidades
 		public CotacaoDiaria Clonar()
 		{
 
-			var objRetorno = new CotacaoDiaria(Ativo, Data)
+			var retorno = new CotacaoDiaria(Ativo, Data)
 			{
 			    Sequencial = Sequencial,
 			    ValorAbertura = ValorAbertura,
@@ -112,15 +110,16 @@ namespace Dominio.Entidades
 			    ValorMaximo = ValorMaximo
 			};
 
-		    objRetorno.IFR = new cIFRDiario(objRetorno, IFR.NumPeriodos, IFR.Valor);
+		    retorno.IFR = new cIFRDiario(retorno, IFR.NumPeriodos, IFR.Valor);
 
 
-			foreach (MediaDiaria objMedia in Medias) {
-				objRetorno.Medias.Add(new MediaDiaria(objRetorno, objMedia.Tipo, objMedia.NumPeriodos, objMedia.Valor));
-
+			foreach (var media in Medias)
+			{
+			    var mediaDiaria = (MediaDiaria) media;
+			    retorno.Medias.Add(new MediaDiaria(retorno, mediaDiaria.Tipo, mediaDiaria.NumPeriodos, mediaDiaria.Valor));
 			}
 
-			return objRetorno;
+			return retorno;
 
 		}
 

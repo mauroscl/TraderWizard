@@ -2,12 +2,12 @@ using System.Collections.ObjectModel;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Cotacao;
 using DataBase;
 using Dominio.Entidades;
 using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;
 using TraderWizard.Infra.Repositorio;
+using TraderWizard.ServicosDeAplicacao;
 
 namespace TraderWizard
 {

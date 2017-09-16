@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Text;
 using DataBase;
 
-namespace Cotacao
+namespace TraderWizard.ServicosDeAplicacao
 {
     public class SequencialService
     {
@@ -11,6 +14,12 @@ namespace Cotacao
         {
             this._conexao = new Conexao();
         }
+
+        public SequencialService(Conexao conexao)
+        {
+            this._conexao = conexao;
+        }
+
 
         //~SequencialService()
         //{
@@ -158,6 +167,32 @@ namespace Cotacao
 
             objRs.Fechar();
             return functionReturnValue;
+
+        }
+
+        public ICollection<SequencialAtivo> AtivosProximoSequencialCalcular()
+        {
+            var sb = new StringBuilder();
+            sb
+                .Append("SELECT Codigo, ISNULL(MAX(SEQUENCIAL), 0) + 1 AS Sequencial ")
+                .Append("FROM Cotacao ")
+                .Append("GROUP BY Codigo ");
+
+            var rs = new RS(this._conexao);
+
+            rs.ExecuteQuery(sb.ToString());
+
+            var sequenciais = new Collection<SequencialAtivo>();
+
+            while (!rs.Eof)
+            {
+                sequenciais.Add(new SequencialAtivo(rs.Field("Codigo").ToString(),Convert.ToInt64(rs.Field("Sequencial"))));
+                rs.MoveNext();
+            }
+
+            rs.Fechar();
+
+            return sequenciais;
 
         }
 

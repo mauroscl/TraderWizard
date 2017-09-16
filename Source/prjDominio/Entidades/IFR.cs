@@ -8,7 +8,8 @@ namespace Dominio.Entidades
 		public int NumPeriodos;
 
 		public double Valor;
-		public cIFR(CotacaoAbstract pobjCotacao, int pintNumPeriodos, double pdecValor)
+
+	    protected cIFR(CotacaoAbstract pobjCotacao, int pintNumPeriodos, double pdecValor)
 		{
 			Cotacao = pobjCotacao;
 			Valor = pdecValor;

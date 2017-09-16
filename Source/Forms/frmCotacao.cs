@@ -3,8 +3,8 @@ using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 using Configuracao;
-using Cotacao;
 using DataBase;
+using TraderWizard.ServicosDeAplicacao;
 using WebAccess;
 
 namespace TraderWizard
