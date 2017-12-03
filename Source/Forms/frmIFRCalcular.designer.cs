@@ -216,7 +216,7 @@ namespace Forms
             this.MaximizeBox = false;
             this.Name = "frmIFRCalcular";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Calcular IFR";
+            this.Text = "CalcularVolatilidadeDiaria IFR";
             this.Load += new System.EventHandler(this.frmIDiarioCalcular_Load);
             this.Panel1.ResumeLayout(false);
             this.pnlAtivosEscolher.ResumeLayout(false);

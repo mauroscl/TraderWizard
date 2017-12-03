@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Dominio.Entidades;
 using DTO;
@@ -14,5 +15,7 @@ namespace DataBase.Interfaces
 		IList<CotacaoDiaria> CarregaComIFRSobrevendidoSemSimulacao(Ativo pobjAtivo, Setup pobjSetup, double pdblValorMaximoIFRSobrevendido, cEnum.enumMediaTipo pintMediaTipo);
 
 		IList<CotacaoDiaria> CarregarParaIFRComFiltro(Ativo pobjAtivo, Setup pobjSetup, cEnum.enumMediaTipo pintMediaTipo, System.DateTime pdtmDataInicial);
+	    ICollection<CotacaoOscilacao> CarregarOscilacaoPorAtivo(string codigo);
+	    IDictionary<string, List<CotacaoOscilacao>> CarregarOscilacaoAPartirDe(DateTime dataInicialDados);
 	}
 }

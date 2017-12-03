@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
 using DataBase.Interfaces;
 using Dominio.Entidades;
 using DTO;
@@ -93,8 +96,7 @@ namespace DataBase.Carregadores
 
 		        foreach (MediaDTO mediaDto in plstMedias)
 				{
-				    double valordaMedia;
-				    if (double.TryParse(Convert.ToString( objRS.Field(mediaDto.GetAlias)),out valordaMedia)) {
+				    if (double.TryParse(Convert.ToString( objRS.Field(mediaDto.GetAlias)),out var valordaMedia)) {
                         objCotacaoDiaria.Medias.Add(new MediaDiaria(objCotacaoDiaria, mediaDto.CampoTipoBd, mediaDto.NumPeriodos, valordaMedia));
 					}
 				}
@@ -207,20 +209,20 @@ namespace DataBase.Carregadores
 			//FALSE nesta chamada porque será feito uma verificação aqui nesta função se o setup será acionado.
 			//Se o parâmetro for passado com valor TRUE retornará apenas as datas em que houver rompimento 
 			//no período seguinte ao período em que o IFR cruzou a média. 
-			string strSQL = GeradorQuery.BackTestingIFRComFiltroEntradaQueryGerar(Conexao.ObterFormatadorDeCampo() , pobjAtivo.Codigo, "DIARIO", "TODOS", 1, pintMediaTipo, pdtmDataInicial, false, true);
+			string strSql = GeradorQuery.BackTestingIFRComFiltroEntradaQueryGerar(Conexao.ObterFormatadorDeCampo() , pobjAtivo.Codigo, "DIARIO", "TODOS", 1, pintMediaTipo, pdtmDataInicial, false, true);
 
 			//inclui ordenamento por data.
-			strSQL += " ORDER BY Dia2.Data ";
+			strSql += " ORDER BY Dia2.Data ";
 
 			RS objRS = new RS(Conexao);
 
-			objRS.ExecuteQuery(strSQL);
+			objRS.ExecuteQuery(strSql);
 
 			List<CotacaoDiaria> lstRetorno = new List<CotacaoDiaria>();
 
 		    string strTipoMedia = MediaTipoCalcular(pintMediaTipo);
 
-			objRS.ExecuteQuery(strSQL);
+			objRS.ExecuteQuery(strSql);
 
 
 			while (!objRS.Eof) {
@@ -254,6 +256,74 @@ namespace DataBase.Carregadores
 
 		}
 
+	    public ICollection<CotacaoOscilacao> CarregarOscilacaoPorAtivo(string codigo)
+	    {
+	        var funcoesBd = Conexao.ObterFormatadorDeCampo();
+	        var sb = new StringBuilder();
+	        sb
+	            .Append("SELECT Data, 1 + Oscilacao / 100 AS Oscilacao ")
+	            .Append("FROM Cotacao ")
+	            .Append($"WHERE Codigo = {funcoesBd.CampoStringFormatar(codigo)} ")
+                .Append($"ORDER BY Data");
+
+	        var rs = new RS(Conexao);
+            rs.ExecuteQuery(sb.ToString());
+
+	        var oscilacoes = new Collection<CotacaoOscilacao>();
+
+	        while (!rs.Eof)
+	        {
+                var oscilacao = new CotacaoOscilacao
+                {
+                    Data = Convert.ToDateTime(rs.Field("Data")),
+                    Oscilacao = Convert.ToDecimal(rs.Field("Oscilacao"))
+                };
+                oscilacoes.Add(oscilacao);
+	            rs.MoveNext();
+	        }
+
+            rs.Fechar();
+
+	        return oscilacoes;
+
+	    }
+
+	    public IDictionary<string, List<CotacaoOscilacao>> CarregarOscilacaoAPartirDe(DateTime dataInicialDados)
+	    {
+	        var funcoesBd = Conexao.ObterFormatadorDeCampo();
+	        var sb = new StringBuilder();
+	        sb
+	            .Append("SELECT Codigo, Data, 1 + Oscilacao / 100 AS Oscilacao ")
+	            .Append("FROM Cotacao ")
+	            .Append($"WHERE Data >= {funcoesBd.CampoDateFormatar(dataInicialDados)} ")
+	            .Append($"ORDER BY Codigo, Data");
+
+	        var rs = new RS(Conexao);
+	        rs.ExecuteQuery(sb.ToString());
+
+	        var oscilacoes = new Collection<CotacaoOscilacao>();
+
+	        while (!rs.Eof)
+	        {
+	            var oscilacao = new CotacaoOscilacao
+	            {
+                    Codigo = rs.Field("Codigo").ToString(),
+	                Data = Convert.ToDateTime(rs.Field("Data")),
+	                Oscilacao = Convert.ToDecimal(rs.Field("Oscilacao"))
+	            };
+	            oscilacoes.Add(oscilacao);
+	            rs.MoveNext();
+	        }
+
+	        rs.Fechar();
+
+            //ativos que não tiverem pelo menos 21 oscilações não pode ser calculada a volatilidade
+	        IDictionary<string, List<CotacaoOscilacao>> dictionary = oscilacoes.GroupBy(o => o.Codigo)
+                .Where(g => g.Count() >= 21)
+                .ToDictionary(x => x.Key, x => x.ToList());
+
+	        return dictionary;
+	    }
 	}
 
 }

@@ -12,13 +12,13 @@ namespace TraderWizard.ServicosDeAplicacao
     {
 
         private readonly Conexao _conexao;
-        private readonly CotacaoData _cotacaoData;
+        private readonly CotacaoDataService _cotacaoData;
         private readonly GeradorQuery _geradorQuery;
 
         public ValoresExtremosService()
         {
             _conexao = new Conexao();
-            _cotacaoData = new CotacaoData();
+            _cotacaoData = new CotacaoDataService();
             _geradorQuery = new GeradorQuery(_conexao.ObterFormatadorDeCampo());
         }
 

@@ -66,6 +66,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Carregadores\CarregadorCotacaoSemanal.cs" />
     <Compile Include="Carregadores\CarregadorDeAtivo.cs" />
     <Compile Include="Carregadores\CarregadorCarteira.cs" />
     <Compile Include="Carregadores\CarregadorClassificacaoMedia.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="Carregadores\CarregadorSetup.cs" />
     <Compile Include="Carregadores\CarregadorSimulacaoIFRDiario.cs" />
     <Compile Include="Carregadores\CarregadorSplit.cs" />
+    <Compile Include="Carregadores\CarregadorVolatilidade.cs" />
     <Compile Include="Carregadores\GeradorOperacaoBDPadrao.cs" />
     <Compile Include="Carregadores\ManipuladorIFRSimulacaoDiaria.cs" />
     <Compile Include="Carregadores\ManipuladorIFRSimulacaoDiariaDetalhe.cs" />

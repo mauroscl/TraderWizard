@@ -49,16 +49,17 @@ namespace TraderWizard.ServicosDeAplicacao
             var pathToExtract = $"{pathLocal}\\unzip";
             var pathArquivoCotacoes = $"{pathToExtract}\\{nomeArquivoCotacoes}";
             //baixar arquivo zip
-            var url = $"http://www.bmfbovespa.com.br/pesquisapregao/download?filelist={nomeArquivoCotacoes}";
             if (!File.Exists(pathArquivoLocal))
             {
+                var url = GeradorNomeArquivo.GerarUlrBoletimDiario(data);
                 if (!_web.DownloadWithProxy(url, pathLocal, nomeArquivoDownload))
                 {
                     throw new Exception($"Não foi possível baixar o arquivo de cotações na data {data:d}.");
                 }
 
             }
-            if (!Directory.GetFiles(pathToExtract, "*.xml").Any())
+            string[] arquivosXml = Directory.GetFiles(pathToExtract, "*.xml");
+            if (!arquivosXml.Any())
             {
                 //extrair primeiro arquivo
                 var zipFile1 = new ZipFile(pathArquivoLocal);
@@ -67,10 +68,12 @@ namespace TraderWizard.ServicosDeAplicacao
                 //extrair segundo arquivo
                 var zipFile2 = new ZipFile(pathArquivoCotacoes);
                 zipFile2.ExtractAll(pathToExtract);
+
+                arquivosXml = Directory.GetFiles(pathToExtract, "*.xml");
             }
 
             //selecionar arquivo
-            string fileToRead = Directory.GetFiles(pathToExtract, "*.xml").First();
+            string fileToRead = arquivosXml.First();
 
             return fileToRead;
 

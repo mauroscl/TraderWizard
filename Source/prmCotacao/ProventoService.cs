@@ -12,13 +12,13 @@ namespace TraderWizard.ServicosDeAplicacao
     {
 
         private readonly Conexao _conexao;
-        private readonly CotacaoData _cotacaoData;
+        private readonly CotacaoDataService _cotacaoData;
         private readonly ServicoDeCotacao _servicoDeCotacao;
 
         public ProventoService()
         {
             this._conexao = new Conexao();
-            this._cotacaoData = new CotacaoData();
+            this._cotacaoData = new CotacaoDataService();
             this._servicoDeCotacao = new ServicoDeCotacao();
         }
         /// <summary>

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Dominio.Entidades;
 using Dominio.Regras;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TesteSemAcessarBancoDeDados.Geral;
 
 namespace TesteSemAcessarBancoDeDados
 {

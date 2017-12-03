@@ -8,7 +8,7 @@ namespace Configuracao
 		public static string GerarUlrBoletimDiario(DateTime data)
 		{
 		    var url = BuscarConfiguracao.ObterUrlBoletimDiario();
-		    return $"{url}?PR{data:yyMMdd}.zip";
+		    return $"{url}?filelist=PR{data:yyMMdd}.zip";
 		}
 
 	    public static string GerarUrlCotacaoHistorica(DateTime data)

@@ -19,7 +19,7 @@ namespace TraderWizard.ServicosDeAplicacao
 		private readonly Conexao _conexao;
 
 	    private readonly SequencialService _sequencialService;
-	    private readonly CotacaoData _cotacaoData;
+	    private readonly CotacaoDataService _cotacaoDataService;
 	    private readonly GeradorQuery _geradorQuery;
 	    private readonly CalculadorDeIfr _atualizadorDeIfr;
 	    private readonly FuncoesBd _funcoesBd;
@@ -38,7 +38,7 @@ namespace TraderWizard.ServicosDeAplicacao
 		    _conexao = conexao;
 		    _funcoesBd = conexao.ObterFormatadorDeCampo();
             _sequencialService = new SequencialService();
-            _cotacaoData = new CotacaoData();
+            _cotacaoDataService = new CotacaoDataService();
             _geradorQuery = new GeradorQuery(_conexao.ObterFormatadorDeCampo());
             _atualizadorDeIfr = new CalculadorDeIfr();
 		}
@@ -269,7 +269,7 @@ namespace TraderWizard.ServicosDeAplicacao
 
 
 					if (pdtmDataInicial != Constantes.DataInvalida) {
-						dtmCalculoDataInicial = this._cotacaoData.AtivoCotacaoAnteriorDataConsultar(strCodigo, pdtmDataInicial, "Cotacao", objConnAux);
+						dtmCalculoDataInicial = this._cotacaoDataService.AtivoCotacaoAnteriorDataConsultar(strCodigo, pdtmDataInicial, "Cotacao", objConnAux);
 
 					}
 
@@ -448,7 +448,7 @@ namespace TraderWizard.ServicosDeAplicacao
 					//Quando o próximo registro tiver data diferente tem que atualizar a oscilação e a diferença
 					// da data atual, pois na próxima iteração os cálculos já serão referentes à outra data.
 
-					DateTime dtmCotacaoAnteriorData = this._cotacaoData.AtivoCotacaoAnteriorDataConsultar(pstrCodigo, dtmDataAtual, "Cotacao", objConnAux);
+					DateTime dtmCotacaoAnteriorData = this._cotacaoDataService.AtivoCotacaoAnteriorDataConsultar(pstrCodigo, dtmDataAtual, "Cotacao", objConnAux);
 
 					//busca a cotação anterior do ativo.
 					string strQuery = " select ValorFechamento " + " from Cotacao " + " where Codigo = " + FuncoesBd.CampoStringFormatar(pstrCodigo) + " and Data = " + FuncoesBd.CampoDateFormatar(dtmCotacaoAnteriorData);
@@ -581,7 +581,7 @@ namespace TraderWizard.ServicosDeAplicacao
 
 			if (intIFRNumPeriodos == -1) {
 
-                DateTime dtmDataFinalBuscaSplit = pstrTabela.ToUpper() == "COTACAO_SEMANAL" ? _cotacaoData.AtivoCotacaoSemanalUltimoDiaSemanaCalcular(pstrCodigo, pdtmDataFinal) : pdtmDataFinal;
+                DateTime dtmDataFinalBuscaSplit = pstrTabela.ToUpper() == "COTACAO_SEMANAL" ? _cotacaoDataService.AtivoCotacaoSemanalUltimoDiaSemanaCalcular(pstrCodigo, pdtmDataFinal) : pdtmDataFinal;
 
 				var objCarregadorSplit = new CarregadorSplit(objRS.Conexao);
 
@@ -605,7 +605,7 @@ namespace TraderWizard.ServicosDeAplicacao
 
 		            if (dataDoUltimoSplit != dataDoSplitAtual)
                     {
-                        dtmDataInicialSplit = pstrTabela.ToUpper() == "COTACAO" ?  dataDoSplitAtual : _cotacaoData.PrimeiraSemanaDataCalcular(dataDoSplitAtual);
+                        dtmDataInicialSplit = pstrTabela.ToUpper() == "COTACAO" ?  dataDoSplitAtual : _cotacaoDataService.PrimeiraSemanaDataCalcular(dataDoSplitAtual);
 
 						dblDadoAcumulado = dblDadoAcumulado + (double) CotacaoPeriodoCampoSomar(pstrCodigo, dtmDataInicialSplit, dtmDataFinalSplit, pstrTabela, strCampo) * dblSplitAcumulado;
 
@@ -804,7 +804,7 @@ namespace TraderWizard.ServicosDeAplicacao
 
 			    var dtmDataInicial = new DateTime();
 			    var dtmDataFinal = new DateTime();
-			    if (_cotacaoData.NumPeriodosDataInicialCalcular(pstrCodigo, pintNumPeriodos, true, ref dtmDataInicial, ref dtmDataFinal, pstrTabela,-1 , objConnAux))
+			    if (_cotacaoDataService.NumPeriodosDataInicialCalcular(pstrCodigo, pintNumPeriodos, true, ref dtmDataInicial, ref dtmDataFinal, pstrTabela,-1 , objConnAux))
 				{
 				    var calculadorData = new CalculadorData(_conexao);
 
@@ -1111,7 +1111,7 @@ namespace TraderWizard.ServicosDeAplicacao
 
 				} else {
 					dtmDataInicialAux = cotacaoDataDto.Data ;
-					dtmCotacaoAnteriorData = this._cotacaoData.AtivoCotacaoAnteriorDataConsultar(cotacaoDataDto.Codigo, dtmDataInicialAux, strTabela);
+					dtmCotacaoAnteriorData = this._cotacaoDataService.AtivoCotacaoAnteriorDataConsultar(cotacaoDataDto.Codigo, dtmDataInicialAux, strTabela);
 				}
 
 				//For Each objStructMedia In pcolMedia
@@ -1386,9 +1386,9 @@ namespace TraderWizard.ServicosDeAplicacao
 			DateTime dtmDataSegundaFeira;
 
 			if (pdtmDataBase != Constantes.DataInvalida) {
-				dtmDataSegundaFeira = _cotacaoData.PrimeiraSemanaDataCalcular(pdtmDataBase);
+				dtmDataSegundaFeira = _cotacaoDataService.PrimeiraSemanaDataCalcular(pdtmDataBase);
 			} else {
-				dtmDataSegundaFeira = _cotacaoData.PrimeiraSemanaDataCalcular(pstrCodigo, objConnAux);
+				dtmDataSegundaFeira = _cotacaoDataService.PrimeiraSemanaDataCalcular(pstrCodigo, objConnAux);
 			}
 
 		    //a data maior da semana é sempre a data de sexta-feira, que são quatro dias após a segunda
@@ -1404,7 +1404,7 @@ namespace TraderWizard.ServicosDeAplicacao
 
 			if (pdtmDataBase != Constantes.DataInvalida) {
 
-                DateTime dtmCotacaoAnteriorData = this._cotacaoData.AtivoCotacaoAnteriorDataConsultar(pstrCodigo, dtmDataSegundaFeira, "Cotacao_Semanal", objConnAux);
+                DateTime dtmCotacaoAnteriorData = this._cotacaoDataService.AtivoCotacaoAnteriorDataConsultar(pstrCodigo, dtmDataSegundaFeira, "Cotacao_Semanal", objConnAux);
 
                 decimal valorDeAbertura = 0;
 				//busca o valor de fechamento nesta data.
@@ -1461,7 +1461,7 @@ namespace TraderWizard.ServicosDeAplicacao
 
 		    objCommand.BeginTrans();
 
-			DateTime dtmDataSegundaFeira = _cotacaoData.PrimeiraSemanaDataCalcular(pdtmDataBase);
+			DateTime dtmDataSegundaFeira = _cotacaoDataService.PrimeiraSemanaDataCalcular(pdtmDataBase);
 
 			CarregadorSplit objCarregadorSplit = new CarregadorSplit(objConnAux);
 
@@ -1472,12 +1472,12 @@ namespace TraderWizard.ServicosDeAplicacao
 
 			while (!objRSSplit.Eof) {
 				//CALCULA A DATA DA SEGUNDA-FEIRA E DA SEXTA-FEIRA DA SEMANA EM QUE HÁ SPLIT.
-				dtmDataSegundaFeira = _cotacaoData.PrimeiraSemanaDataCalcular(Convert.ToDateTime(objRSSplit.Field("Data")));
+				dtmDataSegundaFeira = _cotacaoDataService.PrimeiraSemanaDataCalcular(Convert.ToDateTime(objRSSplit.Field("Data")));
 
 				//a data maior da semana é sempre a data de sexta-feira, que são quatro dias após a segunda
 				DateTime dtmDataSextaFeira = dtmDataSegundaFeira.AddDays(4);
 
-				DateTime dtmCotacaoAnteriorData = this._cotacaoData.AtivoCotacaoAnteriorDataConsultar(pstrCodigo, dtmDataSegundaFeira, "Cotacao_Semanal", objConnAux);
+				DateTime dtmCotacaoAnteriorData = this._cotacaoDataService.AtivoCotacaoAnteriorDataConsultar(pstrCodigo, dtmDataSegundaFeira, "Cotacao_Semanal", objConnAux);
 
 				//busca o valor de fechamento nesta data.
 			    decimal pdecValorAberturaRet = -1M;
@@ -1688,6 +1688,10 @@ namespace TraderWizard.ServicosDeAplicacao
 			    blnMmExpOk = MediaMovelGeralCalcular("DIARIO", lstMediasSelecionadas, pdtmDataBase, pstrAtivos);
 			}
 
+		    var calculadorDeVolatilidade = new CalculadorDeVolatilidade();
+            calculadorDeVolatilidade.CalcularVolatilidadeDiaria(pdtmDataBase);
+            calculadorDeVolatilidade.CalcularMediaVolatilidadeDiaria(pdtmDataBase);
+
 		    return (blnOk && blnIfrok && blnMmExpOk);
 
 		}
@@ -1781,6 +1785,13 @@ namespace TraderWizard.ServicosDeAplicacao
 						blnOk = false;
 					}
 				}
+
+			    var primeiraDataDaSemana = _cotacaoDataService.AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular("PETR4", pdtmDataBase);
+
+			    var calculadorDeVolatilidade = new CalculadorDeVolatilidade();
+                calculadorDeVolatilidade.CalcularVolatilidadeSemanal(primeiraDataDaSemana);
+                calculadorDeVolatilidade.CalcularMediaVolatilidadeSemanal(primeiraDataDaSemana);
+			    
 			}
             else
             {
@@ -1813,7 +1824,9 @@ namespace TraderWizard.ServicosDeAplicacao
 		/// e no cálculo de todos os dados da tabela COTACAO_SEMANAL</param>
 		/// <returns></returns>
 		/// <remarks></remarks>
-		public bool DadosRecalcular(bool pblnCotacaoDiariaOscilacaoCalcular, bool pblnCotacaoDiariaOscilacaoPercentualCalcular, bool pblnCotacaoDiariaIFRCalcular, bool pblnCotacaoDiariaMMExpCalcular, bool pblnCotacaoDiariaVolumeMedioCalcular, bool pblnCotacaoDiariaIFRMedioCalcular, bool pblnCotacaoSemanalDadosCalcular, bool pblnCotacaoSemanalIFRCalcular, bool pblnCotacaoSemanalMMExpCalcular, bool pblnCotacaoSemanalVolumeMedioCalcular,
+		public bool DadosRecalcular(bool pblnCotacaoDiariaOscilacaoCalcular, bool pblnCotacaoDiariaOscilacaoPercentualCalcular, bool pblnCotacaoDiariaIFRCalcular, 
+            bool pblnCotacaoDiariaMMExpCalcular, bool pblnCotacaoDiariaVolumeMedioCalcular, bool pblnCotacaoDiariaIFRMedioCalcular, bool pblnCotacaoSemanalDadosCalcular
+            , bool pblnCotacaoSemanalIFRCalcular, bool pblnCotacaoSemanalMMExpCalcular, bool pblnCotacaoSemanalVolumeMedioCalcular,
 		bool pblnCotacaoSemanalIFRMedioCalcular, DateTime pdtmDataInicial, string pstrAtivos = "", bool pblnCotacaoAnteriorInicializar = true, bool pblnConsiderarApenasDataSplit = false)
 		{
 
@@ -1822,13 +1835,15 @@ namespace TraderWizard.ServicosDeAplicacao
 
 
 			if (pblnCotacaoDiariaOscilacaoCalcular || pblnCotacaoDiariaIFRCalcular || pblnCotacaoDiariaMMExpCalcular || pblnCotacaoDiariaVolumeMedioCalcular || pblnCotacaoDiariaIFRMedioCalcular) {
-				blnOkCotacaoDiaria = CotacaoDiariaDadosAtualizar(pblnCotacaoDiariaOscilacaoCalcular, pblnCotacaoDiariaOscilacaoPercentualCalcular, pblnCotacaoDiariaIFRCalcular, pblnCotacaoDiariaMMExpCalcular, pblnCotacaoDiariaVolumeMedioCalcular, pblnCotacaoDiariaIFRMedioCalcular, pdtmDataInicial, pstrAtivos, pblnCotacaoAnteriorInicializar, pblnConsiderarApenasDataSplit);
+				blnOkCotacaoDiaria = CotacaoDiariaDadosAtualizar(pblnCotacaoDiariaOscilacaoCalcular, pblnCotacaoDiariaOscilacaoPercentualCalcular, pblnCotacaoDiariaIFRCalcular, pblnCotacaoDiariaMMExpCalcular
+                    , pblnCotacaoDiariaVolumeMedioCalcular, pblnCotacaoDiariaIFRMedioCalcular, pdtmDataInicial, pstrAtivos, pblnCotacaoAnteriorInicializar, pblnConsiderarApenasDataSplit);
 
 			}
 
 
 			if (pblnCotacaoSemanalDadosCalcular || pblnCotacaoSemanalIFRCalcular || pblnCotacaoSemanalMMExpCalcular || pblnCotacaoSemanalVolumeMedioCalcular || pblnCotacaoSemanalIFRMedioCalcular) {
-				blnOkCotacaoSemanal = CotacaoSemanalDadosAtualizar(pblnCotacaoSemanalDadosCalcular, pblnCotacaoSemanalIFRCalcular, pblnCotacaoSemanalMMExpCalcular, pblnCotacaoSemanalVolumeMedioCalcular, pblnCotacaoSemanalIFRMedioCalcular, pdtmDataInicial, pstrAtivos, pblnConsiderarApenasDataSplit);
+				blnOkCotacaoSemanal = CotacaoSemanalDadosAtualizar(pblnCotacaoSemanalDadosCalcular, pblnCotacaoSemanalIFRCalcular, pblnCotacaoSemanalMMExpCalcular, pblnCotacaoSemanalVolumeMedioCalcular,
+                    pblnCotacaoSemanalIFRMedioCalcular, pdtmDataInicial, pstrAtivos, pblnConsiderarApenasDataSplit);
 
 			}
 
@@ -2008,46 +2023,31 @@ namespace TraderWizard.ServicosDeAplicacao
 				//se não recebeu uma data final, que é a data da primeira média que deve ser calculada, então tem
 				//que calcular desde o inicio das cotações. Para descobrir o primeiro período chamada a função
 
-				if (!this._cotacaoData.NumPeriodosDataInicialCalcular(pstrCodigo, pintNumPeriodos, true, ref dtmDataInicial,ref pdtmDataFinal, strTabelaDados, intNumPeriodosTabelaDados)) {
+				if (!this._cotacaoDataService.NumPeriodosDataInicialCalcular(pstrCodigo, pintNumPeriodos, true, ref dtmDataInicial,ref pdtmDataFinal, strTabelaDados, intNumPeriodosTabelaDados)) {
 					//se não foi possível calcular o período, provavelmente porque não tem cotações
 					//suficientes faz rollback.
 					objCommand.RollBackTrans();
 					return cEnum.enumRetorno.RetornoErro2;
 				}
 
-			} else {
-				//se já recebeu a data final por parâmetro tem apenas que calcular a data inicial.
+			} else
+			{
+			    //se já recebeu a data final por parâmetro tem apenas que calcular a data inicial.
 				//Para isso:
 				//Buscar os registros anteriores à data final, considerando na busca a data final, 
 				//ordenando por data decrescente crescente. Em cima destes dados, buscar 
 				//os top intNumPeriodos registros e dentro destes top registros buscar 
 				//o registro com menor data. Esta será a data inicial.
 
-                var subQuery = " select top " + pintNumPeriodos + " Data " + 
-                    "FROM " + strTabelaDados + 
-                    " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " and Data <= " + funcoesBd.CampoDateFormatar(pdtmDataFinal);
+			    dtmDataInicial = _cotacaoDataService.CalcularDataInicial(pstrCodigo, pintNumPeriodos, pdtmDataFinal, strTabelaDados, intNumPeriodosTabelaDados);
 
-				if (intNumPeriodosTabelaDados != -1) {
-                    subQuery += " and NumPeriodos = " + intNumPeriodosTabelaDados;
-				}
+			    //verifica se o período entre as datas calculas é o mesmo recebido por parâmetro
 
-				subQuery += " order by Data desc " ;
-
-                strQuery = "select min(Data) as DataInicial " + " from " + funcoesBd.FormataSubSelect(subQuery);
-
-				objRS.ExecuteQuery(strQuery);
-
-				dtmDataInicial = Convert.ToDateTime(objRS.Field("DataInicial", Constantes.DataInvalida));
-
-				objRS.Fechar();
-
-				//verifica se o período entre as datas calculas é o mesmo recebido por parâmetro
-
-				if (!_cotacaoData.IntervaloNumPeriodosVerificar(pstrCodigo, dtmDataInicial, pdtmDataFinal, pintNumPeriodos, strTabelaDados, intNumPeriodosTabelaDados, objConnAux)) {
+				if (!_cotacaoDataService.IntervaloNumPeriodosVerificar(pstrCodigo, dtmDataInicial, pdtmDataFinal, pintNumPeriodos, strTabelaDados, intNumPeriodosTabelaDados, objConnAux)) {
 					//se o intervalo calculado não contém o número de períodos necessários,
 					//então tenta buscar um intervalo desde o início das cotações
 
-					if (!_cotacaoData.NumPeriodosDataInicialCalcular(pstrCodigo, pintNumPeriodos, true,ref dtmDataInicial, ref pdtmDataFinal, strTabelaDados, intNumPeriodosTabelaDados)) {
+					if (!_cotacaoDataService.NumPeriodosDataInicialCalcular(pstrCodigo, pintNumPeriodos, true,ref dtmDataInicial, ref pdtmDataFinal, strTabelaDados, intNumPeriodosTabelaDados)) {
 						//se não foi possível calcular o período, provavelmente porque não tem cotações
 						//suficientes faz rollback.
 						objCommand.RollBackTrans();
@@ -2056,8 +2056,7 @@ namespace TraderWizard.ServicosDeAplicacao
 
 					}
 
-				} 
-
+				}
 			}
 
 			//Criar dois recordsets.  O primeiro (RS1) deve buscar todas as datas de cotação com 
@@ -2151,7 +2150,7 @@ namespace TraderWizard.ServicosDeAplicacao
 
 		}
 
-		private bool CotacaoAnteriorInicializar(string pstrPeriodo, DateTime pdtmDataInicial, string pstrAtivos = "")
+	    private bool CotacaoAnteriorInicializar(string pstrPeriodo, DateTime pdtmDataInicial, string pstrAtivos = "")
 		{
 
 			Conexao objConexaoAux = new Conexao();
@@ -2375,7 +2374,7 @@ namespace TraderWizard.ServicosDeAplicacao
 							//quando a cotação é semanal, a data inicial tem que ser a data menor ou igual a data do split,
 							//pois se ocorrer um split em uma data que não for a primeira data da semana, toda as cotações
 							//desta semana já foram convertidas para a razão do split
-							dtmDataMinima = _cotacaoData.AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular(pstrCodigoAtivo, dtmDataMinima);
+							dtmDataMinima = _cotacaoDataService.AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular(pstrCodigoAtivo, dtmDataMinima);
 
 						}
 
@@ -2387,7 +2386,7 @@ namespace TraderWizard.ServicosDeAplicacao
 					} else if (pstrPeriodicidade == "SEMANAL")
 					{
 					    DateTime dataDoProximoSplit = Convert.ToDateTime(objRSListSplit.NextField("Data", Constantes.DataInvalida));
-                        DateTime primeiraDataDaSemana = dataDoProximoSplit == Constantes.DataInvalida ? Constantes.DataInvalida :_cotacaoData.AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular(pstrCodigoAtivo,dataDoProximoSplit);
+                        DateTime primeiraDataDaSemana = dataDoProximoSplit == Constantes.DataInvalida ? Constantes.DataInvalida :_cotacaoDataService.AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular(pstrCodigoAtivo,dataDoProximoSplit);
 						blnRealizarConsultaUnitaria = (dtmDataMinima <= pdtmDataFinal) && (dtmDataMinima != primeiraDataDaSemana);
 					}
 
@@ -2431,7 +2430,7 @@ namespace TraderWizard.ServicosDeAplicacao
 
 
 						} else if (pstrPeriodicidade == "SEMANAL") {
-							blnAtribuirOperador = dtmDataMinima != _cotacaoData.AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular(pstrCodigoAtivo, Convert.ToDateTime(objRSListSplit.NextField("Data", Constantes.DataInvalida)));
+							blnAtribuirOperador = dtmDataMinima != _cotacaoDataService.AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular(pstrCodigoAtivo, Convert.ToDateTime(objRSListSplit.NextField("Data", Constantes.DataInvalida)));
 
 						}
 

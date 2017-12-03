@@ -1,5 +1,6 @@
 using Dominio.Entidades;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TesteSemAcessarBancoDeDados.Geral;
 
 namespace TesteSemAcessarBancoDeDados
 {

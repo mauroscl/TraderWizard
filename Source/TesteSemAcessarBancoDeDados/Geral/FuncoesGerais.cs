@@ -4,7 +4,7 @@ using prjCandle;
 using prjCandle.Desenho;
 using TraderWizard.Enumeracoes;
 
-namespace TesteSemAcessarBancoDeDados
+namespace TesteSemAcessarBancoDeDados.Geral
 {
 
 	public class FuncoesGerais

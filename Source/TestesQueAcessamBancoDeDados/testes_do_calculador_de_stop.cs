@@ -113,7 +113,7 @@ namespace TestProject1
 			//TODO: Refazer teste
 			//Dim objCalculadorStop As New cCalculadorStop(Me.objConexao)
 
-			//Dim decValorStop As Decimal = objCalculadorStop.Calcular(New cAtivo("CSNA3"), New Date(2011, 5, 11), 23, 22.35, 22.35)
+			//Dim decValorStop As Decimal = objCalculadorStop.CalcularVolatilidadeDiaria(New cAtivo("CSNA3"), New Date(2011, 5, 11), 23, 22.35, 22.35)
 
 			//Assert.AreEqual(New Decimal(23), decValorStop)
 
@@ -126,7 +126,7 @@ namespace TestProject1
 			//TODO: Refazer teste
 			//Dim objCalculadorStop As New cCalculadorStop(Me.objConexao)
 
-			//Dim decValorStop As Decimal = objCalculadorStop.Calcular(New cAtivo("CSNA3"), New Date(2011, 1, 27), 21, 28.37, 28.18)
+			//Dim decValorStop As Decimal = objCalculadorStop.CalcularVolatilidadeDiaria(New cAtivo("CSNA3"), New Date(2011, 1, 27), 21, 28.37, 28.18)
 
 			//'Pegou abaixo da mínima do dia 20/01/2011, que foi 28.04
 			//Assert.AreEqual(New Decimal(27.97), decValorStop)
@@ -140,7 +140,7 @@ namespace TestProject1
 			//TODO: Refazer teste
 			//Dim objCalculadorStop As New cCalculadorStop(Me.objConexao)
 
-			//Dim decValorStop As Decimal = objCalculadorStop.Calcular(New cAtivo("CSNA3"), New Date(2011, 1, 13), 21, 29.7, 29.61)
+			//Dim decValorStop As Decimal = objCalculadorStop.CalcularVolatilidadeDiaria(New cAtivo("CSNA3"), New Date(2011, 1, 13), 21, 29.7, 29.61)
 
 			//'Pegou abaixo da mínima do dia 11/01/2011, que foi 29.04
 			//Assert.AreEqual(New Decimal(28.97), decValorStop)

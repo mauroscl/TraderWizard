@@ -306,7 +306,7 @@ namespace Forms
             this.chkCalcularDados.Name = "chkCalcularDados";
             this.chkCalcularDados.Size = new System.Drawing.Size(98, 17);
             this.chkCalcularDados.TabIndex = 4;
-            this.chkCalcularDados.Text = "Calcular Dados";
+            this.chkCalcularDados.Text = "CalcularVolatilidadeDiaria Dados";
             this.chkCalcularDados.UseVisualStyleBackColor = true;
             // 
             // frmCotacaoAtualizarPeriodo

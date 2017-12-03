@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using prjCandle;
 using prjCandle.Desenho;
+using TesteSemAcessarBancoDeDados.Geral;
 
 namespace TesteSemAcessarBancoDeDados.UI.FerramentaDeDesenho
 {

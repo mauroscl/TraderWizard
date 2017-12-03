@@ -17,23 +17,15 @@ namespace TraderWizard.ServicosDeAplicacao
     {
 
         private readonly Conexao _conexao;
-        /// <summary>
-        /// contém o objeto que faz downloads na internet.
-        /// </summary>
-        /// <remarks></remarks>
-
-        private readonly Web _web;
-
         private readonly SequencialService _sequencialService;
-        private readonly CotacaoData _cotacaoData;
+        private readonly CotacaoDataService _cotacaoData;
         private readonly ServicoDeCotacao _servicoDeCotacao;
 
         public AtualizadorDeCotacao()
         {
             this._conexao = new Conexao();
-            this._web = new Web(this._conexao);
             this._sequencialService = new SequencialService();
-            this._cotacaoData = new CotacaoData();
+            this._cotacaoData = new CotacaoDataService();
             this._servicoDeCotacao = new ServicoDeCotacao();
         }
 
@@ -90,15 +82,15 @@ namespace TraderWizard.ServicosDeAplicacao
 
             DateTime? dtmDataUltimaCotacao = null;
 
-            var objCalculadorData = new CalculadorData(_conexao);
+            var calculadorData = new CalculadorData(_conexao);
 
             ICollection<string> ativosDesconsiderados = ObterAtivosDesconsiderados();
 
             var command = new Command(this._conexao);
 
-            if (!objCalculadorData.DiaUtilVerificar(pdtmDataInicial))
+            if (!calculadorData.DiaUtilVerificar(pdtmDataInicial))
             {
-                pdtmDataInicial = objCalculadorData.DiaUtilSeguinteCalcular(pdtmDataInicial);
+                pdtmDataInicial = calculadorData.DiaUtilSeguinteCalcular(pdtmDataInicial);
             }
 
             var dataInicioRecalculo = pdtmDataInicial;
@@ -159,7 +151,7 @@ namespace TraderWizard.ServicosDeAplicacao
 
                 dtmDataUltimaCotacao = pdtmDataInicial;
                 //incrementa um dia na data inicial
-                pdtmDataInicial = objCalculadorData.DiaUtilSeguinteCalcular(pdtmDataInicial);
+                pdtmDataInicial = calculadorData.DiaUtilSeguinteCalcular(pdtmDataInicial);
 
             }
 

@@ -15,12 +15,12 @@ namespace TraderWizard.ServicosDeAplicacao
     {
 
         private readonly Conexao _conexao;
-        private readonly CotacaoData _cotacaoData;
+        private readonly CotacaoDataService _cotacaoData;
 
         public CalculadorDeIfr()
         {
             this._conexao = new Conexao();
-            _cotacaoData = new CotacaoData();
+            _cotacaoData = new CotacaoDataService();
         }
 
         /// <summary>
@@ -618,16 +618,6 @@ namespace TraderWizard.ServicosDeAplicacao
                 }
 
             }
-
-
-            //'*************************************************
-            //'UTILIZADO PARA DEBUG. COLOCAR O CÓDIGO DE UM PAPEL
-            //If strWhere <> "" Then strWhere = strWhere & " and "
-
-            //strWhere = strWhere _
-            //& " Codigo = " & FuncoesBD.CampoStringFormatar("GGBR4")
-            //'*************************************************
-
 
             if (!string.IsNullOrEmpty(strWhere))
             {

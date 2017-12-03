@@ -20,13 +20,13 @@ namespace TraderWizard.ServicosDeAplicacao
 
 
 		private readonly Conexao _conexao;
-	    private readonly CotacaoData _cotacaoData;
+	    private readonly CotacaoDataService _cotacaoData;
 	    private readonly FuncoesBd _funcoesBd;
 
 		public cRelatorio(Conexao conexao)
 		{
 			_conexao = conexao;
-            this._cotacaoData = new CotacaoData();
+            this._cotacaoData = new CotacaoDataService();
 		    this._funcoesBd = conexao.ObterFormatadorDeCampo();
 		}
 
@@ -1532,7 +1532,7 @@ namespace TraderWizard.ServicosDeAplicacao
 			//valor máximo que pode ser perdido utilizando o manejo.
 			decimal decValorPerdaManejo = pdecCapitalTotal * pdecPercentualManejo / 100;
 
-		    var cotacaoData = new CotacaoData();
+		    var cotacaoData = new CotacaoDataService();
             CalculadorTabelas.TabelasCalcular(pstrPeriodo, ref strTabelaCotacao, ref strTabelaMedia, ref strTabelaIFR);
 
 			//verifica se a data recebida é uma data de cotação

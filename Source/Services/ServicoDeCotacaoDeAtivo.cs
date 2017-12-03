@@ -80,7 +80,7 @@ namespace Services
 
 			IList<CotacaoDiaria> lstCotacoesDoCarregador = objCarregadorCotacoes.CarregarPorPeriodo(_ativo, pdtmDataInicial, pdtmDataFinal, string.Empty, plstMedias, pblnCarregarIFR);
 
-			if (lstCotacoesDoCarregador.Count() > 0) {
+			if (lstCotacoesDoCarregador.Any()) {
 				AtualizarListaDeCotacoes(lstCotacoesDoCarregador);
 				return true;
 			} else {

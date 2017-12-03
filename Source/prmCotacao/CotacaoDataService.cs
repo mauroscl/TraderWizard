@@ -4,12 +4,12 @@ using TraderWizard.Enumeracoes;
 
 namespace TraderWizard.ServicosDeAplicacao
 {
-    public class CotacaoData
+    public class CotacaoDataService
     {
         private readonly Conexao _conexao;
         private readonly FuncoesBd _funcoesBd;
 
-        public CotacaoData()
+        public CotacaoDataService()
         {
             this._conexao = new Conexao();
             this._funcoesBd = this._conexao.ObterFormatadorDeCampo();
@@ -350,7 +350,6 @@ namespace TraderWizard.ServicosDeAplicacao
 
                 strQuery = " select min(Data) as DataInicial " + " from " + pstrTabela + " where Codigo = " + strCodigoFormatado;
 
-
                 if (pintNumPeriodosTabelaDados != -1)
                 {
                     strQuery = strQuery + " and NumPeriodos = " + pintNumPeriodosTabelaDados;
@@ -365,7 +364,6 @@ namespace TraderWizard.ServicosDeAplicacao
                 //é a cotação do número de periodos
                 intNumPeriodosFinal = pintNumPeriodos;
 
-
             }
             else
             {
@@ -375,7 +373,7 @@ namespace TraderWizard.ServicosDeAplicacao
 
                 if (pintNumPeriodosTabelaDados != -1)
                 {
-                    subQuery += " and NumPeriodos = " + pintNumPeriodosTabelaDados.ToString();
+                    subQuery += " and NumPeriodos = " + pintNumPeriodosTabelaDados;
 
                 }
 
@@ -471,6 +469,33 @@ namespace TraderWizard.ServicosDeAplicacao
             return functionReturnValue;
 
         }
+
+        public DateTime CalcularDataInicial(string pstrCodigo, int pintNumPeriodos, DateTime pdtmDataFinal, string strTabelaDados, int intNumPeriodosTabelaDados = -1)
+        {
+            FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
+            var subQuery = " select top " + pintNumPeriodos + " Data " +
+                           "FROM " + strTabelaDados +
+                           " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " and Data <= " +
+                           funcoesBd.CampoDateFormatar(pdtmDataFinal);
+
+            if (intNumPeriodosTabelaDados != -1)
+            {
+                subQuery += " and NumPeriodos = " + intNumPeriodosTabelaDados;
+            }
+
+            subQuery += " order by Data desc ";
+
+            var strQuery = "select min(Data) as DataInicial " + " from " + funcoesBd.FormataSubSelect(subQuery);
+
+            var rs = new RS(this._conexao);
+            rs.ExecuteQuery(strQuery);
+
+            var dtmDataInicial = Convert.ToDateTime(rs.Field("DataInicial", Constantes.DataInvalida));
+
+            rs.Fechar();
+            return dtmDataInicial;
+        }
+
 
 
     }

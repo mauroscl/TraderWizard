@@ -73,6 +73,7 @@
   <ItemGroup>
     <Compile Include="Extensoes\ExtensoesDeString.cs" />
     <Compile Include="Geral\FuncoesGerais.cs" />
+    <Compile Include="Geral\TesteVolatilidade.cs" />
     <Compile Include="My Project\AssemblyInfo.cs" />
     <Compile Include="Geral\testes_de_carteira_de_ativos.cs" />
     <Compile Include="Geral\testes_de_collection.cs" />

@@ -123,9 +123,11 @@ namespace WebAccess
 				objWebProxy.Credentials = new NetworkCredential(_webConfiguracao.Usuario, _webConfiguracao.Senha, _webConfiguracao.Dominio);
 
 			}
-
+            
+            
 			// Create a new request to the mentioned URL.                
-			var httpWebRequest = (HttpWebRequest)WebRequest.Create(pstrUrl);
+			var httpWebRequest = WebRequest.CreateHttp(pstrUrl);
+		    httpWebRequest.Method = "OPTIONS";
 
 			HttpWebResponse objHttpWebResponse = null;
 

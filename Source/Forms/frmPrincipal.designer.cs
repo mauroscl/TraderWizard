@@ -77,6 +77,7 @@ namespace TraderWizard
             this.mnuOutrasOperacoes = new System.Windows.Forms.ToolStripMenuItem();
             this.mniBackTestUnitTest = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuitemCotacaoExcluir = new System.Windows.Forms.ToolStripMenuItem();
+            this.calcularVolatilidadeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.WindowsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.NewWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CascadeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -336,7 +337,7 @@ namespace TraderWizard
             this.ToolBarToolStripMenuItem.CheckOnClick = true;
             this.ToolBarToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ToolBarToolStripMenuItem.Name = "ToolBarToolStripMenuItem";
-            this.ToolBarToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
+            this.ToolBarToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.ToolBarToolStripMenuItem.Text = "&Toolbar";
             // 
             // StatusBarToolStripMenuItem
@@ -345,7 +346,7 @@ namespace TraderWizard
             this.StatusBarToolStripMenuItem.CheckOnClick = true;
             this.StatusBarToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.StatusBarToolStripMenuItem.Name = "StatusBarToolStripMenuItem";
-            this.StatusBarToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
+            this.StatusBarToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.StatusBarToolStripMenuItem.Text = "&Status Bar";
             // 
             // ToolsMenu
@@ -393,7 +394,8 @@ namespace TraderWizard
             this.mnuSequencialCalcular,
             this.AtualizarCotaçõesSemanaisToolStripMenuItem,
             this.mnuOutrasOperacoes,
-            this.mnuitemCotacaoExcluir});
+            this.mnuitemCotacaoExcluir,
+            this.calcularVolatilidadeToolStripMenuItem});
             this.OperaçõesToolStripMenuItem.Name = "OperaçõesToolStripMenuItem";
             this.OperaçõesToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.OperaçõesToolStripMenuItem.Text = "&Operações";
@@ -401,56 +403,56 @@ namespace TraderWizard
             // AtualizarCotaçõesHistóricasToolStripMenuItem
             // 
             this.AtualizarCotaçõesHistóricasToolStripMenuItem.Name = "AtualizarCotaçõesHistóricasToolStripMenuItem";
-            this.AtualizarCotaçõesHistóricasToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.AtualizarCotaçõesHistóricasToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
             this.AtualizarCotaçõesHistóricasToolStripMenuItem.Text = "Atualizar &Cotações...";
             this.AtualizarCotaçõesHistóricasToolStripMenuItem.Click += new System.EventHandler(this.AtualizarCotaçõesHistóricasToolStripMenuItem_Click);
             // 
             // mniDadosRecalcular
             // 
             this.mniDadosRecalcular.Name = "mniDadosRecalcular";
-            this.mniDadosRecalcular.Size = new System.Drawing.Size(225, 22);
+            this.mniDadosRecalcular.Size = new System.Drawing.Size(273, 22);
             this.mniDadosRecalcular.Text = "Recalcular Dados...";
             this.mniDadosRecalcular.Click += new System.EventHandler(this.mniDadosRecalcular_Click);
             // 
             // mniProventoAtualizar
             // 
             this.mniProventoAtualizar.Name = "mniProventoAtualizar";
-            this.mniProventoAtualizar.Size = new System.Drawing.Size(225, 22);
+            this.mniProventoAtualizar.Size = new System.Drawing.Size(273, 22);
             this.mniProventoAtualizar.Text = "&Importar Proventos...";
             this.mniProventoAtualizar.Click += new System.EventHandler(this.mniProventoAtualizar_Click);
             // 
             // mniProventoCadastrar
             // 
             this.mniProventoCadastrar.Name = "mniProventoCadastrar";
-            this.mniProventoCadastrar.Size = new System.Drawing.Size(225, 22);
+            this.mniProventoCadastrar.Size = new System.Drawing.Size(273, 22);
             this.mniProventoCadastrar.Text = "&Cadastrar Proventos...";
             this.mniProventoCadastrar.Click += new System.EventHandler(this.mniProventoCadastrar_Click);
             // 
             // mniIFRCalcular
             // 
             this.mniIFRCalcular.Name = "mniIFRCalcular";
-            this.mniIFRCalcular.Size = new System.Drawing.Size(225, 22);
-            this.mniIFRCalcular.Text = "Calcular IFR...";
+            this.mniIFRCalcular.Size = new System.Drawing.Size(273, 22);
+            this.mniIFRCalcular.Text = "CalcularVolatilidadeDiaria IFR...";
             this.mniIFRCalcular.Click += new System.EventHandler(this.mniIFRCalcular_Click);
             // 
             // mniIFRDiarioSimular
             // 
             this.mniIFRDiarioSimular.Name = "mniIFRDiarioSimular";
-            this.mniIFRDiarioSimular.Size = new System.Drawing.Size(225, 22);
+            this.mniIFRDiarioSimular.Size = new System.Drawing.Size(273, 22);
             this.mniIFRDiarioSimular.Text = "Simular IFR Diário...";
             this.mniIFRDiarioSimular.Click += new System.EventHandler(this.mniIFRDiarioSimular_Click);
             // 
             // mnuSequencialCalcular
             // 
             this.mnuSequencialCalcular.Name = "mnuSequencialCalcular";
-            this.mnuSequencialCalcular.Size = new System.Drawing.Size(225, 22);
-            this.mnuSequencialCalcular.Text = "Calcular &Sequenciais";
+            this.mnuSequencialCalcular.Size = new System.Drawing.Size(273, 22);
+            this.mnuSequencialCalcular.Text = "CalcularVolatilidadeDiaria &Sequenciais";
             this.mnuSequencialCalcular.Click += new System.EventHandler(this.mnuSequencialCalcular_Click);
             // 
             // AtualizarCotaçõesSemanaisToolStripMenuItem
             // 
             this.AtualizarCotaçõesSemanaisToolStripMenuItem.Name = "AtualizarCotaçõesSemanaisToolStripMenuItem";
-            this.AtualizarCotaçõesSemanaisToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.AtualizarCotaçõesSemanaisToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
             this.AtualizarCotaçõesSemanaisToolStripMenuItem.Text = "Atualizar Cotações &Semanais";
             this.AtualizarCotaçõesSemanaisToolStripMenuItem.Visible = false;
             this.AtualizarCotaçõesSemanaisToolStripMenuItem.Click += new System.EventHandler(this.AtualizarCotaçõesSemanaisToolStripMenuItem_Click);
@@ -460,7 +462,7 @@ namespace TraderWizard
             this.mnuOutrasOperacoes.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mniBackTestUnitTest});
             this.mnuOutrasOperacoes.Name = "mnuOutrasOperacoes";
-            this.mnuOutrasOperacoes.Size = new System.Drawing.Size(225, 22);
+            this.mnuOutrasOperacoes.Size = new System.Drawing.Size(273, 22);
             this.mnuOutrasOperacoes.Text = "Outras Operações";
             // 
             // mniBackTestUnitTest
@@ -473,9 +475,16 @@ namespace TraderWizard
             // mnuitemCotacaoExcluir
             // 
             this.mnuitemCotacaoExcluir.Name = "mnuitemCotacaoExcluir";
-            this.mnuitemCotacaoExcluir.Size = new System.Drawing.Size(225, 22);
+            this.mnuitemCotacaoExcluir.Size = new System.Drawing.Size(273, 22);
             this.mnuitemCotacaoExcluir.Text = "Excluir Cotações...";
             this.mnuitemCotacaoExcluir.Click += new System.EventHandler(this.mnuitemCotacaoExcluir_Click);
+            // 
+            // calcularVolatilidadeToolStripMenuItem
+            // 
+            this.calcularVolatilidadeToolStripMenuItem.Name = "calcularVolatilidadeToolStripMenuItem";
+            this.calcularVolatilidadeToolStripMenuItem.Size = new System.Drawing.Size(273, 22);
+            this.calcularVolatilidadeToolStripMenuItem.Text = "Calcular Volatilidade";
+            this.calcularVolatilidadeToolStripMenuItem.Click += new System.EventHandler(this.calcularVolatilidadeToolStripMenuItem_Click);
             // 
             // WindowsMenu
             // 
@@ -748,5 +757,6 @@ namespace TraderWizard
 		private System.Windows.Forms.ToolStripMenuItem mniProventoCadastrar;
 		private System.Windows.Forms.ToolStripMenuItem mniIFRCalcular;
         private ToolStripMenuItem toolStripMenuSetupDeEntrada;
+        private ToolStripMenuItem calcularVolatilidadeToolStripMenuItem;
     }
 }

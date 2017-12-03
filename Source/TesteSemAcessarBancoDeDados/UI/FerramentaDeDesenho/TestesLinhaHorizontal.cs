@@ -1,11 +1,8 @@
-﻿using System;
-using System.Drawing;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Drawing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using prjCandle;
 using prjCandle.Desenho;
+using TesteSemAcessarBancoDeDados.Geral;
 
 namespace TesteSemAcessarBancoDeDados.UI.FerramentaDeDesenho
 {
