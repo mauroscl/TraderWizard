@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using DataBase;
 using Dominio.Entidades;
+using DTO;
 using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;
 using TraderWizard.Infra.Repositorio;
@@ -173,7 +174,8 @@ namespace TraderWizard
 
 			if (chkCotacaoDiaria.Checked) {
 				//se vai ter operações 
-				blnOperacoesExecutar = (chkCotacaoDiariaOscilacaoRecalcular.Checked || chkCotacaoDiariaIFRRecalcular.Checked || chkCotacaoDiariaMMExpRecalcular.Checked || chkCotacaoDiariaVolumeMedioRecalcular.Checked || chkCotacaoDiariaIFR2MedioRecalcular.Checked);
+				blnOperacoesExecutar = (chkCotacaoDiariaOscilacaoRecalcular.Checked || chkCotacaoDiariaIFRRecalcular.Checked || chkCotacaoDiariaMMExpRecalcular.Checked 
+                    || chkCotacaoDiariaVolumeMedioRecalcular.Checked || chkCotacaoDiariaIFR2MedioRecalcular.Checked || chkVolatilidadeDiaria.Checked);
 
 			}
 
@@ -183,7 +185,7 @@ namespace TraderWizard
 		        blnOperacoesExecutar = (chkCotacaoSemanalDadosGeraisRecalcular.Checked ||
 		                                chkCotacaoSemanalIFRRecalcular.Checked || chkCotacaoSemanalMMExpRecalcular.Checked ||
 		                                chkCotacaoSemanalVolumeMedioRecalcular.Checked ||
-		                                chkCotacaoSemanalIFR2MedioRecalcular.Checked);
+		                                chkCotacaoSemanalIFR2MedioRecalcular.Checked || chkVolatilidadeSemanal.Checked);
 		    }
 
 
@@ -260,42 +262,27 @@ namespace TraderWizard
 
 				ServicoDeCotacao objCotacao = new ServicoDeCotacao(_conexao);
 
-				bool blnCotacaoDiariaOscilacaoRecalcular = false;
-				bool blnCotacaoDiariaIFRRecalcular = false;
-				bool blnCotacaoDiariaMMExpRecalcular = false;
-				bool blnCotacaoDiariaVolumeMedioRecalcular = false;
-				bool blnCotacaoDiariaIFRMedioRecalcular = false;
-
-				bool blnCotacaoSemanalDadosGeraisRecalcular = false;
-				bool blnCotacaoSemanalIFRRecalcular = false;
-				bool blnCotacaoSemanalMMExpRecalcular = false;
-				bool blnCotacaoSemanalVolumeMedioRecalcular = false;
-				bool blnCotacaoSemanalIFRMedioRecalcular = false;
-
+			    ConfiguracaoDeCalculoDiario configuracaoDiaria = null;
 
 				if (chkCotacaoDiaria.Checked) {
-					blnCotacaoDiariaOscilacaoRecalcular = chkCotacaoDiariaOscilacaoRecalcular.Checked;
-					blnCotacaoDiariaIFRRecalcular = chkCotacaoDiariaIFRRecalcular.Checked;
-					blnCotacaoDiariaMMExpRecalcular = chkCotacaoDiariaMMExpRecalcular.Checked;
-					blnCotacaoDiariaVolumeMedioRecalcular = chkCotacaoDiariaVolumeMedioRecalcular.Checked;
-					blnCotacaoDiariaIFRMedioRecalcular = chkCotacaoDiariaIFR2MedioRecalcular.Checked;
+                    configuracaoDiaria = new ConfiguracaoDeCalculoDiario(chkCotacaoDiariaOscilacaoRecalcular.Checked, chkCotacaoDiariaOscilacaoRecalcular.Checked, 
+                        chkCotacaoDiariaIFRRecalcular.Checked, chkCotacaoDiariaMMExpRecalcular.Checked, chkCotacaoDiariaVolumeMedioRecalcular.Checked, 
+                        chkCotacaoDiariaIFR2MedioRecalcular.Checked, chkVolatilidadeDiaria.Checked);
+
 
 				}
 
+			    ConfiguracaoDeCalculoSemanal configuracaoSemanal = null;
 
-				if (chkCotacaoSemanal.Checked) {
-					blnCotacaoSemanalDadosGeraisRecalcular = chkCotacaoSemanalDadosGeraisRecalcular.Checked;
-					blnCotacaoSemanalIFRRecalcular = chkCotacaoSemanalIFRRecalcular.Checked;
-					blnCotacaoSemanalMMExpRecalcular = chkCotacaoSemanalMMExpRecalcular.Checked;
-					blnCotacaoSemanalVolumeMedioRecalcular = chkCotacaoSemanalVolumeMedioRecalcular.Checked;
-					blnCotacaoSemanalIFRMedioRecalcular = chkCotacaoSemanalIFR2MedioRecalcular.Checked;
+                if (chkCotacaoSemanal.Checked) {
+                    configuracaoSemanal = new ConfiguracaoDeCalculoSemanal(true, true, chkCotacaoSemanalIFRRecalcular.Checked, chkCotacaoSemanalMMExpRecalcular.Checked, 
+                        chkCotacaoSemanalVolumeMedioRecalcular.Checked, chkCotacaoSemanalIFR2MedioRecalcular.Checked,chkVolatilidadeSemanal.Checked,chkCotacaoSemanalDadosGeraisRecalcular.Checked);
 
 				}
 
 				this.Cursor = Cursors.WaitCursor;
 
-				if (objCotacao.DadosRecalcular(blnCotacaoDiariaOscilacaoRecalcular, blnCotacaoDiariaOscilacaoRecalcular, blnCotacaoDiariaIFRRecalcular, blnCotacaoDiariaMMExpRecalcular, blnCotacaoDiariaVolumeMedioRecalcular, blnCotacaoDiariaIFRMedioRecalcular, blnCotacaoSemanalDadosGeraisRecalcular, blnCotacaoSemanalIFRRecalcular, blnCotacaoSemanalMMExpRecalcular, blnCotacaoSemanalVolumeMedioRecalcular,
-				blnCotacaoSemanalIFRMedioRecalcular, dtmDataInicial, strAtivos)) {
+				if (objCotacao.DadosRecalcular(configuracaoDiaria, configuracaoSemanal , dtmDataInicial, strAtivos)) {
                     MessageBox.Show("Operação executada com sucesso.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 

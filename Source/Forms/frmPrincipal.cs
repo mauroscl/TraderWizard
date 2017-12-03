@@ -211,18 +211,6 @@ namespace TraderWizard
         }
 
 
-        private void mniBackTestUnitTest_Click(Object sender, EventArgs e)
-        {
-            var objCotacao = new ServicoDeCotacao(objConexao);
-
-            if (
-                MessageBox.Show("Confirma o recálculo das cotações?", Text, MessageBoxButtons.YesNo,
-                                MessageBoxIcon.Question) == DialogResult.Yes)
-            {
-                objCotacao.RecalcularIndicadores();
-            }
-        }
-
         private void mniProventoAtualizar_Click(Object sender, EventArgs e)
         {
             var frmChildForm = new frmProventoAtualizar();

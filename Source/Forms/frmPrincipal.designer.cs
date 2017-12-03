@@ -465,13 +465,6 @@ namespace TraderWizard
             this.mnuOutrasOperacoes.Size = new System.Drawing.Size(273, 22);
             this.mnuOutrasOperacoes.Text = "Outras Operações";
             // 
-            // mniBackTestUnitTest
-            // 
-            this.mniBackTestUnitTest.Name = "mniBackTestUnitTest";
-            this.mniBackTestUnitTest.Size = new System.Drawing.Size(180, 22);
-            this.mniBackTestUnitTest.Text = "Recalcular Cotações";
-            this.mniBackTestUnitTest.Click += new System.EventHandler(this.mniBackTestUnitTest_Click);
-            // 
             // mnuitemCotacaoExcluir
             // 
             this.mnuitemCotacaoExcluir.Name = "mnuitemCotacaoExcluir";

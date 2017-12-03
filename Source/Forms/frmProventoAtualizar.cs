@@ -5,7 +5,7 @@ using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;
 using TraderWizard.ServicosDeAplicacao;
 
-namespace TraderWizard
+namespace Forms
 {
 
 	public partial class frmProventoAtualizar
@@ -43,15 +43,14 @@ namespace TraderWizard
 
 		    var proventoService = new ProventoService();
 
-		    DateTime dtmDataFinal;
-		    if (!DateTime.TryParse(txtDataFinal.Text, out dtmDataFinal) ) {
-		        dtmDataFinal = Constantes.DataInvalida;
+		    if (!DateTime.TryParse(txtDataFinal.Text, out var dataFinal) ) {
+		        dataFinal = Constantes.DataInvalida;
 		    }
 
 		    this.Cursor = Cursors.WaitCursor;
 
 		    //If objCotacao.ProventoAtualizar(CDate(txtDataUltimAtualizacao.Text), dtmDataFinal) Then
-		    if (proventoService.ProventoAtualizar(dtmDataFinal)) {
+		    if (proventoService.ProventoAtualizar(dataFinal)) {
 		        MessageBox.Show("Operação realizada com sucesso.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 		    } else {
 		        MessageBox.Show("Ocorreram erros ao executar a operação.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);

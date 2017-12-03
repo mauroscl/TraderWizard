@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using Configuracao;
 using DataBase;
+using DTO;
 using Services;
 using ServicoNegocio;
 using TraderWizard.Enumeracoes;
@@ -380,8 +381,9 @@ namespace TraderWizard.ServicosDeAplicacao
                         //Não é necessário recalcular o volume médio nas periodicidades diário e semanal
                         //porque os proventos não alteram o volume de ações. Apenas os desdobramentos
                         //que alteram
-                        _servicoDeCotacao.DadosRecalcular(true, true, true, true, false, true, true, true, true, false,
-                            true, dtmDataInicioRecalculo, "#" + strCodigoAtual + "#", true, true);
+                        var configuracaoDiaria = new ConfiguracaoDeCalculoDiario(true, true, true, true, false, true, true);
+                        var configuracaoSemanal = new ConfiguracaoDeCalculoSemanal(true, true, true, true, false, true, true, true);
+                        _servicoDeCotacao.DadosRecalcular(configuracaoDiaria, configuracaoSemanal, dtmDataInicioRecalculo, "#" + strCodigoAtual + "#", true, true);
 
                     }
 
@@ -529,8 +531,10 @@ namespace TraderWizard.ServicosDeAplicacao
                 //Não é necessário recalcular o volume médio nas periodicidades diário e semanal
                 //porque os proventos não alteram o volume de ações. Apenas os desdobramentos
                 //que alteram
-                _servicoDeCotacao.DadosRecalcular(true, true, true, true, false, true, true, true, true, false,
-                    true, dtmUltimoDiaCom, "#" + pstrCodigo + "#", true, true);
+                var configuracaoDiaria = new ConfiguracaoDeCalculoDiario(true, true, true, true, false, true, true);
+                var configuracaoSemanal = new ConfiguracaoDeCalculoSemanal(true, true, true, true, false, true, true, true);
+
+                _servicoDeCotacao.DadosRecalcular(configuracaoDiaria, configuracaoSemanal, dtmUltimoDiaCom, "#" + pstrCodigo + "#", true, true);
 
 
             }

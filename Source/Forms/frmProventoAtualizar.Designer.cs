@@ -1,11 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Drawing;
-using System.Diagnostics;
-using System.Windows.Forms;
-namespace TraderWizard
+namespace Forms
 {
 	partial class frmProventoAtualizar : System.Windows.Forms.Form
 	{

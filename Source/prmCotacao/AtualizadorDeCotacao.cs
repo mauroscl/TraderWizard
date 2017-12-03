@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows.Forms;
 using Configuracao;
 using DataBase;
+using DTO;
 using Services;
 using ServicoNegocio;
 using TraderWizard.Enumeracoes;
@@ -163,7 +164,16 @@ namespace TraderWizard.ServicosDeAplicacao
 
                 if (pblnCalcularDados)
                 {
-                    _servicoDeCotacao.DadosRecalcular(true, false, true, true, true, true, true, true, true, true, true, dataInicioRecalculo);
+                    //bool pblnCotacaoDiariaOscilacaoCalcular, bool pblnCotacaoDiariaOscilacaoPercentualCalcular, bool pblnCotacaoDiariaIFRCalcular,
+                    //bool pblnCotacaoDiariaMMExpCalcular, bool pblnCotacaoDiariaVolumeMedioCalcular, bool pblnCotacaoDiariaIFRMedioCalcular, bool pblnCotacaoSemanalDadosCalcular
+                    //    , bool pblnCotacaoSemanalIFRCalcular, bool pblnCotacaoSemanalMMExpCalcular, bool pblnCotacaoSemanalVolumeMedioCalcular,
+
+                    //bool pblnCotacaoSemanalIFRMedioCalcular, DateTime pdtmDataInicial, string pstrAtivos = "", bool pblnCotacaoAnteriorInicializar = true, bool pblnConsiderarApenasDataSplit = false
+
+                    var configuracaoDiaria = new ConfiguracaoDeCalculoDiario(true, false, true, true, true, true, true);
+                    var configuracaoSemanal = new ConfiguracaoDeCalculoSemanal(true, true, true, true, true, true, true, true);
+
+                    _servicoDeCotacao.DadosRecalcular(configuracaoDiaria, configuracaoSemanal, dataInicioRecalculo);
 
                 }
 
@@ -527,8 +537,10 @@ namespace TraderWizard.ServicosDeAplicacao
             {
                 if (pblnCalcularDados)
                 {
-                    _servicoDeCotacao.DadosRecalcular(true, false, true, true, true, true, true, true, true, true,
-                        true, dtmData);
+                    var configuracaoDiaria = new ConfiguracaoDeCalculoDiario(true, false, true, true, true, true, true);
+                    var configuracaoSemanal = new ConfiguracaoDeCalculoSemanal(true, true, true, true, true, true, true, true);
+
+                    _servicoDeCotacao.DadosRecalcular(configuracaoDiaria, configuracaoSemanal, dtmData);
                 }
 
 
@@ -677,7 +689,9 @@ namespace TraderWizard.ServicosDeAplicacao
                 {
                     //CHAMA A FUNÇÃO DE RECÁLCULO PARA OS DADOS SEMANAIS.
                     //SE NÃO HOUVER REGISTROS NÃO CALCULARÁ
-                    this._servicoDeCotacao.CotacaoSemanalDadosAtualizar(true, true, true, true, true, parrData[0], ativosBuilder.ToString());
+
+                    var configuracaoDeCalculo = new ConfiguracaoDeCalculoSemanal(true, true, true, true, true, true, true,true);
+                    this._servicoDeCotacao.CotacaoSemanalDadosAtualizar(configuracaoDeCalculo, parrData[0], "", true);
 
                 }
 

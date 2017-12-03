@@ -64,6 +64,8 @@ namespace TraderWizard
             this.txtDataInicial = new System.Windows.Forms.TextBox();
             this.btnCalendario = new System.Windows.Forms.Button();
             this.Calendario = new System.Windows.Forms.MonthCalendar();
+            this.chkVolatilidadeSemanal = new System.Windows.Forms.CheckBox();
+            this.chkVolatilidadeDiaria = new System.Windows.Forms.CheckBox();
             this.Panel1.SuspendLayout();
             this.Panel2.SuspendLayout();
             this.pnlAtivosEscolher.SuspendLayout();
@@ -278,6 +280,7 @@ namespace TraderWizard
             // 
             // pnlCotacaoSemanalOpcoes
             // 
+            this.pnlCotacaoSemanalOpcoes.Controls.Add(this.chkVolatilidadeSemanal);
             this.pnlCotacaoSemanalOpcoes.Controls.Add(this.chkCotacaoSemanalIFR2MedioRecalcular);
             this.pnlCotacaoSemanalOpcoes.Controls.Add(this.chkCotacaoSemanalVolumeMedioRecalcular);
             this.pnlCotacaoSemanalOpcoes.Controls.Add(this.chkCotacaoSemanalMMExpRecalcular);
@@ -311,6 +314,7 @@ namespace TraderWizard
             // 
             // pnlCotacaoDiariaOpcoes
             // 
+            this.pnlCotacaoDiariaOpcoes.Controls.Add(this.chkVolatilidadeDiaria);
             this.pnlCotacaoDiariaOpcoes.Controls.Add(this.chkCotacaoDiariaIFR2MedioRecalcular);
             this.pnlCotacaoDiariaOpcoes.Controls.Add(this.chkCotacaoDiariaVolumeMedioRecalcular);
             this.pnlCotacaoDiariaOpcoes.Controls.Add(this.chkCotacaoDiariaMMExpRecalcular);
@@ -401,6 +405,26 @@ namespace TraderWizard
             this.Calendario.Visible = false;
             this.Calendario.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.Calendario_DateSelected);
             // 
+            // chkVolatilidadeSemanal
+            // 
+            this.chkVolatilidadeSemanal.AutoSize = true;
+            this.chkVolatilidadeSemanal.Location = new System.Drawing.Point(342, 26);
+            this.chkVolatilidadeSemanal.Name = "chkVolatilidadeSemanal";
+            this.chkVolatilidadeSemanal.Size = new System.Drawing.Size(83, 17);
+            this.chkVolatilidadeSemanal.TabIndex = 6;
+            this.chkVolatilidadeSemanal.Text = "Volatilidade:";
+            this.chkVolatilidadeSemanal.UseVisualStyleBackColor = true;
+            // 
+            // chkVolatilidadeDiaria
+            // 
+            this.chkVolatilidadeDiaria.AutoSize = true;
+            this.chkVolatilidadeDiaria.Location = new System.Drawing.Point(342, 26);
+            this.chkVolatilidadeDiaria.Name = "chkVolatilidadeDiaria";
+            this.chkVolatilidadeDiaria.Size = new System.Drawing.Size(83, 17);
+            this.chkVolatilidadeDiaria.TabIndex = 7;
+            this.chkVolatilidadeDiaria.Text = "Volatilidade:";
+            this.chkVolatilidadeDiaria.UseVisualStyleBackColor = true;
+            // 
             // frmDadosRecalcular
             // 
             this.AcceptButton = this.btnOK;
@@ -467,5 +491,7 @@ namespace TraderWizard
 		private System.Windows.Forms.CheckBox chkCotacaoDiariaIFR2MedioRecalcular;
         private Button btnCalendario;
         private MonthCalendar Calendario;
-	}
+        private CheckBox chkVolatilidadeSemanal;
+        private CheckBox chkVolatilidadeDiaria;
+    }
 }
