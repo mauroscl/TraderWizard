@@ -1687,8 +1687,9 @@ namespace TraderWizard.ServicosDeAplicacao
 		    if (configuracaoDeCalculo.VolatilidadeCalcular)
 		    {
 		        var calculadorDeVolatilidade = new CalculadorDeVolatilidade();
-		        calculadorDeVolatilidade.CalcularVolatilidadeDiaria(dataBase);
-		        calculadorDeVolatilidade.CalcularMediaVolatilidadeDiaria(dataBase);
+		        var arrayAtivos = ConversorDeListaDeAtivos.ConverterParaArray(ativos);
+                calculadorDeVolatilidade.CalcularVolatilidadeDiaria(dataBase, arrayAtivos);
+		        calculadorDeVolatilidade.CalcularMediaVolatilidadeDiaria(dataBase, arrayAtivos);
 		        
 		    }
 		    return (blnOk && blnIfrok && blnMmExpOk);
@@ -1782,8 +1783,9 @@ namespace TraderWizard.ServicosDeAplicacao
 			        var primeiraDataDaSemana = _cotacaoDataService.AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular("PETR4", dataBase);
 
 			        var calculadorDeVolatilidade = new CalculadorDeVolatilidade();
-			        calculadorDeVolatilidade.CalcularVolatilidadeSemanal(primeiraDataDaSemana);
-			        calculadorDeVolatilidade.CalcularMediaVolatilidadeSemanal(primeiraDataDaSemana);
+			        var arrayAtivos = ConversorDeListaDeAtivos.ConverterParaArray(ativos);
+			        calculadorDeVolatilidade.CalcularVolatilidadeSemanal(primeiraDataDaSemana, arrayAtivos);
+			        calculadorDeVolatilidade.CalcularMediaVolatilidadeSemanal(primeiraDataDaSemana, arrayAtivos);
 			        
 			    }			    
 			}

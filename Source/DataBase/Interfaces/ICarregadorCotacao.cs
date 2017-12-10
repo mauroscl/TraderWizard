@@ -16,6 +16,6 @@ namespace DataBase.Interfaces
 
 		IList<CotacaoDiaria> CarregarParaIFRComFiltro(Ativo pobjAtivo, Setup pobjSetup, cEnum.enumMediaTipo pintMediaTipo, System.DateTime pdtmDataInicial);
 	    ICollection<CotacaoOscilacao> CarregarOscilacaoPorAtivo(string codigo);
-	    IDictionary<string, List<CotacaoOscilacao>> CarregarOscilacaoAPartirDe(DateTime dataInicialDados);
+	    IDictionary<string, List<CotacaoOscilacao>> CarregarOscilacaoAPartirDe(DateTime dataInicialDados, ICollection<string> ativos);
 	}
 }

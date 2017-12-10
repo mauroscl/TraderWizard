@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text;
 using DataBase;
 
@@ -170,13 +171,21 @@ namespace TraderWizard.ServicosDeAplicacao
 
         }
 
-        public ICollection<SequencialAtivo> AtivosProximoSequencialCalcular()
+        public ICollection<SequencialAtivo> AtivosProximoSequencialCalcular(ICollection<string> ativosDesconsiderados)
         {
             var sb = new StringBuilder();
             sb
                 .Append("SELECT Codigo, ISNULL(MAX(SEQUENCIAL), 0) + 1 AS Sequencial ")
-                .Append("FROM Cotacao ")
-                .Append("GROUP BY Codigo ");
+                .Append("FROM Cotacao ");
+
+
+            if (ativosDesconsiderados.Any())
+            {
+                var formatadorDeCampo = _conexao.ObterFormatadorDeCampo();
+                sb.Append($"WHERE Codigo NOT IN({string.Join(", ", ativosDesconsiderados.Select(formatadorDeCampo.CampoStringFormatar))})");
+            }
+
+            sb.Append("GROUP BY Codigo ");
 
             var rs = new RS(this._conexao);
 
@@ -195,6 +204,32 @@ namespace TraderWizard.ServicosDeAplicacao
             return sequenciais;
 
         }
+
+        public SequencialAtivo AtivoProximoSequencialCalcular(string codigo)
+        {
+            var funcoesBd = this._conexao.ObterFormatadorDeCampo();
+            var sb = new StringBuilder();
+            sb
+                .Append("SELECT ISNULL(MAX(SEQUENCIAL), 0) + 1 AS Sequencial ")
+                .Append("FROM Cotacao ")
+                .Append($"WHERE Codigo = {funcoesBd.CampoStringFormatar(codigo)}");
+
+            var rs = new RS(this._conexao);
+
+            rs.ExecuteQuery(sb.ToString());
+
+            SequencialAtivo sequencial = null;
+            if (rs.DadosExistir)
+            {
+                sequencial = new SequencialAtivo(codigo, Convert.ToInt64(rs.Field("Sequencial")));
+            }
+
+            rs.Fechar();
+
+            return sequencial;
+
+        }
+
 
         /// <summary>
         /// Calcula o novo sequencial para um determinado ativo, de acordo com o último sequencial utilizado

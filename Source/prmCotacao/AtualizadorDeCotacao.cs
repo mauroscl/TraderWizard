@@ -173,7 +173,7 @@ namespace TraderWizard.ServicosDeAplicacao
                     var configuracaoDiaria = new ConfiguracaoDeCalculoDiario(true, false, true, true, true, true, true);
                     var configuracaoSemanal = new ConfiguracaoDeCalculoSemanal(true, true, true, true, true, true, true, true);
 
-                    _servicoDeCotacao.DadosRecalcular(configuracaoDiaria, configuracaoSemanal, dataInicioRecalculo);
+                    _servicoDeCotacao.DadosRecalcular(configuracaoDiaria, configuracaoSemanal, dataInicioRecalculo,pstrCodigoUnico);
 
                 }
 

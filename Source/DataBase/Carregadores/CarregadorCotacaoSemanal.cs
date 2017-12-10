@@ -63,15 +63,21 @@ namespace DataBase.Carregadores
             return oscilacoes;
         }
 
-        public IDictionary<string, List<CotacaoOscilacao>> CarregarOscilacaoAPartirDe(DateTime dataInicialDados)
+        public IDictionary<string, List<CotacaoOscilacao>> CarregarOscilacaoAPartirDe(DateTime dataInicialDados, ICollection<string> ativos)
         {
             var funcoesBd = Conexao.ObterFormatadorDeCampo();
             var sb = new StringBuilder();
             sb
                 .Append("SELECT Codigo, Data, 1 + Oscilacao / 100 AS Oscilacao ")
                 .Append("FROM Cotacao_Semanal ")
-                .Append($"WHERE Data >= {funcoesBd.CampoDateFormatar(dataInicialDados)} ")
-                .Append($"ORDER BY Codigo, Data");
+                .Append($"WHERE Data >= {funcoesBd.CampoDateFormatar(dataInicialDados)} ");
+
+            if (ativos.Any())
+            {
+                sb.Append($" AND Codigo IN ({string.Join(", ", ativos.Select(funcoesBd.CampoStringFormatar).ToArray())})");
+            }
+    
+            sb.Append($"ORDER BY Codigo, Data");
 
             var rs = new RS(Conexao);
             rs.ExecuteQuery(sb.ToString());

@@ -598,17 +598,9 @@ namespace TraderWizard.ServicosDeAplicacao
 
                 if (_conexao.BancoDeDados == cEnum.BancoDeDados.SqlServer)
                 {
-                    //remove sustenido do inicio
-                    string ativosAux = pstrAtivos.Remove(0, 1);
-
-                    //remove ultimo sustenido
-                    ativosAux = ativosAux.Remove(ativosAux.Length - 1);
-
-                    //faz split pelo sustenido
-                    string[] ativosSelecionados = ativosAux.Split('#');
+                    var ativosSelecionados = ConversorDeListaDeAtivos.ConverterParaArray(pstrAtivos);
 
                     strWhere += "Codigo IN (" + string.Join(", ", ativosSelecionados.Select(funcoesBd.CampoFormatar)) + ")";
-
                 }
                 else
                 {
@@ -742,7 +734,5 @@ namespace TraderWizard.ServicosDeAplicacao
             return functionReturnValue;
 
         }
-
-
     }
 }

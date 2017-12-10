@@ -58,7 +58,7 @@ namespace TraderWizard.ServicosDeAplicacao
             const char strSeparadorDecimal = ',';
 
             var cotacoes = new Collection<CotacaoImportacao>();
-            ICollection<SequencialAtivo> sequenciais = _sequencialService.AtivosProximoSequencialCalcular();
+            ICollection<SequencialAtivo> sequenciais = _sequencialService.AtivosProximoSequencialCalcular(ativosDesconsiderados);
 
             //se foi possivel baixar...
             //percorre todas as linhas da collection e nas linhas que forem cotações de ativos insere no banco de dados

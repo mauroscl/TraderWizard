@@ -54,6 +54,7 @@
     <Compile Include="CalculadorDeIfr.cs" />
     <Compile Include="CalculadorDeVolatilidade.cs" />
     <Compile Include="ConfiguracaoDeVisualizacao.cs" />
+    <Compile Include="ConversorDeListaDeAtivos.cs" />
     <Compile Include="CotacaoDataService.cs" />
     <Compile Include="CotacaoImportacao.cs" />
     <Compile Include="IImportadorCotacao.cs" />

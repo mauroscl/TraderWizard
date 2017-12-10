@@ -27,15 +27,21 @@ namespace DataBase.Carregadores
 
         }
 
-        public IDictionary<string, List<Volatilidade>> CarregarVolatilidadeDiaria(DateTime dataInicialDados)
+        public IDictionary<string, List<Volatilidade>> CarregarVolatilidadeDiaria(DateTime dataInicialDados, ICollection<string> ativos)
         {
             var funcoesBd = Conexao.ObterFormatadorDeCampo();
             var sb = new StringBuilder();
             sb
                 .Append("SELECT Codigo, Data, Valor ")
                 .Append("FROM VolatilidadeDiaria ")
-                .Append($"WHERE Data >= {funcoesBd.CampoDateFormatar(dataInicialDados)} ")
-                .Append("ORDER BY Codigo, Data");
+                .Append($"WHERE Data >= {funcoesBd.CampoDateFormatar(dataInicialDados)} ");
+
+            if (ativos.Any())
+            {
+                sb.Append($" AND Codigo IN ({string.Join(", ", ativos.Select(funcoesBd.CampoStringFormatar).ToArray())})");
+            }
+
+            sb.Append("ORDER BY Codigo, Data");
 
             return BuildVolatilidadePorData(sb.ToString());
 
@@ -54,67 +60,93 @@ namespace DataBase.Carregadores
             return BuildVolatilidadePorAtivo(sb.ToString());
         }
 
-        public IDictionary<string, List<Volatilidade>> CarregarVolatilidadeSemanal(DateTime dataInicialDados)
+        public IDictionary<string, List<Volatilidade>> CarregarVolatilidadeSemanal(DateTime dataInicialDados, ICollection<string> ativos)
         {
             var funcoesBd = Conexao.ObterFormatadorDeCampo();
             var sb = new StringBuilder();
             sb
                 .Append("SELECT Codigo, Data, Valor ")
                 .Append("FROM VolatilidadeSemanal ")
-                .Append($"WHERE Data >= {funcoesBd.CampoDateFormatar(dataInicialDados)} ")
-                .Append("ORDER BY Codigo, Data");
+                .Append($"WHERE Data >= {funcoesBd.CampoDateFormatar(dataInicialDados)} ");
+
+            if (ativos.Any())
+            {
+                sb.Append($" AND Codigo IN ({string.Join(", ", ativos.Select(funcoesBd.CampoStringFormatar).ToArray())})");
+            }
+
+            sb.Append("ORDER BY Codigo, Data");
 
             return BuildVolatilidadePorData(sb.ToString());
         }
 
-        public void ExcluirVolatilidadeDiaria(DateTime dataInicial)
+        public void ExcluirVolatilidadeDiaria(DateTime dataInicial, ICollection<string> ativos)
         {
             var funcoesBd = Conexao.ObterFormatadorDeCampo();
             var sb = new StringBuilder();
             sb
                 .Append("DELETE ")
                 .Append("FROM VolatilidadeDiaria ")
-                .Append($"WHERE Data >= {funcoesBd.CampoDateFormatar(dataInicial)}");
+                .Append($"WHERE Data >= {funcoesBd.CampoDateFormatar(dataInicial)} ");
+
+            if (ativos.Any())
+            {
+                sb.Append($"AND Codigo IN ({string.Join(", ", ativos.Select(funcoesBd.CampoStringFormatar))})");
+            }
 
             var command = new Command(Conexao);
             command.Execute(sb.ToString());
         }
 
-        public void ExcluirMediaVolatilidadeDiaria(DateTime dataInicial)
+        public void ExcluirMediaVolatilidadeDiaria(DateTime dataInicial, ICollection<string> ativos)
         {
             var funcoesBd = Conexao.ObterFormatadorDeCampo();
             var sb = new StringBuilder();
             sb
                 .Append("DELETE ")
                 .Append("FROM MediaVolatilidadeDiaria ")
-                .Append($"WHERE Data >= {funcoesBd.CampoDateFormatar(dataInicial)}");
+                .Append($"WHERE Data >= {funcoesBd.CampoDateFormatar(dataInicial)} ");
+
+            if (ativos.Any())
+            {
+               sb.Append($"AND Codigo IN ({string.Join(", ", ativos.Select(funcoesBd.CampoStringFormatar))})");
+            }
 
             var command = new Command(Conexao);
             command.Execute(sb.ToString());
         }
 
 
-        public void ExcluirVolatilidadeSemanal(DateTime dataInicial)
+        public void ExcluirVolatilidadeSemanal(DateTime dataInicial, ICollection<string> ativos)
         {
             var funcoesBd = Conexao.ObterFormatadorDeCampo();
             var sb = new StringBuilder();
             sb
                 .Append("DELETE ")
                 .Append("FROM VolatilidadeSemanal ")
-                .Append($"WHERE Data >= {funcoesBd.CampoDateFormatar(dataInicial)}");
+                .Append($"WHERE Data >= {funcoesBd.CampoDateFormatar(dataInicial)} ");
+
+            if (ativos.Any())
+            {
+                sb.Append($"AND Codigo IN ({string.Join(", ", ativos.Select(funcoesBd.CampoStringFormatar))})");
+            }
 
             var command = new Command(Conexao);
             command.Execute(sb.ToString());
         }
 
-        public void ExcluirMediaVolatilidadeSemanal(DateTime dataInicial)
+        public void ExcluirMediaVolatilidadeSemanal(DateTime dataInicial, ICollection<string> ativos)
         {
             var funcoesBd = Conexao.ObterFormatadorDeCampo();
             var sb = new StringBuilder();
             sb
                 .Append("DELETE ")
                 .Append("FROM MediaVolatilidadeSemanal ")
-                .Append($"WHERE Data >= {funcoesBd.CampoDateFormatar(dataInicial)}");
+                .Append($"WHERE Data >= {funcoesBd.CampoDateFormatar(dataInicial)} ");
+
+            if (ativos.Any())
+            {
+                sb.Append($"AND Codigo IN ({string.Join(", ", ativos.Select(funcoesBd.CampoStringFormatar))})");
+            }
 
             var command = new Command(Conexao);
             command.Execute(sb.ToString());

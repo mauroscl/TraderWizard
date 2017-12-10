@@ -81,83 +81,93 @@ namespace TraderWizard.ServicosDeAplicacao
 
         private IEnumerable<CotacaoImportacao> TransformarXmlEmCotacoes(DateTime data, string codigoUnico, ICollection<string> ativosDesconsiderados, string xmlFilePath)
         {
+            ICollection<SequencialAtivo> sequenciais;
 
+            if (!string.IsNullOrEmpty(codigoUnico))
+            {
+                SequencialAtivo sequencial = _sequencialService.AtivoProximoSequencialCalcular(codigoUnico);
+                sequenciais = new Collection<SequencialAtivo> {sequencial};
+            }
+            else
+            {
+                sequenciais = _sequencialService.AtivosProximoSequencialCalcular(ativosDesconsiderados);
+            }
+
+            var pattern = new Regex("^[A-Z]{4}\\d{1,2}$");
             var xmldoc = new XmlDocument();
             var cotacoes = new Collection<CotacaoImportacao>();
-            FileStream fs = new FileStream(xmlFilePath, FileMode.Open, FileAccess.Read);
-            try
-            {
-                
-                xmldoc.Load(fs);
-                XmlNodeList nodes = xmldoc.GetElementsByTagName("PricRpt");
-                ICollection<SequencialAtivo> sequenciais = _sequencialService.AtivosProximoSequencialCalcular();
-                for (int i = 0; i < nodes.Count; i++)
+            using (FileStream fs = new FileStream(xmlFilePath, FileMode.Open, FileAccess.Read))
+            { 
+                try
                 {
-                    XmlNode nodoPriceReport = nodes[i];
-
-                    var codigo = nodoPriceReport.ChildNodes[1].ChildNodes[0].InnerText;
-                    var pattern = new Regex("^[A-Z]{4}\\d{1,2}$");
-                    var nodoFinanceiro = nodoPriceReport.ChildNodes[4];
-
-                    var childFinanceiro = nodoFinanceiro.ChildNodes.OfType<XmlElement>().AsQueryable();
-                    bool temOscilacao = childFinanceiro.Any(x => x.Name == "OscnPctg");
-                    bool temAjusteContrato = childFinanceiro.Any(x => x.Name == "AdjstdValCtrct");
-
-                    var elementoQuantidadeNegocios = childFinanceiro.SingleOrDefault(x => x.Name == "RglrTxsQty");
-                    var quantidadeDeNegocios = elementoQuantidadeNegocios != null
-                        ? Convert.ToInt64(elementoQuantidadeNegocios.InnerText)
-                        : 0;
-
-                    if ((string.IsNullOrEmpty(codigoUnico) || codigoUnico.Equals(codigo) ) 
-                        && codigo.Length <= 6 && pattern.IsMatch(codigo) && temOscilacao && quantidadeDeNegocios > 100
-                        && !temAjusteContrato && !ativosDesconsiderados.Contains(codigo))
+                    xmldoc.Load(fs);
+                    XmlNodeList nodes = xmldoc.GetElementsByTagName("PricRpt");
+                    var cultureInfo = new CultureInfo("en-US");
+                    int i = 0;
+                    while (i < nodes.Count && !CodigoUnicoEncontrado(codigoUnico, cotacoes))
                     {
-                        var cultureInfo = new CultureInfo("en-US");
-                        var quantidadeNegociada = Convert.ToInt64(childFinanceiro.Single(x => x.Name == "RglrTraddCtrcts").InnerText);
-                        var volumeFinanceiro = Convert.ToDecimal(childFinanceiro.Single(x => x.Name == "NtlRglrVol").InnerText, cultureInfo);
-                        var valorAbertura = Convert.ToDecimal(childFinanceiro.Single(x => x.Name == "FrstPric").InnerText, cultureInfo);
-                        var valorMinimo = Convert.ToDecimal(childFinanceiro.Single(x => x.Name == "MinPric").InnerText, cultureInfo);
-                        var valorMaximo = Convert.ToDecimal(childFinanceiro.Single(x => x.Name == "MaxPric").InnerText, cultureInfo);
-                        var valorFechamento = Convert.ToDecimal(childFinanceiro.Single(x => x.Name == "LastPric").InnerText, cultureInfo);
-                        var precoMedio = Convert.ToDecimal(childFinanceiro.Single(x => x.Name == "TradAvrgPric").InnerText, cultureInfo);
-                        var oscilacao = Convert.ToDecimal(childFinanceiro.Single(x => x.Name == "OscnPctg").InnerText, cultureInfo);
+                        XmlNode nodoPriceReport = nodes[i];
 
-                        var sequencialAtivo = sequenciais.FirstOrDefault(s => s.Codigo.Equals(codigo));
-                        long sequencial = sequencialAtivo?.Sequencial ?? 1;
-                        var cotacao = new CotacaoImportacao
+                        var codigo = nodoPriceReport.ChildNodes[1].ChildNodes[0].InnerText;
+                        var nodoFinanceiro = nodoPriceReport.ChildNodes[4];
+
+                        var childFinanceiro = nodoFinanceiro.ChildNodes.OfType<XmlElement>().AsQueryable();
+                        bool temOscilacao = childFinanceiro.Any(x => x.Name == "OscnPctg");
+                        bool temAjusteContrato = childFinanceiro.Any(x => x.Name == "AdjstdValCtrct");
+
+                        var elementoQuantidadeNegocios = childFinanceiro.SingleOrDefault(x => x.Name == "RglrTxsQty");
+                        var quantidadeDeNegocios = elementoQuantidadeNegocios != null
+                            ? Convert.ToInt64(elementoQuantidadeNegocios.InnerText)
+                            : 0;
+
+                        if ((string.IsNullOrEmpty(codigoUnico) || codigoUnico.Equals(codigo))
+                            && codigo.Length <= 6 && pattern.IsMatch(codigo) && temOscilacao && quantidadeDeNegocios > 100
+                            && !temAjusteContrato && !ativosDesconsiderados.Contains(codigo))
                         {
-                            Codigo = codigo,
-                            Sequencial = sequencial,
-                            Data = data,
-                            QuantidadeNegocios = quantidadeDeNegocios,
-                            QuantidadeNegociada = quantidadeNegociada,
-                            VolumeFinanceiro = volumeFinanceiro,
-                            ValorMinimo = valorMinimo,
-                            ValorMaximo = valorMaximo,
-                            ValorAbertura = valorAbertura,
-                            ValorFechamento = valorFechamento,
-                            PrecoMedio = precoMedio,
-                            Oscilacao = oscilacao
-                        };
+                            var quantidadeNegociada = Convert.ToInt64(childFinanceiro.Single(x => x.Name == "RglrTraddCtrcts").InnerText);
+                            var volumeFinanceiro = Convert.ToDecimal(childFinanceiro.Single(x => x.Name == "NtlRglrVol").InnerText, cultureInfo);
+                            var valorAbertura = Convert.ToDecimal(childFinanceiro.Single(x => x.Name == "FrstPric").InnerText, cultureInfo);
+                            var valorMinimo = Convert.ToDecimal(childFinanceiro.Single(x => x.Name == "MinPric").InnerText, cultureInfo);
+                            var valorMaximo = Convert.ToDecimal(childFinanceiro.Single(x => x.Name == "MaxPric").InnerText, cultureInfo);
+                            var valorFechamento = Convert.ToDecimal(childFinanceiro.Single(x => x.Name == "LastPric").InnerText, cultureInfo);
+                            var precoMedio = Convert.ToDecimal(childFinanceiro.Single(x => x.Name == "TradAvrgPric").InnerText, cultureInfo);
+                            var oscilacao = Convert.ToDecimal(childFinanceiro.Single(x => x.Name == "OscnPctg").InnerText, cultureInfo);
 
-                        cotacoes.Add(cotacao);
+                            var sequencialAtivo = sequenciais.FirstOrDefault(s => s.Codigo.Equals(codigo));
+                            long sequencial = sequencialAtivo?.Sequencial ?? 1;
+                            var cotacao = new CotacaoImportacao
+                            {
+                                Codigo = codigo,
+                                Sequencial = sequencial,
+                                Data = data,
+                                QuantidadeNegocios = quantidadeDeNegocios,
+                                QuantidadeNegociada = quantidadeNegociada,
+                                VolumeFinanceiro = volumeFinanceiro,
+                                ValorMinimo = valorMinimo,
+                                ValorMaximo = valorMaximo,
+                                ValorAbertura = valorAbertura,
+                                ValorFechamento = valorFechamento,
+                                PrecoMedio = precoMedio,
+                                Oscilacao = oscilacao
+                            };
 
+                            cotacoes.Add(cotacao);
+                        }
+                        i++;
                     }
-
                 }
-
-
+                finally
+                {
+                    fs.Close();
+                }
             }
-            finally
-            {
-                fs.Close();
-            }
-            
-
             return cotacoes;
-
         }
 
+        private bool CodigoUnicoEncontrado(string codigoUnico, Collection<CotacaoImportacao> cotacoes)
+        {
+            return !string.IsNullOrEmpty(codigoUnico) && cotacoes.Count == 1;
+        }
     }
 }
 

@@ -54,17 +54,16 @@ namespace TraderWizard.ServicosDeAplicacao
 
         }
 
-        public void CalcularVolatilidadeDiaria(DateTime dataInicialCalculo)
+        public void CalcularVolatilidadeDiaria(DateTime dataInicialCalculo, ICollection<string> ativos)
         {
             try
             {
                 _conexao.BeginTrans();
-                _carregadorVolatilidade.ExcluirVolatilidadeDiaria(dataInicialCalculo);
+                _carregadorVolatilidade.ExcluirVolatilidadeDiaria(dataInicialCalculo, ativos);
                 DateTime dataInicialDados = _cotacaoDataService.CalcularDataInicial(CodigoPadrao, Periodo, dataInicialCalculo, "COTACAO");
                 ICarregadorCotacao carregadorCotacao = new CarregadorCotacaoDiaria(_conexao);
 
-                IDictionary<string, List<CotacaoOscilacao>> dados =
-                    carregadorCotacao.CarregarOscilacaoAPartirDe(dataInicialDados);
+                IDictionary<string, List<CotacaoOscilacao>> dados = carregadorCotacao.CarregarOscilacaoAPartirDe(dataInicialDados, ativos);
 
                 foreach (var dado in dados)
                 {
@@ -107,16 +106,16 @@ namespace TraderWizard.ServicosDeAplicacao
             }
         }
 
-        public void CalcularVolatilidadeSemanal(DateTime dataInicialCalculo)
+        public void CalcularVolatilidadeSemanal(DateTime dataInicialCalculo, ICollection<string> ativos)
         {
             try
             {
                 _conexao.BeginTrans();
-                _carregadorVolatilidade.ExcluirVolatilidadeSemanal(dataInicialCalculo);
+                _carregadorVolatilidade.ExcluirVolatilidadeSemanal(dataInicialCalculo, ativos);
                 DateTime dataInicialDados = _cotacaoDataService.CalcularDataInicial(CodigoPadrao, Periodo, dataInicialCalculo, "COTACAO_SEMANAL");
                 ICarregadorCotacao carregadorCotacao = new CarregadorCotacaoSemanal(_conexao);
 
-                IDictionary<string, List<CotacaoOscilacao>> dados = carregadorCotacao.CarregarOscilacaoAPartirDe(dataInicialDados);
+                IDictionary<string, List<CotacaoOscilacao>> dados = carregadorCotacao.CarregarOscilacaoAPartirDe(dataInicialDados, ativos);
 
                 foreach (var dado in dados)
                 {
@@ -159,17 +158,17 @@ namespace TraderWizard.ServicosDeAplicacao
 
         }
 
-        public void CalcularMediaVolatilidadeDiaria(DateTime dataInicialCalculo)
+        public void CalcularMediaVolatilidadeDiaria(DateTime dataInicialCalculo, ICollection<string>  ativos)
         {
 
             try
             {
                 _conexao.BeginTrans();
-                _carregadorVolatilidade.ExcluirMediaVolatilidadeDiaria(dataInicialCalculo);
+                _carregadorVolatilidade.ExcluirMediaVolatilidadeDiaria(dataInicialCalculo, ativos);
                 DateTime dataInicialDados = _cotacaoDataService.CalcularDataInicial(CodigoPadrao, Periodo, dataInicialCalculo, "VolatilidadeDiaria");
                 var carregadorCotacao = new CarregadorVolatilidade(_conexao);
 
-                IDictionary<string, List<Volatilidade>> dados = carregadorCotacao.CarregarVolatilidadeDiaria(dataInicialDados);
+                IDictionary<string, List<Volatilidade>> dados = carregadorCotacao.CarregarVolatilidadeDiaria(dataInicialDados, ativos);
 
                 foreach (var dado in dados)
                 {
@@ -212,17 +211,17 @@ namespace TraderWizard.ServicosDeAplicacao
             }
         }
 
-        public void CalcularMediaVolatilidadeSemanal(DateTime dataInicialCalculo)
+        public void CalcularMediaVolatilidadeSemanal(DateTime dataInicialCalculo, ICollection<string> ativos)
         {
 
             try
             {
                 _conexao.BeginTrans();
-                _carregadorVolatilidade.ExcluirMediaVolatilidadeSemanal(dataInicialCalculo);
+                _carregadorVolatilidade.ExcluirMediaVolatilidadeSemanal(dataInicialCalculo, ativos);
                 DateTime dataInicialDados = _cotacaoDataService.CalcularDataInicial(CodigoPadrao, Periodo, dataInicialCalculo, "VolatilidadeSemanal");
                 var carregadorCotacao = new CarregadorVolatilidade(_conexao);
 
-                IDictionary<string, List<Volatilidade>> dados = carregadorCotacao.CarregarVolatilidadeSemanal(dataInicialDados);
+                IDictionary<string, List<Volatilidade>> dados = carregadorCotacao.CarregarVolatilidadeSemanal(dataInicialDados, ativos);
 
                 foreach (var dado in dados)
                 {
