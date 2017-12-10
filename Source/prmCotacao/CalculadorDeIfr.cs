@@ -524,13 +524,13 @@ namespace TraderWizard.ServicosDeAplicacao
         /// <param name="pcolPeriodos">Collection contendo o número de períodos para os quais deve ser feito o cálculo</param>
         /// <param name="pPeriodicidade"></param>
         /// <param name="pdtmDataInicial"></param>
-        /// <param name="pstrAtivos"></param>
+        /// <param name="ativos"></param>
         /// <returns>
         /// TRUE - Cálculo correto para todos os ativos
         /// FALSE - Cálculo errado para pelo menos um dos ativos
         /// </returns>
         /// <remarks></remarks>
-        public bool IFRGeralCalcular(IList<int> pcolPeriodos, cEnum.Periodicidade pPeriodicidade, DateTime pdtmDataInicial, string pstrAtivos = "")
+        public bool IFRGeralCalcular(IList<int> pcolPeriodos, cEnum.Periodicidade pPeriodicidade, DateTime pdtmDataInicial, ICollection<string> ativos)
         {
             bool functionReturnValue = false;
 
@@ -590,42 +590,29 @@ namespace TraderWizard.ServicosDeAplicacao
             }
 
 
-            if (pstrAtivos != String.Empty)
+            if (ativos.Count > 0)
             {
                 if (!string.IsNullOrEmpty(strWhere))
                     strWhere = strWhere + " And ";
 
-
-                if (_conexao.BancoDeDados == cEnum.BancoDeDados.SqlServer)
-                {
-                    var ativosSelecionados = ConversorDeListaDeAtivos.ConverterParaArray(pstrAtivos);
-
-                    strWhere += "Codigo IN (" + string.Join(", ", ativosSelecionados.Select(funcoesBd.CampoFormatar)) + ")";
-                }
-                else
-                {
-
-                    string sustenidoFormatado = funcoesBd.CampoStringFormatar("#");
-                    strWhere += funcoesBd.IndiceDaSubString(funcoesBd.ConcatenarStrings(new[] { sustenidoFormatado, "Codigo", sustenidoFormatado }), funcoesBd.CampoStringFormatar(pstrAtivos)) + " > 0";
-                }
+                strWhere += "Codigo IN (" + string.Join(", ", funcoesBd.GerarParametrosParaConditionIn(ativos)) + ")";
 
             }
 
             if (!string.IsNullOrEmpty(strWhere))
             {
                 strQuery = strQuery + " where " + strWhere;
-
             }
 
             strQuery = strQuery + " group by Codigo ";
 
             objRSAtivo.ExecuteQuery(strQuery);
 
-            var ativos = new List<CotacaoDataDto>();
+            var cotacaoData = new List<CotacaoDataDto>();
 
             while ((!objRSAtivo.Eof))
             {
-                ativos.Add(new CotacaoDataDto
+                cotacaoData.Add(new CotacaoDataDto
                 {
                     Codigo = (string)objRSAtivo.Field("Codigo"),
                     Data = Convert.ToDateTime(objRSAtivo.Field("DataInicial"))
@@ -635,7 +622,7 @@ namespace TraderWizard.ServicosDeAplicacao
 
             objRSAtivo.Fechar();
 
-            foreach (var cotacaoDataDto in ativos)
+            foreach (var cotacaoDataDto in cotacaoData)
             {
 
                 DateTime dtmCotacaoAnteriorData = this._cotacaoData.AtivoCotacaoAnteriorDataConsultar(cotacaoDataDto.Codigo, cotacaoDataDto.Data, strTabela);

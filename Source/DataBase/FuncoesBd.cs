@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+
 //Descrição: contém funcões auxiliares para facilitar o acesso ao banco de dados
 
 namespace DataBase
@@ -209,5 +212,12 @@ namespace DataBase
         public abstract string ConverterParaPontoFlutuante(string nomeDaColuna);
 
         public abstract string Condicional(string condicao, string valorSeVerdadeiro, string valorSeFalso);
+
+        public string GerarParametrosParaConditionIn(ICollection<string> items)
+        {
+            return string.Join(", ", items.Select(CampoStringFormatar));
+        }
+
+
     }
 }

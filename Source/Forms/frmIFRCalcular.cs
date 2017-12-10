@@ -66,12 +66,8 @@ namespace Forms
 			}
 
 			Cursor = Cursors.WaitCursor;
-
-
-		    var ativosSelecionados = "";
-            ativosSelecionados = lstAtivosEscolhidos.Items.Cast<AtivoSelecao>().Aggregate(ativosSelecionados, (current, ativoSelecionado) => current + ("#" + ativoSelecionado.Codigo));
-
-            ativosSelecionados += "#";
+            
+		    ICollection<string> ativosSelecionados = lstAtivosEscolhidos.Items.Cast<AtivoSelecao>().Select(ativo => ativo.Codigo).ToList();
 
 			IList<int> colPeriodos = new List<int>();
 			colPeriodos.Add(Convert.ToInt32(txtPeriodo.Text));
@@ -98,7 +94,7 @@ namespace Forms
 		    }
 		    catch (Exception exception)
 		    {
-                MessageBox.Show(string.Format("Ocorreram erros ao calcular o IFR. Detalhes: {0}", exception.Message), Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Ocorreram erros ao calcular o IFR. Detalhes: {exception.Message}", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 		    }
 		    finally
 		    {

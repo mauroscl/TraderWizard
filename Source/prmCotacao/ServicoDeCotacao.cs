@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Forms;
 using Configuracao;
@@ -148,7 +149,7 @@ namespace TraderWizard.ServicosDeAplicacao
 		/// </param>
 		/// <returns>status da transação</returns>
 		/// <remarks></remarks>
-		private bool OscilacaoGeralCalcular(bool pblnPercentualCalcular, DateTime pdtmDataInicial, string pstrAtivos = "", bool pblnConsiderarApenasDataSplit = false)
+		private bool OscilacaoGeralCalcular(bool pblnPercentualCalcular, DateTime pdtmDataInicial, ICollection<string> ativos, bool pblnConsiderarApenasDataSplit = false)
 		{
 
 			if (pblnConsiderarApenasDataSplit && pdtmDataInicial == Constantes.DataInvalida) {
@@ -205,30 +206,11 @@ namespace TraderWizard.ServicosDeAplicacao
 			}
 
 
-			if (pstrAtivos != String.Empty) {
+			if (ativos.Count > 0) {
 				if (!string.IsNullOrEmpty(strWhere))
 					strWhere = strWhere + " and ";
 
-
-			    if (_conexao.BancoDeDados == cEnum.BancoDeDados.SqlServer)
-			    {
-			        //remove sustenido do inicio
-			        string ativosAux = pstrAtivos.Remove(0, 1);
-
-			        //remove ultimo sustenido
-			        ativosAux = ativosAux.Remove(ativosAux.Length - 1);
-
-			        //faz split pelo sustenido
-			        string[] ativosSelecionados = ativosAux.Split('#');
-
-			        strWhere += "Codigo IN (" + string.Join(", ", ativosSelecionados.Select(funcoesBd.CampoFormatar)) + ")";
-
-			    }
-			    else
-			    {
-			        string sustenidoFormatado = funcoesBd.CampoStringFormatar("#");
-			        strWhere += funcoesBd.IndiceDaSubString(funcoesBd.ConcatenarStrings(new[] {sustenidoFormatado, "Codigo", sustenidoFormatado}),_funcoesBd.CampoStringFormatar(pstrAtivos)) + " > 0";
-			    }
+			        strWhere += $"Codigo IN ({funcoesBd.GerarParametrosParaConditionIn(ativos)})";
 
 			}
 
@@ -978,15 +960,15 @@ namespace TraderWizard.ServicosDeAplicacao
 	    ///  Período utilizado no cálculo: "DIARIO" ou "SEMANAL"
 	    ///  </param>
 	    ///  <param name="plstMedias">lista contendo as médias que devem ser calculadas</param>
-	    ///  <param name="pstrAtivos">
-	    ///  Código dos ativos separados pelo caracter "#"    
+	    ///  <param name="ativos">
+	    ///  Código dos ativos que deve ser calculada a média   
 	    ///  </param>    
 	    ///  <returns>
 	    ///  TRUE - A MÉDIA MÓVEL EXPONENCIAL FOI CALCULADA PARA TODOS OS ATIVOS SEM NENHUM ERRO.
 	    ///  FALSE - OCORREU ERRO NA EXECUÇÃO DA MÉDIA MÓVEL PARA PELO MENOS UM DOS ATIVOS.
 	    ///  </returns>
 	    ///  <remarks></remarks>
-	    private bool MediaMovelGeralCalcular(string pstrPeriodoDuracao, IEnumerable<MediaDTO> plstMedias, DateTime pdtmDataInicial, string pstrAtivos)
+	    private bool MediaMovelGeralCalcular(string pstrPeriodoDuracao, IEnumerable<MediaDTO> plstMedias, DateTime pdtmDataInicial, ICollection<string> ativos)
 		{
 			bool functionReturnValue = false;
 
@@ -1039,30 +1021,11 @@ namespace TraderWizard.ServicosDeAplicacao
 			}
 
 
-			if (pstrAtivos != String.Empty) {
+			if (ativos.Any()) {
 				if (!string.IsNullOrEmpty(strWhere))
 					strWhere = strWhere + " And ";
 
-			    if (_conexao.BancoDeDados == cEnum.BancoDeDados.SqlServer)
-			    {
-                    //remove sustenido do inicio
-			        string ativosAux = pstrAtivos.Remove(0, 1);
-
-                    //remove ultimo sustenido
-			        ativosAux = ativosAux.Remove(ativosAux.Length - 1);
-
-                    //faz split pelo sustenido
-			        string[] ativosSelecionados = ativosAux.Split('#');
-
-			        strWhere += "Codigo IN (" + string.Join(", ", ativosSelecionados.Select(funcoesBd.CampoFormatar)) +  ")";
-
-			    }
-			    else
-			    {
-                    string sustenidoFormatado = funcoesBd.CampoStringFormatar("#");
-                    strWhere += funcoesBd.IndiceDaSubString(funcoesBd.ConcatenarStrings(new[] { sustenidoFormatado, "Codigo", sustenidoFormatado }), funcoesBd.CampoStringFormatar(pstrAtivos)) + " > 0";
-			        
-			    }
+			    strWhere += $"Codigo IN ({funcoesBd.GerarParametrosParaConditionIn(ativos)})";
 
 
 			}
@@ -1078,7 +1041,7 @@ namespace TraderWizard.ServicosDeAplicacao
 
 		    DateTime dtmCotacaoAnteriorData = Constantes.DataInvalida;
 
-		    var ativos = new List<CotacaoDataDto>();
+		    var cotacaoDatas = new List<CotacaoDataDto>();
 
 		    while (!objRSAtivo.Eof)
 		    {
@@ -1093,14 +1056,14 @@ namespace TraderWizard.ServicosDeAplicacao
                     cotacaoDataDto.Data = Convert.ToDateTime(objRSAtivo.Field("DataInicial"));
                 }
 
-                ativos.Add(cotacaoDataDto);
+                cotacaoDatas.Add(cotacaoDataDto);
 
                 objRSAtivo.MoveNext();
 		    }
 
             objRSAtivo.Fechar();
 
-			foreach (var cotacaoDataDto in ativos) {
+			foreach (var cotacaoDataDto in cotacaoDatas) {
 			    DateTime dtmDataInicialAux;
 			    if (pdtmDataInicial == Constantes.DataInvalida) {
 					//se não recebeu uma data inicial válida, não faz sentido buscar a menor data
@@ -1507,13 +1470,13 @@ namespace TraderWizard.ServicosDeAplicacao
 	    /// Quando este parâmetro é uma data inválida calcula os dados desde a primeira data em que existe cotação diária.
 	    /// </param>
 	    /// '''
-	    /// <param name="pstrAtivos">Lista dos ativos para os quais será calculada a cotação</param>
+	    /// <param name="ativos">Lista dos ativos para os quais será calculada a cotação</param>
 	    /// <param name="pblnCalcularApenasEmSplit">Indica se é para fazer o recálculo das cotações semanais apenas 
 	    /// nas semanas que houver split. Neste caso também tem que calcular na semana subsequente, pois esta
 	    /// é dependente da primeira para calcular os campos "Diferenca" e "Oscilacao"</param>
 	    /// <returns></returns>
 	    /// <remarks></remarks>
-	    private bool CotacaoSemanalRetroativoGeralCalcular(DateTime pdtmData, string pstrAtivos = "", bool pblnCalcularApenasEmSplit = false)
+	    private bool CotacaoSemanalRetroativoGeralCalcular(DateTime pdtmData, ICollection<string>  ativos, bool pblnCalcularApenasEmSplit = false)
 		{
 
 			var objRS = new RS();
@@ -1531,31 +1494,8 @@ namespace TraderWizard.ServicosDeAplicacao
                 strQuery = strQuery + " and Data >= " + funcoesBd.CampoDateFormatar(pdtmData);
 			}
 
-
-
-			if (pstrAtivos != String.Empty) {
-
-                if (_conexao.BancoDeDados == cEnum.BancoDeDados.SqlServer)
-                {
-                    //remove sustenido do inicio
-                    string ativosAux = pstrAtivos.Remove(0, 1);
-
-                    //remove ultimo sustenido
-                    ativosAux = ativosAux.Remove(ativosAux.Length - 1);
-
-                    //faz split pelo sustenido
-                    string[] ativosSelecionados = ativosAux.Split('#');
-
-                    strQuery += "AND Codigo IN (" + string.Join(", ", ativosSelecionados.Select(funcoesBd.CampoFormatar)) + ")";
-
-                }
-
-                else
-                {
-                    string sustenidoFormatado = funcoesBd.CampoStringFormatar("#");
-                    strQuery += funcoesBd.IndiceDaSubString(funcoesBd.ConcatenarStrings(new[] { sustenidoFormatado, "Codigo", sustenidoFormatado }), funcoesBd.CampoStringFormatar(pstrAtivos)) + " > 0";
-                }
-
+			if (ativos.Any()) {
+                strQuery += $"AND Codigo IN ({funcoesBd.GerarParametrosParaConditionIn(ativos)})";
 			}
 
 			strQuery = strQuery + " group by Codigo ";
@@ -1596,11 +1536,7 @@ namespace TraderWizard.ServicosDeAplicacao
 		/// <summary>
 		/// Calcula todos os dados da cotação diária a partir de uma determinada data ou desde o início das cotações.
 		/// </summary>
-		/// <param name="pblnOscilacaoCalcular">se for TRUE indica que é para calcular a oscilação das cotações</param>
-		/// <param name="pblnOscilacaoPercentualCalcular">quando for para calcular a oscilação indica se é para calcular o percentualou apenas a diferença</param>
-		/// <param name="pblnIFRCalcular">se for TRUE indica que é para calcular o indice de força relativa</param>
-		/// <param name="pblnMMExpCalcular">se for TRUE indica que é para calcular a média móvel exponencial</param>
-		/// <param name="pdtmDataBase"></param>
+		/// <param name="dataBase"></param>
 		/// <param name="pblnConsiderarApenasDataSplit">Indica se é para fazer os cálculos 
 		/// apenas nas datas em que houver split. Esta opção é utilizada no recálculo quando
 		/// há importação de proventos. 
@@ -1610,17 +1546,8 @@ namespace TraderWizard.ServicosDeAplicacao
 		/// <param name="pblnCotacaoAnteriorInicializar">Indica se é para inicializar a tabela de cotações anteriores
 		/// para não ser necessário buscar o valor da cotação anterior em todos os cálculos de indicadores. Esta busca
 		/// é um pouco demorada e esta opção foi criada para otimizar o tempo de atualização das cotações. </param>
-		/// <param name="pblnIFRMedioCalcular">Indica se é para calcular o IFR médio das cotações</param>
-		/// <param name="pblnVolumeMedioCalcular">Indica se é para calcular o volume médio das cotações</param>
-		/// <param name="pstrAtivos">Lista de ativos para os quais deve ser feito o cálculo</param>
-		/// <returns>
-		/// ''' RetornoOK = todos os cálculos foram realizados com sucesso.
-		/// RetornoErro2 = erro ao transportar os dados das cotações diárias para a cotação semanal
-		/// RetornoErro3 = erro ao calcular o índice de força relativa
-		/// RetornoErro4 = erro ao calcular a média móvel exponencial.
-		///</returns>
-		/// <remarks></remarks>
-		private bool CotacaoDiariaDadosAtualizar(ConfiguracaoDeCalculoDiario configuracaoDeCalculo, DateTime dataBase, string ativos = "" , 
+		/// <param name="ativos">Lista de ativos para os quais deve ser feito o cálculo</param>
+		private bool CotacaoDiariaDadosAtualizar(ConfiguracaoDeCalculoDiario configuracaoDeCalculo, DateTime dataBase, ICollection<string> ativos , 
             bool pblnCotacaoAnteriorInicializar = true, bool pblnConsiderarApenasDataSplit = false)
 		{
 
@@ -1687,10 +1614,8 @@ namespace TraderWizard.ServicosDeAplicacao
 		    if (configuracaoDeCalculo.VolatilidadeCalcular)
 		    {
 		        var calculadorDeVolatilidade = new CalculadorDeVolatilidade();
-		        var arrayAtivos = ConversorDeListaDeAtivos.ConverterParaArray(ativos);
-                calculadorDeVolatilidade.CalcularVolatilidadeDiaria(dataBase, arrayAtivos);
-		        calculadorDeVolatilidade.CalcularMediaVolatilidadeDiaria(dataBase, arrayAtivos);
-		        
+                calculadorDeVolatilidade.CalcularVolatilidadeDiaria(dataBase, ativos);
+		        calculadorDeVolatilidade.CalcularMediaVolatilidadeDiaria(dataBase, ativos);
 		    }
 		    return (blnOk && blnIfrok && blnMmExpOk);
 
@@ -1700,22 +1625,12 @@ namespace TraderWizard.ServicosDeAplicacao
 		/// <summary>
 		/// Calcula todos os dados da cotação semanal a partir de uma determinada data ou desde o início das cotações.
 		/// </summary>
-		/// <param name="pblnDadosCalcular">se for TRUE indica que é para calcular os dados da cotação utilizando como base a tabela de cotações diárias</param>
-		/// <param name="pblnIFRCalcular">se for TRUE indica que é para calcular o indice de força relativa</param>
-		/// <param name="pblnMMExpCalcular">se for TRUE indica que é para calcular a média móvel exponencial</param>
-		/// <param name="pdtmDataBase"></param>
+		/// <param name="dataBase"></param>
 		/// <param name="pblnConsiderarApenasDataSplit">Indica se é para fazer o recálculo das cotações semanais apenas 
 		/// nas semanas que houver split. Neste caso também tem que calcular na semana subsequente, pois esta
 		/// é dependente da primeira para calcular os campos "Diferenca" e "Oscilacao"
 		/// </param>
-		/// <returns>
-		/// ''' RetornoOK = todos os cálculos foram realizados com sucesso.
-		/// RetornoErro2 = erro ao transportar os dados das cotações diárias para a cotação semanal
-		/// RetornoErro3 = erro ao calcular o índice de força relativa
-		/// RetornoErro4 = erro ao calcular a média móvel exponencial.
-		///</returns>
-		/// <remarks></remarks>
-		public bool CotacaoSemanalDadosAtualizar(ConfiguracaoDeCalculoSemanal configuracaoDeCalculo, DateTime dataBase, string ativos = "", bool pblnConsiderarApenasDataSplit = false)
+		public bool CotacaoSemanalDadosAtualizar(ConfiguracaoDeCalculoSemanal configuracaoDeCalculo, DateTime dataBase, ICollection<string> ativos, bool pblnConsiderarApenasDataSplit = false)
 		{
 
 			bool blnOk = true;
@@ -1783,9 +1698,8 @@ namespace TraderWizard.ServicosDeAplicacao
 			        var primeiraDataDaSemana = _cotacaoDataService.AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular("PETR4", dataBase);
 
 			        var calculadorDeVolatilidade = new CalculadorDeVolatilidade();
-			        var arrayAtivos = ConversorDeListaDeAtivos.ConverterParaArray(ativos);
-			        calculadorDeVolatilidade.CalcularVolatilidadeSemanal(primeiraDataDaSemana, arrayAtivos);
-			        calculadorDeVolatilidade.CalcularMediaVolatilidadeSemanal(primeiraDataDaSemana, arrayAtivos);
+			        calculadorDeVolatilidade.CalcularVolatilidadeSemanal(primeiraDataDaSemana, ativos);
+			        calculadorDeVolatilidade.CalcularMediaVolatilidadeSemanal(primeiraDataDaSemana, ativos);
 			        
 			    }			    
 			}
@@ -1808,7 +1722,7 @@ namespace TraderWizard.ServicosDeAplicacao
 		/// <returns></returns>
 		/// <remarks></remarks>
 		public bool DadosRecalcular(ConfiguracaoDeCalculoDiario configuracaoDiaria, ConfiguracaoDeCalculoSemanal configuracaoSemanal,
-		    DateTime dataInicial, string ativos = "", bool pblnCotacaoAnteriorInicializar = true, bool pblnConsiderarApenasDataSplit = false)
+		    DateTime dataInicial, ICollection<string> ativos, bool pblnCotacaoAnteriorInicializar = true, bool pblnConsiderarApenasDataSplit = false)
 		{
 
 		    bool okCotacaoDiaria = true;
@@ -1866,7 +1780,8 @@ namespace TraderWizard.ServicosDeAplicacao
 
 				objRS.Fechar();
 
-				if (dtmDataInicial != Constantes.DataInvalida) {
+			    var ativos = new Collection<string> { pstrCodigo };
+			    if (dtmDataInicial != Constantes.DataInvalida) {
 
 					//se encontrou uma data, verifica se  tem cotação após esta data. 
 					//Só precisa calcular a média, se possuir cotação
@@ -1882,7 +1797,7 @@ namespace TraderWizard.ServicosDeAplicacao
 
 						lstMediasSelecionadasAux.Add(mediaDto);
 
-					    blnRetorno = MediaMovelGeralCalcular(pstrPeriodoDuracao, lstMediasSelecionadasAux, dataPosterior, "#" + pstrCodigo + "#");
+					    blnRetorno = MediaMovelGeralCalcular(pstrPeriodoDuracao, lstMediasSelecionadasAux, dataPosterior, ativos);
 
 					}
 
@@ -1893,7 +1808,7 @@ namespace TraderWizard.ServicosDeAplicacao
 					lstMediasSelecionadasAux.Add(mediaDto);
 
 					//se não tem média calculada, tem que calcular para todo o período calculado
-				    blnRetorno = MediaMovelGeralCalcular(pstrPeriodoDuracao, lstMediasSelecionadasAux,Constantes.DataInvalida , "#" + pstrCodigo + "#");
+				    blnRetorno = MediaMovelGeralCalcular(pstrPeriodoDuracao, lstMediasSelecionadasAux,Constantes.DataInvalida , ativos);
 
 				}
 
@@ -1926,11 +1841,7 @@ namespace TraderWizard.ServicosDeAplicacao
 
 			Command objCommand = new Command(objConnAux);
 
-			RS objRS = new RS(objConnAux);
-
-			string strQuery;
-
-			DateTime dtmDataInicial = default(DateTime);
+		    DateTime dtmDataInicial = default(DateTime);
 
 		    string strTabelaDados;
 			//TABELA ONDE SERÃO BUSCADOS OS DADOS PARA CALCULAR A MÉDIA
@@ -2051,58 +1962,9 @@ namespace TraderWizard.ServicosDeAplicacao
 			//Atualizar a média calculada na tabela de média, conforme calculado no item b, 
 			//sempre utilizando como data da média a data do RS2.
 
-			//se chegou até este ponto, então significa que conseguiu calcular as datas inicial e final.
-			RS objRsDataInicial = new RS(objConnAux);
-			RS objRsDataFinal = new RS(objConnAux);
+		    var datasIniciais = BuscarDatasComCotacaoAPartirDe(pstrCodigo, strTabelaDados, dtmDataInicial, intNumPeriodosTabelaDados);
 
-		    //executa o recordset de datas iniciais
-
-			strQuery = "select Data " + " from " + strTabelaDados + " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + funcoesBd.CampoDateFormatar(dtmDataInicial);
-
-
-			if (intNumPeriodosTabelaDados != -1) {
-
-				strQuery = strQuery + " and NumPeriodos = " + intNumPeriodosTabelaDados;
-
-			}
-
-			strQuery = strQuery + " order by Data ";
-
-			objRsDataInicial.ExecuteQuery(strQuery);
-
-		    var datasIniciais = new List<DateTime>() ;
-
-            while (!objRsDataInicial.Eof)
-            {
-                datasIniciais.Add(Convert.ToDateTime(objRsDataInicial.Field("Data")));
-                objRsDataInicial.MoveNext();
-	        }
-
-            objRsDataInicial.Fechar();
-
-			//executa o recordset de datas iniciais
-			strQuery = "select Data " + " from " + strTabelaDados +
-                " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " and Data >= " + funcoesBd.CampoDateFormatar(pdtmDataFinal);
-
-
-			if (intNumPeriodosTabelaDados != -1) {
-
-				strQuery = strQuery + " and NumPeriodos = " + intNumPeriodosTabelaDados;
-
-			}
-
-			strQuery = strQuery + " order by Data ";
-
-			objRsDataFinal.ExecuteQuery(strQuery);
-
-		    var datasFinais = new List<DateTime>();
-
-		    while (!objRsDataFinal.Eof)
-		    {
-                datasFinais.Add(Convert.ToDateTime(objRsDataFinal.Field("Data")));
-		        objRsDataFinal.MoveNext();
-		    }
-            objRsDataFinal.Fechar();
+		    var datasFinais = BuscarDatasComCotacaoAPartirDe(pstrCodigo, strTabelaDados, pdtmDataFinal, intNumPeriodosTabelaDados);
 
 			//exclui as médias já existentes a partir da primeira data que será calculada,
 			//caso exista
@@ -2128,7 +1990,37 @@ namespace TraderWizard.ServicosDeAplicacao
 
 		}
 
-	    private bool CotacaoAnteriorInicializar(string pstrPeriodo, DateTime pdtmDataInicial, string pstrAtivos = "")
+	    private List<DateTime> BuscarDatasComCotacaoAPartirDe(string pstrCodigo, string strTabelaDados, DateTime dtmDataInicial, int intNumPeriodosTabelaDados)
+	    {
+	        RS rs = new RS();
+
+	        var query = "select Data " + " from " + strTabelaDados +
+	                    " where Codigo = " + this._funcoesBd.CampoStringFormatar(pstrCodigo) + 
+                        " and Data >= " + this._funcoesBd.CampoDateFormatar(dtmDataInicial);
+
+	        if (intNumPeriodosTabelaDados != -1)
+	        {
+	            query = query + " and NumPeriodos = " + intNumPeriodosTabelaDados;
+	        }
+
+	        query = query + " order by Data ";
+
+	        rs.ExecuteQuery(query);
+
+	        var datas = new List<DateTime>();
+
+	        while (!rs.Eof)
+	        {
+	            datas.Add(Convert.ToDateTime(rs.Field("Data")));
+	            rs.MoveNext();
+	        }
+
+	        rs.Fechar();
+
+	        return datas;
+	    }
+
+	    private bool CotacaoAnteriorInicializar(string pstrPeriodo, DateTime pdtmDataInicial, ICollection<string> ativos)
 		{
 
 			Conexao objConexaoAux = new Conexao();
@@ -2173,17 +2065,11 @@ namespace TraderWizard.ServicosDeAplicacao
 
 			}
 
+			if (ativos.Count > 0) {
+                if (!string.IsNullOrEmpty(strWhere))
+					strWhere +=  " And ";
 
-			if (pstrAtivos != String.Empty) {
-				if (!string.IsNullOrEmpty(strWhere))
-					strWhere = strWhere + " And ";
-
-			    var sustenidoFormatado = funcoesBd.CampoStringFormatar("#");
-			    strWhere +=
-			        funcoesBd.IndiceDaSubString(
-			            funcoesBd.ConcatenarStrings(new[] {sustenidoFormatado, "Codigo", sustenidoFormatado}),
-			            funcoesBd.CampoStringFormatar(pstrAtivos)) + "  > 0 ";
-
+			    strWhere += $"Codigo IN ({funcoesBd.GerarParametrosParaConditionIn(ativos)})";
 			}
 
 			strQuery = strQuery + " WHERE " + strWhere;
@@ -2244,7 +2130,7 @@ namespace TraderWizard.ServicosDeAplicacao
 
 		}
 
-		/// <summary>
+	    /// <summary>
 		/// Busca a data de uma cotação a partir de um número sequencial.
 		/// </summary>
 		/// <returns></returns>

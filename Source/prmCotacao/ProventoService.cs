@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using Configuracao;
 using DataBase;
@@ -383,7 +384,7 @@ namespace TraderWizard.ServicosDeAplicacao
                         //que alteram
                         var configuracaoDiaria = new ConfiguracaoDeCalculoDiario(true, true, true, true, false, true, true);
                         var configuracaoSemanal = new ConfiguracaoDeCalculoSemanal(true, true, true, true, false, true, true, true);
-                        _servicoDeCotacao.DadosRecalcular(configuracaoDiaria, configuracaoSemanal, dtmDataInicioRecalculo, "#" + strCodigoAtual + "#", true, true);
+                        _servicoDeCotacao.DadosRecalcular(configuracaoDiaria, configuracaoSemanal, dtmDataInicioRecalculo, new Collection<string>{strCodigoAtual}, true, true);
 
                     }
 
@@ -516,12 +517,9 @@ namespace TraderWizard.ServicosDeAplicacao
 
             objCommand.Execute(strQuery);
 
-
             //quando vai trocar de ativo precisa fazer commit para que o recálculo que será feito
             //em outra transação já tenho os dados dos splits que foram inseridos por esta operação.
             objCommand.CommitTrans();
-
-
 
             if (objCommand.TransStatus)
             {
@@ -534,14 +532,12 @@ namespace TraderWizard.ServicosDeAplicacao
                 var configuracaoDiaria = new ConfiguracaoDeCalculoDiario(true, true, true, true, false, true, true);
                 var configuracaoSemanal = new ConfiguracaoDeCalculoSemanal(true, true, true, true, false, true, true, true);
 
-                _servicoDeCotacao.DadosRecalcular(configuracaoDiaria, configuracaoSemanal, dtmUltimoDiaCom, "#" + pstrCodigo + "#", true, true);
-
-
+                _servicoDeCotacao.DadosRecalcular(configuracaoDiaria, configuracaoSemanal, dtmUltimoDiaCom, new Collection<string> { pstrCodigo }, true, true);
+                
             }
             else
             {
                 functionReturnValue = cEnum.enumRetorno.RetornoErroInesperado;
-
             }
             return functionReturnValue;
 

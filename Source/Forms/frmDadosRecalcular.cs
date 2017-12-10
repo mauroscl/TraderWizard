@@ -232,24 +232,16 @@ namespace TraderWizard
 
 				}
 
-				string strAtivos = String.Empty;
+				var ativos = new Collection<string>();
 
 
 			    if (rdbAtivosEscolher.Checked) {
-
 					for (var intI = 0; intI <= lstAtivosEscolhidos.Items.Count - 1; intI++)
 					{
 					    string strCodigoAtivo = mdlGeral.ObtemCodigoDoAtivoSelecionadoNoCombo( (string)lstAtivosEscolhidos.Items[intI]);
 
-					    strAtivos = strAtivos + "#" + strCodigoAtivo;
+					    ativos.Add(strCodigoAtivo);
 					}
-
-
-				    if (strAtivos != String.Empty) {
-						strAtivos = strAtivos + "#";
-
-					}
-
 				}
 
 				DateTime dtmDataInicial = Constantes.DataInvalida;
@@ -282,7 +274,7 @@ namespace TraderWizard
 
 				this.Cursor = Cursors.WaitCursor;
 
-				if (objCotacao.DadosRecalcular(configuracaoDiaria, configuracaoSemanal , dtmDataInicial, strAtivos)) {
+				if (objCotacao.DadosRecalcular(configuracaoDiaria, configuracaoSemanal , dtmDataInicial, ativos)) {
                     MessageBox.Show("Operação executada com sucesso.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 

@@ -161,28 +161,26 @@ namespace TraderWizard.ServicosDeAplicacao
                 //se alguma cotação foi atualizada com sucesso atualiza a tabela de resumo.
                 TabelaResumoAtualizar(dtmDataUltimaCotacao.Value, Constantes.DataInvalida);
 
-
                 if (pblnCalcularDados)
                 {
-                    //bool pblnCotacaoDiariaOscilacaoCalcular, bool pblnCotacaoDiariaOscilacaoPercentualCalcular, bool pblnCotacaoDiariaIFRCalcular,
-                    //bool pblnCotacaoDiariaMMExpCalcular, bool pblnCotacaoDiariaVolumeMedioCalcular, bool pblnCotacaoDiariaIFRMedioCalcular, bool pblnCotacaoSemanalDadosCalcular
-                    //    , bool pblnCotacaoSemanalIFRCalcular, bool pblnCotacaoSemanalMMExpCalcular, bool pblnCotacaoSemanalVolumeMedioCalcular,
-
-                    //bool pblnCotacaoSemanalIFRMedioCalcular, DateTime pdtmDataInicial, string pstrAtivos = "", bool pblnCotacaoAnteriorInicializar = true, bool pblnConsiderarApenasDataSplit = false
-
                     var configuracaoDiaria = new ConfiguracaoDeCalculoDiario(true, false, true, true, true, true, true);
                     var configuracaoSemanal = new ConfiguracaoDeCalculoSemanal(true, true, true, true, true, true, true, true);
 
-                    _servicoDeCotacao.DadosRecalcular(configuracaoDiaria, configuracaoSemanal, dataInicioRecalculo,pstrCodigoUnico);
+                    var ativos = new Collection<string>();
+
+                    if (!string.IsNullOrEmpty(pstrCodigoUnico))
+                    {
+                        ativos.Add(pstrCodigoUnico);
+                    }
+
+                    _servicoDeCotacao.DadosRecalcular(configuracaoDiaria, configuracaoSemanal, dataInicioRecalculo, ativos);
 
                 }
-
                 MessageBox.Show("Atualização das cotações realizada com sucesso.", "Atualizar Cotações", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
             else
             {
                 MessageBox.Show("Não existem cotações para serem atualizadas.", "Atualizar Cotações", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-
             }
 
             return true;
@@ -540,7 +538,7 @@ namespace TraderWizard.ServicosDeAplicacao
                     var configuracaoDiaria = new ConfiguracaoDeCalculoDiario(true, false, true, true, true, true, true);
                     var configuracaoSemanal = new ConfiguracaoDeCalculoSemanal(true, true, true, true, true, true, true, true);
 
-                    _servicoDeCotacao.DadosRecalcular(configuracaoDiaria, configuracaoSemanal, dtmData);
+                    _servicoDeCotacao.DadosRecalcular(configuracaoDiaria, configuracaoSemanal, dtmData, new Collection<string>());
                 }
 
 
@@ -691,7 +689,7 @@ namespace TraderWizard.ServicosDeAplicacao
                     //SE NÃO HOUVER REGISTROS NÃO CALCULARÁ
 
                     var configuracaoDeCalculo = new ConfiguracaoDeCalculoSemanal(true, true, true, true, true, true, true,true);
-                    this._servicoDeCotacao.CotacaoSemanalDadosAtualizar(configuracaoDeCalculo, parrData[0], "", true);
+                    this._servicoDeCotacao.CotacaoSemanalDadosAtualizar(configuracaoDeCalculo, parrData[0], new Collection<string>(), true);
 
                 }
 
