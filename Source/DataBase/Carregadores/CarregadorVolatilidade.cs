@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using Dominio.Entidades;
+using Dominio.ValueObjects;
 using DTO;
 
 namespace DataBase.Carregadores

@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace DTO
+namespace Dominio.ValueObjects
 {
-    public class Volatilidade
+    public class MediaVolatilidade
     {
         public string Codigo { get; set; }
         public DateTime Data { get; set; }

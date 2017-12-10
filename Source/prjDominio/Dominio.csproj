@@ -57,9 +57,11 @@
     <Compile Include="Entidades\IFRSimulacaoDiariaFaixaResumo.cs" />
     <Compile Include="Entidades\IFRSobrevendido.cs" />
     <Compile Include="Entidades\MediaAbstract.cs" />
+    <Compile Include="ValueObjects\MediaVolatilidade.cs" />
     <Compile Include="Entidades\Modelo.cs" />
     <Compile Include="Entidades\ProventoTipo.cs" />
     <Compile Include="Entidades\Setup.cs" />
+    <Compile Include="ValueObjects\Volatilidade.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Regras\CalculadorTabelas.cs" />
     <Compile Include="Regras\CalculoService.cs" />

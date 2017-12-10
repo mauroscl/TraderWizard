@@ -7,6 +7,7 @@ using DataBase;
 using DataBase.Carregadores;
 using DataBase.Interfaces;
 using Dominio.Regras;
+using Dominio.ValueObjects;
 using DTO;
 
 namespace TraderWizard.ServicosDeAplicacao

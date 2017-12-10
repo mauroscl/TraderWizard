@@ -48,7 +48,6 @@
     <Compile Include="ConfiguracaoDeCalculoDiario.cs" />
     <Compile Include="ConfiguracaoDeCalculoSemanal.cs" />
     <Compile Include="CotacaoOscilacao.cs" />
-    <Compile Include="MediaVolatilidade.cs" />
     <Compile Include="CotacaoVolatilidade.cs" />
     <Compile Include="FaixaDTO.cs" />
     <Compile Include="MediaDTO.cs" />
@@ -61,7 +60,6 @@
     <Compile Include="TradeDTO.cs" />
     <Compile Include="InformacoesDoTradeDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Volatilidade.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TraderWizard.Enumeracoes\TraderWizard.Enumeracoes.csproj">
