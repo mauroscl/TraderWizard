@@ -52,6 +52,7 @@
     <Compile Include="ArquivoTextoService.cs" />
     <Compile Include="AtualizadorDeCotacao.cs" />
     <Compile Include="CalculadorDeIfr.cs" />
+    <Compile Include="CalculadorDeMediaDeNegocios.cs" />
     <Compile Include="CalculadorDeVolatilidade.cs" />
     <Compile Include="ConfiguracaoDeVisualizacao.cs" />
     <Compile Include="CotacaoDataService.cs" />

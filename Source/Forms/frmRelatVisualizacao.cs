@@ -370,7 +370,7 @@ namespace TraderWizard
 
             if (!txtValorCapital.Text.IsNumeric())
             {
-                MessageBox.Show("Campo \"Valor do Capital\" não preenchido ou com valor inválido.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("Campo \"Negocios do Capital\" não preenchido ou com valor inválido.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
 				txtValorCapital.Focus();
 

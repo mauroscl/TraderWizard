@@ -135,18 +135,18 @@ namespace DataBase
 
 
 			if (pstrFiltroMME49 != "TODOS") {
-				strQuery = strQuery + '\t' + ", MM49_FECH.Valor AS MME49";
+				strQuery = strQuery + '\t' + ", MM49_FECH.Negocios AS MME49";
 
 			}
 
 
 			if (pblnMME21Incluir) {
-				strQuery = strQuery + '\t' + ", MM21_FECH.Valor AS MME21";
+				strQuery = strQuery + '\t' + ", MM21_FECH.Negocios AS MME21";
 
 			}
 
 			//Retorna também o valor da média móvel aritmética de 13 períodos do IFR
-			strQuery = strQuery + ", MM_IFR.Valor AS Media_IFR, ValorMinimo, ValorMaximo, MM200_FECH.Valor AS MM200 " + Environment.NewLine;
+			strQuery = strQuery + ", MM_IFR.Negocios AS Media_IFR, ValorMinimo, ValorMaximo, MM200_FECH.Negocios AS MM200 " + Environment.NewLine;
 
 		    string strTabelaSegundoDia = "((" + strTabelaCotacao + " C INNER JOIN " + strTabelaMedia + " MM_IFR " +
 		                                 Environment.NewLine + '\t' + " On C.CODIGO = MM_IFR.CODIGO " + Environment.NewLine +
@@ -170,7 +170,7 @@ namespace DataBase
 			//Faz um SELECT para gerar uma tabela interna com a média de 200 períodos. 
 			//Não pode fazer uma junção direta com a tabela de médias.
 
-		    string strTabelaMme200 = "(SELECT Codigo, Data, Valor" + Environment.NewLine + " FROM " + strTabelaMedia +
+		    string strTabelaMme200 = "(SELECT Codigo, Data, Negocios" + Environment.NewLine + " FROM " + strTabelaMedia +
 		                             Environment.NewLine + " WHERE Tipo = " + FuncoesBd.CampoStringFormatar(strMediaTipo) +
 		                             Environment.NewLine + " AND NumPeriodos = 200 " + Environment.NewLine + " AND Codigo = " +
 		                             FuncoesBd.CampoStringFormatar(pstrCodigo) + ") AS MM200_FECH";
@@ -276,7 +276,7 @@ namespace DataBase
 		/// ou igual à média de 49 períodos</param>
 		/// <param name="pintOrdem">Ordem de preferência na execução do setup. É um valor constante e serve para ordenar as entradas
 		/// caso seja utilizado mais de um setup ao mesmo tempo e mais de um deles der entrada na mesma data</param>
-		/// <param name="pdblIFRValorMaximoSobrevendido">Valor para o qual o IFR tem que ser menor ou igual para ser considerado sobrevendido, ou seja, gerar entrada neste setup.
+		/// <param name="pdblIFRValorMaximoSobrevendido">Negocios para o qual o IFR tem que ser menor ou igual para ser considerado sobrevendido, ou seja, gerar entrada neste setup.
 		/// O padrão que se utiliza é 5.</param>
 		/// <param name="pblnMME21Incluir">Indica se a query deve ou não retornar o valor da MME21 </param>
 		/// <param name="pintMediaTipo">
@@ -331,42 +331,42 @@ namespace DataBase
 			//Faz um SELECT para gerar uma tabela interna com a média de 200 períodos. 
 			//Não pode fazer uma junção direta com a tabela de médias.
 
-		    var strTabelaMme200 = "(" + Environment.NewLine + '\t' + "SELECT Codigo, Data, Valor" + Environment.NewLine + '\t' + " FROM " + strTabelaMedia + Environment.NewLine + '\t' + " WHERE Tipo = " + funcoesBd.CampoStringFormatar(strMediaTipo) + Environment.NewLine + '\t' + " AND NumPeriodos = 200 " + Environment.NewLine + '\t' + " AND Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + Environment.NewLine + ") AS MM200" + Environment.NewLine;
+		    var strTabelaMme200 = "(" + Environment.NewLine + '\t' + "SELECT Codigo, Data, Negocios" + Environment.NewLine + '\t' + " FROM " + strTabelaMedia + Environment.NewLine + '\t' + " WHERE Tipo = " + funcoesBd.CampoStringFormatar(strMediaTipo) + Environment.NewLine + '\t' + " AND NumPeriodos = 200 " + Environment.NewLine + '\t' + " AND Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + Environment.NewLine + ") AS MM200" + Environment.NewLine;
 
 			//concatena a tabela da MME200  na tabela do segundo dia.
 			strTabela = "(" + strTabela + " INNER JOIN " + Environment.NewLine + strTabelaMme200 + " On C.CODIGO = MM200.CODIGO " + Environment.NewLine + " And C.DATA = MM200.DATA) " + Environment.NewLine;
 
 
-			string strTabelaMediaIFR = "(" + Environment.NewLine + '\t' + "SELECT Codigo, Data, Valor" + Environment.NewLine + '\t' + " FROM " + strTabelaMedia + Environment.NewLine + '\t' +
+			string strTabelaMediaIFR = "(" + Environment.NewLine + '\t' + "SELECT Codigo, Data, Negocios" + Environment.NewLine + '\t' + " FROM " + strTabelaMedia + Environment.NewLine + '\t' +
                 " WHERE Tipo = " + funcoesBd.CampoStringFormatar("IFR2") + Environment.NewLine + '\t' + " AND NumPeriodos = 13 " + Environment.NewLine + '\t' + " AND Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + Environment.NewLine + ") AS MMIFR" + Environment.NewLine;
 
 			//concatena a tabela da MME200  na tabela do segundo dia.
 			strTabela = "(" + strTabela + " INNER JOIN " + Environment.NewLine + strTabelaMediaIFR + " On C.CODIGO = MMIFR.CODIGO " + Environment.NewLine + " And C.DATA = MMIFR.DATA) " + Environment.NewLine;
 
 
-			var strQuery = "SELECT " + funcoesBd.CampoStringFormatar("IFR2SOBREVEND") + " AS SETUP" + ", " + " C.DATA As DATA_ENTRADA, VALORFECHAMENTO As VALOR_ENTRADA " + ", Round(VALORMINIMO - (VALORMAXIMO - VALORMINIMO) * 1.3, 2) As VALOR_STOP_LOSS " + ", " + pintOrdem.ToString() + " As ORDEM " + ", Sequencial, I.Valor AS VALOR_IFR, ValorAbertura, ValorMaximo, ValorMinimo, MME49.VALOR AS MME49, MM200.Valor AS MME200, MMIFR.Valor AS MMIFR ";
+			var strQuery = "SELECT " + funcoesBd.CampoStringFormatar("IFR2SOBREVEND") + " AS SETUP" + ", " + " C.DATA As DATA_ENTRADA, VALORFECHAMENTO As VALOR_ENTRADA " + ", Round(VALORMINIMO - (VALORMAXIMO - VALORMINIMO) * 1.3, 2) As VALOR_STOP_LOSS " + ", " + pintOrdem.ToString() + " As ORDEM " + ", Sequencial, I.Negocios AS VALOR_IFR, ValorAbertura, ValorMaximo, ValorMinimo, MME49.VALOR AS MME49, MM200.Negocios AS MME200, MMIFR.Negocios AS MMIFR ";
 
 
 			if (pblnMME21Incluir) {
-				strQuery = strQuery + ", MME21.Valor as MME21 ";
+				strQuery = strQuery + ", MME21.Negocios as MME21 ";
 
 			}
 
 			strQuery = strQuery + Environment.NewLine;
 
 			strQuery = strQuery + " FROM " + strTabela + " WHERE C.Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + Environment.NewLine + 
-                " And I.NumPeriodos = 2 " + Environment.NewLine + " And I.Valor <= " + funcoesBd.CampoFloatFormatar(pdblIFRValorMaximoSobrevendido) + Environment.NewLine;
+                " And I.NumPeriodos = 2 " + Environment.NewLine + " And I.Negocios <= " + funcoesBd.CampoFloatFormatar(pdblIFRValorMaximoSobrevendido) + Environment.NewLine;
 
 			//inicio do where relacionado à média de 49
 			strQuery = strQuery + " And MME49.Tipo = " + funcoesBd.CampoStringFormatar(strMediaTipo) + Environment.NewLine + " And MME49.NumPeriodos = 49 " + Environment.NewLine;
 
 
 			if (pstrFiltroMME49 == "ACIMA") {
-				strQuery = strQuery + " And C.ValorFechamento >= MME49.Valor " + Environment.NewLine;
+				strQuery = strQuery + " And C.ValorFechamento >= MME49.Negocios " + Environment.NewLine;
 
 
 			} else if (pstrFiltroMME49 == "ABAIXO") {
-				strQuery = strQuery + " And C.ValorFechamento < MME49.Valor " + Environment.NewLine;
+				strQuery = strQuery + " And C.ValorFechamento < MME49.Negocios " + Environment.NewLine;
 
 			}
 
@@ -479,13 +479,13 @@ namespace DataBase
 
 	                if (pstrFinalidade == "TODOS")
 	                {
-	                    strSql = " SELECT Data, Valor * " + _formatadorDeCampo.CampoFormatar(pdblOperador) + " as Valor " + Environment.NewLine;
+	                    strSql = " SELECT Data, Negocios * " + _formatadorDeCampo.CampoFormatar(pdblOperador) + " as Negocios " + Environment.NewLine;
 
 
 	                }
 	                else if (pstrFinalidade == "EXTREMOS")
 	                {
-	                    strSql = " SELECT MIN(Valor * " + _formatadorDeCampo.CampoFormatar(pdblOperador) + ") AS ValorMinimo " + Environment.NewLine + ", MAX(Valor * " + _formatadorDeCampo.CampoFormatar(pdblOperador) + ") AS ValorMaximo " + Environment.NewLine + ", COUNT(1) as NumRegistros " + Environment.NewLine;
+	                    strSql = " SELECT MIN(Negocios * " + _formatadorDeCampo.CampoFormatar(pdblOperador) + ") AS ValorMinimo " + Environment.NewLine + ", MAX(Negocios * " + _formatadorDeCampo.CampoFormatar(pdblOperador) + ") AS ValorMaximo " + Environment.NewLine + ", COUNT(1) as NumRegistros " + Environment.NewLine;
 
 	                }
 	            }
@@ -495,13 +495,13 @@ namespace DataBase
 
 	                if (pstrFinalidade == "TODOS")
 	                {
-	                    strSql = '\t' + " select Data, Valor * " + _formatadorDeCampo.CampoFormatar(pdblOperadorInvertido) + " as Valor " + Environment.NewLine;
+	                    strSql = '\t' + " select Data, Negocios * " + _formatadorDeCampo.CampoFormatar(pdblOperadorInvertido) + " as Negocios " + Environment.NewLine;
 
 
 	                }
 	                else if (pstrFinalidade == "EXTREMOS")
 	                {
-	                    strSql = " SELECT MIN(Valor * " + _formatadorDeCampo.CampoFormatar(pdblOperadorInvertido) + ") AS ValorMinimo " + Environment.NewLine + ", MAX(Valor * " + _formatadorDeCampo.CampoFormatar(pdblOperadorInvertido) + ") AS ValorMaximo " + Environment.NewLine + ", COUNT(1) as NumRegistros " + Environment.NewLine;
+	                    strSql = " SELECT MIN(Negocios * " + _formatadorDeCampo.CampoFormatar(pdblOperadorInvertido) + ") AS ValorMinimo " + Environment.NewLine + ", MAX(Negocios * " + _formatadorDeCampo.CampoFormatar(pdblOperadorInvertido) + ") AS ValorMaximo " + Environment.NewLine + ", COUNT(1) as NumRegistros " + Environment.NewLine;
 
 	                }
 

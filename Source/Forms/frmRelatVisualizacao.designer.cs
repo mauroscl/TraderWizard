@@ -144,7 +144,7 @@ namespace TraderWizard
             this.Label3.Name = "Label3";
             this.Label3.Size = new System.Drawing.Size(61, 13);
             this.Label3.TabIndex = 13;
-            this.Label3.Text = "Valor Total:";
+            this.Label3.Text = "Negocios Total:";
             // 
             // cmbSetup
             // 
@@ -332,7 +332,7 @@ namespace TraderWizard
             this.Label13.Name = "Label13";
             this.Label13.Size = new System.Drawing.Size(84, 13);
             this.Label13.TabIndex = 26;
-            this.Label13.Text = "Valor do Capital:";
+            this.Label13.Text = "Negocios do Capital:";
             // 
             // txtPercentualManejo
             // 

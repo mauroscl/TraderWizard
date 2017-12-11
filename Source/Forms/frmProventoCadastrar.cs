@@ -77,7 +77,7 @@ namespace TraderWizard
 
             if (txtValorPorAcao.Text.IsNumeric())
             {
-                MessageBox.Show("Campo \"Valor por Ação\" não preenchido ou com valor inválido.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("Campo \"Negocios por Ação\" não preenchido ou com valor inválido.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
 				txtValorPorAcao.Focus();
 

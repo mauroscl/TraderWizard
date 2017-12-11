@@ -52,7 +52,7 @@ namespace Dominio.Regras
 		/// <summary>
 		/// Calcula a faixa inferior para um determinado número. A faixa inferior sempre é um inteiro ou um decimal .5
 		/// </summary>
-		/// <param name="pdblValor">Valor utilizado para estabelecer a faixa</param>
+		/// <param name="pdblValor">Negocios utilizado para estabelecer a faixa</param>
 		/// <returns>Um valor que fique abaixo do valor recebido por parâmetro que termine em .0 ou .5 e que a diferença máxima para
 		/// o valor recebido por parâmetro fique entre 0.5 e 0.54999....
 		/// </returns>
@@ -78,7 +78,7 @@ namespace Dominio.Regras
 		/// <summary>
 		/// Calcula a faixa superior para um determinado número. A faixa superior sempre é um inteiro ou um decimal .5
 		/// </summary>
-		/// <param name="pdblValor">Valor utilizado para estabelecer a faixa</param>
+		/// <param name="pdblValor">Negocios utilizado para estabelecer a faixa</param>
 		/// <returns>Um valor que fique acima do valor recebido por parâmetro que termine em .0 ou .5 e que a diferença máxima para
 		/// o valor recebido por parâmetro fique entre 0.05 e 0.54999....
 		/// </returns>

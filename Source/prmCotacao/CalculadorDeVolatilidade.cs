@@ -252,7 +252,7 @@ namespace TraderWizard.ServicosDeAplicacao
             {
                 sb
                     .Append("INSERT INTO MediaVolatilidadeSemanal ")
-                    .Append("(Codigo, Data, Valor) ")
+                    .Append("(Codigo, Data, Negocios) ")
                     .Append("VALUES ")
                     .Append($"({funcoesBd.CampoStringFormatar(media.Codigo)}, ")
                     .Append($"{funcoesBd.CampoDateFormatar(media.Data)}, ")
@@ -272,7 +272,7 @@ namespace TraderWizard.ServicosDeAplicacao
             {
                 sb
                     .Append("INSERT INTO VolatilidadeDiaria ")
-                    .Append("(Codigo, Data, Valor) ")
+                    .Append("(Codigo, Data, Negocios) ")
                     .Append("VALUES ")
                     .Append($"({funcoesBd.CampoStringFormatar(volatilidade.Codigo)}, ")
                     .Append($"{funcoesBd.CampoDateFormatar(volatilidade.Data)}, ")
@@ -345,7 +345,7 @@ namespace TraderWizard.ServicosDeAplicacao
             {
                 sb
                     .Append("INSERT INTO VolatilidadeSemanal ")
-                    .Append("(Codigo, Data, Valor) ")
+                    .Append("(Codigo, Data, Negocios) ")
                     .Append("VALUES ")
                     .Append($"({funcoesBd.CampoStringFormatar(volatilidade.Codigo)}, ")
                     .Append($"{funcoesBd.CampoDateFormatar(volatilidade.Data)}, ")
@@ -369,7 +369,7 @@ namespace TraderWizard.ServicosDeAplicacao
             {
                 sb
                     .Append("INSERT INTO MediaVolatilidadeDiaria ")
-                    .Append("(Codigo, Data, Valor) ")
+                    .Append("(Codigo, Data, Negocios) ")
                     .Append("VALUES ")
                     .Append($"({funcoesBd.CampoStringFormatar(media.Codigo)}, ")
                     .Append($"{funcoesBd.CampoDateFormatar(media.Data)}, ")

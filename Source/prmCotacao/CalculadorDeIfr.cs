@@ -44,7 +44,7 @@ namespace TraderWizard.ServicosDeAplicacao
 
             //******ALTERADO POR MAURO, 19/12/2009
             //******ARMAZENAMENTO DO IFR EM TABELA PRÓPRIA PARA O IFR DIÁRIO E PARA O IFR SEMANAL
-            string strQuery = " INSERT INTO " + pstrTabela + "(Codigo, Data, NumPeriodos, MediaBaixa, MediaAlta, Valor) " + " VALUES " + 
+            string strQuery = " INSERT INTO " + pstrTabela + "(Codigo, Data, NumPeriodos, MediaBaixa, MediaAlta, Negocios) " + " VALUES " + 
                 "(" + funcoesBd.CampoStringFormatar(pstrCodigo) + ", " + funcoesBd.CampoDateFormatar(pdtmData) + ", " + pintPeriodo + ", " + 
                 funcoesBd.CampoDecimalFormatar((decimal?)pdblMediaBaixa) + ", " + funcoesBd.CampoDecimalFormatar((decimal?)pdblMediaAlta) + ", " + 
                 funcoesBd.CampoDecimalFormatar((decimal?)pdblIFR) + ")";

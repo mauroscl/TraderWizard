@@ -339,7 +339,7 @@ namespace TraderWizard
 
             objDadosDB.CampoAdicionar("Parametro", true, pstrParametro);
 
-            objDadosDB.CampoAdicionar("Valor", false, pstrValor);
+            objDadosDB.CampoAdicionar("Negocios", false, pstrValor);
 
             objDadosDB.DadosBDSalvar();
         }

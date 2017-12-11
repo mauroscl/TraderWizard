@@ -48,6 +48,7 @@
     <Compile Include="ConfiguracaoDeCalculoDiario.cs" />
     <Compile Include="ConfiguracaoDeCalculoSemanal.cs" />
     <Compile Include="CotacaoOscilacao.cs" />
+    <Compile Include="CotacaoNegocios.cs" />
     <Compile Include="CotacaoVolatilidade.cs" />
     <Compile Include="FaixaDTO.cs" />
     <Compile Include="MediaDTO.cs" />

@@ -776,7 +776,7 @@ namespace TraderWizard
                 if (quantidadeDeCotacaoComValorZerado == 1)
                 {
                     MessageBox.Show(
-                        "Existe 1 cotação com Valor Mínimo zerado. " + Environment.NewLine + "Verifique a cotação.",
+                        "Existe 1 cotação com Negocios Mínimo zerado. " + Environment.NewLine + "Verifique a cotação.",
                         this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 
@@ -784,7 +784,7 @@ namespace TraderWizard
                 else
                 {
                     MessageBox.Show(
-                        "Existem " + quantidadeDeCotacaoComValorZerado + " cotações com Valor Mínimo zerado. " +
+                        "Existem " + quantidadeDeCotacaoComValorZerado + " cotações com Negocios Mínimo zerado. " +
                         Environment.NewLine + "Verifique as cotações.", this.Text, MessageBoxButtons.OK,
                         MessageBoxIcon.Information);
 
@@ -883,7 +883,7 @@ namespace TraderWizard
             {
                 //****************VER SE ESTÁ FUNCIONANDO QUANDO O PERÍODO DO IFR FOR TROCADO.
 
-                string strQuery = " SELECT Valor " + Environment.NewLine + " FROM " + strTabelaIFR +
+                string strQuery = " SELECT Negocios " + Environment.NewLine + " FROM " + strTabelaIFR +
                                   Environment.NewLine + " WHERE Codigo = " +
                                   FuncoesBd.CampoStringFormatar(strCodigoAtivo) + Environment.NewLine +
                                   " AND NumPeriodos = " + intIFRNumPeriodos + Environment.NewLine + " AND Data >= " +
@@ -899,7 +899,7 @@ namespace TraderWizard
                 {
                     try
                     {
-                        arrCandle[intArrayCandleIndice].IFR14 = Convert.ToDouble(objRS.Field("Valor"));
+                        arrCandle[intArrayCandleIndice].IFR14 = Convert.ToDouble(objRS.Field("Negocios"));
                     }
                     catch
                     {
@@ -955,7 +955,7 @@ namespace TraderWizard
 
                 while (!objRSList.Eof)
                 {
-                    arrCandle[intArrayCandleIndice].VolumeMedio = Convert.ToDouble(objRSList.Field("Valor"));
+                    arrCandle[intArrayCandleIndice].VolumeMedio = Convert.ToDouble(objRSList.Field("Negocios"));
 
                     intArrayCandleIndice = intArrayCandleIndice - 1;
 
@@ -1146,7 +1146,7 @@ namespace TraderWizard
                         //preenche estrutura com os dados da média
                         objstructMediaValor.intPeriodo = objMediaDTO.NumPeriodos;
                         objstructMediaValor.strTipo = objMediaDTO.Tipo;
-                        objstructMediaValor.dblValor = Convert.ToDouble(objRSList.Field("Valor"));
+                        objstructMediaValor.dblValor = Convert.ToDouble(objRSList.Field("Negocios"));
 
                         //adiciona a média no array de candle
                         arrCandle[intArrayCandleIndice].MediaAtribuir(objstructMediaValor);
@@ -2255,11 +2255,11 @@ namespace TraderWizard
 
             objDadosDB.CampoAdicionar("Parametro", true, pstrParametro);
 
-            objDadosDB.CampoAdicionar("Valor", false, "");
+            objDadosDB.CampoAdicionar("Negocios", false, "");
 
             objDadosDB.DadosBDConsultar();
 
-            pstrValorRet = objDadosDB.CampoConsultar("Valor");
+            pstrValorRet = objDadosDB.CampoConsultar("Negocios");
 
 
         }

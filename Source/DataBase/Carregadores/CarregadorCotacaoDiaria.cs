@@ -41,12 +41,12 @@ namespace DataBase.Carregadores
 		    foreach (MediaDTO objMediaDTO in plstMedias) {
 				string strAliasTabelaMedia = objMediaDTO.GetAlias;
 
-				strSelect += ", " + strAliasTabelaMedia + ".Valor AS " + strAliasTabelaMedia;
+				strSelect += ", " + strAliasTabelaMedia + ".Negocios AS " + strAliasTabelaMedia;
 
 				//tem que gerar na forma de um subselect para trazer os valores corretos com o LEFT JOIN devido ao WHERE 
 				//necessário nos campos "Tipo" e "NumPeriodos"
 				string strTabelaMedia = "(" + Environment.NewLine;
-				strTabelaMedia += '\t' + "SELECT Codigo, Data, Valor" + Environment.NewLine;
+				strTabelaMedia += '\t' + "SELECT Codigo, Data, Negocios" + Environment.NewLine;
 				strTabelaMedia += '\t' + " FROM Media_Diaria " + strAliasTabelaMedia + Environment.NewLine;
 				strTabelaMedia += '\t' + " WHERE Tipo = " + funcoesBd.CampoStringFormatar(objMediaDTO.CampoTipoBd) + Environment.NewLine;
 				strTabelaMedia += '\t' + " AND NumPeriodos = " + funcoesBd.CampoFormatar(objMediaDTO.NumPeriodos) + Environment.NewLine;
@@ -62,7 +62,7 @@ namespace DataBase.Carregadores
 
 
 			if (pblnCarregarIFR) {
-				strSelect += ", IFR.Valor  AS IFR ";
+				strSelect += ", IFR.Negocios  AS IFR ";
 
 				strFrom = Environment.NewLine + "(" + strFrom + " LEFT JOIN IFR_Diario IFR " + Environment.NewLine;
 				strFrom += " ON C.Codigo = IFR.Codigo " + Environment.NewLine;
@@ -264,7 +264,7 @@ namespace DataBase.Carregadores
 	            .Append("SELECT Data, 1 + Oscilacao / 100 AS Oscilacao ")
 	            .Append("FROM Cotacao ")
 	            .Append($"WHERE Codigo = {funcoesBd.CampoStringFormatar(codigo)} ")
-                .Append($"ORDER BY Data");
+                .Append("ORDER BY Data");
 
 	        var rs = new RS(Conexao);
             rs.ExecuteQuery(sb.ToString());
@@ -302,7 +302,7 @@ namespace DataBase.Carregadores
 	            sb.Append($" AND Codigo IN ({string.Join(", ", ativos.Select(funcoesBd.CampoStringFormatar).ToArray())})");
 	        }
 
-	            sb.Append(" ORDER BY Codigo, Data");
+	        sb.Append(" ORDER BY Codigo, Data");
 
 	        var rs = new RS(Conexao);
 	        rs.ExecuteQuery(sb.ToString());
@@ -330,6 +330,51 @@ namespace DataBase.Carregadores
 
 	        return dictionary;
 	    }
-	}
+
+	    public IDictionary<string, List<CotacaoNegocios>> CarregarNegociosAPartirDe(DateTime dataInicialDados, ICollection<string> ativos)
+	    {
+	        var funcoesBd = Conexao.ObterFormatadorDeCampo();
+	        var sb = new StringBuilder();
+	        sb
+	            .Append("SELECT Codigo, Data, Negocios_Total ")
+	            .Append("FROM Cotacao ")
+	            .Append($"WHERE Data >= {funcoesBd.CampoDateFormatar(dataInicialDados)} ")
+                .Append("AND Codigo NOT IN (SELECT CODIGO FROM ATIVOS_DESCONSIDERADOS) ");
+
+	        if (ativos.Any())
+	        {
+	            sb.Append($" AND Codigo IN ({string.Join(", ", ativos.Select(funcoesBd.CampoStringFormatar).ToArray())})");
+	        }
+
+	        sb.Append(" ORDER BY Codigo, Data");
+
+	        var rs = new RS(Conexao);
+	        rs.ExecuteQuery(sb.ToString());
+
+	        var negocios = new Collection<CotacaoNegocios>();
+
+	        while (!rs.Eof)
+	        {
+	            var oscilacao = new CotacaoNegocios
+                {
+	                Codigo = rs.Field("Codigo").ToString(),
+	                Data = Convert.ToDateTime(rs.Field("Data")),
+	                Negocios = Convert.ToDecimal(rs.Field("Negocios_Total"))
+	            };
+	            negocios.Add(oscilacao);
+	            rs.MoveNext();
+	        }
+
+	        rs.Fechar();
+
+	        //ativos que não tiverem pelo menos 21 oscilações não pode ser calculada a volatilidade
+	        IDictionary<string, List<CotacaoNegocios>> dictionary = negocios.GroupBy(o => o.Codigo)
+	            .Where(g => g.Count() >= 21)
+	            .ToDictionary(x => x.Key, x => x.ToList());
+
+	        return dictionary;
+	    }
+
+    }
 
 }

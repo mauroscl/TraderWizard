@@ -173,7 +173,7 @@ namespace TraderWizard
             this.Label9.Name = "Label9";
             this.Label9.Size = new System.Drawing.Size(80, 13);
             this.Label9.TabIndex = 18;
-            this.Label9.Text = "Valor por Ação:";
+            this.Label9.Text = "Negocios por Ação:";
             // 
             // btnCalendarioAprovacao
             // 

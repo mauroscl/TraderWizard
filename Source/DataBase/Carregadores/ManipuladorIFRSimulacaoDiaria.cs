@@ -74,7 +74,7 @@ namespace DataBase.Carregadores
 		             FuncoesBd.CampoFormatar(objItem.ValorStopLossInicial);
 
 
-			//Valor original de entrada
+			//Negocios original de entrada
 			strSQL = strSQL + ", " + FuncoesBd.CampoFormatar(objItem.ValorEntradaOriginal);
 
 			strSQL = strSQL + ")" + Environment.NewLine;

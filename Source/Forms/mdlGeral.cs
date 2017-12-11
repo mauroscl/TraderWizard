@@ -17,11 +17,11 @@ namespace TraderWizard
 
 			objDadosDB.CampoAdicionar("Parametro", true, pstrParametro);
 
-			objDadosDB.CampoAdicionar("Valor", false, "");
+			objDadosDB.CampoAdicionar("Negocios", false, "");
 
 			objDadosDB.DadosBDConsultar();
 
-			pstrValorRet = objDadosDB.CampoConsultar("Valor");
+			pstrValorRet = objDadosDB.CampoConsultar("Negocios");
 
 		    //ParametroConsultar = objRS.DadosExistir()
 			return true;

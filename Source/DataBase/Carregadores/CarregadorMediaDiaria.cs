@@ -23,7 +23,7 @@ namespace DataBase.Carregadores
 
             FuncoesBd  funcoesBd = Conexao.ObterFormatadorDeCampo();
 
-		    string strSql = "SELECT Valor " + Environment.NewLine;
+		    string strSql = "SELECT Negocios " + Environment.NewLine;
 			strSql = strSql + " FROM Media_Diaria " + Environment.NewLine;
 			strSql = strSql + " WHERE Codigo = " + funcoesBd.CampoFormatar(pobjCotacaoDiaria.Ativo.Codigo);
 			strSql = strSql + " AND Data = " + funcoesBd.CampoFormatar(pobjCotacaoDiaria.Data);
@@ -32,7 +32,7 @@ namespace DataBase.Carregadores
 
 			objRS.ExecuteQuery(strSql);
 
-			MediaAbstract functionReturnValue = new MediaDiaria(pobjCotacaoDiaria, pobjMediaDTO.Tipo, pobjMediaDTO.NumPeriodos, Convert.ToDouble(objRS.Field("Valor")));
+			MediaAbstract functionReturnValue = new MediaDiaria(pobjCotacaoDiaria, pobjMediaDTO.Tipo, pobjMediaDTO.NumPeriodos, Convert.ToDouble(objRS.Field("Negocios")));
 
 			objRS.Fechar();
 

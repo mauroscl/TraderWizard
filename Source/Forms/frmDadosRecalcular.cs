@@ -174,18 +174,19 @@ namespace TraderWizard
 
 			if (chkCotacaoDiaria.Checked) {
 				//se vai ter operações 
-				blnOperacoesExecutar = (chkCotacaoDiariaOscilacaoRecalcular.Checked || chkCotacaoDiariaIFRRecalcular.Checked || chkCotacaoDiariaMMExpRecalcular.Checked 
-                    || chkCotacaoDiariaVolumeMedioRecalcular.Checked || chkCotacaoDiariaIFR2MedioRecalcular.Checked || chkVolatilidadeDiaria.Checked);
+				blnOperacoesExecutar = chkCotacaoDiariaOscilacaoRecalcular.Checked || chkCotacaoDiariaIFRRecalcular.Checked || chkCotacaoDiariaMMExpRecalcular.Checked 
+				                       || chkCotacaoDiariaVolumeMedioRecalcular.Checked || chkCotacaoDiariaIFR2MedioRecalcular.Checked || chkVolatilidadeDiaria.Checked 
+                                       || chkMediaNegociosDiaria.Checked;
 
 			}
 
 
 		    if (!blnOperacoesExecutar && chkCotacaoSemanal.Checked)
 		    {
-		        blnOperacoesExecutar = (chkCotacaoSemanalDadosGeraisRecalcular.Checked ||
-		                                chkCotacaoSemanalIFRRecalcular.Checked || chkCotacaoSemanalMMExpRecalcular.Checked ||
-		                                chkCotacaoSemanalVolumeMedioRecalcular.Checked ||
-		                                chkCotacaoSemanalIFR2MedioRecalcular.Checked || chkVolatilidadeSemanal.Checked);
+		        blnOperacoesExecutar = chkCotacaoSemanalDadosGeraisRecalcular.Checked ||
+		                               chkCotacaoSemanalIFRRecalcular.Checked || chkCotacaoSemanalMMExpRecalcular.Checked ||
+		                               chkCotacaoSemanalVolumeMedioRecalcular.Checked ||
+		                               chkCotacaoSemanalIFR2MedioRecalcular.Checked || chkVolatilidadeSemanal.Checked || chkMediaNegociosSemanal.Checked;
 		    }
 
 
@@ -259,7 +260,7 @@ namespace TraderWizard
 				if (chkCotacaoDiaria.Checked) {
                     configuracaoDiaria = new ConfiguracaoDeCalculoDiario(chkCotacaoDiariaOscilacaoRecalcular.Checked, chkCotacaoDiariaOscilacaoRecalcular.Checked, 
                         chkCotacaoDiariaIFRRecalcular.Checked, chkCotacaoDiariaMMExpRecalcular.Checked, chkCotacaoDiariaVolumeMedioRecalcular.Checked, 
-                        chkCotacaoDiariaIFR2MedioRecalcular.Checked, chkVolatilidadeDiaria.Checked);
+                        chkCotacaoDiariaIFR2MedioRecalcular.Checked, chkVolatilidadeDiaria.Checked, chkMediaNegociosDiaria.Checked);
 
 
 				}
@@ -268,7 +269,8 @@ namespace TraderWizard
 
                 if (chkCotacaoSemanal.Checked) {
                     configuracaoSemanal = new ConfiguracaoDeCalculoSemanal(true, true, chkCotacaoSemanalIFRRecalcular.Checked, chkCotacaoSemanalMMExpRecalcular.Checked, 
-                        chkCotacaoSemanalVolumeMedioRecalcular.Checked, chkCotacaoSemanalIFR2MedioRecalcular.Checked,chkVolatilidadeSemanal.Checked,chkCotacaoSemanalDadosGeraisRecalcular.Checked);
+                        chkCotacaoSemanalVolumeMedioRecalcular.Checked, chkCotacaoSemanalIFR2MedioRecalcular.Checked,chkVolatilidadeSemanal.Checked,
+                        chkMediaNegociosSemanal.Checked, chkCotacaoSemanalDadosGeraisRecalcular.Checked);
 
 				}
 

@@ -36,7 +36,7 @@ namespace ServicoNegocio
 		/// <param name="pstrTabelaCotacao"></param>
 		/// <param name="pstrTabelaIFR"></param>
 		/// <param name="pstrTabelaMedia"></param>
-		/// <param name="pdecValorFechamentoRet">Retorna o Valor de Fechamento na data da menor cotação anterior</param>
+		/// <param name="pdecValorFechamentoRet">Retorna o Negocios de Fechamento na data da menor cotação anterior</param>
 		/// <param name="pdblMME21Ret">Retorna a MME 21 na data da menor cotação anterior </param>
 		/// <param name="pdblMME49Ret">Retorna a MME 49 na data da menor cotação anterior</param>
 		/// <returns>Retorna o IFR de dois períodos na data da menor cotação anterior</returns>
@@ -63,14 +63,14 @@ namespace ServicoNegocio
 			while ((!blnEncontrouNegativo)) {
 				//enquanto não encontrou as oscilações positivas e negativas
 
-			    string strTabelaMME21 = '\t' + "SELECT Codigo, Data, Valor " + Environment.NewLine + '\t' + " FROM " + pstrTabelaMedia +
+			    string strTabelaMME21 = '\t' + "SELECT Codigo, Data, Negocios " + Environment.NewLine + '\t' + " FROM " + pstrTabelaMedia +
 			                            Environment.NewLine + '\t' + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(objAtivo.Codigo) +
 			                            Environment.NewLine + '\t' + " AND Tipo = " + FuncoesBd.CampoStringFormatar("MME") +
 			                            Environment.NewLine + '\t' + " AND NumPeriodos = 21 " + Environment.NewLine + '\t' +
 			                            " AND Data >= " + FuncoesBd.CampoDateFormatar(dtmDataInicial) + Environment.NewLine + '\t' +
 			                            " AND Data <= " + FuncoesBd.CampoDateFormatar(dtmDataFinal) + Environment.NewLine;
 
-			    string strTabelaMME49 = '\t' + "SELECT Codigo, Data, Valor " + Environment.NewLine + '\t' + " FROM " + pstrTabelaMedia +
+			    string strTabelaMME49 = '\t' + "SELECT Codigo, Data, Negocios " + Environment.NewLine + '\t' + " FROM " + pstrTabelaMedia +
 			                            Environment.NewLine + '\t' + " WHERE Codigo = " + FuncoesBd.CampoStringFormatar(objAtivo.Codigo) +
 			                            Environment.NewLine + '\t' + " AND Tipo = " + FuncoesBd.CampoStringFormatar("MME") +
 			                            Environment.NewLine + '\t' + " AND NumPeriodos = 49 " + Environment.NewLine + '\t' +
@@ -78,7 +78,7 @@ namespace ServicoNegocio
 			                            " AND Data <= " + FuncoesBd.CampoDateFormatar(dtmDataFinal) + Environment.NewLine;
 
 				//Busca as cotações em ordem decrescente.
-				string strQuery = "SELECT C.ValorFechamento, C.Oscilacao, IFR.Valor, MME21.Valor AS MME21, MME49.Valor AS MME49 " + Environment.NewLine;
+				string strQuery = "SELECT C.ValorFechamento, C.Oscilacao, IFR.Negocios, MME21.Negocios AS MME21, MME49.Negocios AS MME49 " + Environment.NewLine;
 
 				strQuery += " FROM (((" + pstrTabelaCotacao + " C INNER JOIN " + pstrTabelaIFR + " IFR" + Environment.NewLine + " ON C.Codigo = IFR.Codigo " + Environment.NewLine + " AND C.Data = IFR.Data) " + Environment.NewLine + " LEFT JOIN " + Environment.NewLine + "(" + Environment.NewLine + strTabelaMME21 + ") MME21 " + Environment.NewLine + " ON C.Codigo = MME21.Codigo " + Environment.NewLine + " AND C.Data = MME21.Data) " + Environment.NewLine + " LEFT JOIN " + Environment.NewLine + "(" + Environment.NewLine + strTabelaMME49 + ") MME49 " + Environment.NewLine + " ON C.Codigo = MME49.Codigo " + Environment.NewLine + " AND C.Data = MME49.Data " + Environment.NewLine;
 
@@ -100,7 +100,7 @@ namespace ServicoNegocio
 						blnEncontrouNegativo = true;
 
 						//se a oscilção foi menor ou igual a zero atribui o IFR na variável
-						dblIFR = Convert.ToDouble(objRS.Field("Valor"));
+						dblIFR = Convert.ToDouble(objRS.Field("Negocios"));
 
                         double valorMedia;
 
@@ -378,8 +378,8 @@ namespace ServicoNegocio
 								//os valores de entrada e stop loss no mesmo dia.
 								//Neste caso não estopa se as seguintes condições forem satisfeitas:
 								//1) ValorFechamento > ValorAbertura
-								//2) ValorFechamento > Valor do Stop Loss
-								//3) Valor de Abertura < Valor de Entrada
+								//2) ValorFechamento > Negocios do Stop Loss
+								//3) Negocios de Abertura < Negocios de Entrada
 								//Se estas três condições forem satisfeitas provavelmente o período
 								//abriu em baixa e depois superou a máxima do período anterior gerando entrada
 								//Caso contrário deve ter gerado uma entrada e depois estopado.

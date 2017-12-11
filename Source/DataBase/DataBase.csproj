@@ -82,6 +82,7 @@
     <Compile Include="Carregadores\CarregadorSetup.cs" />
     <Compile Include="Carregadores\CarregadorSimulacaoIFRDiario.cs" />
     <Compile Include="Carregadores\CarregadorSplit.cs" />
+    <Compile Include="Carregadores\CarregadorMediaNegocios.cs" />
     <Compile Include="Carregadores\CarregadorVolatilidade.cs" />
     <Compile Include="Carregadores\GeradorOperacaoBDPadrao.cs" />
     <Compile Include="Carregadores\ManipuladorIFRSimulacaoDiaria.cs" />

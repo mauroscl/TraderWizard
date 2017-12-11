@@ -550,7 +550,7 @@ namespace TraderWizard.ServicosDeAplicacao
 
 			} else {
 				//IFR
-				strCampo = "Valor";
+				strCampo = "Negocios";
 
 				//quando é IFR o dado está sempre no formato IFRxx, onde xx é o IFR de xx períodos, para
 				//o qual deve ser calculada a média.
@@ -682,7 +682,7 @@ namespace TraderWizard.ServicosDeAplicacao
 	    ///     Cotacao
 	    ///     Cotacao_Semanal
 	    /// </param>
-	    /// <param name="pdblMedia">Valor da média que será atualizada
+	    /// <param name="pdblMedia">Negocios da média que será atualizada
 	    /// </param>
 	    /// <param name="pstrMediaTipo"></param>
 	    /// <param name="pobjConexao"></param>
@@ -696,7 +696,7 @@ namespace TraderWizard.ServicosDeAplicacao
 
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
-			string strQuery = " INSERT INTO " + pstrTabela + "(Codigo, Data, NumPeriodos, Tipo, Valor)" + " VALUES " +
+			string strQuery = " INSERT INTO " + pstrTabela + "(Codigo, Data, NumPeriodos, Tipo, Negocios)" + " VALUES " +
                 "(" + funcoesBd.CampoStringFormatar(pstrCodigo) + ", " + funcoesBd.CampoDateFormatar(pdtmData) + ", " + pintNumPeriodos + ", " + funcoesBd.CampoStringFormatar(pstrMediaTipo) + ", " + funcoesBd.CampoFloatFormatar(pdblMedia) + ")";
 
 			objCommand.Execute(strQuery);
@@ -758,10 +758,10 @@ namespace TraderWizard.ServicosDeAplicacao
 
 				if (dtmCotacaoAnteriorData != Constantes.DataInvalida) {
 
-					objRS.ExecuteQuery(" select Valor " + " from " + strTabelaMedia + " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " and Data = " + funcoesBd.CampoDateFormatar(dtmCotacaoAnteriorData) + " and NumPeriodos = " + pintNumPeriodos + " and Tipo = " + funcoesBd.CampoStringFormatar("MME"));
+					objRS.ExecuteQuery(" select Negocios " + " from " + strTabelaMedia + " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " and Data = " + funcoesBd.CampoDateFormatar(dtmCotacaoAnteriorData) + " and NumPeriodos = " + pintNumPeriodos + " and Tipo = " + funcoesBd.CampoStringFormatar("MME"));
 
-					if (Convert.ToDecimal(objRS.Field("Valor", 0)) > 0) {
-						dblMmExpAnterior = Convert.ToDouble(objRS.Field("Valor"));
+					if (Convert.ToDecimal(objRS.Field("Negocios", 0)) > 0) {
+						dblMmExpAnterior = Convert.ToDouble(objRS.Field("Negocios"));
 					} else {
 						//se tem cotação mas não tem média calculada, tem que calcular o período inicial.
 						blnPeriodoCalcular = true;
@@ -1617,6 +1617,13 @@ namespace TraderWizard.ServicosDeAplicacao
                 calculadorDeVolatilidade.CalcularVolatilidadeDiaria(dataBase, ativos);
 		        calculadorDeVolatilidade.CalcularMediaVolatilidadeDiaria(dataBase, ativos);
 		    }
+
+		    if (configuracaoDeCalculo.MediaNegociosCalcular)
+		    {
+		        var calculadorDeMediaDeNegocios = new CalculadorDeMediaDeNegocios();
+                calculadorDeMediaDeNegocios.CalcularMediaNegociosDiaria(dataBase, ativos);
+		    }
+
 		    return (blnOk && blnIfrok && blnMmExpOk);
 
 		}
@@ -1692,16 +1699,21 @@ namespace TraderWizard.ServicosDeAplicacao
 						blnOk = false;
 					}
 				}
+			    var primeiraDataDaSemana = _cotacaoDataService.AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular("PETR4", dataBase);
 
-			    if (configuracaoDeCalculo.VolatilidadeCalcular)
+                if (configuracaoDeCalculo.VolatilidadeCalcular)
 			    {
-			        var primeiraDataDaSemana = _cotacaoDataService.AtivoCotacaoSemanalPrimeiroDiaSemanaCalcular("PETR4", dataBase);
 
 			        var calculadorDeVolatilidade = new CalculadorDeVolatilidade();
 			        calculadorDeVolatilidade.CalcularVolatilidadeSemanal(primeiraDataDaSemana, ativos);
 			        calculadorDeVolatilidade.CalcularMediaVolatilidadeSemanal(primeiraDataDaSemana, ativos);
-			        
-			    }			    
+			    }
+
+			    if (configuracaoDeCalculo.MediaNegociosCalcular)
+			    {
+			        var calculadorDeMediaDeNegocios = new CalculadorDeMediaDeNegocios();
+                    calculadorDeMediaDeNegocios.CalcularMediaNegociosSemanal(primeiraDataDaSemana, ativos);
+			    }
 			}
             else
             {

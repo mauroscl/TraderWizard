@@ -163,8 +163,8 @@ namespace TraderWizard.ServicosDeAplicacao
 
                 if (pblnCalcularDados)
                 {
-                    var configuracaoDiaria = new ConfiguracaoDeCalculoDiario(true, false, true, true, true, true, true);
-                    var configuracaoSemanal = new ConfiguracaoDeCalculoSemanal(true, true, true, true, true, true, true, true);
+                    var configuracaoDiaria = new ConfiguracaoDeCalculoDiario(true, false, true, true, true, true, true, true);
+                    var configuracaoSemanal = new ConfiguracaoDeCalculoSemanal(true, true, true, true, true, true, true, true,true);
 
                     var ativos = new Collection<string>();
 
@@ -535,8 +535,8 @@ namespace TraderWizard.ServicosDeAplicacao
             {
                 if (pblnCalcularDados)
                 {
-                    var configuracaoDiaria = new ConfiguracaoDeCalculoDiario(true, false, true, true, true, true, true);
-                    var configuracaoSemanal = new ConfiguracaoDeCalculoSemanal(true, true, true, true, true, true, true, true);
+                    var configuracaoDiaria = new ConfiguracaoDeCalculoDiario(true, false, true, true, true, true, true, true);
+                    var configuracaoSemanal = new ConfiguracaoDeCalculoSemanal(true, true, true, true, true, true, true, true, true);
 
                     _servicoDeCotacao.DadosRecalcular(configuracaoDiaria, configuracaoSemanal, dtmData, new Collection<string>());
                 }
@@ -688,7 +688,7 @@ namespace TraderWizard.ServicosDeAplicacao
                     //CHAMA A FUNÇÃO DE RECÁLCULO PARA OS DADOS SEMANAIS.
                     //SE NÃO HOUVER REGISTROS NÃO CALCULARÁ
 
-                    var configuracaoDeCalculo = new ConfiguracaoDeCalculoSemanal(true, true, true, true, true, true, true,true);
+                    var configuracaoDeCalculo = new ConfiguracaoDeCalculoSemanal(true, true, true, true, true, true, true,true, true);
                     this._servicoDeCotacao.CotacaoSemanalDadosAtualizar(configuracaoDeCalculo, parrData[0], new Collection<string>(), true);
 
                 }
