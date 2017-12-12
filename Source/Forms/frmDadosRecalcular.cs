@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using DataBase;
 using Dominio.Entidades;
 using DTO;
+using Forms;
 using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;
 using TraderWizard.Infra.Repositorio;

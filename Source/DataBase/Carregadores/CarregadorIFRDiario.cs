@@ -22,7 +22,7 @@ namespace DataBase.Carregadores
 
 		    FuncoesBd funcoesBd = Conexao.ObterFormatadorDeCampo();
 
-			string strSql = "SELECT Negocios " + Environment.NewLine;
+			string strSql = "SELECT Valor " + Environment.NewLine;
 			strSql += " FROM IFR_Diario " + Environment.NewLine;
 			strSql += " WHERE Codigo = " + funcoesBd.CampoFormatar(pobjCotacaoDiaria.Ativo.Codigo);
 			strSql += " AND Data = " + funcoesBd.CampoFormatar(pobjCotacaoDiaria.Data);
@@ -30,7 +30,7 @@ namespace DataBase.Carregadores
 
 			objRS.ExecuteQuery(strSql);
 
-			cIFR functionReturnValue = new cIFRDiario(pobjCotacaoDiaria, pintNumPeriodos, Convert.ToDouble(objRS.Field("Negocios")));
+			cIFR functionReturnValue = new cIFRDiario(pobjCotacaoDiaria, pintNumPeriodos, Convert.ToDouble(objRS.Field("Valor")));
 
 			objRS.Fechar();
 

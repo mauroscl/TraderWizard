@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using DataBase;
 using Dominio.Entidades;
 using frwTela;
+using Forms;
 using ServicosDeInterface;
 using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;

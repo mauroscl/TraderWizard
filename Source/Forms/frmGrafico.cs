@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Dominio.Entidades;
+using Forms;
 using prjCandle.Desenho;
 using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;
@@ -883,7 +884,7 @@ namespace TraderWizard
             {
                 //****************VER SE ESTÁ FUNCIONANDO QUANDO O PERÍODO DO IFR FOR TROCADO.
 
-                string strQuery = " SELECT Negocios " + Environment.NewLine + " FROM " + strTabelaIFR +
+                string strQuery = " SELECT Valor " + Environment.NewLine + " FROM " + strTabelaIFR +
                                   Environment.NewLine + " WHERE Codigo = " +
                                   FuncoesBd.CampoStringFormatar(strCodigoAtivo) + Environment.NewLine +
                                   " AND NumPeriodos = " + intIFRNumPeriodos + Environment.NewLine + " AND Data >= " +
@@ -899,7 +900,7 @@ namespace TraderWizard
                 {
                     try
                     {
-                        arrCandle[intArrayCandleIndice].IFR14 = Convert.ToDouble(objRS.Field("Negocios"));
+                        arrCandle[intArrayCandleIndice].IFR14 = Convert.ToDouble(objRS.Field("Valor"));
                     }
                     catch
                     {
@@ -955,7 +956,7 @@ namespace TraderWizard
 
                 while (!objRSList.Eof)
                 {
-                    arrCandle[intArrayCandleIndice].VolumeMedio = Convert.ToDouble(objRSList.Field("Negocios"));
+                    arrCandle[intArrayCandleIndice].VolumeMedio = Convert.ToDouble(objRSList.Field("Valor"));
 
                     intArrayCandleIndice = intArrayCandleIndice - 1;
 
@@ -1146,7 +1147,7 @@ namespace TraderWizard
                         //preenche estrutura com os dados da média
                         objstructMediaValor.intPeriodo = objMediaDTO.NumPeriodos;
                         objstructMediaValor.strTipo = objMediaDTO.Tipo;
-                        objstructMediaValor.dblValor = Convert.ToDouble(objRSList.Field("Negocios"));
+                        objstructMediaValor.dblValor = Convert.ToDouble(objRSList.Field("Valor"));
 
                         //adiciona a média no array de candle
                         arrCandle[intArrayCandleIndice].MediaAtribuir(objstructMediaValor);
@@ -2255,11 +2256,11 @@ namespace TraderWizard
 
             objDadosDB.CampoAdicionar("Parametro", true, pstrParametro);
 
-            objDadosDB.CampoAdicionar("Negocios", false, "");
+            objDadosDB.CampoAdicionar("Valor", false, "");
 
             objDadosDB.DadosBDConsultar();
 
-            pstrValorRet = objDadosDB.CampoConsultar("Negocios");
+            pstrValorRet = objDadosDB.CampoConsultar("Valor");
 
 
         }

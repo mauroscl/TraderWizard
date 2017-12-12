@@ -550,7 +550,7 @@ namespace TraderWizard.ServicosDeAplicacao
 
 			} else {
 				//IFR
-				strCampo = "Negocios";
+				strCampo = "Valor";
 
 				//quando é IFR o dado está sempre no formato IFRxx, onde xx é o IFR de xx períodos, para
 				//o qual deve ser calculada a média.
@@ -696,7 +696,7 @@ namespace TraderWizard.ServicosDeAplicacao
 
             FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
-			string strQuery = " INSERT INTO " + pstrTabela + "(Codigo, Data, NumPeriodos, Tipo, Negocios)" + " VALUES " +
+			string strQuery = " INSERT INTO " + pstrTabela + "(Codigo, Data, NumPeriodos, Tipo, Valor)" + " VALUES " +
                 "(" + funcoesBd.CampoStringFormatar(pstrCodigo) + ", " + funcoesBd.CampoDateFormatar(pdtmData) + ", " + pintNumPeriodos + ", " + funcoesBd.CampoStringFormatar(pstrMediaTipo) + ", " + funcoesBd.CampoFloatFormatar(pdblMedia) + ")";
 
 			objCommand.Execute(strQuery);
@@ -758,10 +758,10 @@ namespace TraderWizard.ServicosDeAplicacao
 
 				if (dtmCotacaoAnteriorData != Constantes.DataInvalida) {
 
-					objRS.ExecuteQuery(" select Negocios " + " from " + strTabelaMedia + " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " and Data = " + funcoesBd.CampoDateFormatar(dtmCotacaoAnteriorData) + " and NumPeriodos = " + pintNumPeriodos + " and Tipo = " + funcoesBd.CampoStringFormatar("MME"));
+					objRS.ExecuteQuery(" select Valor " + " from " + strTabelaMedia + " where Codigo = " + funcoesBd.CampoStringFormatar(pstrCodigo) + " and Data = " + funcoesBd.CampoDateFormatar(dtmCotacaoAnteriorData) + " and NumPeriodos = " + pintNumPeriodos + " and Tipo = " + funcoesBd.CampoStringFormatar("MME"));
 
-					if (Convert.ToDecimal(objRS.Field("Negocios", 0)) > 0) {
-						dblMmExpAnterior = Convert.ToDouble(objRS.Field("Negocios"));
+					if (Convert.ToDecimal(objRS.Field("Valor", 0)) > 0) {
+						dblMmExpAnterior = Convert.ToDouble(objRS.Field("Valor"));
 					} else {
 						//se tem cotação mas não tem média calculada, tem que calcular o período inicial.
 						blnPeriodoCalcular = true;
@@ -1974,9 +1974,9 @@ namespace TraderWizard.ServicosDeAplicacao
 			//Atualizar a média calculada na tabela de média, conforme calculado no item b, 
 			//sempre utilizando como data da média a data do RS2.
 
-		    var datasIniciais = BuscarDatasComCotacaoAPartirDe(pstrCodigo, strTabelaDados, dtmDataInicial, intNumPeriodosTabelaDados);
+		    var datasIniciais = BuscarDatasComCotacaoAPartirDe(pstrCodigo, strTabelaDados, dtmDataInicial, intNumPeriodosTabelaDados, objConnAux);
 
-		    var datasFinais = BuscarDatasComCotacaoAPartirDe(pstrCodigo, strTabelaDados, pdtmDataFinal, intNumPeriodosTabelaDados);
+		    var datasFinais = BuscarDatasComCotacaoAPartirDe(pstrCodigo, strTabelaDados, pdtmDataFinal, intNumPeriodosTabelaDados, objConnAux);
 
 			//exclui as médias já existentes a partir da primeira data que será calculada,
 			//caso exista
@@ -2002,9 +2002,9 @@ namespace TraderWizard.ServicosDeAplicacao
 
 		}
 
-	    private List<DateTime> BuscarDatasComCotacaoAPartirDe(string pstrCodigo, string strTabelaDados, DateTime dtmDataInicial, int intNumPeriodosTabelaDados)
+	    private List<DateTime> BuscarDatasComCotacaoAPartirDe(string pstrCodigo, string strTabelaDados, DateTime dtmDataInicial, int intNumPeriodosTabelaDados, Conexao conexao)
 	    {
-	        RS rs = new RS();
+	        RS rs = new RS(conexao);
 
 	        var query = "select Data " + " from " + strTabelaDados +
 	                    " where Codigo = " + this._funcoesBd.CampoStringFormatar(pstrCodigo) + 

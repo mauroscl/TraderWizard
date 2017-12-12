@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Forms;
 using DataBase;
 using DTO;
+using Forms;
 using ServicoNegocio;
 using TraderWizard.Enumeracoes;
 using TraderWizard.ServicosDeAplicacao;

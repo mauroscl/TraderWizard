@@ -41,7 +41,7 @@ namespace DataBase.Carregadores
 		    foreach (MediaDTO objMediaDTO in plstMedias) {
 				string strAliasTabelaMedia = objMediaDTO.GetAlias;
 
-				strSelect += ", " + strAliasTabelaMedia + ".Negocios AS " + strAliasTabelaMedia;
+				strSelect += ", " + strAliasTabelaMedia + ".Valor AS " + strAliasTabelaMedia;
 
 				//tem que gerar na forma de um subselect para trazer os valores corretos com o LEFT JOIN devido ao WHERE 
 				//necessário nos campos "Tipo" e "NumPeriodos"
@@ -62,7 +62,7 @@ namespace DataBase.Carregadores
 
 
 			if (pblnCarregarIFR) {
-				strSelect += ", IFR.Negocios  AS IFR ";
+				strSelect += ", IFR.Valor  AS IFR ";
 
 				strFrom = Environment.NewLine + "(" + strFrom + " LEFT JOIN IFR_Diario IFR " + Environment.NewLine;
 				strFrom += " ON C.Codigo = IFR.Codigo " + Environment.NewLine;

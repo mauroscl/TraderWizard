@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Configuracao;
 using DataBase;
+using Forms;
 using TraderWizard.ServicosDeAplicacao;
 using WebAccess;
 

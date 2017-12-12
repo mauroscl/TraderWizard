@@ -126,7 +126,7 @@ namespace TraderWizard.ServicosDeAplicacao
 			//percentual em relação à média de 21 períodos
 			strQuery = strQuery + ", ROUND((dia_atual.ValorFechamento / MMExp21 - 1) * 100, 4) AS Perc_MME21 " + Environment.NewLine;
 
-			strQuery = strQuery + " FROM " + "(" + " SELECT c.codigo, valorabertura, valorfechamento, titulos_total " + " FROM " + pstrTabelaCotacao + " c INNER JOIN " + pstrTabelaMedia + " m " + " On c.codigo = m.codigo " + " And c.data = m.data " + " WHERE m.tipo = 'MME' " + " And m.numPeriodos = 9 " + " And valorfechamento < Round(m.valor, 2) " + " And c.data = " + FuncoesBd.CampoDateFormatar(pdtmDataAnterior) + ") As dia_anterior " + " INNER JOIN " + "(" + " SELECT c.codigo, valorabertura, valorfechamento, m.valor As mmexp9 " + " , titulos_total, valorminimo, valormaximo, MME21.Negocios as MMExp21 " + " FROM ";
+			strQuery = strQuery + " FROM " + "(" + " SELECT c.codigo, valorabertura, valorfechamento, titulos_total " + " FROM " + pstrTabelaCotacao + " c INNER JOIN " + pstrTabelaMedia + " m " + " On c.codigo = m.codigo " + " And c.data = m.data " + " WHERE m.tipo = 'MME' " + " And m.numPeriodos = 9 " + " And valorfechamento < Round(m.valor, 2) " + " And c.data = " + FuncoesBd.CampoDateFormatar(pdtmDataAnterior) + ") As dia_anterior " + " INNER JOIN " + "(" + " SELECT c.codigo, valorabertura, valorfechamento, m.valor As mmexp9 " + " , titulos_total, valorminimo, valormaximo, MME21.Valor as MMExp21 " + " FROM ";
 
 			//ligação da cotação com a tabela de médias para fazer o filtro com a média de 9 perídos.
 			string strTabelaAux = "(" + pstrTabelaCotacao + " c INNER JOIN " + pstrTabelaMedia + " m " + " On c.codigo = m.codigo " + " And c.data = m.data) ";
@@ -151,7 +151,7 @@ namespace TraderWizard.ServicosDeAplicacao
 			//WHERE DA MÉDIA DE 21 PERIODOS
 
 			if (pdblTitulosTotal != -1) {
-				strQuery = strQuery + " And MV.Tipo = " + FuncoesBd.CampoStringFormatar("VMA") + " And MV.NumPeriodos = 21 " + " And MV.Negocios >= " + FuncoesBd.CampoFloatFormatar(pdblTitulosTotal);
+				strQuery = strQuery + " And MV.Tipo = " + FuncoesBd.CampoStringFormatar("VMA") + " And MV.NumPeriodos = 21 " + " And MV.Valor >= " + FuncoesBd.CampoFloatFormatar(pdblTitulosTotal);
 
 			}
 
@@ -277,7 +277,7 @@ namespace TraderWizard.ServicosDeAplicacao
 			//percentual em relação à média de 21 períodos
 			strQuery = strQuery + ", ROUND((dia_atual.ValorFechamento / MMExp21 - 1) * 100, 4) AS Perc_MME21 " + Environment.NewLine;
 
-			strQuery = strQuery + " FROM " + "(" + " SELECT c.codigo, valorabertura, valorfechamento, titulos_total, valorminimo " + " FROM " + pstrTabelaCotacao + " c INNER JOIN " + pstrTabelaMedia + " m " + " On c.codigo = m.codigo " + " And c.data = m.data " + " WHERE m.tipo = 'MME' " + " And m.numPeriodos = 9 " + " And valorfechamento > Round(m.valor, 2) " + " And c.data = " + FuncoesBd.CampoDateFormatar(pdtmDataAnterior) + ") As dia_anterior " + " INNER JOIN " + "(" + " SELECT c.codigo, valorabertura, valorfechamento, m.valor As mmexp9 " + " , titulos_total, valorminimo, valormaximo, MME21.Negocios as MMExp21 " + " FROM ";
+			strQuery = strQuery + " FROM " + "(" + " SELECT c.codigo, valorabertura, valorfechamento, titulos_total, valorminimo " + " FROM " + pstrTabelaCotacao + " c INNER JOIN " + pstrTabelaMedia + " m " + " On c.codigo = m.codigo " + " And c.data = m.data " + " WHERE m.tipo = 'MME' " + " And m.numPeriodos = 9 " + " And valorfechamento > Round(m.valor, 2) " + " And c.data = " + FuncoesBd.CampoDateFormatar(pdtmDataAnterior) + ") As dia_anterior " + " INNER JOIN " + "(" + " SELECT c.codigo, valorabertura, valorfechamento, m.valor As mmexp9 " + " , titulos_total, valorminimo, valormaximo, MME21.Valor as MMExp21 " + " FROM ";
 
 			string strTabelaAux = "(" + pstrTabelaCotacao + " c INNER JOIN " + pstrTabelaMedia + " m " + " On c.codigo = m.codigo " + " And c.data = m.data) ";
 
@@ -297,7 +297,7 @@ namespace TraderWizard.ServicosDeAplicacao
 
 
 			if (pdblTitulosTotal != -1) {
-				strQuery = strQuery + " And MV.Tipo = " + FuncoesBd.CampoStringFormatar("VMA") + " And MV.NumPeriodos = 21 " + " And MV.Negocios >= " + FuncoesBd.CampoFloatFormatar(pdblTitulosTotal);
+				strQuery = strQuery + " And MV.Tipo = " + FuncoesBd.CampoStringFormatar("VMA") + " And MV.NumPeriodos = 21 " + " And MV.Valor >= " + FuncoesBd.CampoFloatFormatar(pdblTitulosTotal);
 
 			}
 
@@ -411,7 +411,7 @@ namespace TraderWizard.ServicosDeAplicacao
 			//percentual em relação à média de 21 períodos
 			strQuery = strQuery + ", ROUND((dia_atual.ValorFechamento / MMExp21 - 1) * 100, 4) AS Perc_MME21 " + Environment.NewLine;
 
-			strQuery = strQuery + " FROM " + "(" + " SELECT c.codigo, valorabertura, valorfechamento, titulos_total " + " FROM " + pstrTabelaCotacao + " c INNER JOIN " + pstrTabelaMedia + " m " + " On c.codigo = m.codigo " + " And c.data = m.data " + " WHERE m.tipo = 'MME' " + " And m.numPeriodos = 9 " + " And valorfechamento > Round(m.valor, 2) " + " And c.data = " + FuncoesBd.CampoDateFormatar(pdtmDataAnterior) + " AND c.Oscilacao < 0 " + ") As dia_anterior " + " INNER JOIN " + "(" + " SELECT c.codigo, valorabertura, valorfechamento, m.valor As mmexp9 " + " , titulos_total, valorminimo, valormaximo, MME21.Negocios AS MMExp21 " + " FROM ";
+			strQuery = strQuery + " FROM " + "(" + " SELECT c.codigo, valorabertura, valorfechamento, titulos_total " + " FROM " + pstrTabelaCotacao + " c INNER JOIN " + pstrTabelaMedia + " m " + " On c.codigo = m.codigo " + " And c.data = m.data " + " WHERE m.tipo = 'MME' " + " And m.numPeriodos = 9 " + " And valorfechamento > Round(m.valor, 2) " + " And c.data = " + FuncoesBd.CampoDateFormatar(pdtmDataAnterior) + " AND c.Oscilacao < 0 " + ") As dia_anterior " + " INNER JOIN " + "(" + " SELECT c.codigo, valorabertura, valorfechamento, m.valor As mmexp9 " + " , titulos_total, valorminimo, valormaximo, MME21.Valor AS MMExp21 " + " FROM ";
 
 			string strTabelaAux = "(" + pstrTabelaCotacao + " c INNER JOIN " + pstrTabelaMedia + " m " + " On c.codigo = m.codigo " + " And c.data = m.data) ";
 
@@ -431,7 +431,7 @@ namespace TraderWizard.ServicosDeAplicacao
 
 
 			if (pdblTitulosTotal != -1) {
-				strQuery = strQuery + " And MV.Tipo = " + FuncoesBd.CampoStringFormatar("VMA") + " And MV.NumPeriodos = 21 " + " And MV.Negocios >= " + FuncoesBd.CampoFloatFormatar(pdblTitulosTotal);
+				strQuery = strQuery + " And MV.Tipo = " + FuncoesBd.CampoStringFormatar("VMA") + " And MV.NumPeriodos = 21 " + " And MV.Valor >= " + FuncoesBd.CampoFloatFormatar(pdblTitulosTotal);
 
 			}
 
@@ -594,7 +594,7 @@ namespace TraderWizard.ServicosDeAplicacao
 			}
 
 			//percentual em relação à média de 21 períodos
-			strQuery = strQuery + ", ROUND((ValorFechamento / MME21.Negocios - 1) * 100, 4) AS Perc_MME21 " + Environment.NewLine;
+			strQuery = strQuery + ", ROUND((ValorFechamento / MME21.Valor - 1) * 100, 4) AS Perc_MME21 " + Environment.NewLine;
 
 			string strTabela = "(" + pstrTabelaCotacao + " INNER JOIN " + pstrTabelaIFR + Environment.NewLine + " On " + pstrTabelaCotacao + ".Codigo = " + pstrTabelaIFR + ".Codigo " + Environment.NewLine + " And " + pstrTabelaCotacao + ".Data = " + pstrTabelaIFR + ".Data) " + Environment.NewLine;
 
@@ -610,21 +610,21 @@ namespace TraderWizard.ServicosDeAplicacao
 			//PORQUE O WHERE PELO TIPO = 'MME' AND NUMPERIODOS = 21 FAZ COM QUE OS REGISTROS
 			//QUE AINDA NÃO TENHAM A MÉDIA DE 21 NÃO SEJAM CONSIDERADOS.
 			//POR ISSO TEMOS QUE CRIAR UM SELECT INTERNO QUE FORMA A TABELA MME21
-			strTabela = "(" + strTabela + " LEFT JOIN " + Environment.NewLine + "(" + Environment.NewLine + '\t' + "SELECT Codigo, Data, Negocios " + Environment.NewLine + '\t' + "FROM " + pstrTabelaMedia + Environment.NewLine + '\t' + 
+			strTabela = "(" + strTabela + " LEFT JOIN " + Environment.NewLine + "(" + Environment.NewLine + '\t' + "SELECT Codigo, Data, Valor " + Environment.NewLine + '\t' + "FROM " + pstrTabelaMedia + Environment.NewLine + '\t' + 
                 " WHERE Data = " + funcoesBd.CampoDateFormatar(pdtmDataAtual) + Environment.NewLine + '\t' +
                 " AND Tipo = " + funcoesBd.CampoStringFormatar("MMA") + Environment.NewLine + '\t' + " And NumPeriodos = 21 " + Environment.NewLine + ") AS MME21 " + Environment.NewLine + " On " + pstrTabelaCotacao + ".Codigo = MME21.Codigo " + Environment.NewLine + " And " + pstrTabelaCotacao + ".Data = MME21.Data) " + Environment.NewLine;
 
-			strQuery = strQuery + " FROM " + strTabela + " WHERE " + pstrTabelaCotacao + ".Data = " + funcoesBd.CampoDateFormatar(pdtmDataAtual) + " And " + pstrTabelaIFR + ".NumPeriodos = 2 " + " And " + pstrTabelaIFR + ".Negocios <= " + funcoesBd.CampoFloatFormatar(pdblIFR2LimiteSuperior);
+			strQuery = strQuery + " FROM " + strTabela + " WHERE " + pstrTabelaCotacao + ".Data = " + funcoesBd.CampoDateFormatar(pdtmDataAtual) + " And " + pstrTabelaIFR + ".NumPeriodos = 2 " + " And " + pstrTabelaIFR + ".Valor <= " + funcoesBd.CampoFloatFormatar(pdblIFR2LimiteSuperior);
 
 
 			if (pblnAcimaMME49) {
-				strQuery = strQuery + " And " + pstrTabelaCotacao + ".ValorFechamento >= MME49.Negocios ";
+				strQuery = strQuery + " And " + pstrTabelaCotacao + ".ValorFechamento >= MME49.Valor ";
 
 			}
 
 
 			if (pdblTitulosTotal != -1) {
-				strQuery = strQuery + " And MV.Tipo = " + funcoesBd.CampoStringFormatar("VMA") + " And MV.NumPeriodos = 21 " + " And MV.Negocios >= " + funcoesBd.CampoFloatFormatar(pdblTitulosTotal);
+				strQuery = strQuery + " And MV.Tipo = " + funcoesBd.CampoStringFormatar("VMA") + " And MV.NumPeriodos = 21 " + " And MV.Valor >= " + funcoesBd.CampoFloatFormatar(pdblTitulosTotal);
 
 			}
 
@@ -672,7 +672,7 @@ namespace TraderWizard.ServicosDeAplicacao
 		    FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
 
 			while (!blnOK) {
-				string strSQL = "SELECT TOP 5 Sequencial, Negocios " + Environment.NewLine;
+				string strSQL = "SELECT TOP 5 Sequencial, Valor " + Environment.NewLine;
 				strSQL = strSQL + " FROM Cotacao C INNER JOIN IFR_Diario IFR " + Environment.NewLine;
 				strSQL = strSQL + " ON C.Codigo = IFR.Codigo " + Environment.NewLine;
 				strSQL = strSQL + " AND C.Data = IFR.Data " + Environment.NewLine;
@@ -686,7 +686,7 @@ namespace TraderWizard.ServicosDeAplicacao
 				while ((!objRS.Eof) && (!blnOK)) {
 
 
-					if (Convert.ToDouble(objRS.Field("Negocios")) <= pdblValorMaximoIFRSobrevendido) {
+					if (Convert.ToDouble(objRS.Field("Valor")) <= pdblValorMaximoIFRSobrevendido) {
 						lngUltimoSequencialSobrevendido = Convert.ToInt64(objRS.Field("Sequencial"));
 
 					} else {
@@ -863,7 +863,7 @@ namespace TraderWizard.ServicosDeAplicacao
 			if (pdblTitulosTotal != -1) {
 				strSQL = strSQL + " AND MV.Tipo = " + FuncoesBd.CampoFormatar("VMA") + Environment.NewLine;
 				strSQL = strSQL + " AND MV.NumPeriodos = 21 " + Environment.NewLine;
-				strSQL = strSQL + " AND MV.Negocios >= " + FuncoesBd.CampoFormatar(pdblTitulosTotal) + Environment.NewLine;
+				strSQL = strSQL + " AND MV.Valor >= " + FuncoesBd.CampoFormatar(pdblTitulosTotal) + Environment.NewLine;
 
 			}
 
@@ -1070,12 +1070,12 @@ namespace TraderWizard.ServicosDeAplicacao
 
 			strSQL = " SELECT Sequencial, C.Codigo, ValorFechamento ";
 			strSQL += ", ROUND(IFR.Negocios, 2) AS IFR2" + Environment.NewLine;
-			strSQL += ", MME49.Negocios AS MME49, MME200.Negocios AS MME200";
-			strSQL += ", ROUND((ValorFechamento / MME21.Negocios - 1) * 100, 4) AS Percentual_MME21 " + Environment.NewLine;
-			strSQL += ", ROUND((ValorFechamento / MME49.Negocios - 1) * 100, 4) AS Percentual_MME49 " + Environment.NewLine;
-			strSQL += ", ROUND((ValorFechamento / MME200.Negocios - 1) * 100, 4) AS Percentual_MME200 " + Environment.NewLine;
-			strSQL += ", ROUND(((ValorFechamento / MME200.Negocios - 1) * 100) - ((ValorFechamento / MME21.Negocios - 1) * 100), 4) AS Diferenca_MM200_MM21" + Environment.NewLine;
-			strSQL += ", ROUND(((ValorFechamento / MME200.Negocios - 1) * 100) - ((ValorFechamento / MME49.Negocios - 1) * 100), 4) AS Diferenca_MM200_MM49" + Environment.NewLine;
+			strSQL += ", MME49.Valor AS MME49, MME200.Negocios AS MME200";
+			strSQL += ", ROUND((ValorFechamento / MME21.Valor - 1) * 100, 4) AS Percentual_MME21 " + Environment.NewLine;
+			strSQL += ", ROUND((ValorFechamento / MME49.Valor - 1) * 100, 4) AS Percentual_MME49 " + Environment.NewLine;
+			strSQL += ", ROUND((ValorFechamento / MME200.Valor- 1) * 100, 4) AS Percentual_MME200 " + Environment.NewLine;
+			strSQL += ", ROUND(((ValorFechamento / MME200.Valor - 1) * 100) - ((ValorFechamento / MME21.Valor - 1) * 100), 4) AS Diferenca_MM200_MM21" + Environment.NewLine;
+			strSQL += ", ROUND(((ValorFechamento / MME200.Valor - 1) * 100) - ((ValorFechamento / MME49.Valor - 1) * 100), 4) AS Diferenca_MM200_MM49" + Environment.NewLine;
 			strSQL += ", ROUND(valorminimo - (valormaximo - valorminimo) * 1.3, 2) As stop_loss " + Environment.NewLine;
 			strSQL += ", ROUND(((valorminimo - (valormaximo - valorminimo) * 1.3) / valorfechamento -1) * 100, 4) As perc_stop_loss " + Environment.NewLine;
 
@@ -1136,7 +1136,7 @@ namespace TraderWizard.ServicosDeAplicacao
 			//****Fim dos cálculos com manejo de risco.
 
 			//percentual em relação à média de 21 períodos
-			strSQL = strSQL + ", ROUND((ValorFechamento / MME21.Negocios - 1) * 100, 4) AS Perc_MME21 " + Environment.NewLine;
+			strSQL = strSQL + ", ROUND((ValorFechamento / MME21.Valor - 1) * 100, 4) AS Perc_MME21 " + Environment.NewLine;
 
 		    string strTabela = "(Cotacao C INNER JOIN IFR_Diario IFR" + Environment.NewLine + " On C.Codigo = IFR.Codigo " + Environment.NewLine + " And C.Data = IFR.Data) " + Environment.NewLine;
 
@@ -1160,11 +1160,11 @@ namespace TraderWizard.ServicosDeAplicacao
 
 
 
-			strSQL = strSQL + " FROM " + strTabela + Environment.NewLine + " WHERE C.Data = " + FuncoesBd.CampoDateFormatar(pdtmDataAtual) + Environment.NewLine + " AND C.Sequencial > 200" + " And IFR.NumPeriodos = 2 " + Environment.NewLine + " And IFR.Negocios <= " + FuncoesBd.CampoFloatFormatar(pdblIFR2LimiteSuperior) + Environment.NewLine;
+			strSQL = strSQL + " FROM " + strTabela + Environment.NewLine + " WHERE C.Data = " + FuncoesBd.CampoDateFormatar(pdtmDataAtual) + Environment.NewLine + " AND C.Sequencial > 200" + " And IFR.NumPeriodos = 2 " + Environment.NewLine + " And IFR.Valor <= " + FuncoesBd.CampoFloatFormatar(pdblIFR2LimiteSuperior) + Environment.NewLine;
 
 
 			if (pdblTitulosTotal != -1) {
-				strSQL = strSQL + " And MV.Tipo = " + FuncoesBd.CampoStringFormatar("VMA") + Environment.NewLine + " And MV.NumPeriodos = 21 " + Environment.NewLine + " And MV.Negocios >= " + FuncoesBd.CampoFloatFormatar(pdblTitulosTotal) + Environment.NewLine;
+				strSQL = strSQL + " And MV.Tipo = " + FuncoesBd.CampoStringFormatar("VMA") + Environment.NewLine + " And MV.NumPeriodos = 21 " + Environment.NewLine + " And MV.Valor >= " + FuncoesBd.CampoFloatFormatar(pdblTitulosTotal) + Environment.NewLine;
 
 			}
 
@@ -1413,7 +1413,7 @@ namespace TraderWizard.ServicosDeAplicacao
 			//percentual do valor de fechamento em relação à média de 21 períodos
 			strQuery = strQuery + ", ROUND((ValorFechamento / MMExp21 - 1) * 100, 4) AS Perc_MME21 ";
 
-			strQuery = strQuery + " FROM " + Environment.NewLine + "(" + Environment.NewLine + '\t' + " SELECT " + pstrTabelaCotacao + ".Codigo " + Environment.NewLine + '\t' + " FROM ((" + pstrTabelaCotacao + " INNER JOIN " + pstrTabelaMedia + Environment.NewLine + '\t' + " On " + pstrTabelaCotacao + ".Codigo = " + pstrTabelaMedia + ".Codigo " + Environment.NewLine + '\t' + " And " + pstrTabelaCotacao + ".Data = " + pstrTabelaMedia + ".Data) " + Environment.NewLine + '\t' + " INNER JOIN " + pstrTabelaIFR + Environment.NewLine + '\t' + " On " + pstrTabelaCotacao + ".Codigo = " + pstrTabelaIFR + ".Codigo " + Environment.NewLine + '\t' + " And " + pstrTabelaCotacao + ".Data = " + pstrTabelaIFR + ".Data) " + Environment.NewLine + '\t' + " WHERE " + pstrTabelaCotacao + ".Data = " + FuncoesBd.CampoDateFormatar(pdtmDataAnterior) + Environment.NewLine + '\t' + " And " + pstrTabelaMedia + ".Tipo = " + FuncoesBd.CampoStringFormatar("IFR2") + Environment.NewLine + '\t' + " And " + pstrTabelaMedia + ".NumPeriodos = 13 " + Environment.NewLine + '\t' + " And " + pstrTabelaIFR + ".NumPeriodos = 2 " + Environment.NewLine + '\t' + " And " + pstrTabelaIFR + ".Negocios < " + pstrTabelaMedia + ".Negocios " + Environment.NewLine + ") As primeiro_dia " + Environment.NewLine + " INNER JOIN " + Environment.NewLine + "(" + Environment.NewLine + '\t' + " SELECT " + pstrTabelaCotacao + ".Codigo, valorfechamento " + '\t' + ", MME21.Negocios AS MMExp21, MME49.Negocios AS MMExp49, " + pstrTabelaIFR + ".Negocios" + Environment.NewLine;
+			strQuery = strQuery + " FROM " + Environment.NewLine + "(" + Environment.NewLine + '\t' + " SELECT " + pstrTabelaCotacao + ".Codigo " + Environment.NewLine + '\t' + " FROM ((" + pstrTabelaCotacao + " INNER JOIN " + pstrTabelaMedia + Environment.NewLine + '\t' + " On " + pstrTabelaCotacao + ".Codigo = " + pstrTabelaMedia + ".Codigo " + Environment.NewLine + '\t' + " And " + pstrTabelaCotacao + ".Data = " + pstrTabelaMedia + ".Data) " + Environment.NewLine + '\t' + " INNER JOIN " + pstrTabelaIFR + Environment.NewLine + '\t' + " On " + pstrTabelaCotacao + ".Codigo = " + pstrTabelaIFR + ".Codigo " + Environment.NewLine + '\t' + " And " + pstrTabelaCotacao + ".Data = " + pstrTabelaIFR + ".Data) " + Environment.NewLine + '\t' + " WHERE " + pstrTabelaCotacao + ".Data = " + FuncoesBd.CampoDateFormatar(pdtmDataAnterior) + Environment.NewLine + '\t' + " And " + pstrTabelaMedia + ".Tipo = " + FuncoesBd.CampoStringFormatar("IFR2") + Environment.NewLine + '\t' + " And " + pstrTabelaMedia + ".NumPeriodos = 13 " + Environment.NewLine + '\t' + " And " + pstrTabelaIFR + ".NumPeriodos = 2 " + Environment.NewLine + '\t' + " And " + pstrTabelaIFR + ".Valor < " + pstrTabelaMedia + ".Val.or " + Environment.NewLine + ") As primeiro_dia " + Environment.NewLine + " INNER JOIN " + Environment.NewLine + "(" + Environment.NewLine + '\t' + " SELECT " + pstrTabelaCotacao + ".Codigo, valorfechamento " + '\t' + ", MME21.Negocios AS MMExp21, MME49.Negocios AS MMExp49, " + pstrTabelaIFR + ".Negocios" + Environment.NewLine;
 
 			//Para calcular o valor de entrada aplica 0,25% sobre o valor máximo do dia em que o IFR cruza a média. 
 			//Se este valor for maior ou igual a 0, 01 soma este valor ao valor máximo. Caso contrário soma 0,01 (1 centavo)
@@ -1440,16 +1440,16 @@ namespace TraderWizard.ServicosDeAplicacao
 			//PORQUE O WHERE PELO TIPO = 'MME' AND NUMPERIODOS = 21 FAZ COM QUE OS REGISTROS
 			//QUE AINDA NÃO TENHAM A MÉDIA DE 21 NÃO SEJAM CONSIDERADOS.
 			//POR ISSO TEMOS QUE CRIAR UM SELECT INTERNO QUE FORMA A TABELA MME21
-			strTabela = "(" + strTabela + '\t' + " LEFT JOIN " + Environment.NewLine + '\t' + "(" + Environment.NewLine + '\t' + '\t' + "SELECT Codigo, Data, Negocios " + Environment.NewLine + '\t' + '\t' + "FROM " + pstrTabelaMedia + Environment.NewLine + '\t' + '\t' + " WHERE Data = " + FuncoesBd.CampoDateFormatar(pdtmDataAtual) + Environment.NewLine + '\t' + '\t' + " AND Tipo = " + FuncoesBd.CampoStringFormatar("MME") + Environment.NewLine + '\t' + '\t' + " And NumPeriodos = 21 " + Environment.NewLine + '\t' + ") AS MME21 " + Environment.NewLine + '\t' + " On " + pstrTabelaCotacao + ".Codigo = MME21.Codigo " + Environment.NewLine + '\t' + " And " + pstrTabelaCotacao + ".Data = MME21.Data) " + Environment.NewLine;
+			strTabela = "(" + strTabela + '\t' + " LEFT JOIN " + Environment.NewLine + '\t' + "(" + Environment.NewLine + '\t' + '\t' + "SELECT Codigo, Data, Valor " + Environment.NewLine + '\t' + '\t' + "FROM " + pstrTabelaMedia + Environment.NewLine + '\t' + '\t' + " WHERE Data = " + FuncoesBd.CampoDateFormatar(pdtmDataAtual) + Environment.NewLine + '\t' + '\t' + " AND Tipo = " + FuncoesBd.CampoStringFormatar("MME") + Environment.NewLine + '\t' + '\t' + " And NumPeriodos = 21 " + Environment.NewLine + '\t' + ") AS MME21 " + Environment.NewLine + '\t' + " On " + pstrTabelaCotacao + ".Codigo = MME21.Codigo " + Environment.NewLine + '\t' + " And " + pstrTabelaCotacao + ".Data = MME21.Data) " + Environment.NewLine;
 
 			//GERA TABELA PARA BUSCAR A MÉDIA MÓVEL DE 49 PERÍODOS.
 			//NÃO PODE FAZER SIMPLESMENTE UM LEFT JOIN COM  A TABELA DE MÉDIAS
 			//PORQUE O WHERE PELO TIPO = 'MME' AND NUMPERIODOS = 49 FAZ COM QUE OS REGISTROS
 			//QUE AINDA NÃO TENHAM A MÉDIA DE 49 NÃO SEJAM CONSIDERADOS.
 			//POR ISSO TEMOS QUE CRIAR UM SELECT INTERNO QUE FORMA A TABELA MME49
-			strTabela = "(" + strTabela + '\t' + " LEFT JOIN " + Environment.NewLine + '\t' + "(" + Environment.NewLine + '\t' + '\t' + "SELECT Codigo, Data, Negocios " + Environment.NewLine + '\t' + '\t' + "FROM " + pstrTabelaMedia + Environment.NewLine + '\t' + '\t' + " WHERE Data = " + FuncoesBd.CampoDateFormatar(pdtmDataAtual) + Environment.NewLine + '\t' + '\t' + " AND Tipo = " + FuncoesBd.CampoStringFormatar("MME") + Environment.NewLine + '\t' + '\t' + " And NumPeriodos = 49 " + Environment.NewLine + '\t' + ") AS MME49 " + Environment.NewLine + '\t' + " On " + pstrTabelaCotacao + ".Codigo = MME49.Codigo " + Environment.NewLine + '\t' + " And " + pstrTabelaCotacao + ".Data = MME49.Data) " + Environment.NewLine;
+			strTabela = "(" + strTabela + '\t' + " LEFT JOIN " + Environment.NewLine + '\t' + "(" + Environment.NewLine + '\t' + '\t' + "SELECT Codigo, Data, Valor " + Environment.NewLine + '\t' + '\t' + "FROM " + pstrTabelaMedia + Environment.NewLine + '\t' + '\t' + " WHERE Data = " + FuncoesBd.CampoDateFormatar(pdtmDataAtual) + Environment.NewLine + '\t' + '\t' + " AND Tipo = " + FuncoesBd.CampoStringFormatar("MME") + Environment.NewLine + '\t' + '\t' + " And NumPeriodos = 49 " + Environment.NewLine + '\t' + ") AS MME49 " + Environment.NewLine + '\t' + " On " + pstrTabelaCotacao + ".Codigo = MME49.Codigo " + Environment.NewLine + '\t' + " And " + pstrTabelaCotacao + ".Data = MME49.Data) " + Environment.NewLine;
 
-			strQuery = strQuery + '\t' + " FROM " + strTabela + '\t' + " WHERE " + pstrTabelaCotacao + ".Data = " + FuncoesBd.CampoDateFormatar(pdtmDataAtual) + '\t' + " And " + pstrTabelaMedia + ".Tipo = " + FuncoesBd.CampoStringFormatar("IFR2") + '\t' + " And " + pstrTabelaMedia + ".NumPeriodos = 13 " + '\t' + " And " + pstrTabelaIFR + ".NumPeriodos = 2 " + '\t' + " And " + pstrTabelaIFR + ".Negocios > " + pstrTabelaMedia + ".Negocios ";
+			strQuery = strQuery + '\t' + " FROM " + strTabela + '\t' + " WHERE " + pstrTabelaCotacao + ".Data = " + FuncoesBd.CampoDateFormatar(pdtmDataAtual) + '\t' + " And " + pstrTabelaMedia + ".Tipo = " + FuncoesBd.CampoStringFormatar("IFR2") + '\t' + " And " + pstrTabelaMedia + ".Valor = 13 " + '\t' + " And " + pstrTabelaIFR + ".NumPeriodos = 2 " + '\t' + " And " + pstrTabelaIFR + ".Valor > " + pstrTabelaMedia + ".Negocios ";
 
 
 			if (pblnAcimaMME49) {
@@ -1458,7 +1458,7 @@ namespace TraderWizard.ServicosDeAplicacao
 			}
 
 			if (pdblTitulosTotal != -1) {
-				strQuery = strQuery + '\t' + " And MV.Tipo = " + FuncoesBd.CampoStringFormatar("VMA") + Environment.NewLine + '\t' + " And MV.NumPeriodos = 21 " + Environment.NewLine + '\t' + " And MV.Negocios >= " + FuncoesBd.CampoFloatFormatar(pdblTitulosTotal) + Environment.NewLine;
+				strQuery = strQuery + '\t' + " And MV.Tipo = " + FuncoesBd.CampoStringFormatar("VMA") + Environment.NewLine + '\t' + " And MV.NumPeriodos = 21 " + Environment.NewLine + '\t' + " And MV.Valor >= " + FuncoesBd.CampoFloatFormatar(pdblTitulosTotal) + Environment.NewLine;
 
 			}
 

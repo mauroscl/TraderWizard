@@ -20,7 +20,7 @@ namespace DataBase.Carregadores
             var funcoesBd = Conexao.ObterFormatadorDeCampo();
             var sb = new StringBuilder();
             sb
-                .Append("SELECT Data, Negocios ")
+                .Append("SELECT Data, Valor ")
                 .Append("FROM VolatilidadeDiaria ")
                 .Append($"WHERE Codigo = {funcoesBd.CampoStringFormatar(codigo)} ")
                 .Append("ORDER BY Data");
@@ -34,7 +34,7 @@ namespace DataBase.Carregadores
             var funcoesBd = Conexao.ObterFormatadorDeCampo();
             var sb = new StringBuilder();
             sb
-                .Append("SELECT Codigo, Data, Negocios ")
+                .Append("SELECT Codigo, Data, Valor ")
                 .Append("FROM VolatilidadeDiaria ")
                 .Append($"WHERE Data >= {funcoesBd.CampoDateFormatar(dataInicialDados)} ");
 
@@ -54,7 +54,7 @@ namespace DataBase.Carregadores
             var funcoesBd = Conexao.ObterFormatadorDeCampo();
             var sb = new StringBuilder();
             sb
-                .Append("SELECT Data, Negocios ")
+                .Append("SELECT Data, Valor ")
                 .Append("FROM VolatilidadeSemanal ")
                 .Append($"WHERE Codigo = {funcoesBd.CampoStringFormatar(codigo)} ")
                 .Append("ORDER BY Data");
@@ -67,7 +67,7 @@ namespace DataBase.Carregadores
             var funcoesBd = Conexao.ObterFormatadorDeCampo();
             var sb = new StringBuilder();
             sb
-                .Append("SELECT Codigo, Data, Negocios ")
+                .Append("SELECT Codigo, Data, Valor ")
                 .Append("FROM VolatilidadeSemanal ")
                 .Append($"WHERE Data >= {funcoesBd.CampoDateFormatar(dataInicialDados)} ");
 
@@ -166,7 +166,7 @@ namespace DataBase.Carregadores
                 var volatilidade = new Volatilidade
                 {
                     Data = Convert.ToDateTime(rs.Field("Data")),
-                    Valor = Convert.ToDecimal(rs.Field("Negocios"))
+                    Valor = Convert.ToDecimal(rs.Field("Valor"))
                 };
                 volatilidades.Add(volatilidade);
                 rs.MoveNext();
@@ -192,7 +192,7 @@ namespace DataBase.Carregadores
                 {
                     Codigo = rs.Field("Codigo").ToString(),
                     Data = Convert.ToDateTime(rs.Field("Data")),
-                    Valor = Convert.ToDecimal(rs.Field("Negocios"))
+                    Valor = Convert.ToDecimal(rs.Field("Valor"))
                 };
                 volatilidades.Add(volatilidade);
                 rs.MoveNext();

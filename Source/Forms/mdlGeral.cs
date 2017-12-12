@@ -4,7 +4,7 @@ using DataBase;
 using Dominio.Entidades;
 using TraderWizard.Enumeracoes;
 
-namespace TraderWizard
+namespace Forms
 {
 
 	public static class mdlGeral
@@ -17,15 +17,13 @@ namespace TraderWizard
 
 			objDadosDB.CampoAdicionar("Parametro", true, pstrParametro);
 
-			objDadosDB.CampoAdicionar("Negocios", false, "");
+			objDadosDB.CampoAdicionar("Valor", false, "");
 
 			objDadosDB.DadosBDConsultar();
 
-			pstrValorRet = objDadosDB.CampoConsultar("Negocios");
+			pstrValorRet = objDadosDB.CampoConsultar("Valor");
 
-		    //ParametroConsultar = objRS.DadosExistir()
 			return true;
-			//objConexao.FecharConexao()
 
 		}
 
