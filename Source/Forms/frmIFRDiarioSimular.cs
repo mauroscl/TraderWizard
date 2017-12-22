@@ -249,7 +249,7 @@ namespace TraderWizard
 			strSQL += '\t' + " AND MVT.Data = " + FuncoesBd.CampoFormatar(dtmDataUltimaCotacao) + Environment.NewLine;
 			strSQL += '\t' + " AND MVT.NumPeriodos = 21 " + Environment.NewLine;
 			strSQL += '\t' + " AND MVT.Tipo = " + FuncoesBd.CampoFormatar("VMA");
-			strSQL += '\t' + " AND MVT.Negocios >= 100000";
+			strSQL += '\t' + " AND MVT.Valor >= 100000";
 			//volume maior ou igual a 100.000 (cem mil) titulos negociados
 			strSQL += ")" + Environment.NewLine;
 

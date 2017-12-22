@@ -46,7 +46,7 @@ namespace DataBase.Carregadores
 				//tem que gerar na forma de um subselect para trazer os valores corretos com o LEFT JOIN devido ao WHERE 
 				//necessário nos campos "Tipo" e "NumPeriodos"
 				string strTabelaMedia = "(" + Environment.NewLine;
-				strTabelaMedia += '\t' + "SELECT Codigo, Data, Negocios" + Environment.NewLine;
+				strTabelaMedia += '\t' + "SELECT Codigo, Data, Valor" + Environment.NewLine;
 				strTabelaMedia += '\t' + " FROM Media_Diaria " + strAliasTabelaMedia + Environment.NewLine;
 				strTabelaMedia += '\t' + " WHERE Tipo = " + funcoesBd.CampoStringFormatar(objMediaDTO.CampoTipoBd) + Environment.NewLine;
 				strTabelaMedia += '\t' + " AND NumPeriodos = " + funcoesBd.CampoFormatar(objMediaDTO.NumPeriodos) + Environment.NewLine;
