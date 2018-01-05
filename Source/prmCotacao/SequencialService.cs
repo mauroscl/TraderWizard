@@ -205,14 +205,15 @@ namespace TraderWizard.ServicosDeAplicacao
 
         }
 
-        public SequencialAtivo AtivoProximoSequencialCalcular(string codigo)
+        public SequencialAtivo AtivoProximoSequencialCalcular(string codigo, DateTime dataDaCotacao)
         {
             var funcoesBd = this._conexao.ObterFormatadorDeCampo();
             var sb = new StringBuilder();
             sb
                 .Append("SELECT ISNULL(MAX(SEQUENCIAL), 0) + 1 AS Sequencial ")
                 .Append("FROM Cotacao ")
-                .Append($"WHERE Codigo = {funcoesBd.CampoStringFormatar(codigo)}");
+                .Append($"WHERE Codigo = {funcoesBd.CampoStringFormatar(codigo)}")
+                .Append($"AND Data < {funcoesBd.CampoDateFormatar(dataDaCotacao)}");
 
             var rs = new RS(this._conexao);
 

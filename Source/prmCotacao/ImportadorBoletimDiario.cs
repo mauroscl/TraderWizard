@@ -8,6 +8,8 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using Configuracao;
 using DataBase;
+using DataBase.Carregadores;
+using DTO;
 using Ionic.Zip;
 using Services;
 using WebAccess;
@@ -18,12 +20,14 @@ namespace TraderWizard.ServicosDeAplicacao
     {
         private readonly Web _web;
         private readonly SequencialService _sequencialService;
+        private readonly CarregadorDeAtivo _carregadorDeAtivo;
 
         public ImportadorBoletimDiario()
         {
             var conexao = new Conexao();
             this._web = new Web(conexao);
             this._sequencialService = new SequencialService(conexao);
+            this._carregadorDeAtivo = new CarregadorDeAtivo();
         }
 
         public IEnumerable<CotacaoImportacao> ObterCotacoes(DateTime data, string codigoUnico, ICollection<string> ativosDesconsiderados)
@@ -35,8 +39,6 @@ namespace TraderWizard.ServicosDeAplicacao
             var fileService = new FileService();
             fileService.DeleteAllFiles($"{pathLocal}\\unzip");
 
-            Console.Write(cotacoes);
-            //salvar cotações
             return cotacoes;
 
         }
@@ -82,16 +84,17 @@ namespace TraderWizard.ServicosDeAplicacao
         private IEnumerable<CotacaoImportacao> TransformarXmlEmCotacoes(DateTime data, string codigoUnico, ICollection<string> ativosDesconsiderados, string xmlFilePath)
         {
             ICollection<SequencialAtivo> sequenciais;
-
             if (!string.IsNullOrEmpty(codigoUnico))
             {
-                SequencialAtivo sequencial = _sequencialService.AtivoProximoSequencialCalcular(codigoUnico);
+                SequencialAtivo sequencial = _sequencialService.AtivoProximoSequencialCalcular(codigoUnico, data);
                 sequenciais = new Collection<SequencialAtivo> {sequencial};
             }
             else
             {
                 sequenciais = _sequencialService.AtivosProximoSequencialCalcular(ativosDesconsiderados);
             }
+
+            ICollection<AtivoSelecao> ativosCadastrados = this._carregadorDeAtivo.Carregar().ToList();
 
             var pattern = new Regex("^[A-Z]{4}\\d{1,2}$");
             var xmldoc = new XmlDocument();
@@ -121,7 +124,8 @@ namespace TraderWizard.ServicosDeAplicacao
                             : 0;
 
                         if ((string.IsNullOrEmpty(codigoUnico) || codigoUnico.Equals(codigo))
-                            && codigo.Length <= 6 && pattern.IsMatch(codigo) && temOscilacao && quantidadeDeNegocios > 100
+                            && codigo.Length <= 6 && pattern.IsMatch(codigo) && temOscilacao 
+                            && (quantidadeDeNegocios > 100 || ativosCadastrados.Any(ativoCadastrado => ativoCadastrado.Codigo.Equals(codigo)))
                             && !temAjusteContrato && !ativosDesconsiderados.Contains(codigo))
                         {
                             var quantidadeNegociada = Convert.ToInt64(childFinanceiro.Single(x => x.Name == "RglrTraddCtrcts").InnerText);

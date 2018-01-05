@@ -26,7 +26,7 @@ namespace DataBase.Carregadores
                 ativos.Add(new AtivoSelecao
                 {
                     Codigo = codigo,
-                    Descricao = string.Format("{0} - {1}", codigo, Convert.ToString(rs.Field("Descricao")))
+                    Descricao = $"{codigo} - {Convert.ToString(rs.Field("Descricao"))}"
                 });
 
                 rs.MoveNext();

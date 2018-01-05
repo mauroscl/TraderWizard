@@ -115,6 +115,13 @@ namespace TraderWizard.ServicosDeAplicacao
                 {
                     command.BeginTrans();
 
+                    if (!string.IsNullOrEmpty(pstrCodigoUnico))
+                    {
+                        //mais correto seria chamar este método sempre, mas acredito que apenas quando for código único é que vai ter questões
+                        //de algum ativo não ter cotação em uma data específica
+                        VerificaCotacoesPosteriores(pstrCodigoUnico, pdtmDataInicial);
+                    }
+
                     foreach (var cotacao in cotacoes)
                     {
 
@@ -185,6 +192,18 @@ namespace TraderWizard.ServicosDeAplicacao
 
             return true;
 
+        }
+
+        private void VerificaCotacoesPosteriores(string codigoAtivo, DateTime dataDaCotacao)
+        {
+            var formatadorDeCampo = this._conexao.ObterFormatadorDeCampo();
+            string query = "UPDATE Cotacao SET " +
+                           "Sequencial = Sequencial + 1 " +
+                           $"WHERE Codigo = {formatadorDeCampo.CampoStringFormatar(codigoAtivo)} " +
+                           $"AND Data > {formatadorDeCampo.CampoDateFormatar(dataDaCotacao)}";
+
+            var command = new Command(this._conexao);
+            command.Execute(query);
         }
 
 
