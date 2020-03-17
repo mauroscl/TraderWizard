@@ -96,7 +96,8 @@ namespace TraderWizard.ServicosDeAplicacao
 
             ICollection<AtivoSelecao> ativosCadastrados = this._carregadorDeAtivo.Carregar().ToList();
 
-            var pattern = new Regex("^[A-Z]{4}\\d{1,2}$");
+            var pattern = new Regex("^[A-Z]{1}.{1}[A-Z]{2}\\d{1,2}$");
+            String[] prefixosMercadoFuturo = { "WIN", "WDO", "DOL", "IND", "BGI", "CCM", "ICF", "WSP", "ISP" };
             var xmldoc = new XmlDocument();
             var cotacoes = new Collection<CotacaoImportacao>();
             using (FileStream fs = new FileStream(xmlFilePath, FileMode.Open, FileAccess.Read))
@@ -126,7 +127,9 @@ namespace TraderWizard.ServicosDeAplicacao
                         if ((string.IsNullOrEmpty(codigoUnico) || codigoUnico.Equals(codigo))
                             && codigo.Length <= 6 && pattern.IsMatch(codigo) && temOscilacao 
                             && (quantidadeDeNegocios > 100 || ativosCadastrados.Any(ativoCadastrado => ativoCadastrado.Codigo.Equals(codigo)))
-                            && !temAjusteContrato && !ativosDesconsiderados.Contains(codigo))
+                            && !temAjusteContrato && !ativosDesconsiderados.Contains(codigo)
+                            && prefixosMercadoFuturo.All(p => !codigo.StartsWith(p))
+                            && !IsFundoImobiliario(codigo, ativosCadastrados))
                         {
                             var quantidadeNegociada = Convert.ToInt64(childFinanceiro.Single(x => x.Name == "RglrTraddCtrcts").InnerText);
                             var volumeFinanceiro = Convert.ToDecimal(childFinanceiro.Single(x => x.Name == "NtlRglrVol").InnerText, cultureInfo);
@@ -171,6 +174,12 @@ namespace TraderWizard.ServicosDeAplicacao
         private bool CodigoUnicoEncontrado(string codigoUnico, Collection<CotacaoImportacao> cotacoes)
         {
             return !string.IsNullOrEmpty(codigoUnico) && cotacoes.Count == 1;
+        }
+
+        private bool IsFundoImobiliario(string codigo, ICollection<AtivoSelecao> ativosCadastrados)
+        {
+            return (codigo.EndsWith("11") || codigo.EndsWith("12")) 
+                && ativosCadastrados.All(ativoCadastrado => !ativoCadastrado.Codigo.Equals(codigo));
         }
     }
 }

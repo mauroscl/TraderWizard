@@ -125,6 +125,12 @@ namespace TraderWizard
                     MessageBox.Show("Não foi encontrada cotação na data ex do provento. Operação não pode ser executada.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
 					break;
+
+				case cEnum.enumRetorno.RetornoErro3:
+
+					MessageBox.Show("Já existe provento cadastrado para este ativo nesta data. Operação não pode ser executada.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+					break;
 			}
 
 		}

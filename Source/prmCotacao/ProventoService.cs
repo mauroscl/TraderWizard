@@ -417,12 +417,13 @@ namespace TraderWizard.ServicosDeAplicacao
         /// RetornoOK = operação executada com sucesso.
         /// RetonoErroInesperado = erro de banco de dados ou de programação
         /// RetornoErro2 = não existe cotação na data Ex do provento
+        /// RetonroErro3 = já existe provento
         /// <remarks></remarks>
         public cEnum.enumRetorno ProventoCadastrar(string pstrCodigo, cEnum.enumProventoTipo pintProventoTipo, DateTime pdtmDataAprovacao, DateTime pdtmDataEx, decimal pdecValorPorAcao)
         {
             cEnum.enumRetorno functionReturnValue;
 
-            decimal decUltimoPrecoCom = default(decimal);
+            decimal decUltimoPrecoCom = default;
             const string strTabelaCotacao = "COTACAO";
             string strProventoTipoAbreviatura;
             string strProventoTipoDescricao;
@@ -430,7 +431,6 @@ namespace TraderWizard.ServicosDeAplicacao
             Command objCommand = new Command(_conexao);
 
             CalculadorData objCalculadorData = new CalculadorData(_conexao);
-
 
             objCommand.BeginTrans();
 
@@ -492,6 +492,13 @@ namespace TraderWizard.ServicosDeAplicacao
             }
 
             double dblQuantidadeAnterior = Convert.ToDouble(decUltimoPrecoCom) - Convert.ToDouble(pdecValorPorAcao);
+
+            if (ExisteProvento(pstrCodigo, pdtmDataEx, strProventoTipoAbreviatura))
+            {
+                objCommand.RollBackTrans();
+                return cEnum.enumRetorno.RetornoErro3;
+
+            }
 
             string strQuery = "INSERT INTO Split " + Environment.NewLine + "(Codigo, Data, Tipo, QuantidadeAnterior, QuantidadePosterior)" + Environment.NewLine + " VALUES " + Environment.NewLine + 
                 "(" + funcoesBd.CampoStringFormatar(pstrCodigo) + ", " + funcoesBd.CampoDateFormatar(pdtmDataEx) + ", " + strProventoTipoAbreviatura + ", " + funcoesBd.CampoFloatFormatar(dblQuantidadeAnterior) + ", " + funcoesBd.CampoFloatFormatar(Convert.ToDouble(decUltimoPrecoCom)) + ")";
@@ -578,5 +585,27 @@ namespace TraderWizard.ServicosDeAplicacao
 
         }
 
+        private bool ExisteProvento(string codigo, DateTime data, string tipo)
+        {
+            RS objRsData = new RS(_conexao);
+
+            FuncoesBd funcoesBd = _conexao.ObterFormatadorDeCampo();
+
+            var query = " select 1 " + " from Split" +
+                " where Codigo = " + funcoesBd.CampoStringFormatar(codigo) +
+                " and Data = " + funcoesBd.CampoDateFormatar(data) +
+                " and Tipo = " + funcoesBd.CampoStringFormatar(tipo);
+
+            objRsData.ExecuteQuery(query);
+
+            var retorno = objRsData.DadosExistir;
+
+            objRsData.Fechar();
+            return retorno;
+
+        }
+
+
     }
+
 }
