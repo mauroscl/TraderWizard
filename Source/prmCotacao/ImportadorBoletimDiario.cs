@@ -1,4 +1,10 @@
-﻿using System;
+﻿using Configuracao;
+using DataBase;
+using DataBase.Carregadores;
+using DTO;
+using Ionic.Zip;
+using Services;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -6,12 +12,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
-using Configuracao;
-using DataBase;
-using DataBase.Carregadores;
-using DTO;
-using Ionic.Zip;
-using Services;
 using WebAccess;
 
 namespace TraderWizard.ServicosDeAplicacao
@@ -45,11 +45,13 @@ namespace TraderWizard.ServicosDeAplicacao
 
         private string ObterArquivoDeCotacao(String pathLocal, DateTime data)
         {
-            var nomeArquivoCotacoes = $"PR{data:yyMMdd}.zip";
+            var pathPorData = $"PR{data:yyMMdd}";
+            var nomeArquivoCotacoes = $"{pathPorData}.zip";
             string nomeArquivoDownload = $"pesquisa-pregao-{data:yyMMdd}.zip";
             var pathArquivoLocal = $"{pathLocal}\\{nomeArquivoDownload}";
             var pathToExtract = $"{pathLocal}\\unzip";
             var pathArquivoCotacoes = $"{pathToExtract}\\{nomeArquivoCotacoes}";
+            var pathXml = $"{pathToExtract}\\{pathPorData}";
             //baixar arquivo zip
             if (!File.Exists(pathArquivoLocal))
             {
@@ -60,24 +62,21 @@ namespace TraderWizard.ServicosDeAplicacao
                 }
 
             }
-            string[] arquivosXml = Directory.GetFiles(pathToExtract, "*.xml");
-            if (!arquivosXml.Any())
-            {
-                //extrair primeiro arquivo
-                var zipFile1 = new ZipFile(pathArquivoLocal);
-                zipFile1.ExtractAll(pathToExtract);
+            //extrair zip dentro do zip
+            var zipFile1 = new ZipFile(pathArquivoLocal);
+            zipFile1.ExtractAll(pathToExtract);
 
-                //extrair segundo arquivo
-                var zipFile2 = new ZipFile(pathArquivoCotacoes);
-                zipFile2.ExtractAll(pathToExtract);
+            //extrair XMLs dentro do zip
+            var zipFile2 = new ZipFile(pathArquivoCotacoes);
+            zipFile2.ExtractAll(pathXml);
 
-                arquivosXml = Directory.GetFiles(pathToExtract, "*.xml");
-            }
+            var ultimoArquivoCriado = new DirectoryInfo(pathXml)
+                .GetFiles()
+                .OrderByDescending(f => f.LastWriteTime)
+                .First()
+                .FullName;
 
-            //selecionar arquivo
-            string fileToRead = arquivosXml.First();
-
-            return fileToRead;
+            return ultimoArquivoCriado;
 
         }
 
@@ -87,7 +86,7 @@ namespace TraderWizard.ServicosDeAplicacao
             if (!string.IsNullOrEmpty(codigoUnico))
             {
                 SequencialAtivo sequencial = _sequencialService.AtivoProximoSequencialCalcular(codigoUnico, data);
-                sequenciais = new Collection<SequencialAtivo> {sequencial};
+                sequenciais = new Collection<SequencialAtivo> { sequencial };
             }
             else
             {
@@ -101,7 +100,7 @@ namespace TraderWizard.ServicosDeAplicacao
             var xmldoc = new XmlDocument();
             var cotacoes = new Collection<CotacaoImportacao>();
             using (FileStream fs = new FileStream(xmlFilePath, FileMode.Open, FileAccess.Read))
-            { 
+            {
                 try
                 {
                     xmldoc.Load(fs);
@@ -125,7 +124,7 @@ namespace TraderWizard.ServicosDeAplicacao
                             : 0;
 
                         if ((string.IsNullOrEmpty(codigoUnico) || codigoUnico.Equals(codigo))
-                            && codigo.Length <= 6 && pattern.IsMatch(codigo) && temOscilacao 
+                            && codigo.Length <= 6 && pattern.IsMatch(codigo) && temOscilacao
                             && (quantidadeDeNegocios > 100 || ativosCadastrados.Any(ativoCadastrado => ativoCadastrado.Codigo.Equals(codigo)))
                             && !temAjusteContrato && !ativosDesconsiderados.Contains(codigo)
                             && prefixosMercadoFuturo.All(p => !codigo.StartsWith(p))
@@ -178,7 +177,7 @@ namespace TraderWizard.ServicosDeAplicacao
 
         private bool IsFundoImobiliario(string codigo, ICollection<AtivoSelecao> ativosCadastrados)
         {
-            return (codigo.EndsWith("11") || codigo.EndsWith("12")) 
+            return (codigo.EndsWith("11") || codigo.EndsWith("12"))
                 && ativosCadastrados.All(ativoCadastrado => !ativoCadastrado.Codigo.Equals(codigo));
         }
     }

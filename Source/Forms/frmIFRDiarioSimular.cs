@@ -214,7 +214,7 @@ namespace TraderWizard
 		{
 			var objCalculadorData = new CalculadorData(objConexao);
 
-			DateTime dtmDataUltimaCotacao = objCalculadorData.ObtemDataDaUltimaCotacao();
+			DateTime dtmDataUltimaCotacao = objCalculadorData.ObterDataDaUltimaCotacao();
 
 			var objRelatorio = new cRelatorio(objConexao);
 

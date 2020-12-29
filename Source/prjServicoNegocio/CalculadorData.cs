@@ -148,7 +148,7 @@ namespace ServicoNegocio
 
 		}
 
-		public DateTime ObtemDataDaUltimaCotacao()
+		public DateTime ObterDataDaUltimaCotacao()
 		{
 		    RS objRS = new RS(_conexao);
 
@@ -170,7 +170,7 @@ namespace ServicoNegocio
 			//data que tem que buscar a próxima cotação.
 		    DateTime dtmDataFinal;
 
-			DateTime dtmDataInicial = DiaUtilSeguinteCalcular(ObtemDataDaUltimaCotacao());
+			DateTime dtmDataInicial = DiaUtilSeguinteCalcular(ObterDataDaUltimaCotacao());
 
 			//Verifica se a data atual já tem cotação
 			Web objWeb = new Web(_conexao);

@@ -5,6 +5,7 @@ using DataBase;
 using TraderWizard.Enumeracoes;
 using TraderWizard.Extensoes;
 using TraderWizard.ServicosDeAplicacao;
+using ServicoNegocio;
 
 namespace TraderWizard
 {
@@ -31,7 +32,12 @@ namespace TraderWizard
 
 			mdlGeral.ComboProventoTipoPreencher(cmbProventoTipo);
 
-			txtDataEx.Text = DateTime.Now.Date.ToString("dd/MM/yyyy");
+			var calculadorData = new CalculadorData(objConexao);
+
+			var dataUltimaCotacao = calculadorData.ObterDataDaUltimaCotacao();
+
+			txtDataEx.Text = dataUltimaCotacao.ToString("dd/MM/yyyy");
+			txtDataAprovacao.Text = dataUltimaCotacao.AddDays(-1).ToString("dd/MM/yyyy");
 
 		}
 
