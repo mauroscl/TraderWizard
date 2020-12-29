@@ -172,15 +172,8 @@ namespace ServicoNegocio
 
 			DateTime dtmDataInicial = DiaUtilSeguinteCalcular(ObterDataDaUltimaCotacao());
 
-			//Verifica se a data atual já tem cotação
-			Web objWeb = new Web(_conexao);
-
-		    string urlCompleta = tipo == EnumAtualizacaoDiariaTipo.BoletimDiario
-		        ? GeradorNomeArquivo.GerarUlrBoletimDiario(DateTime.Now)
-		        : GeradorNomeArquivo.GerarUrlCotacaoHistorica(DateTime.Now);
-
 		    bool hojeDiaUtil = DiaUtilVerificar(DateTime.Now);
-		    if (hojeDiaUtil && objWeb.VerificarLink(urlCompleta)) {
+		    if (hojeDiaUtil && DateTime.Now.Hour >= 18) {
 				dtmDataFinal = DateTime.Now;
 			} else {
 				//Calcula o dia útil anterior à data atual
@@ -190,7 +183,7 @@ namespace ServicoNegocio
 			if (dtmDataFinal >= dtmDataInicial) {
 				return new SugerirAtualizacaoCotacaoDTO("online", dtmDataInicial, dtmDataFinal);
 			}
-		    return hojeDiaUtil ? new SugerirAtualizacaoCotacaoDTO("daytrade", DateTime.Now.Date, DateTime.Now.Date) : null;
+		    return hojeDiaUtil && DateTime.Now.Hour >= 10 ? new SugerirAtualizacaoCotacaoDTO("daytrade", DateTime.Now.Date, DateTime.Now.Date) : null;
 		}
 
 
