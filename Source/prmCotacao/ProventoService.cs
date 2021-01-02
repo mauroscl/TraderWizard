@@ -594,7 +594,7 @@ namespace TraderWizard.ServicosDeAplicacao
             var query = " select 1 " + " from Split" +
                 " where Codigo = " + funcoesBd.CampoStringFormatar(codigo) +
                 " and Data = " + funcoesBd.CampoDateFormatar(data) +
-                " and Tipo = " + funcoesBd.CampoStringFormatar(tipo);
+                " and Tipo = " + tipo;
 
             objRsData.ExecuteQuery(query);
 
